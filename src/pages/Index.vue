@@ -1,11 +1,17 @@
 <template>
   <q-page class="row items-center justify-evenly">
+  <div class="row justify-center text-primary">
+    @cnic/server
+  </div>
+  <div class="row justify-center">
     <example-component
       title="Example component"
       active
       :todos="todos"
       :meta="meta"
     ></example-component>
+  </div>
+
   </q-page>
 </template>
 
