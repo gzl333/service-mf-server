@@ -34,5 +34,11 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     )
   })
 
+  Router.beforeEach((to, from, next) => {
+    console.log('@cnic/server fullPath: ', to.fullPath)
+
+    next()
+  })
+
   return Router
 })

@@ -29,7 +29,12 @@ const vueLifecycles = singleSpaVue({
   replaceMode: true
 })
 
-export const bootstrap = vueLifecycles.bootstrap
-export const mount = vueLifecycles.mount
-export const unmount = vueLifecycles.unmount
-export const update = vueLifecycles.update
+export const {
+  bootstrap,
+  mount,
+  unmount,
+  update
+} = vueLifecycles
+
+// public interface
+export { getCount, countRef } from '@cnic/main'

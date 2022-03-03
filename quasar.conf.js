@@ -94,12 +94,13 @@ module.exports = configure(function (ctx) {
         cfg.output = {
           // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
           libraryTarget: 'system',
-          // chunkLoadingGlobal: `webpackJsonp_${name}`,  // not sure what this is
+          chunkLoadingGlobal: `webpackJsonp_${name}`, // not sure what this is
           publicPath: ''
         }
         // Dependencies that will be provided by the container
         cfg.externals = [
-          'single-spa'
+          'single-spa',
+          '@cnic/main'
           // 'single-spa-vue',
           // 'quasar',
           // '@quasar/extras',
