@@ -23,7 +23,8 @@
   <q-layout view="lHh Lpr lFf">
 
     <q-drawer class="column" show-if-above side="left" bordered style="padding-top: 50px;">
-      <q-btn to="/my/server/1">TAB1</q-btn>
+      云主机服务列表
+      <q-btn to="/my/server/create">TAB1</q-btn>
       <q-btn to="/my/server/2">TAB2</q-btn>
       <q-btn to="/my/server/3">TAB3</q-btn>
       <q-btn to="/my/server/4">TAB4</q-btn>

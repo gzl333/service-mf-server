@@ -2,10 +2,6 @@ import { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/my',
-    redirect: '/my/server'
-  },
-  {
     path: '/my/server',
     component: () => import('layouts/ServerLayout.vue'),
     children: [{
