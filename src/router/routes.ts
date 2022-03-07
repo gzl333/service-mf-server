@@ -2,16 +2,20 @@ import { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/my/server/:id',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index.vue') }],
-    props: true // 接收url中的参数
+    path: '/my',
+    redirect: '/my/server'
   },
   {
     path: '/my/server',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index.vue') }],
-    props: true // 接收url中的参数
+    component: () => import('layouts/ServerLayout.vue'),
+    children: [{
+      path: '',
+      component: () => import('pages/ServerIndex.vue')
+    },
+    {
+      path: 'create',
+      component: () => import('pages/ServerCreate.vue')
+    }]
   },
 
   // Always leave this as last one,

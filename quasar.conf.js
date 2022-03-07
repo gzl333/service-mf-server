@@ -12,15 +12,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 const { configure } = require('quasar/wrappers')
-const path = require('path')
+const resolve = require('path').resolve
 const { name } = require('./package')
 const SystemJSPublicPathWebpackPlugin = require('systemjs-webpack-interop/SystemJSPublicPathWebpackPlugin')
-
-function resolve (...dirs) {
-  return path.join(__dirname, ...dirs)
-}
 
 module.exports = configure(function (ctx) {
   return {
@@ -41,8 +38,9 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
-      'i18n',
-      'axios'
+      'pinia',
+      'axios',
+      'i18n'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -87,20 +85,20 @@ module.exports = configure(function (ctx) {
 
       // https://quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpack (chain) {
-        chain.entry('app').add(resolve('src', 'single-spa-entry.js'))
+      chainWebpack (/* chain */) {
+        //
       },
       extendWebpack (cfg) {
         cfg.output = {
           // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
           libraryTarget: 'system',
-          chunkLoadingGlobal: `webpackJsonp_${name}`, // not sure what this is
-          publicPath: ''
+          chunkLoadingGlobal: `webpackJsonp_${name}`, // @mimas: not sure what this is
+          publicPath: `${name}`
         }
-        // Dependencies that will be provided by the container
+
+        // @mimas: dependencies that will be provided by root-config
         cfg.externals = [
-          'single-spa',
-          '@cnic/main'
+          // 'single-spa'
           // 'single-spa-vue',
           // 'quasar',
           // '@quasar/extras',
@@ -109,18 +107,38 @@ module.exports = configure(function (ctx) {
           // 'core-js',
           // 'axios'
         ]
-        // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+
+        // @mimas: https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
         cfg.optimization.splitChunks = false // potentially problematic
-        cfg.devtool = 'source-map'
+        cfg.devtool = 'source-map' // for debugging
         cfg.plugins.push(
           new SystemJSPublicPathWebpackPlugin({ systemjsModuleName: name })
         )
+        // @mimas: real meat for single-spa!
+        // replace /.quasar files with /.single-spa files during bundling!
         cfg.module.rules.push({
           test: /\.js$/,
-          loader: 'string-replace-loader',
+          loader: 'file-replace-loader',
           options: {
-            search: '[Quasar] Running SPA.',
-            replace: `[Quasar] Running SPA: Micro Frontend ${name}.`
+            condition: 'always',
+            replacement (resourcePath) {
+              // modified for single-spa
+              if (resourcePath.endsWith('app.js')) {
+                return resolve('.single-spa', 'modified-app.js')
+              }
+              if (resourcePath.endsWith('client-entry.js')) {
+                return resolve('.single-spa', 'modified-client-entry.js')
+              }
+
+              // originals for debugging
+              // if (resourcePath.endsWith('app.js')) {
+              //   return resolve('.single-spa', 'app.js')
+              // }
+              // if (resourcePath.endsWith('client-entry.js')) {
+              //   return resolve('.single-spa', 'client-entry.js')
+              // }
+            },
+            async: true
           }
         })
       }
@@ -131,8 +149,9 @@ module.exports = configure(function (ctx) {
       server: {
         type: 'http'
       },
-      port: 9300,
+      port: 9200,
       open: false, // opens browser window automatically
+      // @mimas: allow cors for dev servers
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -197,9 +216,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: 'Micro Frontend Server',
-        short_name: 'Micro Frontend Server',
-        description: 'Micro Frontend Server',
+        name: 'Quasar App',
+        short_name: 'Quasar App',
+        description: 'A Quasar Framework app',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
