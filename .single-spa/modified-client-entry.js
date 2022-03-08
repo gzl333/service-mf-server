@@ -111,9 +111,7 @@ createQuasarApp(createApp, quasarUserOptions)
     return Promise.all([
       import(/* webpackMode: "eager" */ 'boot/pinia'),
 
-      import(/* webpackMode: "eager" */ 'boot/axios'),
-
-      import(/* webpackMode: "eager" */ 'boot/i18n')
+      import(/* webpackMode: "eager" */ 'boot/axios')
 
     ]).then(bootFiles => {
       const boot = bootFiles

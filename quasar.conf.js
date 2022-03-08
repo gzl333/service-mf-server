@@ -39,8 +39,7 @@ module.exports = configure(function (ctx) {
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
       'pinia',
-      'axios',
-      'i18n'
+      'axios'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
