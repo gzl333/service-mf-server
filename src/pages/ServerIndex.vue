@@ -1,7 +1,10 @@
 <script setup lang="ts">
-// import { ref, computed } from "vue"
+// import { computed } from 'vue'
 import useStore from 'src/store'
-// import { useI18n } from 'vue-i18n'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { useMainStore } from '@cnic/main'
 
 // const props = defineProps({
 //   foo: {
@@ -13,9 +16,13 @@ import useStore from 'src/store'
 // const emits = defineEmits(['change', 'delete'])
 
 const store = useStore()
-// const { locale } = useI18n({ useScope: 'global' })
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
+const mainStore = useMainStore()
 
 // code starts...
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+const logMain = console.log
+
 </script>
 
 <template>
@@ -23,10 +30,20 @@ const store = useStore()
     云主机首页
 
     <div> this is ServerIndex
-      store: {{ store.counter }}
+      store: {{ store }}
     </div>
 
     <q-btn @click="store.increment">+1</q-btn>
+
+    <div>
+      mainStore: {{ mainStore }}
+    </div>
+
+    <q-btn @click="mainStore.increment">+1</q-btn>
+
+    <q-btn @click="logMain(mainStore.getCounter)">log</q-btn>
+
+    <div class="text-positive">{{ $t('翻译测试') }}</div>
   </div>
 </template>
 

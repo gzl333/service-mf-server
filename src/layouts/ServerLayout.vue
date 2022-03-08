@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// import { ref, computed } from "vue"
+// import { watch } from 'vue'
 // import useStore from 'src/store'
 // import { useI18n } from 'vue-i18n'
 
@@ -16,11 +16,12 @@
 // const { locale } = useI18n({ useScope: 'global' })
 
 // code starts...
+
 </script>
 
 <template>
 
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh LpR fFf">
 
     <q-drawer class="column" show-if-above side="left" bordered style="padding-top: 50px;">
       云主机服务列表

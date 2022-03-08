@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
-const useStore = defineStore('storeId', {
+const useStore = defineStore('serverStore', {
   state: () => {
     return {
       counter: 0,
