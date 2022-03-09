@@ -1,6 +1,6 @@
-# Micro Frontend Server (@cnic/server)
+# Server (@cnic/server)
 
-Micro Frontend Server
+Server
 
 ## Install the dependencies
 ```bash

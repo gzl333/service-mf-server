@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// import { watch } from 'vue'
+// import { ref, computed } from "vue"
 // import useStore from 'src/store'
-// import { useI18n } from 'vue-i18n'
+// import { i18n } from 'boot/i18n'
 
 // const props = defineProps({
 //   foo: {
@@ -13,14 +13,11 @@
 // const emits = defineEmits(['change', 'delete'])
 
 // const store = useStore()
-// const { locale } = useI18n({ useScope: 'global' })
 
 // code starts...
-
 </script>
 
 <template>
-
   <q-layout view="hHh LpR fFf">
 
     <q-drawer class="column" show-if-above side="left" bordered style="padding-top: 50px;">
@@ -39,8 +36,9 @@
     </q-page-container>
 
   </q-layout>
-
 </template>
 
 <style lang="scss" scoped>
+.ServerLayout {
+}
 </style>

@@ -7,8 +7,7 @@ const routes: RouteRecordRaw[] = [
     children: [{
       path: '',
       component: () => import('pages/ServerIndex.vue')
-    },
-    {
+    }, {
       path: 'create',
       component: () => import('pages/ServerCreate.vue')
     }]

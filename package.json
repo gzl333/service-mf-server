@@ -1,8 +1,8 @@
 {
   "name": "@cnic/server",
   "version": "0.0.1",
-  "description": "Micro Frontend Server",
-  "productName": "Micro Frontend Server",
+  "description": "Server",
+  "productName": "Server",
   "author": "mimas",
   "private": true,
   "scripts": {

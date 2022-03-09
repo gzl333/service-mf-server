@@ -1,9 +1,7 @@
 <template>
   <div class="bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
-
       @cnic/server
-
       <div style="font-size: 30vh">
         404
       </div>
@@ -17,7 +15,7 @@
         color="white"
         text-color="blue"
         unelevated
-        :to="$router.back"
+        to="/"
         label="Go Home"
         no-caps
       />

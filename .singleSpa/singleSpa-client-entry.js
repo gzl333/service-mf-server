@@ -111,7 +111,9 @@ createQuasarApp(createApp, quasarUserOptions)
     return Promise.all([
       import(/* webpackMode: "eager" */ 'boot/pinia'),
 
-      import(/* webpackMode: "eager" */ 'boot/axios')
+      import(/* webpackMode: "eager" */ 'boot/i18n'),
+
+      import(/* webpackMode: "eager" */ 'boot/axios'),
 
     ]).then(bootFiles => {
       const boot = bootFiles
@@ -121,20 +123,6 @@ createQuasarApp(createApp, quasarUserOptions)
       start(app, boot)
     })
   })
-
-// @mimas: i18n
-import { createI18n } from 'vue-i18n'
-import messages from 'src/i18n'
-
-// 获取浏览器locale, 因只提供英文和简体中文两种locale，只截取locale code的前两位
-const browserLocale = Quasar.lang.getLocale()?.slice(0, 2)
-
-const i18n = createI18n({
-  locale: browserLocale === 'zh' ? 'zh' : 'en', // 置i18n模块的初始locale
-  fallbackLocale: 'zh', // 找不到翻译的就落到中文，可以避免再为中文写一份翻译库
-  globalInjection: true,
-  messages
-})
 
 // @mimas: single-spa-vue
 const vueLifecycles = singleSpaVue({
@@ -148,10 +136,8 @@ const vueLifecycles = singleSpaVue({
     // @mimas: inject quasar UI, router
     app.use(Quasar, quasarUserOptions)
     app.use(router)
-    app.use(i18n)
     // @mimas: set application name as a global property
     app.config.globalProperties.$appName = packageInfo.name
-
   }
 })
 
@@ -164,4 +150,4 @@ export const {
 
 // @mimas: single-spa application public interface
 // share with other apps. Communications between apps happen here.
-export { i18n as i18nServer }
+export { i18n as i18nServer } from 'boot/i18n'
