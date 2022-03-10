@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { ref, computed } from "vue"
-// import useStore from 'src/store'
+import useStore from 'src/store'
 // import { i18n } from 'boot/i18n'
 
 // const props = defineProps({
@@ -12,7 +12,11 @@
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const store = useStore()
+const store = useStore()
+console.log('@cnic/server store:', store.$state)
+
+// the root layout of @cnic/server, load @cnic/server's  store here
+void store.loadServerRole()
 
 // code starts...
 </script>

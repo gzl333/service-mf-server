@@ -1,7 +1,9 @@
 <script setup lang="ts">
-// import { ref, computed } from "vue"
+import { ref/* , computed */ } from 'vue'
 import useStore from 'src/store'
 import { i18n } from 'boot/i18n'
+
+const tc = i18n.global.tc
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -18,6 +20,10 @@ import { useStoreMain } from '@cnic/main'
 const store = useStore()
 const storeMain = useStoreMain()
 
+const images = ref()
+const updateImages = async () => {
+  images.value = (await store.getImages()).data
+}
 // code starts...
 </script>
 
@@ -30,11 +36,16 @@ const storeMain = useStoreMain()
       server store: {{ store.counter }}
     </div>
 
-    <div class="text-primary">{{ i18n.global.tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
 
     <div>
       <q-btn @click="storeMain.increment">add</q-btn>
       main store: {{ storeMain.counter }}
+    </div>
+
+    <div>
+      <q-btn @click="updateImages">update images</q-btn>
+      fed images: {{ images }}
     </div>
 
   </div>
