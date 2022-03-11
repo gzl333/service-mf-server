@@ -1,6 +1,6 @@
-/* eslint-disable camelcase */
-
 // server api
+
+/* eslint-disable camelcase */
 
 import { axiosServer } from 'boot/axios'
 

@@ -24,7 +24,7 @@ void store.loadServerRole()
 <template>
   <q-layout view="hHh LpR fFf">
 
-    <q-drawer class="column" show-if-above side="left" bordered style="padding-top: 50px;">
+    <q-drawer class="column" show-if-above :breakpoint="100" side="left" bordered style="padding-top: 50px;">
       云主机服务列表
       <q-btn to="/my/server/create">TAB1</q-btn>
       <q-btn to="/my/server/2">TAB2</q-btn>

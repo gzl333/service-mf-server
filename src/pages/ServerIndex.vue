@@ -2,6 +2,7 @@
 import { ref/* , computed */ } from 'vue'
 import useStore from 'src/store'
 import { i18n } from 'boot/i18n'
+import { Notify } from 'quasar'
 
 const tc = i18n.global.tc
 
@@ -24,7 +25,22 @@ const images = ref()
 const updateImages = async () => {
   images.value = (await store.getImages()).data
 }
-// code starts...
+
+const notify = () => {
+  // 弹出通知
+  Notify.create({
+    classes: 'notification-positive shadow-15',
+    icon: 'mdi-check-circle',
+    textColor: 'light-green',
+    message: '项目组信息修改成功',
+    position: 'bottom',
+    closeBtn: true,
+    timeout: 5000,
+    multiLine: false
+  })
+}
+
+const alert = ref(false)
 </script>
 
 <template>
@@ -47,6 +63,29 @@ const updateImages = async () => {
       <q-btn @click="updateImages">update images</q-btn>
       fed images: {{ images }}
     </div>
+
+    <div>
+      <q-btn @click="notify">notify</q-btn>
+    </div>
+
+    <q-btn label="Alert" color="primary" @click="alert = true"/>
+
+    <q-dialog v-model="alert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Alert</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <div>token: {{ storeMain.items.tokenAccess }}</div>
+          <div>tokenDecoded: {{ storeMain.items.tokenDecoded }}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
   </div>
 </template>
