@@ -3,6 +3,8 @@
 import useStore from 'src/store'
 // import { i18n } from 'boot/i18n'
 
+import { navigateToUrl } from 'single-spa'
+
 // const props = defineProps({
 //   foo: {
 //     type: String,
@@ -27,7 +29,7 @@ void store.loadServerRole()
     <q-drawer class="column" show-if-above :breakpoint="100" side="left" bordered style="padding-top: 50px;">
       云主机服务列表
       <q-btn to="/my/server/create">TAB1</q-btn>
-      <q-btn to="/my/server/2">TAB2</q-btn>
+      <q-btn @click="navigateToUrl('/my/server/create')">TAB1 navi</q-btn>
       <q-btn to="/my/server/3">TAB3</q-btn>
       <q-btn to="/my/server/4">TAB4</q-btn>
       <q-btn to="/my/server/5">TAB5</q-btn>
