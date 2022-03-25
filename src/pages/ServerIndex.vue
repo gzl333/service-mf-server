@@ -4,11 +4,6 @@ import useStore from 'src/store'
 import { i18n } from 'boot/i18n'
 import { Notify } from 'quasar'
 
-const tc = i18n.global.tc
-
-// @ts-expect-error
-import { useStoreMain } from '@cnic/main'
-
 // const props = defineProps({
 //   foo: {
 //     type: String,
@@ -19,12 +14,15 @@ import { useStoreMain } from '@cnic/main'
 // const emits = defineEmits(['change', 'delete'])
 
 const store = useStore()
-const storeMain = useStoreMain()
+const tc = i18n.global.tc
 
 const images = ref()
 const updateImages = async () => {
   images.value = (await store.getImages()).data
 }
+// await (async () => {
+//   images.value = (await store.getImages()).data
+// })()
 
 const notify = () => {
   // 弹出通知
@@ -55,11 +53,6 @@ const alert = ref(false)
     <div class="text-primary">{{ tc('翻译测试') }}</div>
 
     <div>
-      <q-btn @click="storeMain.increment">add</q-btn>
-      main store: {{ storeMain.counter }}
-    </div>
-
-    <div>
       <q-btn @click="updateImages">update images</q-btn>
       fed images: {{ images }}
     </div>
@@ -76,10 +69,10 @@ const alert = ref(false)
           <div class="text-h6">Alert</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          <div>token: {{ storeMain.items.tokenAccess }}</div>
-          <div>tokenDecoded: {{ storeMain.items.tokenDecoded }}</div>
-        </q-card-section>
+<!--        <q-card-section class="q-pt-none">-->
+<!--          <div>token: {{ store.items.tokenAccess }}</div>-->
+<!--          <div>tokenDecoded: {{ store.items.tokenDecoded }}</div>-->
+<!--        </q-card-section>-->
 
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup/>

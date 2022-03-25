@@ -32,6 +32,10 @@ const axiosServer = axios.create({
 
 /* 原生axios的拦截器 */
 axios.interceptors.request.use(config => {
+  // get jwt token from @cnic/main's store
+  const store = useStoreMain()
+  config.headers.common.Authorization = `Bearer ${store.items.tokenAccess as string}`
+
   return config
 }, (error: AxiosError) => {
   console.log('axios-REQ-Rejected')
@@ -54,6 +58,7 @@ axiosServer.interceptors.request.use(config => {
   // get jwt token from @cnic/main's store
   const store = useStoreMain()
   config.headers.common.Authorization = `Bearer ${store.items.tokenAccess as string}`
+
   return config
 }, (error: AxiosError) => {
   console.log('axiosServer-REQ-Rejected')

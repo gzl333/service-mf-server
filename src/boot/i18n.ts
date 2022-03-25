@@ -14,6 +14,13 @@ export const i18n = createI18n({
   messages
 })
 
+// Register local handler of global i18n event.
+// Dispatched at @cnic/main's MyHeader component.
+window.addEventListener('i18n', ((event: CustomEvent) => {
+  console.log('server i18n event!')
+  i18n.global.locale = event.detail
+}) as EventListener)
+
 export default boot(({ app }) => {
   app.use(i18n)
 })
