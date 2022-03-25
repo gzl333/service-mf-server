@@ -67,6 +67,7 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
+      distDir: 'dist/mf', // @mimas: change quasar build dir, quasar will clean this folder each time building
 
       // transpile: false,
       // publicPath: '/',
@@ -95,7 +96,8 @@ module.exports = configure(function (ctx) {
           // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
           libraryTarget: 'system',
           chunkLoadingGlobal: `webpackJsonp_${name}`, // @mimas: not sure what this is
-          publicPath: `${name}`
+          publicPath: `${name}`,
+          path: resolve(__dirname, 'dist/mf') // @mimas: where to put all files but index.html (which goes with the distDir setting)
         }
 
         // @mimas: dependencies that will be provided by root-config
