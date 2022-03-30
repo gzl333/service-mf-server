@@ -24,9 +24,9 @@ void store.loadServerRole()
 </script>
 
 <template>
-  <q-layout view="hHh LpR fFf">
+  <q-layout view="hHh LpR fFf" >
 
-    <q-drawer class="column" show-if-above :breakpoint="100" side="left" bordered style="padding-top: 50px;">
+    <q-drawer class="column" show-if-above :breakpoint="100" side="left" bordered style="padding-top: 60px;">
       云主机服务列表
       <q-btn to="/my/server/create">TAB1</q-btn>
       <q-btn @click="navigateToUrl('/my/server/create')">TAB1 navi</q-btn>
@@ -38,7 +38,9 @@ void store.loadServerRole()
     </q-drawer>
 
     <q-page-container>
-      <router-view/>
+      <q-scroll-area style="height: 100vh;">
+        <router-view/>
+      </q-scroll-area>
     </q-page-container>
 
   </q-layout>

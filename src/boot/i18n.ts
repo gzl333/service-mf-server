@@ -3,12 +3,21 @@ import { createI18n } from 'vue-i18n'
 import { Quasar } from 'quasar'
 import messages from 'src/i18n'
 
+// extend the global Window type with 'i18n'
+declare global {
+  interface Window {
+    i18n: string;
+  }
+}
+
 // 获取浏览器locale, 因只提供英文和简体中文两种locale，只截取locale code的前两位
 const browserLocale = Quasar.lang.getLocale()?.slice(0, 2)
 
 // 导出i18n实例供全局使用，singleSpa中避免使用useI18n方式
 export const i18n = createI18n({
-  locale: browserLocale === 'zh' ? 'zh' : 'en', // i18n模块的初始locale。不是中文的一律显示英文
+  // init i18n. Try to read from window object. If it does not exist, then read from browserLocale.
+  // 不是中文的一律显示英文
+  locale: window.i18n ? window.i18n : browserLocale === 'zh' ? 'zh' : 'en',
   fallbackLocale: 'zh', // 找不到翻译的就落到中文，可以避免再为中文写一份翻译库
   globalInjection: true,
   messages

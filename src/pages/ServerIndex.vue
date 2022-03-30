@@ -42,7 +42,7 @@ const alert = ref(false)
 </script>
 
 <template>
-  <div class="ServerIndex">
+  <div class="ServerIndex" style="height: 2000px;">
     this is ServerIndex
 
     <div>
@@ -50,6 +50,12 @@ const alert = ref(false)
       server store: {{ store.counter }}
     </div>
 
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
+    <div class="text-primary">{{ tc('翻译测试') }}</div>
     <div class="text-primary">{{ tc('翻译测试') }}</div>
 
     <div>
@@ -69,10 +75,10 @@ const alert = ref(false)
           <div class="text-h6">Alert</div>
         </q-card-section>
 
-<!--        <q-card-section class="q-pt-none">-->
-<!--          <div>token: {{ store.items.tokenAccess }}</div>-->
-<!--          <div>tokenDecoded: {{ store.items.tokenDecoded }}</div>-->
-<!--        </q-card-section>-->
+        <!--        <q-card-section class="q-pt-none">-->
+        <!--          <div>token: {{ store.items.tokenAccess }}</div>-->
+        <!--          <div>tokenDecoded: {{ store.items.tokenDecoded }}</div>-->
+        <!--        </q-card-section>-->
 
         <q-card-actions align="right">
           <q-btn flat label="OK" color="primary" v-close-popup/>
