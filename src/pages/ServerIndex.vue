@@ -42,7 +42,7 @@ const alert = ref(false)
 </script>
 
 <template>
-  <div class="ServerIndex" style="height: 2000px;">
+  <div class="ServerIndex" style="height: 100vh;">
     this is ServerIndex
 
     <div>

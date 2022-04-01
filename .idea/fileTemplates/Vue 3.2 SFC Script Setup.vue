@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // import { ref, computed } from "vue"
+// import { navigateToUrl } from 'single-spa'
 // import useStore from 'src/store'
 // import { i18n } from 'boot/i18n'
-// import { navigateToUrl } from 'single-spa'
 
 // const store = useStore()
 // const tc = i18n.global.tc
