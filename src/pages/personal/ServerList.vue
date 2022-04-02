@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-import useStore from 'src/store'
+// import useStore from 'src/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -14,7 +14,7 @@ import { i18n } from 'boot/i18n'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-const store = useStore()
+// const store = useStore()
 // const route = userRoute()
 const tc = i18n.global.tc
 
