@@ -6,6 +6,9 @@ import {
   createWebHistory
 } from 'vue-router'
 import routes from './routes'
+// import useStore from 'src/store'
+// import { Notify } from 'quasar'
+// import { i18n } from 'boot/i18n'
 
 /*
  * If not building with SSR mode, you can
@@ -38,6 +41,24 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     console.log('@cnic/server ', 'from:', from.fullPath, ' to:', to.fullPath)
+    // const store = useStore()
+
+    // 服务管理员才能访问 有请求滞后的问题
+    // if (to.meta.requireServiceAdmin && store.items.adminServiceIds.length === 0) {
+    //   // 跳转回上一个页面
+    //   next(from.fullPath)
+    //   // 弹出通知
+    //   Notify.create({
+    //     classes: 'notification-negative shadow-15',
+    //     icon: 'mdi-alert-circle',
+    //     textColor: 'negative',
+    //     message: '访问目标页面需要服务管理员权限',
+    //     position: 'bottom',
+    //     closeBtn: true,
+    //     timeout: 5000,
+    //     multiLine: false
+    //   })
+    // }
 
     next()
   })

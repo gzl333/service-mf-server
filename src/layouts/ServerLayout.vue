@@ -2,6 +2,7 @@
 import { ref/* , computed */ } from 'vue'
 import { navigateToUrl } from 'single-spa'
 import useStore from 'src/store'
+import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 // const props = defineProps({
@@ -20,15 +21,18 @@ const tc = i18n.global.tc
 console.log('@cnic/server store:', store.$state)
 void store.loadServerRole()
 
-// code starts...
+const route = useRoute()
+const paths = route.path.split('/')
+const activeItem = ref(paths[3] || 'personal') // keep selection when reloading
+
 const releaseTime = process.env.releaseTime
-const activeItem = ref('index')
+
 </script>
 
 <template>
   <q-layout view="hHh LpR fFf">
 
-    <q-drawer :model-value="true" style="padding-top: 60px;" :breakpoint="0" side="left" width="120" elevated>
+    <q-drawer :model-value="true" style="padding-top: 60px;" :breakpoint="0" side="left" width="120" bordered>
 
       <div class="column full-height bg-grey-3">
         <q-scroll-area class="col non-selectable" visible>
@@ -43,75 +47,62 @@ const activeItem = ref('index')
 
             <q-item
               clickable
-              :active="activeItem === 'index'"
-              @click="activeItem = 'index'; navigateToUrl('/my/server')"
-              active-class="active-item"
-            >
-              <q-item-section class="column items-center">
-                <q-icon name="person" size="lg"/>
-                <div class="text-center active-text">{{ tc('index') }}</div>
-              </q-item-section>
-            </q-item>
-
-            <q-item
-              clickable
               :active="activeItem === 'personal'"
-              @click="activeItem = 'personal'; navigateToUrl('/my/server/create')"
+              @click="activeItem = 'personal'; navigateToUrl('/my/server/personal')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="person" size="lg"/>
-                <div class="ttext-center active-text">{{ tc('个人资源') }}</div>
+                <div class="active-text">{{ tc('个人') }}</div>
               </q-item-section>
             </q-item>
 
             <q-item
               clickable
               :active="activeItem === 'group'"
-              @click="activeItem = 'group'"
+              @click="activeItem = 'group'; navigateToUrl('/my/server/group')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="group" size="lg"/>
-                <div class="text-center active-text">{{ tc('项目组资源') }}</div>
-              </q-item-section>
-            </q-item>
-
-            <!--          <q-item-->
-            <!--            clickable-->
-            <!--            :active="activeItem === 'vpn'"-->
-            <!--            @click="activeItem = 'vpn'"-->
-            <!--            active-class="active-item"-->
-            <!--            to='/my/vpn'-->
-            <!--          >-->
-            <!--            <q-item-section class="column items-center">-->
-            <!--              <q-icon name="vpn_lock" size="lg"/>-->
-            <!--              <div class="text-c-blue5 text-bold text-center line-height-1em">VPN</div>-->
-            <!--            </q-item-section>-->
-            <!--          </q-item>-->
-
-            <!--有服务管理权限的用户才能看到，同时在路由里进行权限限制-->
-            <q-item v-if="store.items.adminServiceIds.length > 0"
-                    clickable
-                    :active="activeItem === 'provider'"
-                    @click="activeItem = 'provider'"
-                    active-class="active-item"
-            >
-              <q-item-section class="column items-center">
-                <q-icon name="cloud_upload" size="lg"/>
-                <div class="text-center active-text">{{ tc('资源提供') }}</div>
+                <div class="active-text">{{ tc('项目组') }}</div>
               </q-item-section>
             </q-item>
 
             <q-item
               clickable
-              :active="activeItem === 'federation'"
-              @click="activeItem = 'federation'"
+              :active="activeItem === 'vpn'"
+              @click="activeItem = 'vpn'; navigateToUrl('/my/server/vpn')"
+              active-class="active-item"
+            >
+              <q-item-section class="column items-center">
+                <q-icon name="vpn_lock" size="lg"/>
+                <div class="active-text">VPN</div>
+              </q-item-section>
+            </q-item>
+
+            <!--有服务管理权限的用户才能看到，同时在路由里进行权限限制-->
+            <q-item v-if="store.items.adminServiceIds.length > 0"
+                    clickable
+                    :active="activeItem === 'provider'"
+                    @click="activeItem = 'provider'; navigateToUrl('/my/server/provider')"
+                    active-class="active-item"
+            >
+              <q-item-section class="column items-center">
+                <q-icon name="cloud_upload" size="lg"/>
+                <div class="active-text">{{ tc('资源提供者') }}</div>
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              clickable
+              :active="activeItem === 'management'"
+              @click="activeItem = 'management'; navigateToUrl('/my/server/management')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="construction" size="lg"/>
-                <div class="text-center active-text">{{ tc('资源统计') }}</div>
+                <div class="active-text">{{ tc('资源管理') }}</div>
               </q-item-section>
             </q-item>
 

@@ -2,8 +2,10 @@
 // import { ref, computed } from "vue"
 // import { navigateToUrl } from 'single-spa'
 // import useStore from 'src/store'
-// import { useRoute } from 'vue-router'
 // import { i18n } from 'boot/i18n'
+
+// const store = useStore()
+// const tc = i18n.global.tc
 
 // const props = defineProps({
 //   foo: {
@@ -14,19 +16,16 @@
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const store = useStore()
-// const route = userRoute()
-// const tc = i18n.global.tc
-
+// your code starts...
 </script>
 
 <template>
-  <div class="${NAME}">
-    this is ${NAME}
+  <div class="Index">
+    this is VPN Index
   </div>
 </template>
 
 <style lang="scss" scoped>
-.${NAME} {
+.Index {
 }
 </style>
