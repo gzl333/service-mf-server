@@ -34,7 +34,7 @@ const releaseTime = process.env.releaseTime
 
     <q-drawer :model-value="true" style="padding-top: 60px;" :breakpoint="0" side="left" width="120" bordered>
 
-      <div class="column full-height bg-grey-3">
+      <div class="column full-height">
         <q-scroll-area class="col non-selectable" visible>
 
           <q-list>
@@ -90,7 +90,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="cloud_upload" size="lg"/>
-                <div class="active-text">{{ tc('资源提供者') }}</div>
+                <div class="active-text">{{ tc('提供者') }}</div>
               </q-item-section>
             </q-item>
 
@@ -108,8 +108,8 @@ const releaseTime = process.env.releaseTime
 
           </q-list>
 
-          <div class="text-grey text-body2 text-center q-pt-xl">v0.2.11 beta</div>
-          <div class="text-grey text-body2 text-center">release time: {{ new Date(releaseTime).toLocaleString()}}</div>
+          <div class="text-grey text-body2 text-center q-pt-xl">v0.3.1</div>
+          <div class="text-grey text-body2 text-center">{{ new Date(releaseTime).toLocaleString() }}</div>
         </q-scroll-area>
       </div>
     </q-drawer>
@@ -128,7 +128,7 @@ const releaseTime = process.env.releaseTime
 }
 
 .active-item {
-  background-color: $grey-4;
+  background-color: #DBF0FC; // $grey-4;
 
   .active-text {
     color: $primary;
