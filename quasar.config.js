@@ -135,14 +135,6 @@ module.exports = configure(function (ctx) {
               if (resourcePath.endsWith('client-entry.js')) {
                 return resolve(__dirname, '.singleSpa', 'singleSpa-client-entry.js')
               }
-
-              // @mimas: originals for debugging
-              // if (resourcePath.endsWith('app.js')) {
-              //   return resolve('.singleSpa', 'original-app.js')
-              // }
-              // if (resourcePath.endsWith('client-entry.js')) {
-              //   return resolve('.singleSpa', 'original-client-entry.js')
-              // }
             },
             async: true
           }

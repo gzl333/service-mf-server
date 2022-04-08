@@ -40,7 +40,7 @@ const releaseTime = process.env.releaseTime
           <q-list>
 
             <q-item>
-              <q-item-section class="column items-center q-py-sm text-weight-bold text-grey-8">
+              <q-item-section class="column items-center q-py-sm text-center text-weight-bold text-grey-8">
                 {{ tc('云主机') }}
               </q-item-section>
             </q-item>
@@ -53,7 +53,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="person" size="lg"/>
-                <div class="active-text">{{ tc('个人') }}</div>
+                <div class="active-text text-center">{{ tc('个人') }}</div>
               </q-item-section>
             </q-item>
 
@@ -65,7 +65,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="group" size="lg"/>
-                <div class="active-text">{{ tc('项目组') }}</div>
+                <div class="active-text text-center">{{ tc('项目组') }}</div>
               </q-item-section>
             </q-item>
 
@@ -77,7 +77,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="vpn_lock" size="lg"/>
-                <div class="active-text">VPN</div>
+                <div class="active-text text-center">VPN</div>
               </q-item-section>
             </q-item>
 
@@ -90,7 +90,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="cloud_upload" size="lg"/>
-                <div class="active-text">{{ tc('提供者') }}</div>
+                <div class="active-text text-center">{{ tc('提供者') }}</div>
               </q-item-section>
             </q-item>
 
@@ -102,7 +102,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="construction" size="lg"/>
-                <div class="active-text">{{ tc('资源管理') }}</div>
+                <div class="active-text text-center">{{ tc('资源管理') }}</div>
               </q-item-section>
             </q-item>
 
@@ -124,9 +124,6 @@ const releaseTime = process.env.releaseTime
 </template>
 
 <style lang="scss" scoped>
-.ServerLayout {
-}
-
 .active-item {
   background-color: #DBF0FC; // $grey-4;
 
