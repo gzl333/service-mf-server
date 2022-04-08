@@ -268,6 +268,7 @@ export const useStore = defineStore('server', {
   state: () => {
     return {
       items: {
+        currentPath: '' as string, // 左侧导航栏当前位置
         // 账户在server服务内的身份
         fedRole: '' as 'ordinary' | 'federal-admin', // 联邦层级：普通用户还是管理员
         adminServiceIds: [] as string[] // 有vms管理员权限的接入服务id

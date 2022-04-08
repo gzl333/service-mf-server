@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref/* , computed */ } from 'vue'
+import { computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
-import { useRoute } from 'vue-router'
+// import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 // const props = defineProps({
@@ -21,9 +21,9 @@ const tc = i18n.global.tc
 console.log('@cnic/server store:', store.$state)
 void store.loadServerRole()
 
-const route = useRoute()
-const paths = route.path.split('/')
-const activeItem = ref(paths[3] || 'personal') // keep selection when reloading
+// const route = useRoute()
+
+const activeItem = computed(() => store.items.currentPath)
 
 const releaseTime = process.env.releaseTime
 
