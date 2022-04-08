@@ -28,6 +28,7 @@ export const i18n = createI18n({
 window.addEventListener('i18n', ((event: CustomEvent) => {
   console.log('server i18n event!')
   i18n.global.locale = event.detail
+// eslint-disable-next-line no-undef
 }) as EventListener)
 
 export default boot(({ app }) => {

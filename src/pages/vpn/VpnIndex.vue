@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { ref, computed } from "vue"
 // import { navigateToUrl } from 'single-spa'
-// import useStore from 'src/store'
+// import { useStore } from 'stores/store'
 // import { i18n } from 'boot/i18n'
 
 // const store = useStore()
@@ -21,7 +21,7 @@
 
 <template>
   <div class="Index">
-    this is provider Index
+    <div class="text-h1">vpn</div>
   </div>
 </template>
 

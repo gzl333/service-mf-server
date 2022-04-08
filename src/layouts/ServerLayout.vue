@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref/* , computed */ } from 'vue'
 import { navigateToUrl } from 'single-spa'
-import useStore from 'src/store'
+import { useStore } from 'stores/store'
 import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -34,7 +34,7 @@ const releaseTime = process.env.releaseTime
 
     <q-drawer :model-value="true" style="padding-top: 60px;" :breakpoint="0" side="left" width="120" bordered>
 
-      <div class="column full-height">
+      <div class="column full-height bg-grey-2">
         <q-scroll-area class="col non-selectable" visible>
 
           <q-list>

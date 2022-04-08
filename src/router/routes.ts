@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'personal',
-        component: () => import('pages/personal/Index.vue'),
+        component: () => import('pages/personal/PersonalIndex.vue'),
         redirect: '/my/server/personal/list',
         children: [
           {
@@ -19,17 +19,17 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'group',
-        component: () => import('pages/group/Index.vue'),
+        component: () => import('pages/group/GroupIndex.vue'),
         children: []
       },
       {
         path: 'vpn',
-        component: () => import('pages/vpn/Index.vue'),
+        component: () => import('pages/vpn/VpnIndex.vue'),
         children: []
       },
       {
         path: 'provider',
-        component: () => import('pages/provider/Index.vue'),
+        component: () => import('pages/provider/ProviderIndex.vue'),
         meta: {
           requireServiceAdmin: true // 服务管理员才能访问
         },
@@ -37,7 +37,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'management',
-        component: () => import('pages/management/Index.vue'),
+        component: () => import('pages/management/ManagementIndex.vue'),
         children: []
       }
     ]
@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/Error404.vue')
+    component: () => import('pages/ErrorNotFound.vue')
   }
 ]
 

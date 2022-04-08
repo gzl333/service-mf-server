@@ -1,6 +1,6 @@
 // 复制信息到剪切板的钩子函数
 import { copyToClipboard, useQuasar } from 'quasar'
-import { i18n } from '../boot/i18n'
+import { i18n } from 'boot/i18n'
 
 export default function () {
   const $q = useQuasar()

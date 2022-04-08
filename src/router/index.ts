@@ -6,7 +6,8 @@ import {
   createWebHistory
 } from 'vue-router'
 import routes from './routes'
-// import useStore from 'src/store'
+
+// import { useStore } from 'stores/store'
 // import { Notify } from 'quasar'
 // import { i18n } from 'boot/i18n'
 
@@ -25,10 +26,7 @@ export default route(function (/* { store, ssrContext } */) {
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
 
   const Router = createRouter({
-    scrollBehavior: () => ({
-      left: 0,
-      top: 0
-    }),
+    scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!

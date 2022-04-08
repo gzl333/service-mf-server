@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-// import useStore from 'src/store'
+// import { useStore } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -125,7 +125,7 @@ const search = ref('')
 </script>
 
 <template>
-  <div class="ServerList" style="height: 2000px">
+  <div class="ServerList">
     <div class="row items-center justify-between q-py-md">
 
       <div class="col-3">

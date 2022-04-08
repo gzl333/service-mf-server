@@ -4,21 +4,39 @@
  *
  * You are probably looking on adding startup/initialization code.
  * Use "quasar new boot <name>" and add it there.
- * One boot file per concern. Then reference the file(s) in quasar.conf.js > boot:
+ * One boot file per concern. Then reference the file(s) in quasar.config.js > boot:
  * boot: ['file', ...] // do not add ".js" extension to it.
  *
  * Boot files are your "main.js"
  **/
 
+
 import { createApp } from 'vue'
-// @mimas: !all css files need to be included in root-config!
+// @mimas: !all css files MUST be included in root-config!
+
+
+
+
+
+
 import '@quasar/extras/mdi-v5/mdi-v5.css'
+
 import '@quasar/extras/line-awesome/line-awesome.css'
+
 import '@quasar/extras/roboto-font/roboto-font.css'
+
 import '@quasar/extras/material-icons/material-icons.css'
+
+
+
+
 // We load Quasar stylesheet file
-import 'quasar/dist/quasar.sass'  // include a cdn version in root-config
-import 'src/css/app.scss'  // contains customed css variables, need to include in root-config
+import 'quasar/dist/quasar.sass' // @mimas: MUST include a cdn version in root-config
+
+
+
+
+import 'src/css/app.scss' // @mimas: contains customized css variables, does not need to be included in root-config
 
 // @mimas: /.quasar files
 import createQuasarApp from './app.js'
@@ -33,19 +51,26 @@ import packageInfo from 'app/package.json'
 
 console.info(packageInfo.name + ' Running Single-Spa Application: Quasar')
 
+
+
+
+
+
 const publicPath = `/`
+
 
 async function start ({
   app,
   router
+  , store
 }, bootFiles) {
+
+
 
   let hasRedirected = false
   const getRedirectUrl = url => {
-    try {
-      return router.resolve(url).href
-    } catch (err) {
-    }
+    try { return router.resolve(url).href }
+    catch (err) {}
 
     return Object(url) === url
       ? null
@@ -75,13 +100,14 @@ async function start ({
       await bootFiles[i]({
         app,
         router,
-
+        store,
         ssrContext: null,
         redirect,
         urlPath,
         publicPath
       })
-    } catch (err) {
+    }
+    catch (err) {
       if (err && err.url) {
         redirect(err.url)
         return
@@ -96,26 +122,38 @@ async function start ({
     return
   }
 
+
   // @mimas: will inject router,store in single-spa-vue
   // app.use(router)
+
+
+
+
+
+
+
   // app.mount('#q-app')
+
+
+
+
+
 
 }
 
 // @mimas: grab the router instance during quasar initiation
 let router
+
+// @mimas: original
 createQuasarApp(createApp, quasarUserOptions)
 
   .then(app => {
-
     router = app.router
-
     return Promise.all([
-      import(/* webpackMode: "eager" */ 'boot/pinia'),
 
       import(/* webpackMode: "eager" */ 'boot/i18n'),
 
-      import(/* webpackMode: "eager" */ 'boot/axios'),
+      import(/* webpackMode: "eager" */ 'boot/axios')
 
     ]).then(bootFiles => {
       const boot = bootFiles

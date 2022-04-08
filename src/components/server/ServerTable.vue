@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-import useStore, { ServerInterface } from 'src/store'
+import { useStore, ServerInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 

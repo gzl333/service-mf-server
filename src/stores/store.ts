@@ -264,7 +264,7 @@ export interface GroupServerTableInterface extends totalTable, idTable {
   byId: Record<string, ServerInterface>
 }
 
-const useStore = defineStore('serverStore', {
+export const useStore = defineStore('server', {
   state: () => {
     return {
       items: {
@@ -352,5 +352,3 @@ const useStore = defineStore('serverStore', {
     }
   }
 })
-
-export default useStore
