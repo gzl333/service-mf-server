@@ -3,6 +3,96 @@
 import { defineStore } from 'pinia'
 import api from 'src/api'
 
+export interface GroupInterface {
+  id: string
+  name: string
+  company: string
+  description: string
+  creation_time: string
+  owner: {
+    id: string
+    username: string
+  },
+  status: string // 'active' | 'inactive' ?
+
+  // 以下字段自行判断添加
+  // 当前用户在组内权限  owner > leader > member
+  myRole: 'owner' | 'leader' | 'member'
+}
+
+export interface SingleMemberInterface {
+  id: string
+  user: {
+    id: string
+    username: string
+  }
+  role: 'member' | 'leader'
+  join_time: string
+  inviter: string
+}
+
+export interface GroupMemberInterface {
+  members: SingleMemberInterface[]
+  owner: {
+    id: string
+    username: string
+  }
+}
+
+export interface DataCenterInterface {
+  // 来自registry接口
+  id: string
+  name: string
+  name_en: string
+  endpoint_vms: string
+  endpoint_object: never // null 待细化
+  endpoint_compute: never // null 待细化
+  endpoint_monitor: never // null 待细化
+  creation_time: string
+  status: {
+    code: number
+    message: string
+  },
+  desc: string
+  longitude: number
+  latitude: number
+
+  // 来自service接口
+  services: string[] // 全部services汇总
+  // personalServices: string[] // 用户可用services汇总
+}
+
+export interface ServiceInterface {
+  // 来自service接口
+  id: string
+  name: string
+  name_en: string
+  service_type: string
+  add_time: string
+  need_vpn: boolean
+  status: number
+  data_center: string
+  longitude: number
+  latitude: number
+}
+
+// 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述
+export interface AllocationInterface {
+  private_ip_total: number
+  public_ip_total: number
+  vcpu_total: number
+  ram_total: number
+  disk_size_total: number
+  private_ip_used: number
+  public_ip_used: number
+  vcpu_used: number
+  ram_used: number
+  disk_size_used: number
+  creation_time: string
+  enable: boolean
+  service: string
+}
+
 export interface FlavorInterface {
   id: string
   vcpus: number
@@ -191,77 +281,103 @@ export interface QuotaActivity {
 
 // 整体加载表
 export interface totalTable {
-  status: 'empty' | 'loading' | 'total'
+  status: 'init' | 'loading' | 'total'
 }
 
 // 累计加载表
 export interface partTable {
-  status: 'empty' | 'loading' | 'part'
+  status: 'init' | 'loading' | 'part'
 }
 
 // id
-export interface idTable {
+export interface idTable<T> {
   allIds: string[]
+  byId: Record<string, T>
 }
 
 // localId
-export interface localIdTable {
+export interface localIdTable<T> {
   allLocalIds: string[]
+  byLocalId: Record<string, T>
+}
+
+/* 表的具体类型 */
+
+// 用户相关的全部组table
+export interface GroupTableInterface extends totalTable, idTable<GroupInterface> {
+}
+
+// 组配额table: groupId -> groupMember
+export interface GroupMemberTableInterface extends totalTable, idTable<GroupMemberInterface> {
+}
+
+// 联邦层级datacenter
+export interface DataCenterTableInterface extends totalTable, idTable<DataCenterInterface> {
+}
+
+// 联邦层级service
+export interface ServiceTableInterface extends totalTable, idTable<ServiceInterface> {
+}
+
+// 全部service的 自主资源配置(autonomous resource allocation)，服务各自管理
+export interface ServiceAllocationTableInterface extends totalTable, idTable<AllocationInterface> {
+}
+
+// 全部service的 联邦资源配置(federation resource allocation)，联邦统一管理
+export interface FedAllocationTableInterface extends totalTable, idTable<AllocationInterface> {
+}
+
+// 管理员有权限审批的quota申请
+export interface AdminQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
+}
+
+// 服务管理员能看到的，当前服务下创建的所有云主机
+export interface AdminServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
 // 所有人一样的云主机配置选项
-export interface FedFlavorTableInterface extends totalTable, idTable {
-  byId: Record<string, FlavorInterface>
+export interface FedFlavorTableInterface extends totalTable, idTable<FlavorInterface> {
 }
 
 // 联邦配额赠送活动
-export interface FedQuotaActivityTableInterface extends totalTable, idTable {
-  byId: Record<string, QuotaActivity>
+export interface FedQuotaActivityTableInterface extends totalTable, idTable<QuotaActivity> {
 }
 
 // 服务内通行的网络配置
-export interface ServiceNetworkTableInterface extends totalTable, localIdTable {
-  byLocalId: Record<string, NetworkInterface>
+export interface ServiceNetworkTableInterface extends totalTable, localIdTable<NetworkInterface> {
 }
 
 // 服务内通行的镜像配置
-export interface ServiceImageTableInterface extends totalTable, localIdTable {
-  byLocalId: Record<string, ImageInterface>
+export interface ServiceImageTableInterface extends totalTable, localIdTable<ImageInterface> {
 }
 
 // 用户全部的Vpn -> 依赖fed/serviceTable
-export interface UserVpnTableInterface extends totalTable, idTable {
-  byId: Record<string, VpnInterface> // 原始数据没有id，自加id，与serviceId同。service不一定有vpn
+export interface UserVpnTableInterface extends totalTable, idTable<VpnInterface> {
+// 原始数据没有id，自加id，与serviceId同。service不一定有vpn
 }
 
 // 个人云主机配额申请
-export interface PersonalQuotaApplicationTableInterface extends totalTable, idTable {
-  byId: Record<string, QuotaApplicationInterface>
+export interface PersonalQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
 }
 
 // 个人云主机配额
-export interface PersonalQuotaTableInterface extends totalTable, idTable {
-  byId: Record<string, QuotaInterface>
+export interface PersonalQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
 }
 
 // 个人云主机
-export interface PersonalServerTableInterface extends totalTable, idTable {
-  byId: Record<string, ServerInterface>
+export interface PersonalServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
 // 项目组云主机配额申请
-export interface GroupQuotaApplicationTableInterface extends totalTable, idTable {
-  byId: Record<string, QuotaApplicationInterface>
+export interface GroupQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
 }
 
 // 项目组云主机配额
-export interface GroupQuotaTableInterface extends totalTable, idTable {
-  byId: Record<string, QuotaInterface>
+export interface GroupQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
 }
 
 // 项目组云主机
-export interface GroupServerTableInterface extends totalTable, idTable {
-  byId: Record<string, ServerInterface>
+export interface GroupServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
 export const useStore = defineStore('server', {
@@ -277,61 +393,110 @@ export const useStore = defineStore('server', {
       },
       tables: {
         /* 整体加载表：一旦加载则全部加载 */
-        fedFlavorTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as FedFlavorTableInterface,
-        fedQuotaActivityTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as FedQuotaActivityTableInterface,
-        serviceNetworkTable: {
-          byLocalId: {},
-          allLocalIds: [],
-          status: 'empty'
-        } as ServiceNetworkTableInterface,
-        serviceImageTable: {
-          byLocalId: {},
-          allLocalIds: [],
-          status: 'empty'
-        } as ServiceImageTableInterface,
-        userVpnTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as UserVpnTableInterface,
-        personalQuotaApplicationTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as PersonalQuotaApplicationTableInterface,
-        personalQuotaTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as PersonalQuotaTableInterface,
-        personalServerTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as PersonalServerTableInterface,
-        groupQuotaApplicationTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as GroupQuotaApplicationTableInterface,
-        groupQuotaTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as GroupQuotaTableInterface,
-        groupServerTable: {
-          byId: {},
-          allIds: [],
-          status: 'empty'
-        } as GroupServerTableInterface
+        account: {
+          groupTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as GroupTableInterface,
+          groupMemberTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as GroupMemberTableInterface
+        },
+        fed: {
+          dataCenterTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as DataCenterTableInterface,
+          serviceTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as ServiceTableInterface,
+          serviceAllocationTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as ServiceAllocationTableInterface,
+          fedAllocationTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as FedAllocationTableInterface
+        },
+        provider: {
+          adminQuotaApplicationTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as AdminQuotaApplicationTableInterface,
+          adminServerTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as AdminServerTableInterface
+        },
+        server: {
+          fedFlavorTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as FedFlavorTableInterface,
+          fedQuotaActivityTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as FedQuotaActivityTableInterface,
+          serviceNetworkTable: {
+            byLocalId: {},
+            allLocalIds: [],
+            status: 'init'
+          } as ServiceNetworkTableInterface,
+          serviceImageTable: {
+            byLocalId: {},
+            allLocalIds: [],
+            status: 'init'
+          } as ServiceImageTableInterface,
+          userVpnTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as UserVpnTableInterface,
+          personalQuotaApplicationTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as PersonalQuotaApplicationTableInterface,
+          personalQuotaTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as PersonalQuotaTableInterface,
+          personalServerTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as PersonalServerTableInterface,
+          groupQuotaApplicationTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as GroupQuotaApplicationTableInterface,
+          groupQuotaTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as GroupQuotaTableInterface,
+          groupServerTable: {
+            byId: {},
+            allIds: [],
+            status: 'init'
+          } as GroupServerTableInterface
+        }
+
         /* 整体加载表：一旦加载则全部加载 */
 
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
@@ -343,6 +508,10 @@ export const useStore = defineStore('server', {
   },
   getters: {},
   actions: {
+    account: {},
+    fed: {},
+    provider: {},
+    server: {},
     async getImages () {
       return await api.server.image.getImage({ query: { service_id: '1' } })
     },
