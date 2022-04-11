@@ -268,7 +268,9 @@ export const useStore = defineStore('server', {
   state: () => {
     return {
       items: {
-        currentPath: '' as string, // 左侧导航栏当前位置
+        // 实时记录用户所在app局部路径位置
+        // 例如'/my/server/personal/list' -> ['personal', 'list'], 供二级三级导航栏在刷新时保持选择使用
+        currentPath: [] as string[],
         // 账户在server服务内的身份
         fedRole: '' as 'ordinary' | 'federal-admin', // 联邦层级：普通用户还是管理员
         adminServiceIds: [] as string[] // 有vms管理员权限的接入服务id

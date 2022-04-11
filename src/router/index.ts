@@ -26,7 +26,10 @@ export default route(function (/* { store, ssrContext } */) {
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
 
   const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
+    scrollBehavior: () => ({
+      left: 0,
+      top: 0
+    }),
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!
@@ -41,8 +44,8 @@ export default route(function (/* { store, ssrContext } */) {
     console.log('@cnic/server ', 'from:', from.fullPath, ' to:', to.fullPath)
     const store = useStore()
 
-    // 根据当前path更新store.items.currentPath，保证左侧导航栏保持正确选择
-    store.items.currentPath = to.path.split('/')[3] || 'personal'
+    // 根据当前path更新store.items.currentPath
+    store.items.currentPath = to.path.split('/').slice(3)
 
     // 服务管理员才能访问 有请求滞后的问题
     // if (to.meta.requireServiceAdmin && store.items.adminServiceIds.length === 0) {
