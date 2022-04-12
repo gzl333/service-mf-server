@@ -1,7 +1,11 @@
 /* eslint-disable camelcase */
 
 import { defineStore } from 'pinia'
+import { normalize, schema } from 'normalizr'
 import api from 'src/api'
+
+// @ts-expect-error
+import { useStoreMain } from '@cnic/main'
 
 export interface GroupInterface {
   id: string
@@ -508,10 +512,79 @@ export const useStore = defineStore('server', {
   },
   getters: {},
   actions: {
-    account: {},
-    fed: {},
-    provider: {},
-    server: {},
+    forceLoadAccountTable () {
+      void this.loadGroupTable().then(() => {
+        // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+        void this.loadGroupMemberTable().then(() => {
+          // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+          // void context.dispatch('server/loadGroupQuotaApplicationTable', null, { root: true })
+        })
+        // void context.dispatch('server/loadGroupServerTable', null, { root: true })
+        // void context.dispatch('server/loadGroupQuotaTable', null, { root: true })
+      })
+    },
+    // 加载groupTable
+    async loadGroupTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.account.groupTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 发送请求
+      const respGroup = await api.server.vo.getVo()
+      // normalize
+      const group = new schema.Entity('group')
+      for (const data of respGroup.data.results) {
+        // 添加role字段
+        const storeMain = useStoreMain()
+        const currentId = storeMain.items.tokenDecoded.email
+        const myRole = currentId === data.owner.username ? 'owner' : 'member'
+        Object.assign(data, { myRole })
+        // normalize
+        const normalizedData = normalize(data, group)
+        // 保存table
+        Object.assign(this.tables.account.groupTable.byId, normalizedData.entities.group)
+        this.tables.account.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
+        this.tables.account.groupTable.allIds = [...new Set(this.tables.account.groupTable.allIds)]
+      }
+      // load table的最后再改status
+      this.tables.account.groupTable.status = 'total'
+    },
+    // 根据groupTable,建立groupMemberTable
+    async loadGroupMemberTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.account.groupMemberTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      for (const groupId of this.tables.account.groupTable.allIds) {
+        const respGroupMember = await api.server.vo.getVoListMembers({ path: { id: groupId } })
+        // 是否把组长添加进member列表？
+        // 把groupId字段补充进去
+        Object.assign(respGroupMember.data, { id: groupId })
+        // normalize
+        const groupMember = new schema.Entity('groupMember')
+        const normalizedData = normalize(respGroupMember.data, groupMember)
+        // 存入state
+        Object.assign(this.tables.account.groupMemberTable.byId, normalizedData.entities.groupMember)
+        this.tables.account.groupMemberTable.allIds.unshift(Object.keys(normalizedData.entities.groupMember as Record<string, unknown>)[0])
+        this.tables.account.groupMemberTable.allIds = [...new Set(this.tables.account.groupMemberTable.allIds)]
+        // 给groupTable补充role字段
+        const storeMain = useStoreMain()
+        const currentId = storeMain.items.tokenDecoded.email
+        for (const member of respGroupMember.data.members) {
+          if (member.user.username === currentId && member.role === 'leader') {
+            this.tables.account.groupTable.byId[groupId].myRole = 'leader'
+          }
+        }
+      }
+      // load table的最后再改status
+      this.tables.account.groupMemberTable.status = 'total'
+    },
+
+    //
     async getImages () {
       return await api.server.image.getImage({ query: { service_id: '1' } })
     },

@@ -15,13 +15,13 @@ import { i18n } from 'boot/i18n'
 // const emits = defineEmits(['change', 'delete'])
 
 const store = useStore()
+// const route = useRoute()
 const tc = i18n.global.tc
 
 // the root layout of @cnic/server, load @cnic/server's  store here
 console.log('@cnic/server store:', store.$state)
 void store.loadServerRole()
-
-// const route = useRoute()
+void store.forceLoadAccountTable()
 
 const activeItem = computed(() => store.items.currentPath[0])
 
