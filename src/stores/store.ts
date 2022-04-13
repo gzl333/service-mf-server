@@ -397,109 +397,105 @@ export const useStore = defineStore('server', {
       },
       tables: {
         /* 整体加载表：一旦加载则全部加载 */
-        account: {
-          groupTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as GroupTableInterface,
-          groupMemberTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as GroupMemberTableInterface
-        },
-        fed: {
-          dataCenterTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as DataCenterTableInterface,
-          serviceTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as ServiceTableInterface,
-          serviceAllocationTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as ServiceAllocationTableInterface,
-          fedAllocationTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as FedAllocationTableInterface
-        },
-        provider: {
-          adminQuotaApplicationTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as AdminQuotaApplicationTableInterface,
-          adminServerTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as AdminServerTableInterface
-        },
-        server: {
-          fedFlavorTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as FedFlavorTableInterface,
-          fedQuotaActivityTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as FedQuotaActivityTableInterface,
-          serviceNetworkTable: {
-            byLocalId: {},
-            allLocalIds: [],
-            status: 'init'
-          } as ServiceNetworkTableInterface,
-          serviceImageTable: {
-            byLocalId: {},
-            allLocalIds: [],
-            status: 'init'
-          } as ServiceImageTableInterface,
-          userVpnTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as UserVpnTableInterface,
-          personalQuotaApplicationTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as PersonalQuotaApplicationTableInterface,
-          personalQuotaTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as PersonalQuotaTableInterface,
-          personalServerTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as PersonalServerTableInterface,
-          groupQuotaApplicationTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as GroupQuotaApplicationTableInterface,
-          groupQuotaTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as GroupQuotaTableInterface,
-          groupServerTable: {
-            byId: {},
-            allIds: [],
-            status: 'init'
-          } as GroupServerTableInterface
-        }
+
+        groupTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupTableInterface,
+        groupMemberTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupMemberTableInterface,
+
+        dataCenterTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as DataCenterTableInterface,
+        serviceTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as ServiceTableInterface,
+        serviceAllocationTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as ServiceAllocationTableInterface,
+        fedAllocationTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as FedAllocationTableInterface,
+
+        adminQuotaApplicationTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as AdminQuotaApplicationTableInterface,
+        adminServerTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as AdminServerTableInterface,
+
+        fedFlavorTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as FedFlavorTableInterface,
+        fedQuotaActivityTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as FedQuotaActivityTableInterface,
+        serviceNetworkTable: {
+          byLocalId: {},
+          allLocalIds: [],
+          status: 'init'
+        } as ServiceNetworkTableInterface,
+        serviceImageTable: {
+          byLocalId: {},
+          allLocalIds: [],
+          status: 'init'
+        } as ServiceImageTableInterface,
+        userVpnTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as UserVpnTableInterface,
+        personalQuotaApplicationTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as PersonalQuotaApplicationTableInterface,
+        personalQuotaTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as PersonalQuotaTableInterface,
+        personalServerTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as PersonalServerTableInterface,
+        groupQuotaApplicationTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupQuotaApplicationTableInterface,
+        groupQuotaTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupQuotaTableInterface,
+        groupServerTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupServerTableInterface
 
         /* 整体加载表：一旦加载则全部加载 */
 
@@ -523,10 +519,77 @@ export const useStore = defineStore('server', {
         // void context.dispatch('server/loadGroupQuotaTable', null, { root: true })
       })
     },
+    // loadAllTables (context) {
+    //   if (!context.state.tables.dataCenterTable.isLoaded) {
+    //     void context.dispatch('loadDataCenterTable').then(() => { // 1. 基础依赖
+    //       if (!context.state.tables.serviceTable.isLoaded) {
+    //         void context.dispatch('loadServiceTable').then(() => { // 2. 基础依赖
+    //           if (!context.state.tables.serviceAllocationTable.isLoaded) {
+    //             void context.dispatch('loadServiceAllocationTable')
+    //           }
+    //           if (!context.state.tables.fedAllocationTable.isLoaded) {
+    //             void context.dispatch('loadFedAllocationTable')
+    //           }
+    //           if (!context.rootState.server.tables.userVpnTable.isLoaded) {
+    //             void context.dispatch('server/loadUserVpnTable', null, { root: true })
+    //           }
+    //           if (!context.rootState.server.tables.serviceNetworkTable.isLoaded) {
+    //             void context.dispatch('server/loadServiceNetworkTable', null, { root: true })
+    //           }
+    //           if (!context.rootState.server.tables.serviceImageTable.isLoaded) {
+    //             void context.dispatch('server/loadServiceImageTable', null, { root: true })
+    //           }
+    //           if (!context.rootState.server.tables.personalServerTable.isLoaded) {
+    //             void context.dispatch('server/loadPersonalServerTable', null, { root: true })
+    //           }
+    //         })
+    //       }
+    //     })
+    //   }
+    //
+    //   if (!context.rootState.server.tables.fedFlavorTable.isLoaded) {
+    //     void context.dispatch('server/loadFedFlavorTable', null, { root: true })
+    //   }
+    //   if (!context.rootState.server.tables.personalQuotaTable.isLoaded) {
+    //     void context.dispatch('server/loadPersonalQuotaTable', null, { root: true })
+    //   }
+    //   if (!context.rootState.server.tables.personalQuotaApplicationTable.isLoaded) {
+    //     void context.dispatch('server/loadPersonalQuotaApplicationTable', null, { root: true })
+    //   }
+    //   if (!context.rootState.server.tables.fedQuotaActivityTable.isLoaded) {
+    //     void context.dispatch('server/loadFedQuotaActivityTable', null, { root: true })
+    //   }
+    //
+    //   if (!context.rootState.account.tables.groupTable.isLoaded) {
+    //     void context.dispatch('account/loadGroupTable', null, { root: true }).then(() => {
+    //       // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+    //       if (!context.rootState.account.tables.groupMemberTable.isLoaded) {
+    //         void context.dispatch('account/loadGroupMemberTable', null, { root: true }).then(() => {
+    //           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+    //           if (!context.rootState.server.tables.groupQuotaApplicationTable.isLoaded) {
+    //             void context.dispatch('server/loadGroupQuotaApplicationTable', null, { root: true })
+    //           }
+    //         })
+    //       }
+    //       if (!context.rootState.server.tables.groupServerTable.isLoaded) {
+    //         void context.dispatch('server/loadGroupServerTable', null, { root: true })
+    //       }
+    //       if (!context.rootState.server.tables.groupQuotaTable.isLoaded) {
+    //         void context.dispatch('server/loadGroupQuotaTable', null, { root: true })
+    //       }
+    //     })
+    //   }
+    //
+    //   // 以下表格为分页，在页面自身加载时load
+    //   // if (!context.rootState.provider.tables.adminQuotaApplicationTable.isLoaded) {
+    //   //   void context.dispatch('provider/loadAdminQuotaApplicationTable', null, { root: true })
+    //   // }
+    // },
+
     // 加载groupTable
     async loadGroupTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.account.groupTable = {
+      this.tables.groupTable = {
         byId: {},
         allIds: [],
         status: 'init'
@@ -544,22 +607,22 @@ export const useStore = defineStore('server', {
         // normalize
         const normalizedData = normalize(data, group)
         // 保存table
-        Object.assign(this.tables.account.groupTable.byId, normalizedData.entities.group)
-        this.tables.account.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
-        this.tables.account.groupTable.allIds = [...new Set(this.tables.account.groupTable.allIds)]
+        Object.assign(this.tables.groupTable.byId, normalizedData.entities.group)
+        this.tables.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
+        this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
       }
       // load table的最后再改status
-      this.tables.account.groupTable.status = 'total'
+      this.tables.groupTable.status = 'total'
     },
     // 根据groupTable,建立groupMemberTable
     async loadGroupMemberTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.account.groupMemberTable = {
+      this.tables.groupMemberTable = {
         byId: {},
         allIds: [],
         status: 'init'
       }
-      for (const groupId of this.tables.account.groupTable.allIds) {
+      for (const groupId of this.tables.groupTable.allIds) {
         const respGroupMember = await api.server.vo.getVoListMembers({ path: { id: groupId } })
         // 是否把组长添加进member列表？
         // 把groupId字段补充进去
@@ -568,23 +631,239 @@ export const useStore = defineStore('server', {
         const groupMember = new schema.Entity('groupMember')
         const normalizedData = normalize(respGroupMember.data, groupMember)
         // 存入state
-        Object.assign(this.tables.account.groupMemberTable.byId, normalizedData.entities.groupMember)
-        this.tables.account.groupMemberTable.allIds.unshift(Object.keys(normalizedData.entities.groupMember as Record<string, unknown>)[0])
-        this.tables.account.groupMemberTable.allIds = [...new Set(this.tables.account.groupMemberTable.allIds)]
+        Object.assign(this.tables.groupMemberTable.byId, normalizedData.entities.groupMember)
+        this.tables.groupMemberTable.allIds.unshift(Object.keys(normalizedData.entities.groupMember as Record<string, unknown>)[0])
+        this.tables.groupMemberTable.allIds = [...new Set(this.tables.groupMemberTable.allIds)]
         // 给groupTable补充role字段
         const storeMain = useStoreMain()
         const currentId = storeMain.items.tokenDecoded.email
         for (const member of respGroupMember.data.members) {
           if (member.user.username === currentId && member.role === 'leader') {
-            this.tables.account.groupTable.byId[groupId].myRole = 'leader'
+            this.tables.groupTable.byId[groupId].myRole = 'leader'
           }
         }
       }
       // load table的最后再改status
-      this.tables.account.groupMemberTable.status = 'total'
+      this.tables.groupMemberTable.status = 'total'
+    },
+    /* dataCenterTable */
+    async loadDataCenterTable () {
+      // 清空table
+      this.tables.dataCenterTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respDataCenter = await api.server.registry.getRegistry()
+      const dataCenter = new schema.Entity('dataCenter', {})
+      respDataCenter.data.registries.forEach((data: Record<string, never>) => {
+        const normalizedData = normalize(data, dataCenter)
+        // 添加上services/personalServices空字段
+        Object.values(normalizedData.entities.dataCenter!)[0].services = []
+        Object.values(normalizedData.entities.dataCenter!)[0].personalServices = []
+        Object.assign(this.tables.dataCenterTable.byId, normalizedData.entities.dataCenter)
+        this.tables.dataCenterTable.allIds.unshift(Object.keys(normalizedData.entities.dataCenter as Record<string, unknown>)[0])
+        this.tables.dataCenterTable.allIds = [...new Set(this.tables.dataCenterTable.allIds)]
+      })
+      // load table的最后再改isLoaded
+      this.tables.dataCenterTable.status = 'total'
+    },
+    /* serviceTable */
+    async loadServiceTable () {
+      // 清空table
+      this.tables.serviceTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respService = await api.server.service.getService()
+      // 将响应normalize，存入state里的serviceTable
+      const data_center = new schema.Entity('data_center')
+      const service = new schema.Entity('service', { data_center })
+      respService.data.results.forEach((data: Record<string, never>) => {
+        const normalizedData = normalize(data, service)
+        Object.assign(this.tables.serviceTable.byId, normalizedData.entities.service)
+        this.tables.serviceTable.allIds.unshift(Object.keys(normalizedData.entities.service as Record<string, unknown>)[0])
+        this.tables.serviceTable.allIds = [...new Set(this.tables.serviceTable.allIds)]
+        // 将本serviceId补充进对应dataCenter的services字段
+        this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].id].services.unshift(Object.values(normalizedData.entities.service!)[0].data_center)
+        this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services = [...new Set(this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services)]
+      })
+      // load table的最后再改isLoaded
+      this.tables.serviceTable.status = 'total'
+    },
+    /* serviceAllocationTable */
+    async loadServiceAllocationTable () {
+      this.tables.serviceAllocationTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respPQuota = await api.server.vms.getVmsServicePQuota()
+      const service = new schema.Entity('service')
+      const allocation = new schema.Entity('allocation', { service })
+      for (const data of respPQuota.data.results) {
+        Object.assign(data, { id: data.service.id })
+        const normalizedData = normalize(data, allocation)
+        Object.assign(this.tables.serviceAllocationTable.byId, normalizedData.entities.allocation)
+        this.tables.serviceAllocationTable.allIds.unshift(Object.keys(normalizedData.entities.allocation as Record<string, unknown>)[0])
+        this.tables.serviceAllocationTable.allIds = [...new Set(this.tables.serviceAllocationTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.serviceAllocationTable.status = 'total'
+    },
+    /* fedAllocationTable */
+    async loadFedAllocationTable () {
+      this.tables.fedAllocationTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respSQuota = await api.server.vms.getVmsServiceSQuota()
+      const service = new schema.Entity('service')
+      const allocation = new schema.Entity('allocation', { service })
+      for (const data of respSQuota.data.results) {
+        Object.assign(data, { id: data.service.id })
+        const normalizedData = normalize(data, allocation)
+        Object.assign(this.tables.fedAllocationTable.byId, normalizedData.entities.allocation)
+        this.tables.fedAllocationTable.allIds.unshift(Object.keys(normalizedData.entities.allocation as Record<string, unknown>)[0])
+        this.tables.fedAllocationTable.allIds = [...new Set(this.tables.fedAllocationTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.fedAllocationTable.status = 'total'
+    },
+    // 代码风格不好
+    async loadAdminQuotaApplicationTable (payload?: {
+      page?: number;
+      pageSize?: number;
+      serviceId?: string;
+      status?: 'wait' | 'pending' | 'pass' | 'reject' | 'cancel'
+    }) {
+      this.tables.adminQuotaApplicationTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 获取数据并更新table
+      const respApply = await api.server.apply.getApplyQuotaAdmin({
+        query: {
+          deleted: false,
+          // ...(payload?.serviceId) && { service: payload.serviceId }, // 有条件添加属性 https://stackoverflow.com/a/40560953
+          // ...(payload?.status) && { status: [payload.status as string] }
+          page: payload?.page,
+          page_size: payload?.pageSize,
+          service: payload?.serviceId,
+          status: [payload?.status as string]
+        }
+      })
+      // 再向详情接口发送请求
+      const service = new schema.Entity('service')
+      const quotaApplication = new schema.Entity('quotaApplication', { service })
+      for (const data of respApply.data.results) {
+        const respApplyDetail = await api.server.apply.getApplyQuotaApplyIdAdmin({ path: { apply_id: data.id } })
+        const normalizedData = normalize(respApplyDetail.data, quotaApplication)
+        Object.assign(this.tables.adminQuotaApplicationTable.byId, normalizedData.entities.quotaApplication)
+        this.tables.adminQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.quotaApplication as Record<string, unknown>)[0])
+        this.tables.adminQuotaApplicationTable.allIds = [...new Set(this.tables.adminQuotaApplicationTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.adminQuotaApplicationTable.status = 'total'
+      // 返回count值
+      return respApply.data.count
+    },
+    // 代码风格不好
+    async loadAdminServerTable (payload: { page?: number; page_size?: number }) {
+      this.tables.adminServerTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respGroupServer = await api.server.server.getServer({ query: payload })
+      const service = new schema.Entity('service')
+      const server = new schema.Entity('server', { service })
+      // if (respGroupServer.data) {
+      for (const data of respGroupServer.data.servers) {
+        const normalizedData = normalize(data, server)
+        Object.assign(this.tables.adminServerTable.byId, normalizedData.entities.server)
+        this.tables.adminServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+        this.tables.adminServerTable.allIds = [...new Set(this.tables.adminServerTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.adminServerTable.status = 'total'
+      // }
+      return respGroupServer
+    },
+    async loadFedFlavorTable () {
+      this.tables.fedFlavorTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      const respFlavor = await api.server.flavor.getFlavor()
+      for (const flavor of respFlavor.data.flavors) {
+        Object.assign(this.tables.fedFlavorTable.byId, { [flavor.id]: flavor })
+        this.tables.fedFlavorTable.allIds.unshift(Object.keys({ [flavor.id]: flavor } as Record<string, unknown>)[0])
+        this.tables.fedFlavorTable.allIds = [...new Set(this.tables.fedFlavorTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.fedFlavorTable.status = 'total'
+    },
+    async loadServiceNetworkTable () {
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+        for (const network of respNetwork.data) {
+          // 将service 和 localId补充进network对象
+          Object.assign(network, {
+            service: serviceId,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            localId: `${serviceId}-${network.id}`
+          })
+          Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
+          this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
+          this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
+        }
+      }
+      // load table的最后再改isLoaded
+      this.tables.serviceNetworkTable.status = 'total'
+    },
+    async loadServiceImageTable () {
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+        for (const image of respImage.data) {
+          // 将service 和 localId补充进image对象
+          Object.assign(image, {
+            service: serviceId,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            localId: `${serviceId}-${image.id}`
+          })
+          Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
+          this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
+          this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
+        }
+      }
+      // load table的最后再改isLoaded
+      this.tables.serviceImageTable.status = 'total'
+    },
+    async loadUserVpnTable () {
+      this.tables.userVpnTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
+          const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
+          Object.assign(respVpn.data.vpn, { id: serviceId })
+          Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
+          this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
+          this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+        }
+      }
+      // load table的最后再改isLoaded
+      this.tables.userVpnTable.status = 'total'
     },
 
-    //
+    // test, to be deleted
     async getImages () {
       return await api.server.image.getImage({ query: { service_id: '1' } })
     },
