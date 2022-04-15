@@ -862,6 +862,130 @@ export const useStore = defineStore('server', {
       // load table的最后再改isLoaded
       this.tables.userVpnTable.status = 'total'
     },
+    async loadPersonalQuotaTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.personalQuotaTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 将响应normalize
+      const respQuota = await api.server.quota.getQuota({ query: { deleted: false } })
+      const service = new schema.Entity('service')
+      const quota = new schema.Entity('quota', { service })
+      // quota数组
+      for (const data of respQuota.data.results) {
+        /* 增加补充字段 */
+        // 获取quota下对应的server列表
+        const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
+        const servers: string[] = []
+        respQuotaServers.data.results.forEach((server: ServerInterface) => {
+          servers.push(server.id)
+        })
+        // 给data增加servers字段
+        Object.assign(data, { servers })
+        // 给data增加expired字段
+        const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
+        Object.assign(data, { expired })
+        // 给data增加exhausted字段,该字段的判断方式可能后期更改
+        const exhausted = data.vcpu_used === data.vcpu_total || data.ram_used === data.ram_total || (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
+        Object.assign(data, { exhausted })
+        /* 增加补充字段 */
+
+        // normalize data
+        const normalizedData = normalize(data, quota)
+        Object.assign(this.tables.personalQuotaTable.byId, normalizedData.entities.quota)
+        this.tables.personalQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
+        this.tables.personalQuotaTable.allIds = [...new Set(this.tables.personalQuotaTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.personalQuotaTable.status = 'total'
+    },
+    // 更新整个userServerTable
+    async loadPersonalServerTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.personalServerTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 发送请求
+      const respServer = await api.server.server.getServer()
+      // 将响应normalize，存入state里的userServerTable
+      const service = new schema.Entity('service')
+      const user_quota = new schema.Entity('user_quota')
+      const server = new schema.Entity('server', {
+        service,
+        user_quota
+      })
+      for (const data of respServer.data.servers) {
+        const normalizedData = normalize(data, server)
+        Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
+        this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+        this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
+      }
+      // 建立personalServerTable之后，分别更新每个server status, 并发更新，无需await
+      for (const serverId of this.tables.personalServerTable.allIds) {
+        this.loadSingleServerStatus({
+          isGroup: false,
+          serverId
+        })
+      }
+      // 存完所有item再改isLoaded
+      this.tables.personalServerTable.status = 'total'
+    },
+    // 更新整个groupServerTable，调用点在group模块里
+    async loadGroupServerTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.groupServerTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 根据groupTable,建立groupServerTable
+      for (const groupId of this.tables.groupTable.allIds) {
+        // 发送请求
+        const respGroupServer = await api.server.server.getServerVo({ path: { vo_id: groupId } })
+        // 将响应normalize
+        const service = new schema.Entity('service')
+        const user_quota = new schema.Entity('user_quota')
+        const server = new schema.Entity('server', {
+          service,
+          user_quota
+        })
+        for (const data of respGroupServer.data.servers) {
+          const normalizedData = normalize(data, server)
+          Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
+          this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+          this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
+        }
+      }
+      // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
+      for (const serverId of this.tables.groupServerTable.allIds) {
+        this.loadSingleServerStatus({
+          isGroup: true,
+          serverId
+        })
+      }
+      // load table的最后再改isLoaded
+      this.tables.groupServerTable.status = 'total'
+    },
+    // 获取并保存单个server的status
+    async loadSingleServerStatus (payload: {
+      // table: {
+      //   byId: Record<string, ServerInterface> // 此处固定为ServerInterface
+      //   allIds: string[]
+      //   isLoaded: boolean
+      // }
+      isGroup: boolean
+      serverId: string
+    }) {
+      const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
+      // 先清空server status，让状态变为空，UI则显示为获取中
+      table.byId[payload.serverId].status = ''
+      const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
+      table.byId[payload.serverId].status = respStatus.data.status.status_code
+    },
 
     // test, to be deleted
     async getImages () {
