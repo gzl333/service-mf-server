@@ -397,7 +397,6 @@ export const useStore = defineStore('server', {
       },
       tables: {
         /* 整体加载表：一旦加载则全部加载 */
-
         groupTable: {
           byId: {},
           allIds: [],
@@ -408,7 +407,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupMemberTableInterface,
-
         dataCenterTable: {
           byId: {},
           allIds: [],
@@ -429,7 +427,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedAllocationTableInterface,
-
         adminQuotaApplicationTable: {
           byId: {},
           allIds: [],
@@ -440,7 +437,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as AdminServerTableInterface,
-
         fedFlavorTable: {
           byId: {},
           allIds: [],
@@ -496,7 +492,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupServerTableInterface
-
         /* 整体加载表：一旦加载则全部加载 */
 
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
@@ -508,84 +503,98 @@ export const useStore = defineStore('server', {
   },
   getters: {},
   actions: {
+    /* load tables */
     forceLoadAccountTable () {
       void this.loadGroupTable().then(() => {
         // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
         void this.loadGroupMemberTable().then(() => {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-          // void context.dispatch('server/loadGroupQuotaApplicationTable', null, { root: true })
+          void this.loadGroupQuotaApplicationTable()
         })
-        // void context.dispatch('server/loadGroupServerTable', null, { root: true })
-        // void context.dispatch('server/loadGroupQuotaTable', null, { root: true })
+        void this.loadGroupServerTable()
+        void this.loadGroupQuotaTable()
       })
     },
-    // loadAllTables (context) {
-    //   if (!context.state.tables.dataCenterTable.isLoaded) {
-    //     void context.dispatch('loadDataCenterTable').then(() => { // 1. 基础依赖
-    //       if (!context.state.tables.serviceTable.isLoaded) {
-    //         void context.dispatch('loadServiceTable').then(() => { // 2. 基础依赖
-    //           if (!context.state.tables.serviceAllocationTable.isLoaded) {
-    //             void context.dispatch('loadServiceAllocationTable')
-    //           }
-    //           if (!context.state.tables.fedAllocationTable.isLoaded) {
-    //             void context.dispatch('loadFedAllocationTable')
-    //           }
-    //           if (!context.rootState.server.tables.userVpnTable.isLoaded) {
-    //             void context.dispatch('server/loadUserVpnTable', null, { root: true })
-    //           }
-    //           if (!context.rootState.server.tables.serviceNetworkTable.isLoaded) {
-    //             void context.dispatch('server/loadServiceNetworkTable', null, { root: true })
-    //           }
-    //           if (!context.rootState.server.tables.serviceImageTable.isLoaded) {
-    //             void context.dispatch('server/loadServiceImageTable', null, { root: true })
-    //           }
-    //           if (!context.rootState.server.tables.personalServerTable.isLoaded) {
-    //             void context.dispatch('server/loadPersonalServerTable', null, { root: true })
-    //           }
-    //         })
-    //       }
-    //     })
-    //   }
-    //
-    //   if (!context.rootState.server.tables.fedFlavorTable.isLoaded) {
-    //     void context.dispatch('server/loadFedFlavorTable', null, { root: true })
-    //   }
-    //   if (!context.rootState.server.tables.personalQuotaTable.isLoaded) {
-    //     void context.dispatch('server/loadPersonalQuotaTable', null, { root: true })
-    //   }
-    //   if (!context.rootState.server.tables.personalQuotaApplicationTable.isLoaded) {
-    //     void context.dispatch('server/loadPersonalQuotaApplicationTable', null, { root: true })
-    //   }
-    //   if (!context.rootState.server.tables.fedQuotaActivityTable.isLoaded) {
-    //     void context.dispatch('server/loadFedQuotaActivityTable', null, { root: true })
-    //   }
-    //
-    //   if (!context.rootState.account.tables.groupTable.isLoaded) {
-    //     void context.dispatch('account/loadGroupTable', null, { root: true }).then(() => {
-    //       // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
-    //       if (!context.rootState.account.tables.groupMemberTable.isLoaded) {
-    //         void context.dispatch('account/loadGroupMemberTable', null, { root: true }).then(() => {
-    //           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-    //           if (!context.rootState.server.tables.groupQuotaApplicationTable.isLoaded) {
-    //             void context.dispatch('server/loadGroupQuotaApplicationTable', null, { root: true })
-    //           }
-    //         })
-    //       }
-    //       if (!context.rootState.server.tables.groupServerTable.isLoaded) {
-    //         void context.dispatch('server/loadGroupServerTable', null, { root: true })
-    //       }
-    //       if (!context.rootState.server.tables.groupQuotaTable.isLoaded) {
-    //         void context.dispatch('server/loadGroupQuotaTable', null, { root: true })
-    //       }
-    //     })
-    //   }
-    //
-    //   // 以下表格为分页，在页面自身加载时load
-    //   // if (!context.rootState.provider.tables.adminQuotaApplicationTable.isLoaded) {
-    //   //   void context.dispatch('provider/loadAdminQuotaApplicationTable', null, { root: true })
-    //   // }
-    // },
+    loadAllTables () {
+      if (this.tables.dataCenterTable.status === 'init') {
+        void this.loadDataCenterTable().then(() => { // 1. 基础依赖
+          if (this.tables.serviceTable.status === 'init') {
+            void this.loadServiceTable().then(() => { // 2. 基础依赖
+              if (this.tables.serviceAllocationTable.status === 'init') {
+                void this.loadServiceAllocationTable()
+              }
+              if (this.tables.fedAllocationTable.status === 'init') {
+                void this.loadFedAllocationTable()
+              }
+              if (this.tables.userVpnTable.status === 'init') {
+                void this.loadUserVpnTable()
+              }
+              if (this.tables.serviceNetworkTable.status === 'init') {
+                void this.loadServiceNetworkTable()
+              }
+              if (this.tables.serviceImageTable.status === 'init') {
+                void this.loadServiceImageTable()
+              }
+              if (this.tables.personalServerTable.status === 'init') {
+                void this.loadPersonalServerTable()
+              }
+            })
+          }
+        })
+      }
 
+      if (this.tables.fedFlavorTable.status === 'init') {
+        void this.loadFedFlavorTable()
+      }
+      if (this.tables.personalQuotaTable.status === 'init') {
+        void this.loadPersonalQuotaTable()
+      }
+      if (this.tables.personalQuotaApplicationTable.status === 'init') {
+        void this.loadPersonalQuotaApplicationTable()
+      }
+      if (this.tables.fedQuotaActivityTable.status === 'init') {
+        void this.loadFedQuotaActivityTable()
+      }
+
+      if (this.tables.groupTable.status === 'init') {
+        void this.loadGroupTable().then(() => {
+          // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+          if (this.tables.groupMemberTable.status === 'init') {
+            void this.loadGroupMemberTable().then(() => {
+              // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+              if (this.tables.groupQuotaApplicationTable.status === 'init') {
+                void this.loadGroupQuotaApplicationTable()
+              }
+            })
+          }
+          if (this.tables.groupServerTable.status === 'init') {
+            void this.loadGroupServerTable()
+          }
+          if (this.tables.groupQuotaTable.status === 'init') {
+            void this.loadGroupQuotaTable()
+          }
+        })
+      }
+
+      // 以下表格为分页，在页面自身加载时load
+      // if (!context.rootState.provider.tables.adminQuotaApplicationTable.isLoaded) {
+      //   void context.dispatch('provider/loadAdminQuotaApplicationTable', null, { root: true })
+      // }
+    },
+
+    /* load tables */
+
+    /* items */
+    async loadServerRole () {
+      const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
+      if (respGetUserPermissionPolicy.status === 200) {
+        this.items.fedRole = respGetUserPermissionPolicy.data.role
+        this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
+      }
+    },
+    /* items */
+
+    /* tables */
     // 加载groupTable
     async loadGroupTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
@@ -686,8 +695,12 @@ export const useStore = defineStore('server', {
         this.tables.serviceTable.allIds.unshift(Object.keys(normalizedData.entities.service as Record<string, unknown>)[0])
         this.tables.serviceTable.allIds = [...new Set(this.tables.serviceTable.allIds)]
         // 将本serviceId补充进对应dataCenter的services字段
-        this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].id].services.unshift(Object.values(normalizedData.entities.service!)[0].data_center)
+
+        this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services.unshift(Object.values(normalizedData.entities.service!)[0].id)
         this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services = [...new Set(this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services)]
+
+        // this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].id].services.unshift(Object.values(normalizedData.entities.service!)[0].data_center)
+        // this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services = [...new Set(this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center].services)]
       })
       // load table的最后再改isLoaded
       this.tables.serviceTable.status = 'total'
@@ -986,17 +999,207 @@ export const useStore = defineStore('server', {
       const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
       table.byId[payload.serverId].status = respStatus.data.status.status_code
     },
+    // 更新单个server的信息
+    async loadSingleServer (payload: { serverId: string; isGroup: boolean }) {
+      const respSingleServer = await api.server.server.getServerId({ path: { id: payload.serverId } })
+      // 将响应normalize，存入state里的userServerTable
+      const service = new schema.Entity('service')
+      const user_quota = new schema.Entity('user_quota')
+      const server = new schema.Entity('server', {
+        service,
+        user_quota
+      })
+      const normalizedData = normalize(respSingleServer.data.server, server)
+      if (payload.isGroup) {
+        Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
+        this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+        this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
+        this.loadSingleServerStatus({
+          isGroup: true,
+          serverId: payload.serverId
+        })
+        this.tables.groupServerTable.status = 'total'
+      } else {
+        Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
+        this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+        this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
+        this.loadSingleServerStatus({
+          isGroup: false,
+          serverId: payload.serverId
+        })
+        this.tables.personalServerTable.status = 'total'
+      }
+    },
+    // 所有groupQuota根据quotaId存在一个对象里，不区分group，getter里区分group取
+    async loadGroupQuotaTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.groupQuotaTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 根据groupTable,建立groupQuotaTable
+      for (const groupId of this.tables.groupTable.allIds) {
+        // 获取响应
+        const respGroupQuota = await api.server.quota.getQuotaVo({ path: { vo_id: groupId } })
+        // 将响应normalize
+        const service = new schema.Entity('service')
+        const quota = new schema.Entity('quota', { service })
+        // quota数组
+        for (const data of respGroupQuota.data.results) {
+          /* 增加补充字段 */
+          // 补充vo_id字段
+          Object.assign(data, { vo_id: groupId })
+          // 获取quota下对应的server列表
+          const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
+          const servers: string[] = []
+          respQuotaServers.data.results.forEach((server: ServerInterface) => {
+            servers.push(server.id)
+          })
+          // 给data增加servers字段
+          Object.assign(data, { servers })
+          // 给data增加expired字段
+          const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
+          Object.assign(data, { expired })
+          // 给data增加exhausted字段,该字段的判断方式可能后期更改
+          const exhausted = data.vcpu_used === data.vcpu_total ||
+            data.ram_used === data.ram_total ||
+            (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
+          Object.assign(data, { exhausted })
+          /* 增加补充字段 */
+
+          // normalize data
+          const normalizedData = normalize(data, quota)
+          // 存入groupQuotaTable
+          Object.assign(this.tables.groupQuotaTable.byId, normalizedData.entities.quota)
+          this.tables.groupQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
+          this.tables.groupQuotaTable.allIds = [...new Set(this.tables.groupQuotaTable.allIds)]
+        }
+      }
+      // load table的最后再改isLoaded
+      this.tables.groupQuotaTable.status = 'total'
+    },
+    // 默认personalQuotaApplicationTable只保存undeleted的application
+    async loadPersonalQuotaApplicationTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.personalQuotaApplicationTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 再获取数据并更新table
+      const respApply = await api.server.apply.getApplyQuota({ query: { deleted: false } }) // 不包含已删除的申请
+      const service = new schema.Entity('service')
+      const application = new schema.Entity('application', { service })
+      for (const data of respApply.data.results) {
+        const normalizedData = normalize(data, application)
+        Object.assign(this.tables.personalQuotaApplicationTable.byId, normalizedData.entities.application)
+        this.tables.personalQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+        this.tables.personalQuotaApplicationTable.allIds = [...new Set(this.tables.personalQuotaApplicationTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.personalQuotaApplicationTable.status = 'total'
+    },
+    async loadGroupQuotaApplicationTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.groupQuotaApplicationTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      // 根据groupTable,建立groupApplicationTable
+      for (const groupId of this.tables.groupTable.allIds) {
+        // member没有权限请求这个接口, owner和leader可以
+        if (this.tables.groupTable.byId[groupId].myRole !== 'member') {
+          // 获取响应
+          const respGroupApplication = await api.server.apply.getApplyQuotaVo({
+            path: { vo_id: groupId },
+            query: { deleted: false }
+          })
+          // normalize
+          const service = new schema.Entity('service')
+          const application = new schema.Entity('application', { service })
+          // application 数组
+          for (const data of respGroupApplication.data.results) {
+            /* 增加补充字段 */
+            // 补充vo_id字段
+            Object.assign(data, { vo_id: groupId })
+            /* 增加补充字段 */
+            // normalize data
+            const normalizedData = normalize(data, application)
+            // 存入
+            Object.assign(this.tables.groupQuotaApplicationTable.byId, normalizedData.entities.application)
+            this.tables.groupQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+            this.tables.groupQuotaApplicationTable.allIds = [...new Set(this.tables.groupQuotaApplicationTable.allIds)]
+          }
+        }
+      }
+      // load table的最后再改isLoaded
+      this.tables.groupQuotaApplicationTable.status = 'total'
+    },
+    // personal/group quota application table建立时用列举接口，有较少字段；单独更新时从详情接口取，有较多字段，但也只用基本部分。
+    // 单独更新personal/groupQuotaApplicationTable里的一个application对象
+    async loadSingleQuotaApplicationStatus (payload: { applicationId: string; isGroup: boolean }) {
+      // 先清空application的status，显示为获取中。注意不是删除整个application，这样则会丢失整个条目。
+      const table = payload.isGroup ? this.tables.groupQuotaApplicationTable : this.tables.personalQuotaApplicationTable
+      table.status = 'init'
+      // 获取最新的application对象，存入table
+      const respSingleApplication = await api.server.apply.getApplyQuotaApplyId({ path: { apply_id: payload.applicationId } })
+      if (respSingleApplication.status === 200) {
+        if (payload.isGroup) {
+          // 补充vo_id字段
+          Object.assign(respSingleApplication.data, { vo_id: respSingleApplication.data.vo.id })
+        }
+        // normalize
+        const service = new schema.Entity('service')
+        const application = new schema.Entity('application', { service })
+        const normalizedData = normalize(respSingleApplication.data, application)
+
+        Object.assign(table.byId, normalizedData.entities.application)
+        table.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+        table.allIds = [...new Set(table.allIds)]
+      }
+    },
+    async loadFedQuotaActivityTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新
+      // 当前没有强制清楚，避免了ui闪烁,但是也没有数据累加
+      // context.commit('clearTable', context.state.tables.fedQuotaActivityTable)
+
+      // 获取数据并更新table
+      // 当前table内容为筛选出active,排除未开始和已结束的，以后可根据需求全部获取，显示时进行筛选
+      const respActivity = await api.server.quota_activity.getQuotaActivity({
+        query: {
+          status: 'active',
+          'exclude-not-start': true,
+          'exclude-ended': true
+        }
+      })
+      // normalize信息
+      const service = new schema.Entity('service')
+      const user = new schema.Entity('user')
+      const quotaActivity = new schema.Entity('quotaActivity', {
+        service,
+        user
+      })
+      for (const data of respActivity.data.results) {
+        const normalizedData = normalize(data, quotaActivity)
+        Object.assign(this.tables.fedQuotaActivityTable.byId, normalizedData.entities.quotaActivity)
+        this.tables.fedQuotaActivityTable.allIds.unshift(Object.keys(normalizedData.entities.quotaActivity as Record<string, unknown>)[0])
+        this.tables.fedQuotaActivityTable.allIds = [...new Set(this.tables.fedQuotaActivityTable.allIds)]
+      }
+      // load table的最后再改isLoaded
+      this.tables.fedQuotaActivityTable.status = 'total'
+    },
+
+    /* tables */
+
+    /* dialogs */
+    /* dialogs */
 
     // test, to be deleted
     async getImages () {
       return await api.server.image.getImage({ query: { service_id: '1' } })
-    },
-    async loadServerRole () {
-      const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
-      if (respGetUserPermissionPolicy.status === 200) {
-        this.items.fedRole = respGetUserPermissionPolicy.data.role
-        this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
-      }
     }
+
   }
 })

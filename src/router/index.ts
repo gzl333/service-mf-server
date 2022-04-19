@@ -41,7 +41,7 @@ export default route(function (/* { store, ssrContext } */) {
   })
 
   Router.beforeEach((to, from, next) => {
-    console.log('@cnic/server ', 'from:', from.fullPath, ' to:', to.fullPath)
+    // console.log('@cnic/server ', 'from:', from.fullPath, ' to:', to.fullPath)
     const store = useStore()
 
     // 根据当前path更新store.items.currentPath
