@@ -19,7 +19,7 @@ declare module '@vue/runtime-core' {
 // const api = axios.create({ baseURL: 'https://api.example.com' })
 
 // axios instance with base url configured
-export const baseURLServer = window.location.protocol + '//vms.cstcloud.cn/api'
+export const baseURLServer = window.location.protocol + '//159.226.235.4:2000/api' // '//vms.cstcloud.cn/api'
 const axiosServer = axios.create({
   baseURL: baseURLServer,
   // 序列化器，没有这个无法在query里发送数组参数。body里的数组不需要序列化器。
