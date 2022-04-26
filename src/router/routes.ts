@@ -16,8 +16,8 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/personal/ServerList.vue')
           },
           {
-            path: 'create',
-            component: () => import('pages/personal/ServerCreate.vue'),
+            path: 'deploy',
+            component: () => import('pages/personal/ServerDeploy.vue'),
             props: true // 接收url中的参数
           },
           {
@@ -35,12 +35,23 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/group/GroupList.vue')
           },
           {
+            path: 'detail/:id', // groupId 动态路由匹配
+            component: () => import('pages/group/GroupDetail.vue'),
+            props: true // 接收url中的参数
+          },
+          {
             path: 'serverlist', // 组资源
-            meta: {
-              requireLogin: true
-            },
             component: () => import('pages/group/ServerList.vue')
-          }
+          },
+          {
+            path: 'serverdetail/:id', // serverId 动态路由匹配
+            component: () => import('pages/group/ServerDetail.vue')
+          },
+          {
+            path: 'deploy',
+            component: () => import('pages/group/ServerDeploy.vue'),
+            props: true // 接收url中的参数
+          },
         ]
       },
       {

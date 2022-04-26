@@ -22,12 +22,12 @@
 </script>
 
 <template>
-  <div class="ServerCreate">
-    this is ServerCreate
+  <div class="ServerDetail">
+    this is ServerDetail
   </div>
 </template>
 
 <style lang="scss" scoped>
-.ServerCreate {
+.ServerDetail {
 }
 </style>
