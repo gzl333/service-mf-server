@@ -51,7 +51,7 @@ const routes: RouteRecordRaw[] = [
             path: 'deploy',
             component: () => import('pages/group/ServerDeploy.vue'),
             props: true // 接收url中的参数
-          },
+          }
         ]
       },
       {

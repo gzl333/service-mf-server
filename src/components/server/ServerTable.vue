@@ -128,7 +128,7 @@ const columns = computed(() => [
   }])
 
 // 当前用户在group内的角色
-// const myRole = computed(() => store.state.account.tables.groupTable.byId[props.servers[0]?.vo_id || '']?.myRole)
+// const myRole = computed(() => store.tables.groupTable.byId[props.servers[0]?.vo_id || '']?.myRole)
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
@@ -152,25 +152,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
 <template>
   <div class="ServerTable">
-<!--    <q-table-->
-<!--      flat-->
-<!--      card-class=""-->
-<!--      table-class=""-->
-<!--      table-header-class="bg-grey-1 text-grey"-->
-<!--      :rows="servers"-->
-<!--      :columns="columns"-->
-<!--      row-key="name"-->
-<!--      :loading="isGroup ? !(store.tables.groupServerTable.status === 'loading') : !(store.tables.personalServerTable.status === 'loading') "-->
-<!--      color="primary"-->
-<!--      loading-label="网络请求中，请稍候..."-->
-<!--      no-data-label="暂无云主机"-->
-<!--      hide-pagination-->
-<!--      :pagination="{rowsPerPage: 0}"-->
-<!--      :filter="search"-->
-<!--      :filter-method="searchMethod"-->
-<!--      no-results-label="无搜索结果"-->
-<!--    >    -->
-      <q-table
+    <q-table
       flat
       card-class=""
       table-class=""
@@ -178,6 +160,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
       :rows="servers"
       :columns="columns"
       row-key="name"
+      :loading="isGroup ? store.tables.groupServerTable.status === 'loading' : store.tables.personalServerTable.status === 'loading' "
       color="primary"
       loading-label="网络请求中，请稍候..."
       no-data-label="暂无云主机"
@@ -195,74 +178,74 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
         >
           <q-td key="ip" :props="props">
 
-                        <q-btn
-                          class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
-                          :to="{path: isGroup ? `/my/group/server/detail/${props.row.id}` : `/my/personal/server/detail/${props.row.id}`}">
-                          <q-tooltip>
-                            {{ tc('云主机详情') }}
-                          </q-tooltip>
-                          <!--创建时间距离当下小于1小时则打上new标记-->
-                          <q-badge style="top:-10px;"
-                                   v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
-                                   color="light-green" floating transparent rounded align="middle">
-                            new
-                          </q-badge>
-                        </q-btn>
+            <q-btn
+              class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
+              :to="{path: isGroup ? `/my/group/server/detail/${props.row.id}` : `/my/personal/server/detail/${props.row.id}`}">
+              <q-tooltip>
+                {{ tc('云主机详情') }}
+              </q-tooltip>
+              <!--创建时间距离当下小于1小时则打上new标记-->
+              <q-badge style="top:-10px;"
+                       v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
+                       color="light-green" floating transparent rounded align="middle">
+                new
+              </q-badge>
+            </q-btn>
 
-                        <q-btn v-if="hoverRow === props.row.name"
-                               class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
-                               @click="clickToCopy(props.row.ipv4)">
-                          <q-tooltip>
-                            {{ tc('复制到剪切板') }}
-                          </q-tooltip>
-                        </q-btn>
-                        <q-btn v-else
-                               class="col-shrink q-px-xs q-ma-none invisible" flat dense icon="content_copy" size="xs">
-                        </q-btn>
+            <q-btn v-if="hoverRow === props.row.name"
+                   class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
+                   @click="clickToCopy(props.row.ipv4)">
+              <q-tooltip>
+                {{ tc('复制到剪切板') }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn v-else
+                   class="col-shrink q-px-xs q-ma-none invisible" flat dense icon="content_copy" size="xs">
+            </q-btn>
 
           </q-td>
 
           <q-td v-if="isGroup && !isHideGroup" key="group" :props="props">
-                        <q-btn
-                          class="q-ma-none"
-                          color="primary"
-                          padding="none" flat dense unelevated
-                          :label="store.state.account.tables.groupTable.byId[props.row.vo_id]?.name"
-                          :to="{path: `/my/group/detail/${props.row.vo_id}`}">
-                          <q-tooltip>
-                            {{ tc('项目组详情') }}
-                          </q-tooltip>
-                        </q-btn>
+            <q-btn
+              class="q-ma-none"
+              color="primary"
+              padding="none" flat dense unelevated
+              :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
+              :to="{path: `/my/group/detail/${props.row.vo_id}`}">
+              <q-tooltip>
+                {{ tc('项目组详情') }}
+              </q-tooltip>
+            </q-btn>
           </q-td>
 
           <q-td key="serviceNode" :props="props">
-<!--                        <div>-->
-<!--                          {{-->
-<!--                            locale === 'zh' ? store.state.fed.tables.serviceTable.byId[props.row.service]?.name : store.state.fed.tables.serviceTable.byId[props.row.service]?.name_en-->
-<!--                          }}-->
-<!--                        </div>-->
-<!--                        <div>-->
-<!--                          {{-->
-<!--                            locale === 'zh' ? store.state.fed.tables.dataCenterTable.byId[store.state.fed.tables.serviceTable.byId[props.row.service]?.data_center]?.name :-->
-<!--                              store.state.fed.tables.dataCenterTable.byId[store.state.fed.tables.serviceTable.byId[props.row.service]?.data_center]?.name_en-->
-<!--                          }}-->
-<!--                        </div>-->
+            <div>
+              {{
+                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service]?.name : store.tables.serviceTable.byId[props.row.service]?.name_en
+              }}
+            </div>
+            <div>
+              {{
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service]?.data_center]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service]?.data_center]?.name_en
+              }}
+            </div>
 
-<!--                        <div>-->
-<!--                          <q-icon-->
-<!--                            v-if="store.state.fed.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('ev')"-->
-<!--                            name="img:svg/EVCloud-Logo-Horizontal.svg"-->
-<!--                            style="width: 100px;height: 20px"/>-->
-<!--                          &lt;!&ndash;                            <q-tooltip>{{tc('该节点的服务类型为EVCloud')}}</q-tooltip>&ndash;&gt;-->
-<!--                        </div>-->
+            <div>
+              <q-icon
+                v-if="store.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('ev')">
+                <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+              </q-icon>
+              <!--                            <q-tooltip>{{tc('该节点的服务类型为EVCloud')}}</q-tooltip>-->
+            </div>
 
-<!--                        <div>-->
-<!--                          <q-icon-->
-<!--                            v-if="store.state.fed.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('open')"-->
-<!--                            name="img:svg/OpenStack-Logo-Horizontal.svg"-->
-<!--                            style="width: 100px;height: 20px"/>-->
-<!--                          &lt;!&ndash;                            <q-tooltip>{{tc('该节点的服务类型为OpenStack')}}</q-tooltip>&ndash;&gt;-->
-<!--                        </div>-->
+            <div>
+              <q-icon
+                v-if="store.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('open')">
+                <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+              </q-icon>
+              <!--                            <q-tooltip>{{tc('该节点的服务类型为OpenStack')}}</q-tooltip>-->
+            </div>
 
             <!--            <q-tooltip class="bg-grey-4" :offset="[0, -15]">-->
             <!--              <span class="text-black">-->
@@ -294,7 +277,10 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           </q-td>
 
           <q-td key="configuration" :props="props">
-            <div> {{ props.row.vcpus }} {{ i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core' }}</div>
+            <div> {{ props.row.vcpus }} {{
+                i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
+              }}
+            </div>
             <div>{{ props.row.ram / 1024 }}GB</div>
           </q-td>
 
@@ -304,14 +290,14 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             </div>
             <div v-else>
               <!--              日期时间格式根据locale值变化-->
-              <div v-if="locale==='zh'">
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(locale).split(' ')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(locale).split(' ')[1] }}</div>
+              <div v-if="i18n.global.locale==='zh'">
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
               </div>
 
               <div v-else>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(locale).split(',')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(locale).split(',')[1] }}</div>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
               </div>
 
               <!--              <q-icon v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0"-->
@@ -334,18 +320,18 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                 </q-tooltip>
               </div>
 
-              <!--              <q-btn-->
-              <!--                :disable="props.row.lock === 'lock-operation'"-->
-              <!--                v-if="hoverRow === props.row.name && (!isGroup || (isGroup && store.state.account.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "-->
-              <!--                class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"-->
-              <!--                @click="store.dispatch('server/editServerNoteDialog',{serverId:props.row.id, isGroup})">-->
-              <!--                <q-tooltip>-->
-              <!--                  {{ tc('编辑备注') }}-->
-              <!--                </q-tooltip>-->
-              <!--              </q-btn>-->
+              <q-btn
+                :disable="props.row.lock === 'lock-operation'"
+                v-if="hoverRow === props.row.name && (!isGroup || (isGroup && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
+                class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
+                @click="store.dispatch('server/editServerNoteDialog',{serverId:props.row.id, isGroup})">
+                <q-tooltip>
+                  {{ tc('编辑备注') }}
+                </q-tooltip>
+              </q-btn>
 
-              <!--              <q-btn v-else-->
-              <!--                     class="col-shrink q-px-none q-ma-none invisible" flat dense icon="edit" size="xs"/>-->
+              <q-btn v-else
+                     class="col-shrink q-px-none q-ma-none invisible" flat dense icon="edit" size="xs"/>
 
             </div>
           </q-td>

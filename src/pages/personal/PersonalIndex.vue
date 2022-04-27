@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { navigateToUrl } from 'single-spa'
-// import { useStore } from 'stores/store'
-import { useRoute } from 'vue-router'
+import { useStore } from 'stores/store'
+// import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import buttonAdd from 'components/personal/buttonAdd.vue'
 
@@ -15,12 +15,11 @@ import buttonAdd from 'components/personal/buttonAdd.vue'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const store = useStore()
+const store = useStore()
 const tc = i18n.global.tc
-const route = useRoute()
+// const route = useRoute()
 
-const paths = route.path.split('/')
-const activeTab = ref(paths[4] || 'list') // keep selection when reloading
+const activeTab = ref(store.items.currentPath[1]) // keep selection when reloading
 
 </script>
 
