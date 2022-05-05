@@ -2,11 +2,26 @@
 
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
+import { axios } from 'boot/axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
+import { Dialog, Notify } from 'quasar'
+
+import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
+
+const actionMap = new Map<string, string>(
+  [
+    ['start', '开机'],
+    ['reboot', '重启'],
+    ['shutdown', '关机'],
+    ['poweroff', '强制断电'],
+    ['delete', '删除'],
+    ['delete_force', '强制删除']
+  ]
+)
 
 export interface GroupInterface {
   id: string
@@ -1662,6 +1677,172 @@ export const useStore = defineStore('server', {
     /* tables */
 
     /* dialogs */
+    /* server */
+    // 修改server.lock的operation状态( lock-delete <-> lock-operation )
+    async toggleOperationLock (payload: { serverId: string; isGroup: boolean }) {
+      const lock = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId]?.lock : this.tables.personalServerTable.byId[payload.serverId]?.lock
+      const newLock = lock === 'lock-operation' ? 'lock-delete' : 'lock-operation'
+      const respPostServerLock = await api.server.server.postServerLock({
+        query: { lock: newLock },
+        path: { id: payload.serverId }
+      })
+      if (respPostServerLock.status === 200) {
+        const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
+        const server = table.byId[payload.serverId]
+        server.lock = respPostServerLock.data.lock
+      }
+    },
+    // 修改server.lock的delete状态 ( free <-> lock-delete )
+    async toggleDeleteLock (payload: { serverId: string; isGroup: boolean }) {
+      const lock = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId]?.lock : this.tables.personalServerTable.byId[payload.serverId]?.lock
+      const newLock = lock === 'free' ? 'lock-delete' : 'free'
+      const respPostServerLock = await api.server.server.postServerLock({
+        query: { lock: newLock },
+        path: { id: payload.serverId }
+      })
+      if (respPostServerLock.status === 200) {
+        const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
+        const server = table.byId[payload.serverId]
+        server.lock = respPostServerLock.data.lock
+      }
+    },
+    // 修改server.lock的delete状态为lock-delete ( -> lock-delete )
+    async toggleDeleteLockToLock (payload: { serverId: string; isGroup: boolean }) {
+      const newLock = 'lock-delete'
+      const respPostServerLock = await api.server.server.postServerLock({
+        query: { lock: newLock },
+        path: { id: payload.serverId }
+      })
+      if (respPostServerLock.status === 200) {
+        const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
+        const server = table.byId[payload.serverId]
+        server.lock = respPostServerLock.data.lock
+      }
+    },
+    // 操作云主机实例时，向endpoint_url发请求； 进行其他云联邦操作时向每个前端部署对应的后端（例如vms）发请求
+    // todo 细分各种操作;重命名为triggerXxxDialog
+    serverOperationDialog (payload: { serverId: string; action: string; isGroup?: boolean; isJump?: boolean }) {
+      // 所有操作都要用的信息
+      const server = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
+      // 去掉协议
+      const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
+      // 判断结尾有没有'/'，并加上当前用户使用的协议
+      // 以下写法失败, 二元选择问号前都是条件
+      // const api = window.location.protocol + endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action'
+      const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action')
+      const data = { action: payload.action }
+
+      // 执行操作的函数。delete/force_delete不用。start直接用。其他经dialog确认后用。
+      const executeOperation = async () => {
+        // 将主机状态清空，界面将显示loading
+        if (payload.isGroup) {
+          this.tables.groupServerTable.byId[payload.serverId].status = ''
+        } else {
+          this.tables.personalServerTable.byId[payload.serverId].status = ''
+        }
+
+        try {
+          await axios.post(api, data)
+          // 应延时
+          void await new Promise(resolve => (
+            setTimeout(resolve, 5000)
+          ))
+          // 更新单个server status
+          void this.loadSingleServerStatus({
+            isGroup: payload.isGroup || false,
+            serverId: payload.serverId
+          })
+          // todo 比对新老状态，发送通知
+          // const newStatus = payload.isGroup ? context.state.tables.groupServerTable.byId[payload.serverId]?.status : context.state.tables.personalServerTable.byId[payload.serverId]?.status
+        } catch {
+          // 若请求失败则应更新单个server status
+          void this.loadSingleServerStatus({
+            isGroup: payload.isGroup || false,
+            serverId: payload.serverId
+          })
+        }
+      }
+
+      // 各种操作分类
+      if (payload.action === 'delete' || payload.action === 'delete_force') {
+        Dialog.create({
+          component: ServerDeleteDialog,
+          componentProps: {
+            action: payload.action,
+            serverId: payload.serverId,
+            isGroup: payload.isGroup
+          }
+        }).onOk(async () => {
+          // 将主机状态清空，界面将显示loading
+          if (payload.isGroup) {
+            this.tables.groupServerTable.byId[payload.serverId].status = ''
+          } else {
+            this.tables.personalServerTable.byId[payload.serverId].status = ''
+          }
+          try {
+            // 发送请求
+            await axios.post(api, data)
+            // 如果删除主机，重新获取userServerTable或groupServerTable
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              textColor: 'positive',
+              // spinner: true,
+              icon: 'check_circle',
+              message: `成功删除云主机: ${server.ipv4 || ''}`,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+            // // 应延时
+            // void await new Promise(resolve => (
+            //   setTimeout(resolve, 1000)
+            // ))
+            // 更新userServerTable或groupServerTable // 可以优化成直接删除
+            payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
+            // // 更新personal/group quotaTable, 删除了server，对应quota里面servers字段也更新了。// 可以优化成直接删除
+            // payload.isGroup ? void context.dispatch('loadGroupQuotaTable') : void context.dispatch('loadPersonalQuotaTable')
+            // 是否跳转
+            if (payload.isJump) {
+              // @ts-ignore
+              this.$router.back()
+            }
+          } catch {
+            // 若请求失败则应更新单个server status
+            void this.loadSingleServerStatus({
+              isGroup: payload.isGroup || false,
+              serverId: payload.serverId
+            })
+          }
+        })
+      } else if (payload.action === 'start') {
+        void executeOperation()
+      } else {
+        Dialog.create({
+          class: 'dialog-primary',
+          title: `${i18n.global.tc(actionMap.get(payload.action) as string) || ''}`,
+          focus: 'cancel',
+          message:
+            '确认执行？',
+          ok: {
+            label: i18n.global.tc('确认'),
+            push: false,
+            // flat: true,
+            outline: true,
+            color: 'primary'
+          },
+          cancel: {
+            label: i18n.global.tc('取消'),
+            push: false,
+            flat: false,
+            unelevated: true,
+            color: 'primary'
+          }
+        }).onOk(executeOperation)
+      }
+    },
+
+    /* server */
     /* dialogs */
 
     // test, to be deleted

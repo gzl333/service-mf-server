@@ -23,7 +23,7 @@ const tc = i18n.global.tc
 
 const toggle = ref(computed(() => props.server.lock === 'lock-operation'))
 // 当前用户在group内的角色
-const myRole = computed(() => store.state.account.tables.groupTable.byId[props.server?.vo_id || '']?.myRole)
+const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id || '']?.myRole)
 </script>
 
 <template>
@@ -37,7 +37,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
           unchecked-icon="lock_open"
           color="light-green"
           size="md"
-          @click=" store.dispatch('server/toggleOperationLock', {isGroup, serverId: server.id })"
+          @click="store.toggleOperationLock({isGroup, serverId: server.id })"
         >
           <q-tooltip v-if="server.lock === 'lock-operation'">
             {{ tc('已锁定云主机操作') }}
@@ -52,13 +52,13 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
                       :disable-main-btn="server.lock === 'lock-operation'"
                       :loading="!server?.status"
                       :icon="server?.status===5?'play_arrow':server?.status==1?'power_settings_new':'refresh'"
-                      @click="server?.status===5 ? store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'start', isGroup})
-                      : server?.status==1?store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'shutdown', isGroup})
-                      : store.dispatch('server/loadSingleServerStatus', {isGroup, serverId: server.id})">
+                      @click="server?.status===5 ? store.serverOperationDialog({serverId: server.id, action: 'start', isGroup})
+                      : server?.status==1?store.serverOperationDialog({serverId: server.id, action: 'shutdown', isGroup})
+                      : store.loadSingleServerStatus({isGroup, serverId: server.id})">
 
         <q-list style="text-align:center">
           <q-item clickable v-close-popup class="bg-white text-primary"
-                  :to="{path: isGroup? `/my/group/server/detail/${server.id}` : `/my/personal/server/detail/${server.id}`}">
+                  :to="{path: isGroup? `/my/server/group/detail/${server.id}` : `/my/server/personal/detail/${server.id}`}">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="info" size="sm"/>
@@ -75,7 +75,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
           <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-primary"
                   :disable="server.lock === 'lock-operation'"
-                  @click="store.dispatch('server/serverOperationDialog',{ serverId: server.id, action: 'start', isGroup})">
+                  @click="store.serverOperationDialog({ serverId: server.id, action: 'start', isGroup})">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="play_arrow" size="sm"/>
@@ -90,7 +90,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
           <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"
                   :disable="server.lock === 'lock-operation'"
-                  @click="store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'reboot', isGroup})">
+                  @click="store.serverOperationDialog({serverId: server.id, action: 'reboot', isGroup})">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="restart_alt" size="sm"/>
@@ -105,7 +105,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
           <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"
                   :disable="server.lock === 'lock-operation'"
-                  @click="store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'shutdown', isGroup})">
+                  @click="store.serverOperationDialog({serverId: server.id, action: 'shutdown', isGroup})">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="power_settings_new" size="sm"/>
@@ -120,7 +120,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
           <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"
                   :disable="server.lock === 'lock-operation'"
-                  @click="store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'poweroff', isGroup})">
+                  @click="store.serverOperationDialog({serverId: server.id, action: 'poweroff', isGroup})">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="power_off" size="sm"/>
@@ -140,7 +140,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
             <q-item clickable v-close-popup class="bg-white text-primary"
                     :disable="server.lock === 'lock-operation'"
-                    @click="store.dispatch('server/triggerServerRebuildDialog',{serverId: server.id, isGroup})">
+                    @click="store.triggerServerRebuildDialog({serverId: server.id, isGroup})">
               <div class="row">
                 <q-item-section class="col-auto">
                   <q-icon name="build" size="sm"/>
@@ -157,7 +157,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
             <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-red"
                     :disable="server.lock === 'lock-operation'"
-                    @click="store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'delete', isGroup})">
+                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete', isGroup})">
               <div class="row">
                 <q-item-section class="col-auto">
                   <q-icon name="delete" size="sm"/>
@@ -172,7 +172,7 @@ const myRole = computed(() => store.state.account.tables.groupTable.byId[props.s
 
             <q-item clickable v-close-popup class="bg-white text-red"
                     :disable="server.lock === 'lock-operation'"
-                    @click="store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'delete_force', isGroup})">
+                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete_force', isGroup})">
               <div class="row">
                 <q-item-section class="col-auto">
                   <q-icon name="delete_forever" size="sm"/>

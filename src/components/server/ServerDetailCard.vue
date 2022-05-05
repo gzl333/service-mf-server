@@ -118,7 +118,7 @@ const gotoManualVpn = () => {
                     <q-btn v-if="!isGroup || isGroup && myRole!=='member'"
                            :disable="toggle"
                            class="col-shrink q-px-xs" flat dense icon="edit" size="sm" color="primary"
-                           @click="$store.dispatch('server/editServerNoteDialog',{serverId:server.id, isGroup})">
+                           @click="store.editServerNoteDialog({serverId:server.id, isGroup})">
                       <q-tooltip>
                         编辑备注
                       </q-tooltip>
@@ -136,7 +136,7 @@ const gotoManualVpn = () => {
                   unchecked-icon="lock_open"
                   color="light-green"
                   size="lg"
-                  @click=" $store.dispatch('server/toggleOperationLock', {isGroup:isGroup, serverId: serverId })"
+                  @click="store.toggleOperationLock( {isGroup:isGroup, serverId: serverId })"
                 >
                   <q-tooltip v-if="server.lock === 'lock-operation'">
                     {{ tc('已锁定云主机操作') }}
@@ -149,7 +149,7 @@ const gotoManualVpn = () => {
                 <q-btn :disable="!server.status"
                        unelevated flat padding="none" size="lg" :color="server.status==1?'primary':'grey-5'"
                        icon="computer"
-                       @click="server.status==1?$store.dispatch('server/gotoVNC',server.id):''">
+                       @click="server.status==1?store.gotoVNC(server.id):''">
                   <q-tooltip v-if="server.status==1">
                     远程控制
                   </q-tooltip>
@@ -169,7 +169,7 @@ const gotoManualVpn = () => {
                        :disable="server.lock === 'lock-operation'"
                        icon="play_arrow" text-color="primary"
                        unelevated flat padding="none" size="lg"
-                       @click="$store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'start', isGroup})">
+                       @click="store.serverOperationDialog({serverId: server.id, action: 'start', isGroup})">
                   <q-tooltip>
                     开机
                   </q-tooltip>
@@ -179,7 +179,7 @@ const gotoManualVpn = () => {
                        :disable="server.lock === 'lock-operation'"
                        icon="power_settings_new" text-color="primary"
                        unelevated flat padding="none" size="lg"
-                       @click="$store.dispatch('server/serverOperationDialog',{ serverId: server.id, action: 'shutdown', isGroup})">
+                       @click="store.serverOperationDialog({ serverId: server.id, action: 'shutdown', isGroup})">
                   <q-tooltip>
                     关机
                   </q-tooltip>
@@ -189,7 +189,7 @@ const gotoManualVpn = () => {
                        :disable="server.lock === 'lock-operation'"
                        icon="restart_alt" text-color="primary"
                        unelevated flat padding="none" size="lg"
-                       @click="$store.dispatch('server/serverOperationDialog',{ serverId: server.id, action: 'reboot', isGroup})">
+                       @click="store.serverOperationDialog({ serverId: server.id, action: 'reboot', isGroup})">
                   <q-tooltip>
                     重启
                   </q-tooltip>
@@ -199,7 +199,7 @@ const gotoManualVpn = () => {
                        :disable="server.lock === 'lock-operation'"
                        icon="power_off" text-color="primary"
                        unelevated flat padding="none" size="lg"
-                       @click="$store.dispatch('server/serverOperationDialog',{serverId: server.id, action: 'poweroff', isGroup})">
+                       @click="store.serverOperationDialog({serverId: server.id, action: 'poweroff', isGroup})">
                   <q-tooltip>
                     强制断电
                   </q-tooltip>
@@ -213,7 +213,7 @@ const gotoManualVpn = () => {
                          :disable="server.lock === 'lock-operation'"
                          icon="build" text-color="primary"
                          unelevated flat padding="none" size="lg"
-                         @click="$store.dispatch('server/triggerServerRebuildDialog',{ serverId: server.id,  isGroup})">
+                         @click="store.triggerServerRebuildDialog({ serverId: server.id,  isGroup})">
                     <q-tooltip>
                       重建云主机
                     </q-tooltip>
@@ -223,7 +223,7 @@ const gotoManualVpn = () => {
                          :disable="server.lock === 'lock-operation'"
                          icon="delete" text-color="red"
                          unelevated flat padding="none" size="lg"
-                         @click="$store.dispatch('server/serverOperationDialog',{ serverId: server.id, action: 'delete', isGroup, isJump: true})">
+                         @click="store.serverOperationDialog({ serverId: server.id, action: 'delete', isGroup, isJump: true})">
                     <q-tooltip>
                       删除
                     </q-tooltip>
@@ -233,7 +233,7 @@ const gotoManualVpn = () => {
                          :disable="server.lock === 'lock-operation'"
                          icon="delete_forever" text-color="red"
                          unelevated flat padding="none" size="lg"
-                         @click="$store.dispatch('server/serverOperationDialog',{ serverId: server.id, action: 'delete_force', isGroup, isJump: true})">
+                         @click="store.serverOperationDialog({ serverId: server.id, action: 'delete_force', isGroup, isJump: true})">
                     <q-tooltip>
                       强制删除
                     </q-tooltip>
@@ -323,12 +323,12 @@ const gotoManualVpn = () => {
                             复制
                           </q-tooltip>
                         </q-btn>
-                        <q-btn icon="edit" size="sm" dense flat color="primary"
-                               @click="$store.dispatch('server/popEditVpnPass',  vpn)">
-                          <q-tooltip>
-                            修改
-                          </q-tooltip>
-                        </q-btn>
+<!--                        <q-btn icon="edit" size="sm" dense flat color="primary"-->
+<!--                               @click="$store.dispatch('server/popEditVpnPass',  vpn)">-->
+<!--                          <q-tooltip>-->
+<!--                            修改-->
+<!--                          </q-tooltip>-->
+<!--                        </q-btn>-->
                       </template>
                     </q-input>
                   </div>
@@ -339,7 +339,7 @@ const gotoManualVpn = () => {
                   <div class="col-3 text-grey">VPN 配置文件</div>
                   <div class="col">
                     <q-btn label="下载" class=" " color="primary" padding="none" dense flat
-                           @click="$store.dispatch('server/fetchConfig', server.service)"/>
+                           @click="store.fetchConfig(server.service)"/>
                   </div>
                 </div>
 
@@ -347,7 +347,7 @@ const gotoManualVpn = () => {
                   <div class="col-3 text-grey">VPN CA证书</div>
                   <div class="col">
                     <q-btn label="下载" class="" color="primary" padding="none" dense flat
-                           @click="$store.dispatch('server/fetchCa', server.service)"/>
+                           @click="store.fetchCa(server.service)"/>
                   </div>
                 </div>
 

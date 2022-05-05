@@ -324,7 +324,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                 :disable="props.row.lock === 'lock-operation'"
                 v-if="hoverRow === props.row.name && (!isGroup || (isGroup && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
                 class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
-                @click="store.dispatch('server/editServerNoteDialog',{serverId:props.row.id, isGroup})">
+                @click="store.editServerNoteDialog({serverId:props.row.id, isGroup})">
                 <q-tooltip>
                   {{ tc('编辑备注') }}
                 </q-tooltip>
@@ -338,7 +338,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           <q-td key="vnc" :props="props" class="non-selectable q-pa-none">
             <q-btn v-if="props.row.status === 1" unelevated flat padding="none" size="lg" color="primary"
                    icon="computer"
-                   @click="store.dispatch('server/gotoVNC',props.row.id)">
+                   @click="store.gotoVNC(props.row.id)">
               <q-tooltip>{{ tc('进入远程控制') }}</q-tooltip>
             </q-btn>
             <q-btn v-else unelevated flat padding="none" size="lg" color="grey-5" icon="computer">
