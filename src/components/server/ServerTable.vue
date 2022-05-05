@@ -180,7 +180,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
             <q-btn
               class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
-              :to="{path: isGroup ? `/my/group/server/detail/${props.row.id}` : `/my/personal/server/detail/${props.row.id}`}">
+              :to="{path: isGroup ? `/my/server/group/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`}">
               <q-tooltip>
                 {{ tc('云主机详情') }}
               </q-tooltip>

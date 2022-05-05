@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
             props: true // 接收url中的参数
           },
           {
-            path: 'detail/:id', // serverId 动态路由匹配
+            path: 'detail/:serverId', // serverId 动态路由匹配
             component: () => import('pages/personal/ServerDetail.vue')
           }
         ]
