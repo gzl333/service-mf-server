@@ -2,8 +2,10 @@
 // import { ref, computed } from "vue"
 // import { navigateToUrl } from 'single-spa'
 // import { useStore } from 'stores/store'
-// import { useRoute, useRouter } from 'vue-router'
-// import { i18n } from 'boot/i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { i18n } from 'boot/i18n'
+
+import ServerDeployCard from 'components/server/ServerDeployCard.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -15,15 +17,32 @@
 // const emits = defineEmits(['change', 'delete'])
 
 // const store = useStore()
-// const route = useRoute()
-// const router = useRouter()
-// const tc = i18n.global.tc
+const route = useRoute()
+const router = useRouter()
+const tc = i18n.global.tc
+
+const serviceId = route.query.service as string
+const quotaId = route.query.quota as string
 
 </script>
 
 <template>
   <div class="ServerDeploy">
-    this is ServerDeploy
+    <div class="column q-py-md">
+
+      <div class="col">
+        <div class="row items-center title-area q-pb-md">
+          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
+                 @click="router.back()"/>
+          <span>{{ tc('新建个人云主机') }}</span>
+        </div>
+      </div>
+
+      <div class="col">
+        <ServerDeployCard :isGroup="false" :quotaId="quotaId" :serviceId="serviceId"/>
+      </div>
+
+    </div>
   </div>
 </template>
 
