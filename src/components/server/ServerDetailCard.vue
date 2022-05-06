@@ -37,7 +37,7 @@ const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId
 // service info
 const service = computed(() => store.tables.serviceTable.byId[server.value?.service])
 // quota info
-const quota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[server.value.user_quota] : store.tables.personalQuotaTable.byId[server.value?.user_quota])
+// const quota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[server.value.user_quota] : store.tables.personalQuotaTable.byId[server.value?.user_quota])
 // vpn info
 const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service])
 
@@ -382,24 +382,24 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">关联配额</div>
-                  <div class="col-shrink">
+<!--                <div class="row q-pb-md items-center">-->
+<!--                  <div class="col-3 text-grey">关联配额</div>-->
+<!--                  <div class="col-shrink">-->
 
-                    <div v-if="quota">
-                      <q-btn label="配额详情" flat dense color="primary" padding="none"
-                             :to="{path: isGroup ? `/my/group/quota/detail/${quota?.id}` : `/my/personal/quota/detail/${quota?.id}`}">
-                        <q-tooltip>
-                          配额详情
-                        </q-tooltip>
-                      </q-btn>
-                      <!--                      {{ quota?.display }}-->
-                    </div>
+<!--                    <div v-if="quota">-->
+<!--                      <q-btn label="配额详情" flat dense color="primary" padding="none"-->
+<!--                             :to="{path: isGroup ? `/my/group/quota/detail/${quota?.id}` : `/my/personal/quota/detail/${quota?.id}`}">-->
+<!--                        <q-tooltip>-->
+<!--                          配额详情-->
+<!--                        </q-tooltip>-->
+<!--                      </q-btn>-->
+<!--                      &lt;!&ndash;                      {{ quota?.display }}&ndash;&gt;-->
+<!--                    </div>-->
 
-                    <div v-else>关联配额已删除</div>
+<!--                    <div v-else>关联配额已删除</div>-->
 
-                  </div>
-                </div>
+<!--                  </div>-->
+<!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">创建者</div>

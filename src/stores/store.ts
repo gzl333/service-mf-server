@@ -2,12 +2,13 @@
 
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
-import { axios } from 'boot/axios'
+import { axios, baseURLServer } from 'boot/axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
 import { Dialog, Notify } from 'quasar'
 
 import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
+import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -1678,6 +1679,22 @@ export const useStore = defineStore('server', {
 
     /* dialogs */
     /* server */
+    // 打开vnc
+    async gotoVNC (id: string) {
+      const response = await api.server.server.getServerVnc({ path: { id } })
+      const url = response.data.vnc.url
+      window.open(url)
+    },
+    // 下载vpn ca
+    fetchCa (serviceId: string) {
+      const url = baseURLServer + '/vpn/' + serviceId + '/ca'
+      window.open(url)
+    },
+    // 下载vpn config
+    fetchConfig (serviceId: string) {
+      const url = baseURLServer + '/vpn/' + serviceId + '/config'
+      window.open(url)
+    },
     // 修改server.lock的operation状态( lock-delete <-> lock-operation )
     async toggleOperationLock (payload: { serverId: string; isGroup: boolean }) {
       const lock = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId]?.lock : this.tables.personalServerTable.byId[payload.serverId]?.lock
@@ -1841,7 +1858,104 @@ export const useStore = defineStore('server', {
         }).onOk(executeOperation)
       }
     },
-
+    // 编辑云主机备注
+    editServerNoteDialog (payload: { serverId: string; isGroup?: boolean }) {
+      Dialog.create({
+        class: 'dialog-primary',
+        title: `编辑${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].ipv4 : this.tables.personalServerTable.byId[payload.serverId].ipv4}的备注信息`,
+        // message: '长度限制为40个字',
+        prompt: {
+          model: `${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].remarks : this.tables.personalServerTable.byId[payload.serverId].remarks}`,
+          counter: true,
+          maxlength: 40,
+          type: 'text' // optional
+        },
+        color: 'primary',
+        cancel: true
+      }).onOk(async (data: string) => {
+        const respPatchRemark = await api.server.server.patchServerRemark({
+          path: { id: payload.serverId },
+          query: { remark: data.trim() }
+        })
+        if (respPatchRemark.status === 200) {
+          if (payload.isGroup) {
+            this.tables.groupServerTable.byId[payload.serverId].remarks = respPatchRemark.data.remarks
+          } else {
+            this.tables.personalServerTable.byId[payload.serverId].remarks = respPatchRemark.data.remarks
+          }
+          // 弹出通知
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'check_circle',
+            textColor: 'light-green',
+            message: '成功修改云主机备注为: ' + respPatchRemark.data.remarks,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      })
+    },
+    triggerServerRebuildDialog (payload: { serverId: string, isGroup?: boolean }) {
+      Dialog.create({
+        component: ServerRebuildDialog,
+        componentProps: {
+          serverId: payload.serverId,
+          isGroup: payload.isGroup
+        }
+      }).onOk(async (image_id: string) => {
+        const server = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
+        // 去掉协议
+        const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
+        const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/rebuild' : endpoint_url + '/api/server/' + payload.serverId + '/rebuild')
+        const data = { image_id }
+        // notify
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          textColor: 'positive',
+          spinner: true,
+          message: `正在重建云主机: ${server.ipv4 || ''}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+        // 发送请求
+        const respPostServerRebuild = await axios.post(api, data)
+        // console.log(payload.serverId, api, data)
+        if (respPostServerRebuild.status === 202) {
+          // 应延时
+          void await new Promise(resolve => (
+            setTimeout(resolve, 5000)
+          ))
+          // 更新该server
+          void await this.loadSingleServer({
+            serverId: payload.serverId,
+            isGroup: payload.isGroup || false
+          })
+          // notify
+          const newServer = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
+          if (newServer.image_id === image_id) {
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              textColor: 'positive',
+              icon: 'check_circle',
+              message: `成功重建云主机: ${server.ipv4 || ''}`,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          } else {
+            // 可能重建失败，也可能是延时超过上面的5000
+          }
+          // jump 成功才跳转
+          // @ts-ignore
+          // payload.isGroup ? this.$router.push(`/my/group/server/detail/${payload.serverId}`) : this.$router.push(`/my/personal/server/detail/${payload.serverId}`)
+        }
+      })
+    },
     /* server */
     /* dialogs */
 
