@@ -4,7 +4,8 @@ import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import buttonAdd from 'components/personal/buttonAdd.vue'
+
+import ButtonAdd from 'components/personal/ButtonAdd.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -24,7 +25,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
 </script>
 
 <template>
-  <div class="Index">
+  <div class="PersonalIndex">
     <div class="column">
 
       <!--      <div class="col-auto">-->
@@ -66,7 +67,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                 </q-tabs>
               </div>
               <div class="col-1">
-                <buttonAdd/>
+                <ButtonAdd/>
               </div>
             </div>
           </div>
@@ -86,6 +87,6 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
 </template>
 
 <style lang="scss" scoped>
-.Index {
+.PersonalIndex {
 }
 </style>

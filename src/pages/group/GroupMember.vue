@@ -14,7 +14,7 @@
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const { tc } = i18n.global
+// const { tc, locale } = i18n.global
 // const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
@@ -22,12 +22,12 @@
 </script>
 
 <template>
-  <div class="${NAME}">
-    this is ${NAME}
+  <div class="GroupMember">
+    this is GroupMember
   </div>
 </template>
 
 <style lang="scss" scoped>
-.${NAME} {
+.GroupMember {
 }
 </style>

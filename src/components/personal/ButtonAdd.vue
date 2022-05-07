@@ -19,7 +19,7 @@ const fabButton = ref(false)
 </script>
 
 <template>
-  <div class="buttonAdd">
+  <div class="ButtonAdd">
     <q-fab
       style="float: right; transform: translate(0, 65%);"
       v-model="fabButton"
@@ -31,13 +31,11 @@ const fabButton = ref(false)
     >
       <q-fab-action :label="tc('新建个人云主机')" unelevated color="primary" icon="computer"
                     @click="navigateToUrl('/my/server/personal/deploy')"/>
-      <q-fab-action :label="tc('申请个人云主机配额')" unelevated color="primary" icon="description"
-                    @click="navigateToUrl('/my/server/personal/deploy')"/>
     </q-fab>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.buttonAdd {
+.ButtonAdd {
 }
 </style>

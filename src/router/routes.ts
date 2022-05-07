@@ -29,10 +29,16 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'group',
         component: () => import('pages/group/GroupIndex.vue'),
+        redirect: '/my/server/group/list',
         children: [
           {
             path: 'list', // 组列表
             component: () => import('pages/group/GroupList.vue')
+          },
+          {
+            path: 'create',
+            component: () => import('pages/group/GroupCreate.vue'),
+            props: true // 接收url中的参数
           },
           {
             path: 'detail/:id', // groupId 动态路由匹配
@@ -40,15 +46,19 @@ const routes: RouteRecordRaw[] = [
             props: true // 接收url中的参数
           },
           {
-            path: 'serverlist', // 组资源
+            path: 'member/:id', // groupId 动态路由匹配
+            component: () => import('pages/group/GroupMember.vue')
+          },
+          {
+            path: 'server/list', // 组资源
             component: () => import('pages/group/ServerList.vue')
           },
           {
-            path: 'serverdetail/:id', // serverId 动态路由匹配
+            path: 'server/detail/:id', // serverId 动态路由匹配
             component: () => import('pages/group/ServerDetail.vue')
           },
           {
-            path: 'deploy',
+            path: 'server/deploy',
             component: () => import('pages/group/ServerDeploy.vue'),
             props: true // 接收url中的参数
           }
