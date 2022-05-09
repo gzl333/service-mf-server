@@ -116,7 +116,7 @@ const releaseTime = process.env.releaseTime
     </q-drawer>
 
     <q-page-container>
-      <q-scroll-area style="height: 100vh;">
+      <q-scroll-area style="height: calc(100vh - 60px);">
         <router-view/>
       </q-scroll-area>
     </q-page-container>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
-// import { navigateToUrl } from 'single-spa'
+import { navigateToUrl } from 'single-spa'
 import { useStore, ServerInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
@@ -180,7 +180,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
             <q-btn
               class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
-              :to="{path: isGroup ? `/my/server/group/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`}">
+              @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`)">
               <q-tooltip>
                 {{ tc('云主机详情') }}
               </q-tooltip>
@@ -211,7 +211,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               color="primary"
               padding="none" flat dense unelevated
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
-              :to="{path: `/my/group/detail/${props.row.vo_id}`}">
+              @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
                 {{ tc('项目组详情') }}
               </q-tooltip>

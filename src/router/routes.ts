@@ -41,20 +41,16 @@ const routes: RouteRecordRaw[] = [
             props: true // 接收url中的参数
           },
           {
-            path: 'detail/:id', // groupId 动态路由匹配
+            path: 'detail/:groupId', // groupId 动态路由匹配
             component: () => import('pages/group/GroupDetail.vue'),
             props: true // 接收url中的参数
-          },
-          {
-            path: 'member/:id', // groupId 动态路由匹配
-            component: () => import('pages/group/GroupMember.vue')
           },
           {
             path: 'server/list', // 组资源
             component: () => import('pages/group/ServerList.vue')
           },
           {
-            path: 'server/detail/:id', // serverId 动态路由匹配
+            path: 'server/detail/:serverId', // serverId 动态路由匹配
             component: () => import('pages/group/ServerDetail.vue')
           },
           {

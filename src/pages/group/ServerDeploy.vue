@@ -2,8 +2,10 @@
 // import { ref, computed } from "vue"
 // import { navigateToUrl } from 'single-spa'
 // import { useStore } from 'stores/store'
-// import { useRoute, useRouter } from 'vue-router'
-// import { i18n } from 'boot/i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { i18n } from 'boot/i18n'
+
+import ServerDeployCard from 'components/server/ServerDeployCard.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -15,19 +17,44 @@
 // const emits = defineEmits(['change', 'delete'])
 
 // const store = useStore()
-// const route = useRoute()
-// const router = useRouter()
-// const tc = i18n.global.tc
+const route = useRoute()
+const router = useRouter()
+const tc = i18n.global.tc
+
+const groupId = route.query.group as string
+const serviceId = route.query.service as string
+const quotaId = route.query.quota as string
 
 </script>
 
 <template>
   <div class="ServerDeploy">
-    this is ServerDeploy
+    <div class="column q-py-md">
+
+      <div class="col">
+        <div class="row items-center title-area q-pb-md">
+          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
+                 @click="router.back()"/>
+          <span>{{ tc('新建项目组云主机') }}</span>
+        </div>
+      </div>
+
+      <div class="col">
+        <server-deploy-card :is-group="true" :quota-id="quotaId" :service-id="serviceId" :group-id="groupId"/>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .ServerDeploy {
+}
+.title-area {
+  width: 1230px;
+  text-align: left;
+  color: $primary;
+  font-size: large;
+  font-weight: bold;
 }
 </style>

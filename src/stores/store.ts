@@ -6,9 +6,12 @@ import { axios, baseURLServer } from 'boot/axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
 import { Dialog, Notify } from 'quasar'
+import { navigateToUrl } from 'single-spa'
 
 import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
+import GroupEditCard from 'components/group/GroupEditCard.vue'
+import GroupAddMemberCard from 'components/group/GroupAddMemberCard.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -1003,6 +1006,18 @@ export const useStore = defineStore('server', {
         void this.loadGroupQuotaTable()
       })
     },
+    // 强制加载group相关table
+    forceLoadGroupModuleTable () {
+      void this.loadGroupTable().then(() => {
+        // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+        void this.loadGroupMemberTable().then(() => {
+          // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+          void this.loadGroupQuotaApplicationTable()
+        })
+        void this.loadGroupServerTable()
+        void this.loadGroupQuotaTable()
+      })
+    },
     loadAllTables () {
       if (this.tables.dataCenterTable.status === 'init') {
         void this.loadDataCenterTable().then(() => { // 1. 基础依赖
@@ -1958,12 +1973,345 @@ export const useStore = defineStore('server', {
     },
     /* server */
 
-    /* dialogs */
+    /* account */
+    /* 修改group信息 */
+    editGroupDialog (groupId: string) {
+      // // 把整个对话框对象包在promise里。删除成功、失败包装为promise结果值。
+      // return new Promise((resolve, reject) => {
+      // 操作的确认提示
+      Dialog.create({
+        component: GroupEditCard,
+        componentProps: {
+          groupId
+        }
+      }).onOk(async (val: { name: string; company: string; description: string }) => {
+        // val是onDialogOK调用时传入的实参
+        // 发送patch请求
+        const respPatchGroup = await api.server.vo.patchVo({
+          path: { id: groupId },
+          body: val
+        })
+        if (respPatchGroup.status === 200) {
+          // 加入myRole字段
+          Object.assign(respPatchGroup.data, { myRole: this.tables.groupTable.byId[groupId].myRole })
+          // 保存响应内最新信息
+          const newGroup = { [respPatchGroup.data.id]: respPatchGroup.data }
+          // 保存最新group
+          Object.assign(this.tables.groupTable.byId, newGroup)
+          this.tables.groupTable.allIds.unshift(Object.keys(newGroup as Record<string, unknown>)[0])
+          this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
+          // 弹出通知
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'light-green',
+            message: '项目组信息修改成功',
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+          // resolve(true)
+        } /* else {
+        // 弹出通知
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: '项目组信息修改失败，请重试',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+        // reject(false) // 待研究：用reject还是resolve
+      } */
+      })
+      // })
+    },
+    /* 修改group信息 */
 
-    // test, to be deleted
-    async getImages () {
-      return await api.server.image.getImage({ query: { service_id: '1' } })
+    /* 增加group成员 */
+    addGroupMemberDialog (groupId: string) {
+      Dialog.create({
+        component: GroupAddMemberCard,
+        componentProps: {
+          groupId
+        }
+      }).onOk(async (val: { /* groupId: string; */usernames: string[] }) => { // val是onDialogOK调用时传入的实参
+        // 发送patch请求
+        const respPostAddMembers = await api.server.vo.postVoAddMembers({
+          path: { id: groupId },
+          body: val
+        })
+        // 此请求可能有多个成功，多个失败混在一起。因此不能用状态码判断。
+        // 把成功的账户member信息存入table
+        for (const member of respPostAddMembers.data.success) {
+          // 存入单个member
+          // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
+          // 删掉已有的同名member
+          this.tables.groupMemberTable.byId[groupId].members = this.tables.groupMemberTable.byId[groupId].members.filter((memberGroup) => {
+            return memberGroup.user.username !== member.user.username
+          })
+          // 增加新拿到的member
+          this.tables.groupMemberTable.byId[groupId].members.unshift(member)
+          // 通知：单个member成功信息
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'light-green',
+            message: '已经成功添加成员:' + member.user.username,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+        // 通知：失败账户错误信息
+        for (const member of respPostAddMembers.data.failed) {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: '添加成员失败：' + member.username + ' - ' + member.message,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      })
+    },
+    /* 增加group成员 */
+
+    /* 移除group成员 */
+    removeSingleGroupMemberDialog (payload: { groupId: string; username: string }) {
+      // 操作的确认提示
+      Dialog.create({
+        class: 'dialog-primary',
+        title: '移除项目组成员：' + payload.username,
+        message:
+          '确认移除?',
+        focus: 'cancel',
+        ok: {
+          label: '确认',
+          push: false,
+          outline: true,
+          color: 'primary'
+        },
+        cancel: {
+          label: '放弃',
+          push: false,
+          unelevated: true,
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        const respPostRemoveMembers = await api.server.vo.postVoRemoveMembers({
+          path: { id: payload.groupId },
+          body: { usernames: [payload.username] }
+        })
+        if (respPostRemoveMembers.status === 204) {
+          // 保存最新group
+          this.tables.groupMemberTable.byId[payload.groupId].members = this.tables.groupMemberTable.byId[payload.groupId].members.filter((member) => {
+            return member.user.username !== payload.username
+          })
+          // 弹出通知
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'light-green',
+            message: '已经移除项目组成员：' + payload.username,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      })
+    },
+    /* 移除group成员 */
+
+    /* 修改group成员角色 */
+    editGroupMemberRoleDialog (payload: { groupId: string; member_id: string; role: 'member' | 'leader'; role_name: string }) {
+      // 操作的确认提示
+      Dialog.create({
+        class: 'dialog-primary',
+        title: '将成员设置为：' + payload.role_name,
+        message:
+          '确认设置?',
+        focus: 'cancel',
+        ok: {
+          label: '确认',
+          push: false,
+          outline: true,
+          color: 'primary'
+        },
+        cancel: {
+          label: '放弃',
+          push: false,
+          unelevated: true,
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        const respPostMemberRole = await api.server.vo.postVoMembersRole({
+          path: {
+            member_id: payload.member_id,
+            role: payload.role
+          }
+        })
+        if (respPostMemberRole.status === 200) {
+          // 保存最新member
+          // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
+          // 删掉已有的同名member
+          this.tables.groupMemberTable.byId[payload.groupId].members = this.tables.groupMemberTable.byId[payload.groupId].members.filter((memberGroup) => {
+            return memberGroup.user.username !== respPostMemberRole.data.user.username
+          })
+          // 增加新拿到的member
+          this.tables.groupMemberTable.byId[payload.groupId].members.unshift(respPostMemberRole.data)
+
+          // 弹出通知
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'light-green',
+            message: '已经设置成员：' + respPostMemberRole.data.user.username + '为' + payload.role_name,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      })
+    },
+    /* 修改group成员角色 */
+
+    /* 新建group */
+    async createGroupDialog (payload: { name: string; company: string; description: string; }) {
+      // 检查输入合法性
+      if (payload.name.trim() === '' || payload.company.trim() === '' || payload.description.trim() === '') {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: '输入项不可为空，请全部填写',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      } else {
+        const respPostVO = await api.server.vo.postVo({ body: payload })
+        if (respPostVO.status === 200) {
+          // 重要：更新table，因为group是个根依赖，新增一个组，要牵涉数据非常多，不如直接全部重读组相关数
+          void await this.forceLoadGroupModuleTable()
+          // 通知
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'light-green',
+            message: '新建项目组成功',
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+          // 跳转到group list
+          navigateToUrl('/my/server/group/list')
+        } // 失败则由axios统一报错
+      }
+    },
+    /* 新建group */
+
+    /* 删除group */
+    deleteGroupDialog (groupId: string) {
+      // 检查组内:云主机、配额、配额申请记录 是否删除干净
+      const isServerPurged = Boolean(this.getGroupServersByGroupId(groupId).length === 0)
+      const isQuotaPurged = Boolean(this.getGroupQuotasByGroupIdByStatus(groupId, 'all').length === 0)
+      const isQuotaApplicationPurged = Boolean(this.getGroupQuotaApplicationsByGroupId(groupId).length === 0)
+
+      if (!isServerPurged) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-check-circle',
+          textColor: 'red',
+          message: '请将组内的云主机全部删除后，再解散该项目组',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      } else if (!isQuotaPurged) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-check-circle',
+          textColor: 'red',
+          message: '请将组内的云主机配额全部删除后，再解散该项目组',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      } else if (!isQuotaApplicationPurged) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-check-circle',
+          textColor: 'red',
+          message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      } else {
+        // 操作的确认提示
+        Dialog.create({
+          class: 'dialog-primary',
+          title: '解散项目组',
+          message:
+            '解散后的项目组无法恢复。 确认解散？',
+          focus: 'cancel',
+          ok: {
+            label: '确认',
+            push: false,
+            outline: true,
+            color: 'primary'
+          },
+          cancel: {
+            label: '放弃',
+            push: false,
+            unelevated: true,
+            color: 'primary'
+          }
+        }).onOk(async () => {
+          // 发送请求
+          const respDeleteVO = await api.server.vo.deleteVo({ path: { id: groupId } })
+          if (respDeleteVO.status === 204) {
+            // 更新table，因为group是个根依赖，删除一个组，要牵涉数据非常多，不如直接全部重读组相关数据
+            void await this.forceLoadGroupModuleTable()
+            // notify
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              icon: 'mdi-check-circle',
+              textColor: 'light-green',
+              message: '解散项目组成功',
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+            // jump
+            navigateToUrl('/my/server/group/list')
+          }
+        })
+      }
     }
+    /* 删除group */
+    /* account */
 
+    /* provider */
+
+    /* provider */
+
+    /* dialogs */
   }
 })
