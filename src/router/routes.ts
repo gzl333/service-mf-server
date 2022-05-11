@@ -68,10 +68,16 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'provider',
         component: () => import('pages/provider/ProviderIndex.vue'),
+        redirect: '/my/server/provider/server',
         meta: {
-          requireServiceAdmin: true // 服务管理员才能访问
+          requireServiceAdmin: true // 服务管理员权限才能访问
         },
-        children: []
+        children: [
+          {
+            path: 'server',
+            component: () => import('pages/provider/ServerDeployed.vue')
+          }
+        ]
       },
       {
         path: 'management',
