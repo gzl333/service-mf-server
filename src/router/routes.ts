@@ -82,7 +82,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'management',
         component: () => import('pages/management/ManagementIndex.vue'),
-        children: []
+        redirect: '/my/server/management/resource',
+        children: [{
+          path: 'resource',
+          component: () => import('pages/management/TotalResource.vue')
+        }]
       }
     ]
   },
