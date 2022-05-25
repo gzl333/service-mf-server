@@ -1133,9 +1133,6 @@ export const useStore = defineStore('server', {
     },
 
     /* load tables */
-
-
-
     /* tables */
     // 加载groupTable
     async loadGroupTable () {
@@ -2303,29 +2300,29 @@ export const useStore = defineStore('server', {
           timeout: 5000,
           multiLine: false
         })
-      // }
-      // else if (!isQuotaPurged) {
-      //   Notify.create({
-      //     classes: 'notification-negative shadow-15',
-      //     icon: 'mdi-check-circle',
-      //     textColor: 'red',
-      //     message: '请将组内的云主机配额全部删除后，再解散该项目组',
-      //     position: 'bottom',
-      //     closeBtn: true,
-      //     timeout: 5000,
-      //     multiLine: false
-      //   })
-      // } else if (!isQuotaApplicationPurged) {
-      //   Notify.create({
-      //     classes: 'notification-negative shadow-15',
-      //     icon: 'mdi-check-circle',
-      //     textColor: 'red',
-      //     message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
-      //     position: 'bottom',
-      //     closeBtn: true,
-      //     timeout: 5000,
-      //     multiLine: false
-      //   })
+        // }
+        // else if (!isQuotaPurged) {
+        //   Notify.create({
+        //     classes: 'notification-negative shadow-15',
+        //     icon: 'mdi-check-circle',
+        //     textColor: 'red',
+        //     message: '请将组内的云主机配额全部删除后，再解散该项目组',
+        //     position: 'bottom',
+        //     closeBtn: true,
+        //     timeout: 5000,
+        //     multiLine: false
+        //   })
+        // } else if (!isQuotaApplicationPurged) {
+        //   Notify.create({
+        //     classes: 'notification-negative shadow-15',
+        //     icon: 'mdi-check-circle',
+        //     textColor: 'red',
+        //     message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
+        //     position: 'bottom',
+        //     closeBtn: true,
+        //     timeout: 5000,
+        //     multiLine: false
+        //   })
       } else {
         // 操作的确认提示
         Dialog.create({
