@@ -5,6 +5,14 @@
 import { axiosServer } from 'boot/axios'
 
 export default {
+  account: {
+    getAccountBalanceUser () {
+      return axiosServer.get('/account/balance/user')
+    },
+    getAccountBalanceVo (payload: { path: { vo_id: string } }) {
+      return axiosServer.get('/account/balance/vo/' + payload.path.vo_id)
+    }
+  },
   apply: {
     getApplyOrganization (payload: {
       query?: {

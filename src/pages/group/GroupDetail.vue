@@ -154,6 +154,19 @@ const tab = ref(show ?? 'server')
                 </div>
               </div>
 
+              <div class="col-auto ">
+                <div class="column justify-start items-center" style="height: 120px">
+                  <div class="col-2 text-grey">
+                    余额
+                  </div>
+                  <div class="col-10">
+                    <div class="row justify-center items-center" style="height: 70px">
+                      {{store.tables.groupBalanceTable.byId[group.balance].balance}}点
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div v-if="group.myRole !== 'member'" class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">

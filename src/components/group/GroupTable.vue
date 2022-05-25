@@ -68,6 +68,14 @@ const columns = computed(() => [
   //   headerStyle: 'padding: 0 5px'
   // },
   {
+    name: 'balance',
+    label: i18n.global.locale === 'zh' ? '余额' : 'Balance',
+    field: 'balance',
+    align: 'center',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
     name: 'desc',
     label: i18n.global.locale === 'zh' ? '备注' : 'Note',
     field: 'desc',
@@ -163,12 +171,16 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             </q-btn>
           </q-td>
 
-<!--          <q-td key="quota" :props="props">-->
-<!--            <q-btn color="primary" flat padding="none" dense-->
-<!--                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=quota`)">-->
-<!--              {{ store.getGroupQuotasByGroupIdByStatus(props.row.id, 'valid').length }}个-->
-<!--            </q-btn>-->
-<!--          </q-td>-->
+          <!--          <q-td key="quota" :props="props">-->
+          <!--            <q-btn color="primary" flat padding="none" dense-->
+          <!--                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=quota`)">-->
+          <!--              {{ store.getGroupQuotasByGroupIdByStatus(props.row.id, 'valid').length }}个-->
+          <!--            </q-btn>-->
+          <!--          </q-td>-->
+
+          <q-td key="balance" :props="props">
+              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}点
+          </q-td>
 
           <q-td key="desc" :props="props">
             {{ props.row.description }}

@@ -20,7 +20,7 @@ const tc = i18n.global.tc
 
 // the root layout of @cnic/server, load @cnic/server's  store here
 console.log('@cnic/server store:', store.$state)
-void store.loadServerRole()
+void store.loadAllItems()
 void store.loadAllTables()
 // void store.forceLoadAccountTable()
 

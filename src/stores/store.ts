@@ -27,6 +27,15 @@ const actionMap = new Map<string, string>(
   ]
 )
 
+export interface PersonalBalanceInterface {
+  id: string
+  balance: string
+  creation_time: string
+  user: {
+    id: string
+  }
+}
+
 export interface GroupInterface {
   id: string
   name: string
@@ -42,6 +51,8 @@ export interface GroupInterface {
   // 以下字段自行判断添加
   // 当前用户在组内权限  owner > leader > member
   myRole: 'owner' | 'leader' | 'member'
+  // 余额
+  balance: string // groupBalanceTable 内的id值
 }
 
 export interface SingleMemberInterface {
@@ -60,6 +71,15 @@ export interface GroupMemberInterface {
   owner: {
     id: string
     username: string
+  }
+}
+
+export interface GroupBalanceInterface {
+  id: string
+  balance: string
+  creation_time: string
+  vo: {
+    id: string
   }
 }
 
@@ -335,6 +355,10 @@ export interface GroupTableInterface extends totalTable, idTable<GroupInterface>
 export interface GroupMemberTableInterface extends totalTable, idTable<GroupMemberInterface> {
 }
 
+// 组的余额table: balanceId -> balance
+export interface GroupBalanceTableInterface extends totalTable, idTable<GroupBalanceInterface> {
+}
+
 // 联邦层级datacenter
 export interface DataCenterTableInterface extends totalTable, idTable<DataCenterInterface> {
 }
@@ -413,7 +437,9 @@ export const useStore = defineStore('server', {
         currentPath: [] as string[],
         // 账户在server服务内的身份
         fedRole: '' as 'ordinary' | 'federal-admin', // 联邦层级：普通用户还是管理员
-        adminServiceIds: [] as string[] // 有vms管理员权限的接入服务id
+        adminServiceIds: [] as string[], // 有vms管理员权限的接入服务id
+        // 个人账户余额
+        personalBalance: {} as PersonalBalanceInterface
       },
       tables: {
         /* 整体加载表：一旦加载则全部加载 */
@@ -427,6 +453,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupMemberTableInterface,
+        groupBalanceTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupBalanceTableInterface,
         dataCenterTable: {
           byId: {},
           allIds: [],
@@ -995,18 +1026,29 @@ export const useStore = defineStore('server', {
     }
   },
   actions: {
-    /* load tables */
-    forceLoadAccountTable () {
-      void this.loadGroupTable().then(() => {
-        // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
-        void this.loadGroupMemberTable().then(() => {
-          // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-          // void this.loadGroupQuotaApplicationTable()
-        })
-        void this.loadGroupServerTable()
-        // void this.loadGroupQuotaTable()
-      })
+
+    /* items */
+    async loadAllItems () {
+      this.loadServerRole()
+      this.loadPersonalBalance()
     },
+    async loadServerRole () {
+      const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
+      if (respGetUserPermissionPolicy.status === 200) {
+        this.items.fedRole = respGetUserPermissionPolicy.data.role
+        this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
+      }
+    },
+    async loadPersonalBalance () {
+      const respGetAccountBalanceUser = await api.server.account.getAccountBalanceUser()
+      if (respGetAccountBalanceUser.status === 200) {
+        this.items.personalBalance = respGetAccountBalanceUser.data
+      }
+    },
+    /* items */
+
+    /* load tables */
+
     // 强制加载group相关table
     forceLoadGroupModuleTable () {
       void this.loadGroupTable().then(() => {
@@ -1017,6 +1059,7 @@ export const useStore = defineStore('server', {
         })
         void this.loadGroupServerTable()
         // void this.loadGroupQuotaTable()
+        void this.loadGroupBalanceTable()
       })
     },
     loadAllTables () {
@@ -1077,6 +1120,9 @@ export const useStore = defineStore('server', {
           // if (this.tables.groupQuotaTable.status === 'init') {
           //   void this.loadGroupQuotaTable()
           // }
+          if (this.tables.groupBalanceTable.status === 'init') {
+            void this.loadGroupBalanceTable()
+          }
         })
       }
 
@@ -1088,15 +1134,7 @@ export const useStore = defineStore('server', {
 
     /* load tables */
 
-    /* items */
-    async loadServerRole () {
-      const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
-      if (respGetUserPermissionPolicy.status === 200) {
-        this.items.fedRole = respGetUserPermissionPolicy.data.role
-        this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
-      }
-    },
-    /* items */
+
 
     /* tables */
     // 加载groupTable
@@ -1159,6 +1197,30 @@ export const useStore = defineStore('server', {
       // load table的最后再改status
       this.tables.groupMemberTable.status = 'total'
     },
+    // 根据groupTable, 建立groupBalanceTable
+    async loadGroupBalanceTable () {
+      // 先清空table，避免多次更新时数据累加
+      this.tables.groupBalanceTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      for (const groupId of this.tables.groupTable.allIds) {
+        const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
+        // normalize
+        const groupBalance = new schema.Entity('groupBalance')
+        const normalizedData = normalize(respGroupBalance.data, groupBalance)
+        // // 存入state
+        Object.assign(this.tables.groupBalanceTable.byId, normalizedData.entities.groupBalance)
+        this.tables.groupBalanceTable.allIds.unshift(Object.keys(normalizedData.entities.groupBalance as Record<string, unknown>)[0])
+        this.tables.groupBalanceTable.allIds = [...new Set(this.tables.groupBalanceTable.allIds)]
+        // 给groupTable补充balance字段
+        this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
+      }
+      // load table的最后再改status
+      this.tables.groupMemberTable.status = 'total'
+    },
+
     /* dataCenterTable */
     async loadDataCenterTable () {
       // 清空table
