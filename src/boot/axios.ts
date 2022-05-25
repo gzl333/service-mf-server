@@ -20,8 +20,8 @@ declare module '@vue/runtime-core' {
 
 // axios instance with base url configured
 
-// export const baseURLServer = window.location.protocol + '//159.226.235.4:2000/api'
-export const baseURLServer = window.location.protocol + '//vms.cstcloud.cn/api'
+export const baseURLServer = window.location.protocol + '//159.226.235.4:2000/api'
+// export const baseURLServer = window.location.protocol + '//vms.cstcloud.cn/api'
 
 const axiosServer = axios.create({
   baseURL: baseURLServer,

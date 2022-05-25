@@ -59,14 +59,14 @@ const columns = computed(() => [
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
   },
-  {
-    name: 'quota',
-    label: i18n.global.locale === 'zh' ? '可用配额' : 'Valid Quotas',
-    field: 'quota',
-    align: 'center',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 5px'
-  },
+  // {
+  //   name: 'quota',
+  //   label: i18n.global.locale === 'zh' ? '可用配额' : 'Valid Quotas',
+  //   field: 'quota',
+  //   align: 'center',
+  //   style: 'padding: 15px 0px',
+  //   headerStyle: 'padding: 0 5px'
+  // },
   {
     name: 'desc',
     label: i18n.global.locale === 'zh' ? '备注' : 'Note',
@@ -163,12 +163,12 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             </q-btn>
           </q-td>
 
-          <q-td key="quota" :props="props">
-            <q-btn color="primary" flat padding="none" dense
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=quota`)">
-              {{ store.getGroupQuotasByGroupIdByStatus(props.row.id, 'valid').length }}个
-            </q-btn>
-          </q-td>
+<!--          <q-td key="quota" :props="props">-->
+<!--            <q-btn color="primary" flat padding="none" dense-->
+<!--                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=quota`)">-->
+<!--              {{ store.getGroupQuotasByGroupIdByStatus(props.row.id, 'valid').length }}个-->
+<!--            </q-btn>-->
+<!--          </q-td>-->
 
           <q-td key="desc" :props="props">
             {{ props.row.description }}

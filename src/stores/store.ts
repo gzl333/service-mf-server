@@ -159,43 +159,43 @@ export interface VpnInterface {
   id: string
 }
 
-export interface QuotaInterface {
-  id: string
-  tag: { // 提出去单做table无用，暂时保留，不拍平
-    value: number
-    display: string
-  },
-  user: { // 提出去单做table无用，暂时保留，不拍平
-    id: string
-    username: string
-  },
-  service: string
-  private_ip_total: number
-  private_ip_used: number
-  public_ip_total: number
-  public_ip_used: number
-  vcpu_total: number
-  vcpu_used: number
-  ram_total: number
-  ram_used: number
-  disk_size_total: number
-  disk_size_used: number
-  expiration_time: never // null 待细化
-  deleted: boolean
-  display: string
-  duration_days: number
-  classification: 'vo' | 'personal' // 配额类型，二选一
-
-  // 来自vo/quota接口的补充
-  vo_id?: string // groupId
-
-  // 来自server接口补充
-  servers?: string[] // serverId
-
-  // 以下为根据上述字段自行判断填充
-  expired: boolean
-  exhausted: boolean
-}
+// export interface QuotaInterface {
+//   id: string
+//   tag: { // 提出去单做table无用，暂时保留，不拍平
+//     value: number
+//     display: string
+//   },
+//   user: { // 提出去单做table无用，暂时保留，不拍平
+//     id: string
+//     username: string
+//   },
+//   service: string
+//   private_ip_total: number
+//   private_ip_used: number
+//   public_ip_total: number
+//   public_ip_used: number
+//   vcpu_total: number
+//   vcpu_used: number
+//   ram_total: number
+//   ram_used: number
+//   disk_size_total: number
+//   disk_size_used: number
+//   expiration_time: never // null 待细化
+//   deleted: boolean
+//   display: string
+//   duration_days: number
+//   classification: 'vo' | 'personal' // 配额类型，二选一
+//
+//   // 来自vo/quota接口的补充
+//   vo_id?: string // groupId
+//
+//   // 来自server接口补充
+//   servers?: string[] // serverId
+//
+//   // 以下为根据上述字段自行判断填充
+//   expired: boolean
+//   exhausted: boolean
+// }
 
 export interface ServerInterface {
   // 来自server接口
@@ -231,75 +231,75 @@ export interface ServerInterface {
 }
 
 // 配额申请接口
-export interface QuotaApplicationInterface {
-  // 以下字段出现在列举接口的响应里
-  private_ip: number
-  public_ip: number
-  vcpu: number
-  ram: number
-  disk_size: number
-  duration_days: number
-  company: string
-  contact: string
-  purpose: string
-  id: string
-  creation_time: string
-  status: string
-  service: string
-  deleted: boolean
-  classification: 'personal' | 'vo'
-  result_desc: string // 拒绝理由
-
-  // 来自补充
-  vo_id?: string
-
-  // 以下字段出现在详情接口的响应里
-  user?: {
-    id: string
-    name: string
-  }
-  approve_user?: null | {
-    id: string
-    name: string
-  }
-  approve_time?: null | string
-  vo?: null | {
-    id: string
-    name: string
-    company: string
-    description: string
-    creation_time: string
-    owner: {
-      id: string
-      username: string
-    },
-    status: string
-  }
-}
+// export interface QuotaApplicationInterface {
+//   // 以下字段出现在列举接口的响应里
+//   private_ip: number
+//   public_ip: number
+//   vcpu: number
+//   ram: number
+//   disk_size: number
+//   duration_days: number
+//   company: string
+//   contact: string
+//   purpose: string
+//   id: string
+//   creation_time: string
+//   status: string
+//   service: string
+//   deleted: boolean
+//   classification: 'personal' | 'vo'
+//   result_desc: string // 拒绝理由
+//
+//   // 来自补充
+//   vo_id?: string
+//
+//   // 以下字段出现在详情接口的响应里
+//   user?: {
+//     id: string
+//     name: string
+//   }
+//   approve_user?: null | {
+//     id: string
+//     name: string
+//   }
+//   approve_time?: null | string
+//   vo?: null | {
+//     id: string
+//     name: string
+//     company: string
+//     description: string
+//     creation_time: string
+//     owner: {
+//       id: string
+//       username: string
+//     },
+//     status: string
+//   }
+// }
 
 // 赠送配额活动
-export interface QuotaActivity {
-  'id': string
-  'got_count': number
-  'service': string // service id
-  'user': string // user id
-  'creation_time': string
-  'name': string
-  'name_en': string
-  'start_time': string
-  'end_time': string
-  'count': number
-  'times_per_user': number
-  'status': string
-  'tag': string
-  'cpus': number
-  'private_ip': number
-  'public_ip': number
-  'ram': number
-  'disk_size': number
-  'expiration_time': string
-  'duration_days': number
-}
+// export interface QuotaActivity {
+//   'id': string
+//   'got_count': number
+//   'service': string // service id
+//   'user': string // user id
+//   'creation_time': string
+//   'name': string
+//   'name_en': string
+//   'start_time': string
+//   'end_time': string
+//   'count': number
+//   'times_per_user': number
+//   'status': string
+//   'tag': string
+//   'cpus': number
+//   'private_ip': number
+//   'public_ip': number
+//   'ram': number
+//   'disk_size': number
+//   'expiration_time': string
+//   'duration_days': number
+// }
 
 /* table的类型 */
 
@@ -352,8 +352,8 @@ export interface FedAllocationTableInterface extends totalTable, idTable<Allocat
 }
 
 // 管理员有权限审批的quota申请
-export interface AdminQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
-}
+// export interface AdminQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
+// }
 
 // 服务管理员能看到的，当前服务下创建的所有云主机
 export interface AdminServerTableInterface extends totalTable, idTable<ServerInterface> {
@@ -364,8 +364,8 @@ export interface FedFlavorTableInterface extends totalTable, idTable<FlavorInter
 }
 
 // 联邦配额赠送活动
-export interface FedQuotaActivityTableInterface extends totalTable, idTable<QuotaActivity> {
-}
+// export interface FedQuotaActivityTableInterface extends totalTable, idTable<QuotaActivity> {
+// }
 
 // 服务内通行的网络配置
 export interface ServiceNetworkTableInterface extends totalTable, localIdTable<NetworkInterface> {
@@ -381,24 +381,24 @@ export interface UserVpnTableInterface extends totalTable, idTable<VpnInterface>
 }
 
 // 个人云主机配额申请
-export interface PersonalQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
-}
+// export interface PersonalQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
+// }
 
 // 个人云主机配额
-export interface PersonalQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
-}
+// export interface PersonalQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
+// }
 
 // 个人云主机
 export interface PersonalServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
 // 项目组云主机配额申请
-export interface GroupQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
-}
+// export interface GroupQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
+// }
 
 // 项目组云主机配额
-export interface GroupQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
-}
+// export interface GroupQuotaTableInterface extends totalTable, idTable<QuotaInterface> {
+// }
 
 // 项目组云主机
 export interface GroupServerTableInterface extends totalTable, idTable<ServerInterface> {
@@ -447,11 +447,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedAllocationTableInterface,
-        adminQuotaApplicationTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as AdminQuotaApplicationTableInterface,
+        // adminQuotaApplicationTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as AdminQuotaApplicationTableInterface,
         adminServerTable: {
           byId: {},
           allIds: [],
@@ -462,11 +462,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedFlavorTableInterface,
-        fedQuotaActivityTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as FedQuotaActivityTableInterface,
+        // fedQuotaActivityTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as FedQuotaActivityTableInterface,
         serviceNetworkTable: {
           byLocalId: {},
           allLocalIds: [],
@@ -482,31 +482,31 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as UserVpnTableInterface,
-        personalQuotaApplicationTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as PersonalQuotaApplicationTableInterface,
-        personalQuotaTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as PersonalQuotaTableInterface,
+        // personalQuotaApplicationTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as PersonalQuotaApplicationTableInterface,
+        // personalQuotaTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as PersonalQuotaTableInterface,
         personalServerTable: {
           byId: {},
           allIds: [],
           status: 'init'
         } as PersonalServerTableInterface,
-        groupQuotaApplicationTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupQuotaApplicationTableInterface,
-        groupQuotaTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupQuotaTableInterface,
+        // groupQuotaApplicationTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as GroupQuotaApplicationTableInterface,
+        // groupQuotaTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as GroupQuotaTableInterface,
         groupServerTable: {
           byId: {},
           allIds: [],
@@ -711,15 +711,15 @@ export const useStore = defineStore('server', {
       return defaultTicked
     },
     // 根据用户选择的serviceId和status来返回application数组
-    getAdminApplicationsByServiceIdByStatus: (state) => (serviceId: string, status: string): QuotaApplicationInterface[] => {
-      // 先筛选serviceId。serviceId=''时全部返回
-      const applicationsByServiceId = Object.values(state.tables.adminQuotaApplicationTable.byId).filter(application => serviceId ? application.service === serviceId : true)
-      // 再筛选status。 status=''时全部返回
-      const applications = applicationsByServiceId.filter(application => status ? status === application.status : true)
-      // 排序函数，根据申请时间降序排列
-      const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
-      return applications.sort(sortFn)
-    },
+    // getAdminApplicationsByServiceIdByStatus: (state) => (serviceId: string, status: string): QuotaApplicationInterface[] => {
+    //   // 先筛选serviceId。serviceId=''时全部返回
+    //   const applicationsByServiceId = Object.values(state.tables.adminQuotaApplicationTable.byId).filter(application => serviceId ? application.service === serviceId : true)
+    //   // 再筛选status。 status=''时全部返回
+    //   const applications = applicationsByServiceId.filter(application => status ? status === application.status : true)
+    //   // 排序函数，根据申请时间降序排列
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   return applications.sort(sortFn)
+    // },
     getServiceOptions (state) {
       const services = state.items.adminServiceIds.map(serviceId => {
         const currentService = state.tables.serviceTable.byId[serviceId]
@@ -746,39 +746,39 @@ export const useStore = defineStore('server', {
       return rows.sort(sortFn)
     },
     // 根据用户选择的filter来返回application数组
-    getPersonalApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
-      // 排序函数，根据申请时间降序排列
-      const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
-
-      if (filter === '0') {
-        return Object.values(state.tables.personalQuotaApplicationTable.byId).sort(sortFn)
-      } else {
-        const rows: QuotaApplicationInterface[] = []
-        for (const application of Object.values(state.tables.personalQuotaApplicationTable.byId)) {
-          if (application.status === filter) {
-            rows.push(application)
-          }
-        }
-        return rows.sort(sortFn)
-      }
-    },
+    // getPersonalApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
+    //   // 排序函数，根据申请时间降序排列
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //
+    //   if (filter === '0') {
+    //     return Object.values(state.tables.personalQuotaApplicationTable.byId).sort(sortFn)
+    //   } else {
+    //     const rows: QuotaApplicationInterface[] = []
+    //     for (const application of Object.values(state.tables.personalQuotaApplicationTable.byId)) {
+    //       if (application.status === filter) {
+    //         rows.push(application)
+    //       }
+    //     }
+    //     return rows.sort(sortFn)
+    //   }
+    // },
     // 根据用户选择的filter来返回application数组
-    getGroupApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
-      // 排序函数，根据申请时间降序排列
-      const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
-
-      if (filter === '0') {
-        return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
-      } else {
-        const rows: QuotaApplicationInterface[] = []
-        for (const application of Object.values(state.tables.groupQuotaApplicationTable.byId)) {
-          if (application.status === filter) {
-            rows.push(application)
-          }
-        }
-        return rows.sort(sortFn)
-      }
-    },
+    // getGroupApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
+    //   // 排序函数，根据申请时间降序排列
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //
+    //   if (filter === '0') {
+    //     return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
+    //   } else {
+    //     const rows: QuotaApplicationInterface[] = []
+    //     for (const application of Object.values(state.tables.groupQuotaApplicationTable.byId)) {
+    //       if (application.status === filter) {
+    //         rows.push(application)
+    //       }
+    //     }
+    //     return rows.sort(sortFn)
+    //   }
+    // },
 
     /* server deploy card使用 */
     getPublicNetworksByServiceId: (state) => (serviceId: string): NetworkInterface[] => {
@@ -791,30 +791,30 @@ export const useStore = defineStore('server', {
       return Object.values(state.tables.serviceImageTable.byLocalId).filter(image => image.service === serviceId).sort((a, b) => a.name.localeCompare(b.name, 'en'))
     },
     // 只返回未删除guota
-    getPersonalValidQuotasByServiceId: (state) => (serviceId: string): QuotaInterface[] => {
-      // expirtation_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-      // return Object.values(state.tables.userQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && !quota.expired && !quota.exhausted).sort(sortFn)
-      return Object.values(state.tables.personalQuotaTable.byId).filter(quota => quota.service === serviceId && !quota.expired && !quota.exhausted).sort(sortFn)
-    },
-    getPersonalInvalidQuotasByServiceId: (state) => (serviceId: string): QuotaInterface[] => {
-      // expirtation_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-      // return Object.values(state.tables.userQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && (quota.expired || quota.exhausted)).sort(sortFn)
-      return Object.values(state.tables.personalQuotaTable.byId).filter(quota => quota.service === serviceId && (quota.expired || quota.exhausted)).sort(sortFn)
-    },
-    getGroupValidQuotasByServiceId: (state) => (serviceId: string, groupId?: string): QuotaInterface[] => {
-      // expirtation_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-      // return Object.values(state.tables.groupQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && quota.vo_id === groupId && !quota.expired && !quota.exhausted).sort(sortFn)
-      return Object.values(state.tables.groupQuotaTable.byId).filter(quota => quota.service === serviceId && quota.vo_id === groupId && !quota.expired && !quota.exhausted).sort(sortFn)
-    },
-    getGroupInvalidQuotasByServiceId: (state) => (serviceId: string, groupId?: string): QuotaInterface[] => {
-      // expirtation_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-      // return Object.values(state.tables.groupQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && quota.vo_id === groupId && (quota.expired || quota.exhausted)).sort(sortFn)
-      return Object.values(state.tables.groupQuotaTable.byId).filter(quota => quota.service === serviceId && quota.vo_id === groupId && (quota.expired || quota.exhausted)).sort(sortFn)
-    },
+    // getPersonalValidQuotasByServiceId: (state) => (serviceId: string): QuotaInterface[] => {
+    //   // expirtation_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //   // return Object.values(state.tables.userQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && !quota.expired && !quota.exhausted).sort(sortFn)
+    //   return Object.values(state.tables.personalQuotaTable.byId).filter(quota => quota.service === serviceId && !quota.expired && !quota.exhausted).sort(sortFn)
+    // },
+    // getPersonalInvalidQuotasByServiceId: (state) => (serviceId: string): QuotaInterface[] => {
+    //   // expirtation_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //   // return Object.values(state.tables.userQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && (quota.expired || quota.exhausted)).sort(sortFn)
+    //   return Object.values(state.tables.personalQuotaTable.byId).filter(quota => quota.service === serviceId && (quota.expired || quota.exhausted)).sort(sortFn)
+    // },
+    // getGroupValidQuotasByServiceId: (state) => (serviceId: string, groupId?: string): QuotaInterface[] => {
+    //   // expirtation_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //   // return Object.values(state.tables.groupQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && quota.vo_id === groupId && !quota.expired && !quota.exhausted).sort(sortFn)
+    //   return Object.values(state.tables.groupQuotaTable.byId).filter(quota => quota.service === serviceId && quota.vo_id === groupId && !quota.expired && !quota.exhausted).sort(sortFn)
+    // },
+    // getGroupInvalidQuotasByServiceId: (state) => (serviceId: string, groupId?: string): QuotaInterface[] => {
+    //   // expirtation_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //   // return Object.values(state.tables.groupQuotaTable.byId).filter(quota => !quota.deleted && quota.service === serviceId && quota.vo_id === groupId && (quota.expired || quota.exhausted)).sort(sortFn)
+    //   return Object.values(state.tables.groupQuotaTable.byId).filter(quota => quota.service === serviceId && quota.vo_id === groupId && (quota.expired || quota.exhausted)).sort(sortFn)
+    // },
     /* server deploy card使用 */
 
     getPersonalServers (state): ServerInterface[] {
@@ -844,51 +844,51 @@ export const useStore = defineStore('server', {
     },
     /* quotaList使用 */
     // 根据用户选择的filter来返回application数组
-    getPersonalQuotasByFilter: (state) => (filter: string): QuotaInterface[] => {
-      // expirtation_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-
-      if (filter === '0') {
-        // 返回quota对象的数组，并以过期时间降序排序
-        return Object.values(state.tables.personalQuotaTable.byId).sort(sortFn)
-      } else {
-        const rows: QuotaInterface[] = []
-        for (const quota of Object.values(state.tables.personalQuotaTable.byId)) {
-          if (filter === 'valid' && !quota.exhausted && !quota.expired) { // 可用的quota
-            rows.push(quota)
-          } else if (filter === 'invalid' && (quota.exhausted || quota.expired)) { // 不可用的quota
-            rows.push(quota)
-          } else if (filter === null && quota.expiration_time === null) { // 长期的quota
-            rows.push(quota)
-          } else if (filter === 'notExpired' && !quota.expired) { // 未过期的quota
-            rows.push(quota)
-          } else if (filter === 'expired' && quota.expired) { // 过期的quota
-            rows.push(quota)
-          } else if (filter === 'notExhausted' && !quota.exhausted) { // 未用尽的quota
-            rows.push(quota)
-          } else if (filter === 'exhausted' && quota.exhausted) { // 用尽的quota
-            rows.push(quota)
-          }
-        }
-        return rows.sort(sortFn)
-      }
-    },
+    // getPersonalQuotasByFilter: (state) => (filter: string): QuotaInterface[] => {
+    //   // expirtation_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //
+    //   if (filter === '0') {
+    //     // 返回quota对象的数组，并以过期时间降序排序
+    //     return Object.values(state.tables.personalQuotaTable.byId).sort(sortFn)
+    //   } else {
+    //     const rows: QuotaInterface[] = []
+    //     for (const quota of Object.values(state.tables.personalQuotaTable.byId)) {
+    //       if (filter === 'valid' && !quota.exhausted && !quota.expired) { // 可用的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'invalid' && (quota.exhausted || quota.expired)) { // 不可用的quota
+    //         rows.push(quota)
+    //       } else if (filter === null && quota.expiration_time === null) { // 长期的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'notExpired' && !quota.expired) { // 未过期的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'expired' && quota.expired) { // 过期的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'notExhausted' && !quota.exhausted) { // 未用尽的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'exhausted' && quota.exhausted) { // 用尽的quota
+    //         rows.push(quota)
+    //       }
+    //     }
+    //     return rows.sort(sortFn)
+    //   }
+    // },
     /* quotaList使用 */
 
-    getGroupQuotaApplicationsByGroupId: (state) => (groupId: string): QuotaApplicationInterface[] => {
-      const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
-      if (groupId === '0') {
-        return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
-      } else {
-        const applications: QuotaApplicationInterface[] = []
-        for (const server of Object.values(state.tables.groupQuotaApplicationTable.byId)) {
-          if (groupId === server.vo_id) {
-            applications.push(server)
-          }
-        }
-        return applications.sort(sortFn)
-      }
-    },
+    // getGroupQuotaApplicationsByGroupId: (state) => (groupId: string): QuotaApplicationInterface[] => {
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   if (groupId === '0') {
+    //     return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
+    //   } else {
+    //     const applications: QuotaApplicationInterface[] = []
+    //     for (const server of Object.values(state.tables.groupQuotaApplicationTable.byId)) {
+    //       if (groupId === server.vo_id) {
+    //         applications.push(server)
+    //       }
+    //     }
+    //     return applications.sort(sortFn)
+    //   }
+    // },
     getGroupServersByGroupId: (state) => (groupId: string): ServerInterface[] => {
       const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
       if (groupId === '0') {
@@ -904,53 +904,54 @@ export const useStore = defineStore('server', {
       }
     },
     // 有四种状态：all -> 全部, valid -> 可用， expired -> 过期, exhausted -> 用尽
-    getGroupQuotasByGroupIdByStatus: (state) => (groupId: string, status: string): QuotaInterface[] => {
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time).getTime() - new Date(a.expiration_time).getTime()
-      const quotasByGroupId: QuotaInterface[] = []
-      for (const quota of Object.values(state.tables.groupQuotaTable.byId)) {
-        if (quota.vo_id === groupId) {
-          quotasByGroupId.push(quota)
-        }
-      }
-      if (status === 'all') {
-        return quotasByGroupId.sort(sortFn)
-      } else {
-        const quotasByStatus: QuotaInterface[] = []
-        for (const quota of quotasByGroupId) {
-          if (status === 'valid' && !quota.expired && !quota.exhausted) {
-            quotasByStatus.push(quota)
-          } else if (status === 'expired' && quota.expired) {
-            quotasByStatus.push(quota)
-          } else if (status === 'exhausted' && quota.exhausted) {
-            quotasByStatus.push(quota)
-          }
-        }
-        return quotasByStatus.sort(sortFn)
-      }
-    },
-    getGroupQuotasByFilter: (state) => (filter: string): QuotaInterface[] => {
-      // expiration_time字段为null时为长期配额，应视为最大时间
-      const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
-
-      if (filter === '0') {
-        // 返回quota对象的数组，并以过期时间降序排序
-        return Object.values(state.tables.groupQuotaTable.byId).sort(sortFn)
-      } else {
-        const rows: QuotaInterface[] = []
-        for (const quota of Object.values(state.tables.groupQuotaTable.byId)) {
-          if (filter === 'valid' && !quota.exhausted && !quota.expired) { // 可用的quota
-            rows.push(quota)
-          } else if (filter === 'invalid' && (quota.exhausted || quota.expired)) { // 不可用的quota
-            rows.push(quota)
-          }
-        }
-        return rows.sort(sortFn)
-      }
-    },
+    // getGroupQuotasByGroupIdByStatus: (state) => (groupId: string, status: string): QuotaInterface[] => {
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time).getTime() - new Date(a.expiration_time).getTime()
+    //   const quotasByGroupId: QuotaInterface[] = []
+    //   for (const quota of Object.values(state.tables.groupQuotaTable.byId)) {
+    //     if (quota.vo_id === groupId) {
+    //       quotasByGroupId.push(quota)
+    //     }
+    //   }
+    //   if (status === 'all') {
+    //     return quotasByGroupId.sort(sortFn)
+    //   } else {
+    //     const quotasByStatus: QuotaInterface[] = []
+    //     for (const quota of quotasByGroupId) {
+    //       if (status === 'valid' && !quota.expired && !quota.exhausted) {
+    //         quotasByStatus.push(quota)
+    //       } else if (status === 'expired' && quota.expired) {
+    //         quotasByStatus.push(quota)
+    //       } else if (status === 'exhausted' && quota.exhausted) {
+    //         quotasByStatus.push(quota)
+    //       }
+    //     }
+    //     return quotasByStatus.sort(sortFn)
+    //   }
+    // },
+    // getGroupQuotasByFilter: (state) => (filter: string): QuotaInterface[] => {
+    //   // expiration_time字段为null时为长期配额，应视为最大时间
+    //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time || 9999999999999).getTime() - new Date(a.expiration_time || 9999999999999).getTime()
+    //
+    //   if (filter === '0') {
+    //     // 返回quota对象的数组，并以过期时间降序排序
+    //     return Object.values(state.tables.groupQuotaTable.byId).sort(sortFn)
+    //   } else {
+    //     const rows: QuotaInterface[] = []
+    //     for (const quota of Object.values(state.tables.groupQuotaTable.byId)) {
+    //       if (filter === 'valid' && !quota.exhausted && !quota.expired) { // 可用的quota
+    //         rows.push(quota)
+    //       } else if (filter === 'invalid' && (quota.exhausted || quota.expired)) { // 不可用的quota
+    //         rows.push(quota)
+    //       }
+    //     }
+    //     return rows.sort(sortFn)
+    //   }
+    // },
     // 个人有quota(全部quota,包括过期和不可用)和server的serviceId
     getPersonalAvailableServiceIds: (state): string[] => {
       let services = [] as string[]
-      state.tables.personalQuotaTable.allIds.forEach((id) => services.unshift(state.tables.personalQuotaTable.byId[id].service))
+      // todo server + 点 + 券 ？
+      // state.tables.personalQuotaTable.allIds.forEach((id) => services.unshift(state.tables.personalQuotaTable.byId[id].service))
       state.tables.personalServerTable.allIds.forEach((id) => services.unshift(state.tables.personalServerTable.byId[id].service))
       services = [...new Set(services)]
       return services
@@ -1000,10 +1001,10 @@ export const useStore = defineStore('server', {
         // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
         void this.loadGroupMemberTable().then(() => {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-          void this.loadGroupQuotaApplicationTable()
+          // void this.loadGroupQuotaApplicationTable()
         })
         void this.loadGroupServerTable()
-        void this.loadGroupQuotaTable()
+        // void this.loadGroupQuotaTable()
       })
     },
     // 强制加载group相关table
@@ -1012,10 +1013,10 @@ export const useStore = defineStore('server', {
         // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
         void this.loadGroupMemberTable().then(() => {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-          void this.loadGroupQuotaApplicationTable()
+          // void this.loadGroupQuotaApplicationTable()
         })
         void this.loadGroupServerTable()
-        void this.loadGroupQuotaTable()
+        // void this.loadGroupQuotaTable()
       })
     },
     loadAllTables () {
@@ -1049,15 +1050,15 @@ export const useStore = defineStore('server', {
       if (this.tables.fedFlavorTable.status === 'init') {
         void this.loadFedFlavorTable()
       }
-      if (this.tables.personalQuotaTable.status === 'init') {
-        void this.loadPersonalQuotaTable()
-      }
-      if (this.tables.personalQuotaApplicationTable.status === 'init') {
-        void this.loadPersonalQuotaApplicationTable()
-      }
-      if (this.tables.fedQuotaActivityTable.status === 'init') {
-        void this.loadFedQuotaActivityTable()
-      }
+      // if (this.tables.personalQuotaTable.status === 'init') {
+      //   void this.loadPersonalQuotaTable()
+      // }
+      // if (this.tables.personalQuotaApplicationTable.status === 'init') {
+      //   void this.loadPersonalQuotaApplicationTable()
+      // }
+      // if (this.tables.fedQuotaActivityTable.status === 'init') {
+      //   void this.loadFedQuotaActivityTable()
+      // }
 
       if (this.tables.groupTable.status === 'init') {
         void this.loadGroupTable().then(() => {
@@ -1065,17 +1066,17 @@ export const useStore = defineStore('server', {
           if (this.tables.groupMemberTable.status === 'init') {
             void this.loadGroupMemberTable().then(() => {
               // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-              if (this.tables.groupQuotaApplicationTable.status === 'init') {
-                void this.loadGroupQuotaApplicationTable()
-              }
+              // if (this.tables.groupQuotaApplicationTable.status === 'init') {
+              //   void this.loadGroupQuotaApplicationTable()
+              // }
             })
           }
           if (this.tables.groupServerTable.status === 'init') {
             void this.loadGroupServerTable()
           }
-          if (this.tables.groupQuotaTable.status === 'init') {
-            void this.loadGroupQuotaTable()
-          }
+          // if (this.tables.groupQuotaTable.status === 'init') {
+          //   void this.loadGroupQuotaTable()
+          // }
         })
       }
 
@@ -1245,44 +1246,44 @@ export const useStore = defineStore('server', {
       this.tables.fedAllocationTable.status = 'total'
     },
     // 代码风格不好
-    async loadAdminQuotaApplicationTable (payload?: {
-      page?: number;
-      pageSize?: number;
-      serviceId?: string;
-      status?: 'wait' | 'pending' | 'pass' | 'reject' | 'cancel'
-    }) {
-      this.tables.adminQuotaApplicationTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      // 获取数据并更新table
-      const respApply = await api.server.apply.getApplyQuotaAdmin({
-        query: {
-          deleted: false,
-          // ...(payload?.serviceId) && { service: payload.serviceId }, // 有条件添加属性 https://stackoverflow.com/a/40560953
-          // ...(payload?.status) && { status: [payload.status as string] }
-          page: payload?.page,
-          page_size: payload?.pageSize,
-          service: payload?.serviceId,
-          status: [payload?.status as string]
-        }
-      })
-      // 再向详情接口发送请求
-      const service = new schema.Entity('service')
-      const quotaApplication = new schema.Entity('quotaApplication', { service })
-      for (const data of respApply.data.results) {
-        const respApplyDetail = await api.server.apply.getApplyQuotaApplyIdAdmin({ path: { apply_id: data.id } })
-        const normalizedData = normalize(respApplyDetail.data, quotaApplication)
-        Object.assign(this.tables.adminQuotaApplicationTable.byId, normalizedData.entities.quotaApplication)
-        this.tables.adminQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.quotaApplication as Record<string, unknown>)[0])
-        this.tables.adminQuotaApplicationTable.allIds = [...new Set(this.tables.adminQuotaApplicationTable.allIds)]
-      }
-      // load table的最后再改isLoaded
-      this.tables.adminQuotaApplicationTable.status = 'total'
-      // 返回count值
-      return respApply.data.count
-    },
+    // async loadAdminQuotaApplicationTable (payload?: {
+    //   page?: number;
+    //   pageSize?: number;
+    //   serviceId?: string;
+    //   status?: 'wait' | 'pending' | 'pass' | 'reject' | 'cancel'
+    // }) {
+    //   this.tables.adminQuotaApplicationTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   // 获取数据并更新table
+    //   const respApply = await api.server.apply.getApplyQuotaAdmin({
+    //     query: {
+    //       deleted: false,
+    //       // ...(payload?.serviceId) && { service: payload.serviceId }, // 有条件添加属性 https://stackoverflow.com/a/40560953
+    //       // ...(payload?.status) && { status: [payload.status as string] }
+    //       page: payload?.page,
+    //       page_size: payload?.pageSize,
+    //       service: payload?.serviceId,
+    //       status: [payload?.status as string]
+    //     }
+    //   })
+    //   // 再向详情接口发送请求
+    //   const service = new schema.Entity('service')
+    //   const quotaApplication = new schema.Entity('quotaApplication', { service })
+    //   for (const data of respApply.data.results) {
+    //     const respApplyDetail = await api.server.apply.getApplyQuotaApplyIdAdmin({ path: { apply_id: data.id } })
+    //     const normalizedData = normalize(respApplyDetail.data, quotaApplication)
+    //     Object.assign(this.tables.adminQuotaApplicationTable.byId, normalizedData.entities.quotaApplication)
+    //     this.tables.adminQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.quotaApplication as Record<string, unknown>)[0])
+    //     this.tables.adminQuotaApplicationTable.allIds = [...new Set(this.tables.adminQuotaApplicationTable.allIds)]
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.adminQuotaApplicationTable.status = 'total'
+    //   // 返回count值
+    //   return respApply.data.count
+    // },
     // 代码风格不好
     async loadAdminServerTable (payload: { page?: number; page_size?: number }) {
       this.tables.adminServerTable = {
@@ -1374,45 +1375,45 @@ export const useStore = defineStore('server', {
       // load table的最后再改isLoaded
       this.tables.userVpnTable.status = 'total'
     },
-    async loadPersonalQuotaTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.personalQuotaTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      // 将响应normalize
-      const respQuota = await api.server.quota.getQuota({ query: { deleted: false } })
-      const service = new schema.Entity('service')
-      const quota = new schema.Entity('quota', { service })
-      // quota数组
-      for (const data of respQuota.data.results) {
-        /* 增加补充字段 */
-        // 获取quota下对应的server列表
-        const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
-        const servers: string[] = []
-        respQuotaServers.data.results.forEach((server: ServerInterface) => {
-          servers.push(server.id)
-        })
-        // 给data增加servers字段
-        Object.assign(data, { servers })
-        // 给data增加expired字段
-        const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
-        Object.assign(data, { expired })
-        // 给data增加exhausted字段,该字段的判断方式可能后期更改
-        const exhausted = data.vcpu_used === data.vcpu_total || data.ram_used === data.ram_total || (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
-        Object.assign(data, { exhausted })
-        /* 增加补充字段 */
-
-        // normalize data
-        const normalizedData = normalize(data, quota)
-        Object.assign(this.tables.personalQuotaTable.byId, normalizedData.entities.quota)
-        this.tables.personalQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
-        this.tables.personalQuotaTable.allIds = [...new Set(this.tables.personalQuotaTable.allIds)]
-      }
-      // load table的最后再改isLoaded
-      this.tables.personalQuotaTable.status = 'total'
-    },
+    // async loadPersonalQuotaTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+    //   this.tables.personalQuotaTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   // 将响应normalize
+    //   const respQuota = await api.server.quota.getQuota({ query: { deleted: false } })
+    //   const service = new schema.Entity('service')
+    //   const quota = new schema.Entity('quota', { service })
+    //   // quota数组
+    //   for (const data of respQuota.data.results) {
+    //     /* 增加补充字段 */
+    //     // 获取quota下对应的server列表
+    //     const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
+    //     const servers: string[] = []
+    //     respQuotaServers.data.results.forEach((server: ServerInterface) => {
+    //       servers.push(server.id)
+    //     })
+    //     // 给data增加servers字段
+    //     Object.assign(data, { servers })
+    //     // 给data增加expired字段
+    //     const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
+    //     Object.assign(data, { expired })
+    //     // 给data增加exhausted字段,该字段的判断方式可能后期更改
+    //     const exhausted = data.vcpu_used === data.vcpu_total || data.ram_used === data.ram_total || (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
+    //     Object.assign(data, { exhausted })
+    //     /* 增加补充字段 */
+    //
+    //     // normalize data
+    //     const normalizedData = normalize(data, quota)
+    //     Object.assign(this.tables.personalQuotaTable.byId, normalizedData.entities.quota)
+    //     this.tables.personalQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
+    //     this.tables.personalQuotaTable.allIds = [...new Set(this.tables.personalQuotaTable.allIds)]
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.personalQuotaTable.status = 'total'
+    // },
     // 更新整个userServerTable
     async loadPersonalServerTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
@@ -1530,165 +1531,165 @@ export const useStore = defineStore('server', {
       }
     },
     // 所有groupQuota根据quotaId存在一个对象里，不区分group，getter里区分group取
-    async loadGroupQuotaTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.groupQuotaTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      // 根据groupTable,建立groupQuotaTable
-      for (const groupId of this.tables.groupTable.allIds) {
-        // 获取响应
-        const respGroupQuota = await api.server.quota.getQuotaVo({ path: { vo_id: groupId } })
-        // 将响应normalize
-        const service = new schema.Entity('service')
-        const quota = new schema.Entity('quota', { service })
-        // quota数组
-        for (const data of respGroupQuota.data.results) {
-          /* 增加补充字段 */
-          // 补充vo_id字段
-          Object.assign(data, { vo_id: groupId })
-          // 获取quota下对应的server列表
-          const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
-          const servers: string[] = []
-          respQuotaServers.data.results.forEach((server: ServerInterface) => {
-            servers.push(server.id)
-          })
-          // 给data增加servers字段
-          Object.assign(data, { servers })
-          // 给data增加expired字段
-          const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
-          Object.assign(data, { expired })
-          // 给data增加exhausted字段,该字段的判断方式可能后期更改
-          const exhausted = data.vcpu_used === data.vcpu_total ||
-            data.ram_used === data.ram_total ||
-            (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
-          Object.assign(data, { exhausted })
-          /* 增加补充字段 */
-
-          // normalize data
-          const normalizedData = normalize(data, quota)
-          // 存入groupQuotaTable
-          Object.assign(this.tables.groupQuotaTable.byId, normalizedData.entities.quota)
-          this.tables.groupQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
-          this.tables.groupQuotaTable.allIds = [...new Set(this.tables.groupQuotaTable.allIds)]
-        }
-      }
-      // load table的最后再改isLoaded
-      this.tables.groupQuotaTable.status = 'total'
-    },
+    // async loadGroupQuotaTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+    //   this.tables.groupQuotaTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   // 根据groupTable,建立groupQuotaTable
+    //   for (const groupId of this.tables.groupTable.allIds) {
+    //     // 获取响应
+    //     const respGroupQuota = await api.server.quota.getQuotaVo({ path: { vo_id: groupId } })
+    //     // 将响应normalize
+    //     const service = new schema.Entity('service')
+    //     const quota = new schema.Entity('quota', { service })
+    //     // quota数组
+    //     for (const data of respGroupQuota.data.results) {
+    //       /* 增加补充字段 */
+    //       // 补充vo_id字段
+    //       Object.assign(data, { vo_id: groupId })
+    //       // 获取quota下对应的server列表
+    //       const respQuotaServers = await api.server.quota.getQuotaServers({ path: { id: data.id } })
+    //       const servers: string[] = []
+    //       respQuotaServers.data.results.forEach((server: ServerInterface) => {
+    //         servers.push(server.id)
+    //       })
+    //       // 给data增加servers字段
+    //       Object.assign(data, { servers })
+    //       // 给data增加expired字段
+    //       const expired = !!data.expiration_time && (new Date(data.expiration_time).getTime() < new Date().getTime())
+    //       Object.assign(data, { expired })
+    //       // 给data增加exhausted字段,该字段的判断方式可能后期更改
+    //       const exhausted = data.vcpu_used === data.vcpu_total ||
+    //         data.ram_used === data.ram_total ||
+    //         (data.private_ip_used === data.private_ip_total && data.public_ip_used === data.public_ip_total)
+    //       Object.assign(data, { exhausted })
+    //       /* 增加补充字段 */
+    //
+    //       // normalize data
+    //       const normalizedData = normalize(data, quota)
+    //       // 存入groupQuotaTable
+    //       Object.assign(this.tables.groupQuotaTable.byId, normalizedData.entities.quota)
+    //       this.tables.groupQuotaTable.allIds.unshift(Object.keys(normalizedData.entities.quota as Record<string, unknown>)[0])
+    //       this.tables.groupQuotaTable.allIds = [...new Set(this.tables.groupQuotaTable.allIds)]
+    //     }
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.groupQuotaTable.status = 'total'
+    // },
     // 默认personalQuotaApplicationTable只保存undeleted的application
-    async loadPersonalQuotaApplicationTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.personalQuotaApplicationTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      // 再获取数据并更新table
-      const respApply = await api.server.apply.getApplyQuota({ query: { deleted: false } }) // 不包含已删除的申请
-      const service = new schema.Entity('service')
-      const application = new schema.Entity('application', { service })
-      for (const data of respApply.data.results) {
-        const normalizedData = normalize(data, application)
-        Object.assign(this.tables.personalQuotaApplicationTable.byId, normalizedData.entities.application)
-        this.tables.personalQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
-        this.tables.personalQuotaApplicationTable.allIds = [...new Set(this.tables.personalQuotaApplicationTable.allIds)]
-      }
-      // load table的最后再改isLoaded
-      this.tables.personalQuotaApplicationTable.status = 'total'
-    },
-    async loadGroupQuotaApplicationTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.groupQuotaApplicationTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      // 根据groupTable,建立groupApplicationTable
-      for (const groupId of this.tables.groupTable.allIds) {
-        // member没有权限请求这个接口, owner和leader可以
-        if (this.tables.groupTable.byId[groupId].myRole !== 'member') {
-          // 获取响应
-          const respGroupApplication = await api.server.apply.getApplyQuotaVo({
-            path: { vo_id: groupId },
-            query: { deleted: false }
-          })
-          // normalize
-          const service = new schema.Entity('service')
-          const application = new schema.Entity('application', { service })
-          // application 数组
-          for (const data of respGroupApplication.data.results) {
-            /* 增加补充字段 */
-            // 补充vo_id字段
-            Object.assign(data, { vo_id: groupId })
-            /* 增加补充字段 */
-            // normalize data
-            const normalizedData = normalize(data, application)
-            // 存入
-            Object.assign(this.tables.groupQuotaApplicationTable.byId, normalizedData.entities.application)
-            this.tables.groupQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
-            this.tables.groupQuotaApplicationTable.allIds = [...new Set(this.tables.groupQuotaApplicationTable.allIds)]
-          }
-        }
-      }
-      // load table的最后再改isLoaded
-      this.tables.groupQuotaApplicationTable.status = 'total'
-    },
+    // async loadPersonalQuotaApplicationTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+    //   this.tables.personalQuotaApplicationTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   // 再获取数据并更新table
+    //   const respApply = await api.server.apply.getApplyQuota({ query: { deleted: false } }) // 不包含已删除的申请
+    //   const service = new schema.Entity('service')
+    //   const application = new schema.Entity('application', { service })
+    //   for (const data of respApply.data.results) {
+    //     const normalizedData = normalize(data, application)
+    //     Object.assign(this.tables.personalQuotaApplicationTable.byId, normalizedData.entities.application)
+    //     this.tables.personalQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+    //     this.tables.personalQuotaApplicationTable.allIds = [...new Set(this.tables.personalQuotaApplicationTable.allIds)]
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.personalQuotaApplicationTable.status = 'total'
+    // },
+    // async loadGroupQuotaApplicationTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+    //   this.tables.groupQuotaApplicationTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   // 根据groupTable,建立groupApplicationTable
+    //   for (const groupId of this.tables.groupTable.allIds) {
+    //     // member没有权限请求这个接口, owner和leader可以
+    //     if (this.tables.groupTable.byId[groupId].myRole !== 'member') {
+    //       // 获取响应
+    //       const respGroupApplication = await api.server.apply.getApplyQuotaVo({
+    //         path: { vo_id: groupId },
+    //         query: { deleted: false }
+    //       })
+    //       // normalize
+    //       const service = new schema.Entity('service')
+    //       const application = new schema.Entity('application', { service })
+    //       // application 数组
+    //       for (const data of respGroupApplication.data.results) {
+    //         /* 增加补充字段 */
+    //         // 补充vo_id字段
+    //         Object.assign(data, { vo_id: groupId })
+    //         /* 增加补充字段 */
+    //         // normalize data
+    //         const normalizedData = normalize(data, application)
+    //         // 存入
+    //         Object.assign(this.tables.groupQuotaApplicationTable.byId, normalizedData.entities.application)
+    //         this.tables.groupQuotaApplicationTable.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+    //         this.tables.groupQuotaApplicationTable.allIds = [...new Set(this.tables.groupQuotaApplicationTable.allIds)]
+    //       }
+    //     }
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.groupQuotaApplicationTable.status = 'total'
+    // },
     // personal/group quota application table建立时用列举接口，有较少字段；单独更新时从详情接口取，有较多字段，但也只用基本部分。
     // 单独更新personal/groupQuotaApplicationTable里的一个application对象
-    async loadSingleQuotaApplicationStatus (payload: { applicationId: string; isGroup: boolean }) {
-      // 先清空application的status，显示为获取中。注意不是删除整个application，这样则会丢失整个条目。
-      const table = payload.isGroup ? this.tables.groupQuotaApplicationTable : this.tables.personalQuotaApplicationTable
-      table.status = 'init'
-      // 获取最新的application对象，存入table
-      const respSingleApplication = await api.server.apply.getApplyQuotaApplyId({ path: { apply_id: payload.applicationId } })
-      if (respSingleApplication.status === 200) {
-        if (payload.isGroup) {
-          // 补充vo_id字段
-          Object.assign(respSingleApplication.data, { vo_id: respSingleApplication.data.vo.id })
-        }
-        // normalize
-        const service = new schema.Entity('service')
-        const application = new schema.Entity('application', { service })
-        const normalizedData = normalize(respSingleApplication.data, application)
-
-        Object.assign(table.byId, normalizedData.entities.application)
-        table.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
-        table.allIds = [...new Set(table.allIds)]
-      }
-    },
-    async loadFedQuotaActivityTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新
-      // 当前没有强制清楚，避免了ui闪烁,但是也没有数据累加
-      // context.commit('clearTable', context.state.tables.fedQuotaActivityTable)
-
-      // 获取数据并更新table
-      // 当前table内容为筛选出active,排除未开始和已结束的，以后可根据需求全部获取，显示时进行筛选
-      const respActivity = await api.server.quota_activity.getQuotaActivity({
-        query: {
-          status: 'active',
-          'exclude-not-start': true,
-          'exclude-ended': true
-        }
-      })
-      // normalize信息
-      const service = new schema.Entity('service')
-      const user = new schema.Entity('user')
-      const quotaActivity = new schema.Entity('quotaActivity', {
-        service,
-        user
-      })
-      for (const data of respActivity.data.results) {
-        const normalizedData = normalize(data, quotaActivity)
-        Object.assign(this.tables.fedQuotaActivityTable.byId, normalizedData.entities.quotaActivity)
-        this.tables.fedQuotaActivityTable.allIds.unshift(Object.keys(normalizedData.entities.quotaActivity as Record<string, unknown>)[0])
-        this.tables.fedQuotaActivityTable.allIds = [...new Set(this.tables.fedQuotaActivityTable.allIds)]
-      }
-      // load table的最后再改isLoaded
-      this.tables.fedQuotaActivityTable.status = 'total'
-    },
+    // async loadSingleQuotaApplicationStatus (payload: { applicationId: string; isGroup: boolean }) {
+    //   // 先清空application的status，显示为获取中。注意不是删除整个application，这样则会丢失整个条目。
+    //   const table = payload.isGroup ? this.tables.groupQuotaApplicationTable : this.tables.personalQuotaApplicationTable
+    //   table.status = 'init'
+    //   // 获取最新的application对象，存入table
+    //   const respSingleApplication = await api.server.apply.getApplyQuotaApplyId({ path: { apply_id: payload.applicationId } })
+    //   if (respSingleApplication.status === 200) {
+    //     if (payload.isGroup) {
+    //       // 补充vo_id字段
+    //       Object.assign(respSingleApplication.data, { vo_id: respSingleApplication.data.vo.id })
+    //     }
+    //     // normalize
+    //     const service = new schema.Entity('service')
+    //     const application = new schema.Entity('application', { service })
+    //     const normalizedData = normalize(respSingleApplication.data, application)
+    //
+    //     Object.assign(table.byId, normalizedData.entities.application)
+    //     table.allIds.unshift(Object.keys(normalizedData.entities.application as Record<string, unknown>)[0])
+    //     table.allIds = [...new Set(table.allIds)]
+    //   }
+    // },
+    // async loadFedQuotaActivityTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新
+    //   // 当前没有强制清楚，避免了ui闪烁,但是也没有数据累加
+    //   // context.commit('clearTable', context.state.tables.fedQuotaActivityTable)
+    //
+    //   // 获取数据并更新table
+    //   // 当前table内容为筛选出active,排除未开始和已结束的，以后可根据需求全部获取，显示时进行筛选
+    //   const respActivity = await api.server.quota_activity.getQuotaActivity({
+    //     query: {
+    //       status: 'active',
+    //       'exclude-not-start': true,
+    //       'exclude-ended': true
+    //     }
+    //   })
+    //   // normalize信息
+    //   const service = new schema.Entity('service')
+    //   const user = new schema.Entity('user')
+    //   const quotaActivity = new schema.Entity('quotaActivity', {
+    //     service,
+    //     user
+    //   })
+    //   for (const data of respActivity.data.results) {
+    //     const normalizedData = normalize(data, quotaActivity)
+    //     Object.assign(this.tables.fedQuotaActivityTable.byId, normalizedData.entities.quotaActivity)
+    //     this.tables.fedQuotaActivityTable.allIds.unshift(Object.keys(normalizedData.entities.quotaActivity as Record<string, unknown>)[0])
+    //     this.tables.fedQuotaActivityTable.allIds = [...new Set(this.tables.fedQuotaActivityTable.allIds)]
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.fedQuotaActivityTable.status = 'total'
+    // },
 
     /* tables */
 
@@ -2226,8 +2227,8 @@ export const useStore = defineStore('server', {
     deleteGroupDialog (groupId: string) {
       // 检查组内:云主机、配额、配额申请记录 是否删除干净
       const isServerPurged = Boolean(this.getGroupServersByGroupId(groupId).length === 0)
-      const isQuotaPurged = Boolean(this.getGroupQuotasByGroupIdByStatus(groupId, 'all').length === 0)
-      const isQuotaApplicationPurged = Boolean(this.getGroupQuotaApplicationsByGroupId(groupId).length === 0)
+      // const isQuotaPurged = Boolean(this.getGroupQuotasByGroupIdByStatus(groupId, 'all').length === 0)
+      // const isQuotaApplicationPurged = Boolean(this.getGroupQuotaApplicationsByGroupId(groupId).length === 0)
 
       if (!isServerPurged) {
         Notify.create({
@@ -2240,28 +2241,29 @@ export const useStore = defineStore('server', {
           timeout: 5000,
           multiLine: false
         })
-      } else if (!isQuotaPurged) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-check-circle',
-          textColor: 'red',
-          message: '请将组内的云主机配额全部删除后，再解散该项目组',
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      } else if (!isQuotaApplicationPurged) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-check-circle',
-          textColor: 'red',
-          message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
+      // }
+      // else if (!isQuotaPurged) {
+      //   Notify.create({
+      //     classes: 'notification-negative shadow-15',
+      //     icon: 'mdi-check-circle',
+      //     textColor: 'red',
+      //     message: '请将组内的云主机配额全部删除后，再解散该项目组',
+      //     position: 'bottom',
+      //     closeBtn: true,
+      //     timeout: 5000,
+      //     multiLine: false
+      //   })
+      // } else if (!isQuotaApplicationPurged) {
+      //   Notify.create({
+      //     classes: 'notification-negative shadow-15',
+      //     icon: 'mdi-check-circle',
+      //     textColor: 'red',
+      //     message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
+      //     position: 'bottom',
+      //     closeBtn: true,
+      //     timeout: 5000,
+      //     multiLine: false
+      //   })
       } else {
         // 操作的确认提示
         Dialog.create({
