@@ -21,24 +21,14 @@ const props = defineProps({
   serviceId: {
     type: String,
     required: false
-  },
-  quotaId: {
-    type: String,
-    required: false
   }
 })
 // const emits = defineEmits(['change', 'delete'])
 
-const {
-  tc,
-  locale
-} = i18n.global
+const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 const router = useRouter()
-
-// 不可用配额是否折叠
-const isFolded = ref(true)
 
 // 获取os的icon名称
 const getOsIconName = useGetOsIconName()
@@ -48,6 +38,15 @@ const input = ref<HTMLElement>()
 
 // radio选项数据
 // // 全局数据
+const payments = [{
+  type: '预付费',
+  type_en: 'Pre-Paid',
+  value: 'prepaid'
+}, {
+  type: '后付费',
+  type_en: 'Post-Paid',
+  value: 'postpaid'
+}]
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
 const dataCenters = computed(() => Object.values(store.tables.dataCenterTable.byId))
@@ -58,15 +57,14 @@ const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 const publicNetworks = computed(() => store.getPublicNetworksByServiceId(radioService.value))
 const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(radioService.value))
 const images = computed(() => store.getImagesByServiceId(radioService.value))
-const quotasValid = computed(() => props.isGroup ? store.getGroupValidQuotasByServiceId(radioService.value, radioGroup.value) : store.getPersonalValidQuotasByServiceId(radioService.value))
-const quotasInvalid = computed(() => props.isGroup ? store.getGroupInvalidQuotasByServiceId(radioService.value, radioGroup.value) : store.getPersonalInvalidQuotasByServiceId(radioService.value))
-// 当前quota对象
-const currentQuota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[radioQuota.value] : store.tables.personalQuotaTable.byId[radioQuota.value])
+
 // radio选项 初始状态 (1)
+const radioPayment = ref('prepaid')
+const radioPeriod = ref(1)
 const radioGroup = ref('')
 const radioService = ref('')
 const radioDataCenter = computed(() => store.tables.serviceTable.byId[radioService.value]?.data_center || '')
-const radioQuota = ref('')
+// const radioQuota = ref('')
 const radioNetwork = ref('')
 const radioImage = ref('')
 const radioFlavor = ref('')
@@ -78,61 +76,13 @@ const inputRemarks = ref('')
 * 显示部分在标签里进行逻辑判断，哪些显示，哪些不显示
 * 选择动作在ts部分，radio真正选择了哪些值 */
 
-// 选择network选项的逻辑
-// network选项取决于两部分：  1.该服务的network配置，公网/私网各有多少，这是最基础条件。2.配额里公网/私网的余额。
-const chooseNetwork = () => {
-  // radioQuota选了才选network，否则为空
-  if (!radioQuota.value) {
-    radioNetwork.value = ''
-  } else {
-    if (privateNetworks.value.length === 0 && publicNetworks.value.length === 0) {
-      // 1. 配置里私网公网都没有： 选项必为空
-      radioNetwork.value = ''
-    } else if (privateNetworks.value.length > 0 && publicNetworks.value.length === 0) {
-      // 2. 配置里私网有，公网没有：查看配额余额，有私网则选私网里第一项；没有私网，则选项为空
-      if (currentQuota.value?.private_ip_total - currentQuota.value?.private_ip_used > 0) {
-        radioNetwork.value = privateNetworks.value[0]?.id
-      } else {
-        radioNetwork.value = ''
-      }
-    } else if (privateNetworks.value.length === 0 && publicNetworks.value.length > 0) {
-      // 3. 配置里私网没有，公网有：查看配额余额，有公网则选公网第一项；没有公网，则选项为空
-      if (currentQuota.value?.public_ip_total - currentQuota.value?.public_ip_used > 0) {
-        radioNetwork.value = publicNetworks.value[0]?.id
-      } else {
-        radioNetwork.value = ''
-      }
-    } else {
-      // 4. 配置里私网公网都有： 查看配额余额，有私网则选私网里第一项；没有私网则看有没有公网，有则选择公网第一项；配额余额里公网私网都没有，则选项为空
-      if (currentQuota.value?.private_ip_total - currentQuota.value?.private_ip_used > 0) {
-        radioNetwork.value = privateNetworks.value[0]?.id
-      } else if (currentQuota.value?.public_ip_total - currentQuota.value?.public_ip_used > 0) {
-        radioNetwork.value = publicNetworks.value[0]?.id
-      } else {
-        radioNetwork.value = ''
-      }
-    }
-  }
-}
-
 // radio默认选择 (2)
 const chooseRadioDefaults = () => {
-  if (props.quotaId) {
-    // quota使用指定id
-    radioQuota.value = props.quotaId
-    // group和service用quota的归属信息算出来
-    radioGroup.value = store.tables.groupQuotaTable.byId[props.quotaId]?.vo_id as string
-    radioService.value = props.isGroup ? store.tables.groupQuotaTable.byId[props.quotaId]?.service : store.tables.personalQuotaTable.byId[props.quotaId]?.service
-  } else {
-    radioGroup.value = props.groupId || groups.value[0]?.id || ''
-    radioService.value = props.serviceId || services.value[0]?.id || ''
-    radioQuota.value = quotasValid.value[0]?.id || ''
-  }
-  // 选择network
-  chooseNetwork()
-  // image和flavor， 没选择quota，则为空；选择了quota的情况下：image flavor 总是默认选第一项
-  radioImage.value = radioQuota.value ? images.value[0]?.id || '' : ''
-  radioFlavor.value = radioQuota.value ? flavors.value[0]?.id || '' : ''
+  radioGroup.value = props.groupId || groups.value[0]?.id || ''
+  radioService.value = props.serviceId || services.value[0]?.id || ''
+  radioNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+  radioImage.value = images.value[0]?.id || ''
+  radioFlavor.value = flavors.value[0]?.id || ''
 }
 // setup时调用一次 (3) table已加载时进入页面要选一次默认值
 chooseRadioDefaults()
@@ -140,37 +90,18 @@ chooseRadioDefaults()
 watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseRadioDefaults)
 /* table 进入页面过程中选择默认项 */
 
-/* (5) 在table都加载后，3个radio，随着group/service变化选择默认项 */
-watch([radioGroup, radioService], () => {
-  // 在group/service变化后, quota 总是默认选第一项
-  radioQuota.value = quotasValid.value[0]?.id || ''
-  // 在group/service变化后,image和flavor， 没选择quota，则为空；选择了quota的情况下：image flavor 总是默认选第一项
-  radioImage.value = radioQuota.value ? images.value[0]?.id || '' : ''
-  radioFlavor.value = radioQuota.value ? flavors.value[0]?.id || '' : ''
-  // 切换group/service时，不可用quota也恢复折叠
-  isFolded.value = true
+/* (5) 在table都加载后，3个radio，随着service变化选择默认项 */
+watch(radioService, () => {
+  radioNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+  radioImage.value = images.value[0]?.id || ''
+  radioFlavor.value = flavors.value[0]?.id || ''
 })
-/* 在table都加载后，3个radio，随着group/service变化选择默认项 */
-
-/* (6) 在table都加载后，network radio，随着quota变化选择默认项 */
-watch(radioQuota, chooseNetwork)
-/* 在table都加载后，network radio，随着quota变化选择默认项 */
+/* 在table都加载后，3个radio，随着service变化选择默认项 */
 
 /* 新建云主机 */
 const isDeploying = ref(false)
 const deployServer = async () => {
-  if (!radioQuota.value) {
-    Notify.create({
-      classes: 'notification-negative shadow-15',
-      icon: 'error',
-      textColor: 'negative',
-      message: '请选择可用配额',
-      position: 'bottom',
-      closeBtn: true,
-      timeout: 5000,
-      multiLine: false
-    })
-  } else if (!radioNetwork.value) {
+  if (!radioNetwork.value) {
     // 如果radio没有选择全，则弹出通知
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -221,11 +152,13 @@ const deployServer = async () => {
   } else {
     isDeploying.value = true
     const selection = {
+      pay_type: radioPayment.value,
+      ...(radioPayment.value === 'prepaid' ? { period: radioPeriod.value } : {}),
+      ...(props.isGroup ? { vo_id: radioGroup.value } : {}),
       service_id: radioService.value,
-      network_id: radioNetwork.value,
       image_id: radioImage.value,
       flavor_id: radioFlavor.value,
-      quota_id: radioQuota.value,
+      network_id: radioNetwork.value,
       remarks: inputRemarks.value
     }
 
@@ -238,7 +171,7 @@ const deployServer = async () => {
         isGroup: props.isGroup
       })
       // 更新personal/group quotaTable, 因为quota已经消耗了一部分。连带里面servers字段也更新了。
-      props.isGroup ? void store.loadGroupQuotaTable() : void store.loadPersonalQuotaTable()
+      // props.isGroup ? void store.loadGroupQuotaTable() : void store.loadPersonalQuotaTable()
       // notify
       Notify.create({
         classes: 'notification-positive shadow-15',
@@ -285,6 +218,53 @@ const deployServer = async () => {
 
     <div v-else>
 
+      <div class="col section">
+        <div class="text-h7 text-primary section-title">
+          支付类型
+        </div>
+
+        <div class="row item-row">
+          <div class="col">
+            <q-radio v-for="payment in payments" :val="payment.value" :key="payment.value"
+                     class="radio non-selectable" dense v-model="radioPayment">
+              <div :class="radioPayment===payment.value ? 'text-primary' : 'text-black'">
+                {{ i18n.global.locale === 'zh' ? payment.type : payment.type_en }}
+              </div>
+            </q-radio>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="radioPayment === 'prepaid'" class="col section">
+        <div class="text-h7 text-primary section-title">
+          预付时长
+        </div>
+
+        <div class="row items-center q-gutter-md q-pb-lg">
+          <div class="col-auto text-bold row items-center ">
+            {{ tc('云主机使用时长') }}
+          </div>
+
+          <div class="row items-center q-pt-md">
+            <q-input style="max-width: 300px"
+                     outlined v-model.number="radioPeriod" input-class="text-center"
+                     :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
+                     :rules="[val => (Number.isInteger(val) && val>0 && val<=120) || (i18n.global.locale === 'zh' ? '应为介于1-120之间的整数' : 'Must be an integer between 1 and 120')]">
+
+              <template v-slot:prepend>
+                <q-icon name="remove" @click="radioPeriod = (radioPeriod === 1 ? 1 : radioPeriod - 1)"
+                        class="cursor-pointer"/>
+              </template>
+
+              <template v-slot:append>
+                <q-icon name="add" @click="radioPeriod = radioPeriod + 1" class="cursor-pointer"/>
+              </template>
+
+            </q-input>
+          </div>
+        </div>
+      </div>
+
       <div v-if="isGroup" class="section">
         <div class="text-h7 text-primary section-title">
           {{ tc('项目组') }}
@@ -326,18 +306,21 @@ const deployServer = async () => {
         <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="row  item-row">
 
           <div class="col-auto item-title text-bold">
-            {{ locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
+            {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
           </div>
 
           <div class="col">
-            <div class="row items-center q-pb-sm"
+            <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">本机构暂无可用服务</div>
+
+            <div v-else class="row items-center q-pb-sm"
                  v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
                  :key="service.id">
 
-              <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id" :key="service.id">
+              <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id"
+                       :key="service.id">
 
                 <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
-                  {{ locale === 'zh' ? service.name : service.name_en }}
+                  {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                 </span>
                 <span>
                   <q-icon
@@ -365,138 +348,117 @@ const deployServer = async () => {
         </div>
       </div>
 
-      <div class="col section">
-        <div class="text-h7 text-primary section-title row justify-between">
-          {{ tc('云主机配额') }}
+      <!--      <div class="col section">-->
+      <!--        <div class="text-h7 text-primary section-title row justify-between">-->
+      <!--          {{ tc('云主机配额') }}-->
 
-          <q-btn v-if="isGroup" unelevated icon="add" padding="xs" color="primary"
-                 :to="`/my/group/quota/apply?group=${radioGroup}&service=${radioService}`">
-            {{ tc('申请新配额') }}
-          </q-btn>
-          <q-btn v-else unelevated icon="add" padding="xs" color="primary"
-                 :to="`/my/personal/quota/apply?service=${radioService}`">
-            {{ tc('申请新配额') }}
-          </q-btn>
-        </div>
+      <!--          <q-btn v-if="isGroup" unelevated icon="add" padding="xs" color="primary"-->
+      <!--                 :to="`/my/group/quota/apply?group=${radioGroup}&service=${radioService}`">-->
+      <!--            {{ tc('申请新配额') }}-->
+      <!--          </q-btn>-->
+      <!--          <q-btn v-else unelevated icon="add" padding="xs" color="primary"-->
+      <!--                 :to="`/my/personal/quota/apply?service=${radioService}`">-->
+      <!--            {{ tc('申请新配额') }}-->
+      <!--          </q-btn>-->
+      <!--        </div>-->
 
-        <div class="row item-row">
-          <div class="col-1  text-bold">
-            {{ tc('可用配额') }}
-          </div>
-          <div class="col">
+      <!--        <div class="row item-row">-->
+      <!--          <div class="col-1  text-bold">-->
+      <!--            {{ tc('可用配额') }}-->
+      <!--          </div>-->
+      <!--          <div class="col">-->
 
-            <div v-if="quotasValid.length === 0" class="row items-center">
-              {{ tc('无') }}
-            </div>
+      <!--            <div v-if="quotasValid.length === 0" class="row items-center">-->
+      <!--              {{ tc('无') }}-->
+      <!--            </div>-->
 
-            <div v-else>
-              <q-radio v-for="quota in quotasValid" :val="quota.id" :key="quota.id"
-                       class="radio non-selectable"
-                       dense v-model="radioQuota"
-                       :disable="quota.expired || quota.exhausted">
-                <div>{{ quota }}</div>
-                <!--                <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>-->
-                <!--                <q-btn label="a" :to="{path: '/'}"/>-->
-              </q-radio>
-            </div>
+      <!--            <div v-else>-->
+      <!--              <q-radio v-for="quota in quotasValid" :val="quota.id" :key="quota.id"-->
+      <!--                       class="radio non-selectable"-->
+      <!--                       dense v-model="radioQuota"-->
+      <!--                       :disable="quota.expired || quota.exhausted">-->
+      <!--                <div>{{ quota }}</div>-->
+      <!--                &lt;!&ndash;                <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>&ndash;&gt;-->
+      <!--                &lt;!&ndash;                <q-btn label="a" :to="{path: '/'}"/>&ndash;&gt;-->
+      <!--              </q-radio>-->
+      <!--            </div>-->
 
-          </div>
-        </div>
+      <!--          </div>-->
+      <!--        </div>-->
 
-        <!--        <q-separator spaced="lg"/>-->
+      <!--        &lt;!&ndash;        <q-separator spaced="lg"/>&ndash;&gt;-->
 
-        <div class="row item-row">
-          <div class="col-1  text-bold">
-            {{ tc('不可用配额') }}
-          </div>
-          <div class="col">
-            <div v-if="quotasInvalid.length === 0">{{ tc('无') }}</div>
-            <div v-else>
-              <div class="row">
-                <!--                <q-btn class="q-pa-none" color="primary" flat dense padding="none" size="md"-->
-                <!--                       @click="isFolded=!isFolded">-->
-                <!--                  {{ isFolded ? tc('展开') : tc('折叠') }}-->
-                <!--                </q-btn>-->
-                <a class="text-primary cursor-pointer"
-                   @click="isFolded=!isFolded" :to="{path:'/my'}">{{ isFolded ? tc('展开') : tc('收起') }}</a>
-              </div>
-              <div v-if="!isFolded">
-                <q-radio v-for="quota in quotasInvalid" :val="quota.id" :key="quota.id"
-                         class="radio non-selectable"
-                         v-model="radioQuota"
-                         dense :disable="quota.expired || quota.exhausted">
-                  <div>{{ quota }}</div>
-                  <!--                  <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>-->
-                </q-radio>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--        <div class="row item-row">-->
+      <!--          <div class="col-1  text-bold">-->
+      <!--            {{ tc('不可用配额') }}-->
+      <!--          </div>-->
+      <!--          <div class="col">-->
+      <!--            <div v-if="quotasInvalid.length === 0">{{ tc('无') }}</div>-->
+      <!--            <div v-else>-->
+      <!--              <div class="row">-->
+      <!--                &lt;!&ndash;                <q-btn class="q-pa-none" color="primary" flat dense padding="none" size="md"&ndash;&gt;-->
+      <!--                &lt;!&ndash;                       @click="isFolded=!isFolded">&ndash;&gt;-->
+      <!--                &lt;!&ndash;                  {{ isFolded ? tc('展开') : tc('折叠') }}&ndash;&gt;-->
+      <!--                &lt;!&ndash;                </q-btn>&ndash;&gt;-->
+      <!--                <a class="text-primary cursor-pointer"-->
+      <!--                   @click="isFolded=!isFolded" :to="{path:'/my'}">{{ isFolded ? tc('展开') : tc('收起') }}</a>-->
+      <!--              </div>-->
+      <!--              <div v-if="!isFolded">-->
+      <!--                <q-radio v-for="quota in quotasInvalid" :val="quota.id" :key="quota.id"-->
+      <!--                         class="radio non-selectable"-->
+      <!--                         v-model="radioQuota"-->
+      <!--                         dense :disable="quota.expired || quota.exhausted">-->
+      <!--                  <div>{{ quota }}</div>-->
+      <!--                  &lt;!&ndash;                  <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>&ndash;&gt;-->
+      <!--                </q-radio>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
 
       <div class="col section">
 
         <div class="text-h7 text-primary section-title">
           {{ tc('网络类型') }}
         </div>
-        <!--未选择配额-->
-        <div v-if="!radioQuota" class="row item-row">
-          <div class="col-shrink item-title">
-            {{ tc('请选择可用配额以列举网络类型') }}
+        <div
+          v-if="privateNetworks.length > 0"
+          class="row item-row">
+          <div class="col-1 text-bold">
+            {{ tc('私网IP段') }}
+          </div>
+          <div class="col">
+            <q-radio v-for="network in privateNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
+                     class="radio non-selectable" dense>
+              <div :class="radioNetwork===network.id ? 'text-primary' : 'text-black'">
+                {{ network.name }}
+              </div>
+            </q-radio>
           </div>
         </div>
-        <!--选择了配额-->
-        <div v-else>
-          <!--显示部分，只要符合条件就都显示；选择部分只能选一个，不可以都选-->
-          <div
-            v-if="privateNetworks.length > 0 && (currentQuota.private_ip_total - currentQuota.private_ip_used)>0"
-            class="row item-row">
-            <div class="col-1 text-bold">
-              {{ tc('私网IP段') }}
-            </div>
-            <div class="col">
-              <q-radio v-for="network in privateNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
-                       class="radio non-selectable" dense>
-                <div :class="radioNetwork===network.id ? 'text-primary' : 'text-black'">
-                  {{ network.name }}
-                </div>
-              </q-radio>
-            </div>
-          </div>
 
-          <div
-            v-if="publicNetworks.length > 0 && (currentQuota.public_ip_total-currentQuota.public_ip_used)>0"
-            class="row item-row">
-            <div class="col-1 text-bold">
-              {{ tc('公网IP段') }}
-            </div>
-            <div class="col">
-              <q-radio v-for="network in publicNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
-                       class="radio non-selectable" dense>
-                <div :class="radioNetwork===network.id ? 'text-primary' : 'text-black'">
-                  {{ network.name }}
-                </div>
-              </q-radio>
-            </div>
+        <div
+          v-if="publicNetworks.length > 0"
+          class="row item-row">
+          <div class="col-1 text-bold">
+            {{ tc('公网IP段') }}
           </div>
-
-          <!--节点配置只有公网，但余额只有私网；节点配置只有私网，余额只有公网。则无可用配额-->
-          <div
-            v-if="((publicNetworks.length>0 && privateNetworks.length===0) && ((currentQuota.private_ip_total - currentQuota.private_ip_used)>0) && ((currentQuota.public_ip_total - currentQuota.public_ip_used)===0)) ||
-                  ((publicNetworks.length===0 && privateNetworks.length>0) && ((currentQuota.private_ip_total - currentQuota.private_ip_used)===0) && ((currentQuota.public_ip_total - currentQuota.public_ip_used)>0))"
-            class="row item-row">
-            <div class="col-shrink item-title">
-              {{ tc('暂无可用网络类型，请选择其他配额') }}
-            </div>
+          <div class="col">
+            <q-radio v-for="network in publicNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
+                     class="radio non-selectable" dense>
+              <div :class="radioNetwork===network.id ? 'text-primary' : 'text-black'">
+                {{ network.name }}
+              </div>
+            </q-radio>
           </div>
+        </div>
 
-          <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0"
-               class="row item-row">
-            <div class="col-shrink item-title">
-              {{ tc('该服务节点无可用网络类型，请选择其它服务节点') }}
-            </div>
+        <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0"
+             class="row item-row">
+          <div class="col-shrink item-title">
+            {{ tc('该服务节点无可用网络类型，请选择其它服务节点') }}
           </div>
-
         </div>
 
       </div>
@@ -506,32 +468,26 @@ const deployServer = async () => {
           {{ tc('操作系统') }}
         </div>
 
-        <div v-if="!radioQuota" class="row item-row">
-          <div class="col-shrink item-title">
-            {{ tc('请选择可用配额以列举操作系统') }}
+        <div v-if="images.length > 0" class="row item-row">
+          <div class="col">
+            <q-radio v-for="image in images" :val="image.id" :key="image.id"
+                     class="radio non-selectable" dense v-model="radioImage">
+              <div class="column items-center q-pr-md" :class="radioImage===image.id ? 'text-primary' : 'text-black'">
+                <div>
+                  <q-icon v-if="getOsIconName(image.name)" :name="getOsIconName(image.name)" flat size="md"/>
+                </div>
+                {{ image.name }}
+              </div>
+            </q-radio>
           </div>
         </div>
 
-        <div v-else>
-          <div v-if="images.length > 0" class="row item-row">
-            <div class="col">
-              <q-radio v-for="image in images" :val="image.id" :key="image.id"
-                       class="radio non-selectable" dense v-model="radioImage">
-                <div class="column items-center q-pr-md" :class="radioImage===image.id ? 'text-primary' : 'text-black'">
-                  <div>
-                    <q-icon v-if="getOsIconName(image.name)" :name="getOsIconName(image.name)" flat size="md"/>
-                  </div>
-                  {{ image.name }}
-                </div>
-              </q-radio>
-            </div>
-          </div>
-          <div v-else class="row item-row">
-            <div class="col-shrink item-title">
-              {{ tc('该服务节点无可用操作系统，请选择其它服务节点') }}
-            </div>
+        <div v-else class="row item-row">
+          <div class="col-shrink item-title">
+            {{ tc('该服务节点无可用操作系统，请选择其它服务节点') }}
           </div>
         </div>
+
       </div>
 
       <div class="col section">
@@ -539,29 +495,23 @@ const deployServer = async () => {
           CPU/{{ tc('内存') }}
         </div>
 
-        <div v-if="!radioQuota" class="row item-row">
-          <div class="col-shrink item-title">
-            {{ tc('请选择可用配额以列举配置') }}
+        <div v-if="flavors.length > 0" class="row item-row">
+          <div class="col">
+            <q-radio v-for="flavor in flavors" :val="flavor.id" :key="flavor.id"
+                     class="radio non-selectable" dense v-model="radioFlavor">
+              <div :class="radioFlavor===flavor.id ? 'text-primary' : 'text-black'">
+                {{ `${flavor.vcpus}${tc('核')}/${flavor.ram / 1024}GB` }}
+              </div>
+            </q-radio>
           </div>
         </div>
 
-        <div v-else>
-          <div v-if="flavors.length > 0" class="row item-row">
-            <div class="col">
-              <q-radio v-for="flavor in flavors" :val="flavor.id" :key="flavor.id"
-                       class="radio non-selectable" dense v-model="radioFlavor">
-                <div :class="radioFlavor===flavor.id ? 'text-primary' : 'text-black'">
-                  {{ `${flavor.vcpus}${tc('核')}/${flavor.ram / 1024}GB` }}
-                </div>
-              </q-radio>
-            </div>
-          </div>
-          <div v-else class="row item-row">
-            <div class="col-shrink item-title">
-              {{ tc('该服务节点无可用配置，请选择其它服务节点') }}
-            </div>
+        <div v-else class="row item-row">
+          <div class="col-shrink item-title">
+            {{ tc('该服务节点无可用配置，请选择其它服务节点') }}
           </div>
         </div>
+
       </div>
 
       <div class="col section">
@@ -628,25 +578,6 @@ const deployServer = async () => {
             <div v-else class="text-red">{{ tc('请选择服务节点') }}</div>
           </div>
         </div>
-
-        <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('云主机配额') }}
-          </div>
-          <div v-if="isGroup" class="col">
-            <div v-if="store.tables.groupQuotaTable.byId[radioQuota]?.display">
-              {{ store.tables.groupQuotaTable.byId[radioQuota]?.display }}
-            </div>
-            <div v-else class="text-red">{{ tc('请选择云主机配额') }}</div>
-          </div>
-          <div v-else class="col">
-            <div v-if="store.tables.personalQuotaTable.byId[radioQuota]?.display">
-              {{ store.tables.personalQuotaTable.byId[radioQuota]?.display }}
-            </div>
-            <div v-else class="text-red">{{ tc('请选择云主机配额') }}</div>
-          </div>
-        </div>
-
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
             {{ tc('网络类型') }}

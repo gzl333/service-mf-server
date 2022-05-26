@@ -428,12 +428,15 @@ export default {
     },
     postServer (payload: {
       body: {
+        pay_type: string; // 'prepaid' | 'postpaid' | 'quota';
         service_id: string;
         image_id: string;
         flavor_id: string;
-        network_id?: string;
-        quota_id: string;
+        network_id: string;
         remarks?: string;
+        azone_id?: string;
+        vo_id?: string;
+        period?: number;
       }
     }) {
       const data = payload.body
