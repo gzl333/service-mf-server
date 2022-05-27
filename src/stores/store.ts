@@ -1238,6 +1238,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.groupTable.status = 'loading'
       // 发送请求
       const respGroup = await api.server.vo.getVo()
       // normalize
@@ -1270,6 +1271,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.groupMemberTable.status = 'loading'
       for (const groupId of this.tables.groupTable.allIds) {
         const respGroupMember = await api.server.vo.getVoListMembers({ path: { id: groupId } })
         // 是否把组长添加进member列表？
@@ -1302,6 +1304,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.groupBalanceTable.status = 'loading'
       for (const groupId of this.tables.groupTable.allIds) {
         const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
         // normalize
@@ -1324,6 +1327,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.groupOrderTable.status = 'loading'
       for (const groupId of this.tables.groupTable.allIds) {
         const respGetOrder = await api.server.order.getOrder({ query: { vo_id: groupId } })
         const order = new schema.Entity('order')
@@ -1349,6 +1353,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.dataCenterTable.status = 'loading'
       const respDataCenter = await api.server.registry.getRegistry()
       const dataCenter = new schema.Entity('dataCenter', {})
       respDataCenter.data.registries.forEach((data: Record<string, never>) => {
@@ -1371,6 +1376,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.serviceTable.status = 'loading'
       const respService = await api.server.service.getService()
       // 将响应normalize，存入state里的serviceTable
       const data_center = new schema.Entity('data_center')
@@ -1394,6 +1400,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.serviceAllocationTable.status = 'loading'
       const respPQuota = await api.server.vms.getVmsServicePQuota()
       const service = new schema.Entity('service')
       const allocation = new schema.Entity('allocation', { service })
@@ -1414,6 +1421,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.fedAllocationTable.status = 'loading'
       const respSQuota = await api.server.vms.getVmsServiceSQuota()
       const service = new schema.Entity('service')
       const allocation = new schema.Entity('allocation', { service })
@@ -1473,6 +1481,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.adminServerTable.status = 'loading'
       const respGroupServer = await api.server.server.getServer({ query: payload })
       const service = new schema.Entity('service')
       const server = new schema.Entity('server', { service })
@@ -1494,6 +1503,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.fedFlavorTable.status = 'loading'
       const respFlavor = await api.server.flavor.getFlavor()
       for (const flavor of respFlavor.data.flavors) {
         Object.assign(this.tables.fedFlavorTable.byId, { [flavor.id]: flavor })
@@ -1545,6 +1555,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.userVpnTable.status = 'loading'
       for (const serviceId of this.tables.serviceTable.allIds) {
         if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
           const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
@@ -1627,6 +1638,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.personalOrderTable.status = 'loading'
       const respGetOrder = await api.server.order.getOrder()
       const order = new schema.Entity('order')
       for (const data of respGetOrder.data.orders) {
@@ -1647,6 +1659,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.personalServerTable.status = 'loading'
       // 发送请求
       const respServer = await api.server.server.getServer()
       // 将响应normalize，存入state里的userServerTable
@@ -1680,6 +1693,7 @@ export const useStore = defineStore('server', {
         allIds: [],
         status: 'init'
       }
+      this.tables.groupServerTable.status = 'loading'
       // 根据groupTable,建立groupServerTable
       for (const groupId of this.tables.groupTable.allIds) {
         // 发送请求
