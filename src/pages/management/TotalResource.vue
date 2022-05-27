@@ -34,7 +34,7 @@ const ticked = ref([])
 
 // todo WTF are these any???!!!
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-const map: any = ref(null)
+// const map: any = ref(null)
 const tree: any = ref(null)
 const mapData: any = ref([])
 

@@ -68,11 +68,23 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'order',
         component: () => import('pages/order/OrderIndex.vue'),
-        redirect: '/my/server/order/list',
+        redirect: '/my/server/order/personal',
         children: [
           {
-            path: 'list', // 订单列表
-            component: () => import('pages/order/OrderList.vue')
+            path: 'personal', // 订单列表
+            component: () => import('pages/order/PersonalOrder.vue')
+          },
+          {
+            path: 'personal/detail/:orderId', // orderId 动态路由匹配
+            component: () => import('pages/order/PersonalDetail.vue')
+          },
+          {
+            path: 'group', // 订单列表
+            component: () => import('pages/order/GroupOrder.vue')
+          },
+          {
+            path: 'group/detail/:orderId', // orderId 动态路由匹配
+            component: () => import('pages/order/GroupDetail.vue')
           }
         ]
       },

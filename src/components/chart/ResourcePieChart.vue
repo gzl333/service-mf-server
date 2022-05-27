@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 // import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
@@ -47,6 +47,7 @@ onMounted(() => {
     },
     tooltip: {
       trigger: 'item',
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
       formatter: function (data: any) {
         if (props.title === '内存') {
           return data.seriesName + '<br/>' + data.name + ': ' + data.value / 1024 + ' GB'

@@ -5,7 +5,7 @@
 import { useRoute/* , useRouter */ } from 'vue-router'
 // import { i18n } from 'boot/i18n'
 
-import ServerDetailCard from 'components/server/ServerDetailCard.vue'
+import OrderDetailCard from 'components/order/OrderDetailCard.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -16,23 +16,22 @@ import ServerDetailCard from 'components/server/ServerDetailCard.vue'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
+// const { tc } = i18n.global
 // const store = useStore()
 const route = useRoute()
 // const router = useRouter()
-// const tc = i18n.global.tc
 
 // 从route对象中读取id参数
-const serverId = route.params.serverId as string
-
+const orderId = route.params.orderId as string
 </script>
 
 <template>
-  <div class="ServerDetail">
-    <server-detail-card :server-id="serverId" :is-group="true"/>
+  <div class="GroupDetail">
+    <OrderDetailCard :orderId="orderId" :isGroup="true"/>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.ServerDetail {
+.GroupDetail {
 }
 </style>

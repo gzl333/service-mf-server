@@ -24,7 +24,6 @@ const route = useRoute()
 // 从route对象中读取id参数
 const serverId = route.params.serverId as string
 
-console.log(serverId)
 </script>
 
 <template>

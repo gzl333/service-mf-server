@@ -33,7 +33,7 @@ const props = defineProps({
 
 const store = useStore()
 // const route = userRoute()
-const tc = i18n.global.tc
+const { tc } = i18n.global
 
 // 分栏定义
 const columns = computed(() => [

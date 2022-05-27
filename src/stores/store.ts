@@ -53,6 +53,8 @@ export interface GroupInterface {
   myRole: 'owner' | 'leader' | 'member'
   // 余额
   balance: string // groupBalanceTable 内的id值
+  // 订单
+  order: string[] // orderId
 }
 
 export interface SingleMemberInterface {
@@ -930,6 +932,23 @@ export const useStore = defineStore('server', {
         return rows.sort(sortFn)
       }
     },
+    // 根据用户选择的serviceId来返回order数组
+    getPersonalOrdersByServiceId: (state) => (serviceId: string): OrderInterface[] => {
+      // 排序函数，根据云主机创建时间降序排列
+      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+
+      if (serviceId === '0') {
+        return Object.values(state.tables.personalOrderTable.byId).sort(sortFn)
+      } else {
+        const rows: OrderInterface[] = []
+        for (const order of Object.values(state.tables.personalOrderTable.byId)) {
+          if (order.service_id === serviceId) {
+            rows.push(order)
+          }
+        }
+        return rows.sort(sortFn)
+      }
+    },
     /* quotaList使用 */
     // 根据用户选择的filter来返回application数组
     // getPersonalQuotasByFilter: (state) => (filter: string): QuotaInterface[] => {
@@ -989,6 +1008,20 @@ export const useStore = defineStore('server', {
           }
         }
         return servers.sort(sortFn)
+      }
+    },
+    getGroupOrdersByGroupId: (state) => (groupId: string): OrderInterface[] => {
+      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      if (groupId === '0') {
+        return Object.values(state.tables.groupOrderTable.byId).sort(sortFn)
+      } else {
+        const orders: OrderInterface[] = []
+        for (const order of Object.values(state.tables.groupOrderTable.byId)) {
+          if (groupId === order.vo_id) {
+            orders.push(order)
+          }
+        }
+        return orders.sort(sortFn)
       }
     },
     // 有四种状态：all -> 全部, valid -> 可用， expired -> 过期, exhausted -> 用尽
@@ -1078,8 +1111,7 @@ export const useStore = defineStore('server', {
       // service.need_vpn才加入
       const serviceIds = this.getPersonalAvailableServiceIds.filter((serviceId: string) => state.tables.serviceTable.byId[serviceId]?.need_vpn) as string[]
       // serviceId -> service对象
-      const vpns = serviceIds.map((serviceId) => state.tables.userVpnTable.byId[serviceId])
-      return vpns
+      return serviceIds.map((serviceId) => state.tables.userVpnTable.byId[serviceId])
     }
   },
   actions: {
@@ -1115,9 +1147,9 @@ export const useStore = defineStore('server', {
           // void this.loadGroupQuotaApplicationTable()
         })
         void this.loadGroupServerTable()
+        void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
         // void this.loadGroupQuotaTable()
         void this.loadGroupBalanceTable()
-        // todo loadGroupOrderTable
       })
     },
     loadAllTables () {
@@ -1143,7 +1175,9 @@ export const useStore = defineStore('server', {
               if (this.tables.personalServerTable.status === 'init') {
                 void this.loadPersonalServerTable()
               }
-              // todo loadPersonalOrderTable
+              if (this.tables.personalOrderTable.status === 'init') {
+                void this.loadPersonalOrderTable() // 如果要把orderId补充进server实例里，则应在personalServerTable加载后加载
+              }
             })
           }
         })
@@ -1176,13 +1210,15 @@ export const useStore = defineStore('server', {
           if (this.tables.groupServerTable.status === 'init') {
             void this.loadGroupServerTable()
           }
+          if (this.tables.groupOrderTable.status === 'init') {
+            void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+          }
           // if (this.tables.groupQuotaTable.status === 'init') {
           //   void this.loadGroupQuotaTable()
           // }
           if (this.tables.groupBalanceTable.status === 'init') {
             void this.loadGroupBalanceTable()
           }
-          // todo loadGroupOrderTable
         })
       }
 
@@ -1207,11 +1243,15 @@ export const useStore = defineStore('server', {
       // normalize
       const group = new schema.Entity('group')
       for (const data of respGroup.data.results) {
-        // 添加role字段
+        // 添加role/balance/order字段
         const storeMain = useStoreMain()
         const currentId = storeMain.items.tokenDecoded.email
         const myRole = currentId === data.owner.username ? 'owner' : 'member'
-        Object.assign(data, { myRole })
+        Object.assign(data, {
+          myRole,
+          balance: '',
+          order: []
+        })
         // normalize
         const normalizedData = normalize(data, group)
         // 保存table
@@ -1278,7 +1318,28 @@ export const useStore = defineStore('server', {
       this.tables.groupMemberTable.status = 'total'
     },
     // 根据groupTable, 建立groupOrderTable
-    // async loadGroupOrderTable() {}
+    async loadGroupOrderTable () {
+      this.tables.groupOrderTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      for (const groupId of this.tables.groupTable.allIds) {
+        const respGetOrder = await api.server.order.getOrder({ query: { vo_id: groupId } })
+        const order = new schema.Entity('order')
+        for (const data of respGetOrder.data.orders) {
+          // orderId补充进group的order字段
+          this.tables.groupTable.byId[groupId].order.push(data.id)
+          // get order details
+          const respGetOrderId = await api.server.order.getOrderId({ path: { id: data.id } })
+          const normalizedData = normalize(respGetOrderId.data, order)
+          Object.assign(this.tables.groupOrderTable.byId, normalizedData.entities.order)
+          this.tables.groupOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+          this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
+        }
+      }
+      this.tables.groupOrderTable.status = 'total'
+    },
 
     /* dataCenterTable */
     async loadDataCenterTable () {
@@ -1536,12 +1597,47 @@ export const useStore = defineStore('server', {
     //   this.tables.personalQuotaTable.status = 'total'
     // },
     // 加载personalOrderTable
+    async loadSingleOrder (payload: {
+      isGroup: boolean,
+      orderId: string
+    }) {
+      if (payload.isGroup) {
+        const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
+        // groupTable补充order字段
+        this.tables.groupTable.byId[respGetOrderId.data.vo_id].order.push(payload.orderId)
+        // 补充groupOrderTable
+        const order = new schema.Entity('order')
+        const normalizedData = normalize(respGetOrderId.data, order)
+        Object.assign(this.tables.groupOrderTable.byId, normalizedData.entities.order)
+        this.tables.groupOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+        this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
+      } else {
+        const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
+        // 补充personalOrderTable
+        const order = new schema.Entity('order')
+        const normalizedData = normalize(respGetOrderId.data, order)
+        Object.assign(this.tables.personalOrderTable.byId, normalizedData.entities.order)
+        this.tables.personalOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+        this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
+      }
+    },
     async loadPersonalOrderTable () {
       this.tables.personalOrderTable = {
         byId: {},
         allIds: [],
         status: 'init'
       }
+      const respGetOrder = await api.server.order.getOrder()
+      const order = new schema.Entity('order')
+      for (const data of respGetOrder.data.orders) {
+        // get order details
+        const respGetOrderId = await api.server.order.getOrderId({ path: { id: data.id } })
+        const normalizedData = normalize(respGetOrderId.data, order)
+        Object.assign(this.tables.personalOrderTable.byId, normalizedData.entities.order)
+        this.tables.personalOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+        this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
+      }
+      this.tables.personalOrderTable.status = 'total'
     },
     // 更新整个userServerTable
     async loadPersonalServerTable () {

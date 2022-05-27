@@ -60,7 +60,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md"
                     name="list"
                     icon="format_list_bulleted"
-                    :label="tc('项目组')"
+                    :label="tc('项目组列表')"
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/group/list')"
                   />
@@ -69,7 +69,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mx-sm"
                     name="server"
                     icon="computer"
-                    :label="tc('云主机')"
+                    :label="tc('云主机列表')"
                     :ripple="false"
                     @click="activeTab = 'server'; navigateToUrl('/my/server/group/server/list')"
                   />

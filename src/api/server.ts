@@ -313,8 +313,8 @@ export default {
     }
   },
   order: {
-    getOrder (payload: {
-      query: {
+    getOrder (payload?: {
+      query?: {
         page?: number,
         page_size?: number,
         resource_type?: 'vm' | 'disk' | 'bucket',
@@ -326,7 +326,7 @@ export default {
       }
     }) {
       const config = {
-        params: payload.query
+        params: payload?.query
       }
       return axiosServer.get('/order', config)
     },
@@ -335,9 +335,34 @@ export default {
     }) {
       return axiosServer.get('/order/' + payload.path.id)
     },
-    postOrderIdCancel () {},
-    postOrderIdClaim () {},
-    postOrderIdPay () {}
+    postOrderIdCancel (payload: {
+      path: {
+        id: string
+      }
+    }) {
+      return axiosServer.post('/order/' + payload.path.id + '/cancel')
+    },
+    postOrderIdClaim (payload: {
+      path: {
+        id: string
+      }
+    }) {
+      return axiosServer.post('/order/' + payload.path.id + '/claim')
+    },
+    postOrderIdPay (payload: {
+      path: {
+        id: string
+      },
+      query: {
+        payment_method: 'balance' | 'cashcoupon' | 'coupon-balance',
+        coupon_ids?: string[]
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.post('/order/' + payload.path.id + '/pay', null, config)
+    }
   },
   quota: {
     getQuota (payload?: {

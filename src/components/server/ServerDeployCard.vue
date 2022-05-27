@@ -8,6 +8,7 @@ import { Notify } from 'quasar'
 import api from 'src/api'
 
 import useGetOsIconName from 'src/hooks/useGetOsIconName'
+import { navigateToUrl } from 'single-spa'
 
 const props = defineProps({
   isGroup: {
@@ -102,7 +103,19 @@ watch(radioService, () => {
 const isDeploying = ref(false)
 // check inputs
 const checkInputs = () => {
-  if (!radioNetwork.value) {
+  if (radioPeriod.value <= 0 || radioPeriod.value > 120) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: '预付时长应介于1-120个月之间',
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
+  } else if (!radioNetwork.value) {
     // 如果radio没有选择全，则弹出通知
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -178,10 +191,16 @@ const deployServer = async () => {
       // 预付费
       if (respPostServer.status === 200) {
         const orderId = respPostServer.data.order_id
-        console.log(orderId)
-        // todo 订单table完成后做
         // 更新订单table
+        props.isGroup ? void await store.loadSingleOrder({
+          isGroup: true,
+          orderId
+        }) : void await store.loadSingleOrder({
+          isGroup: false,
+          orderId
+        })
         // 跳转至订单list
+        props.isGroup ? navigateToUrl(`/my/server/order/group/detail/${orderId}`) : navigateToUrl(`/my/server/order/personal/detail/${orderId}`)
       }
     } else if (radioPayment.value === 'postpaid') {
       // 后付费
@@ -563,7 +582,8 @@ const deployServer = async () => {
           <div class="col-shrink item-title-narrow text-grey">
             {{ tc('预付时长') }}
           </div>
-          <div class="col">
+          <div class="col"
+               :class="(radioPeriod<=0 || radioPeriod >120 || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
             {{ radioPeriod }} {{ tc('个月') }}
           </div>
         </div>
