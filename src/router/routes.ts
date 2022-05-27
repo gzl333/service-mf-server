@@ -66,6 +66,17 @@ const routes: RouteRecordRaw[] = [
         children: []
       },
       {
+        path: 'order',
+        component: () => import('pages/order/OrderIndex.vue'),
+        redirect: '/my/server/order/list',
+        children: [
+          {
+            path: 'list', // 订单列表
+            component: () => import('pages/order/OrderList.vue')
+          }
+        ]
+      },
+      {
         path: 'provider',
         component: () => import('pages/provider/ProviderIndex.vue'),
         redirect: '/my/server/provider/server',

@@ -100,7 +100,8 @@ watch(radioService, () => {
 
 /* 新建云主机 */
 const isDeploying = ref(false)
-const deployServer = async () => {
+// check inputs
+const checkInputs = () => {
   if (!radioNetwork.value) {
     // 如果radio没有选择全，则弹出通知
     Notify.create({
@@ -113,6 +114,7 @@ const deployServer = async () => {
       timeout: 5000,
       multiLine: false
     })
+    return false
   } else if (!radioImage.value) {
     // 如果radio没有选择全，则弹出通知
     Notify.create({
@@ -125,6 +127,7 @@ const deployServer = async () => {
       timeout: 5000,
       multiLine: false
     })
+    return false
   } else if (!radioFlavor.value) {
     // 如果radio没有选择全，则弹出通知
     Notify.create({
@@ -137,6 +140,7 @@ const deployServer = async () => {
       timeout: 5000,
       multiLine: false
     })
+    return false
   } else if (!inputRemarks.value) {
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -149,7 +153,12 @@ const deployServer = async () => {
       multiLine: false
     })
     input.value?.focus()
-  } else {
+    return false
+  }
+  return true
+}
+const deployServer = async () => {
+  if (checkInputs()) {
     isDeploying.value = true
     const selection = {
       pay_type: radioPayment.value,
@@ -164,42 +173,53 @@ const deployServer = async () => {
 
     const respPostServer = await api.server.server.postServer({ body: selection })
 
-    if (respPostServer.status === 201) {
-      // 更新personal/group ServerTable,根据返回的serverId获取该server的全部信息，存入table
-      void await store.loadSingleServer({
-        serverId: respPostServer.data.id,
-        isGroup: props.isGroup
-      })
-      // 更新personal/group quotaTable, 因为quota已经消耗了一部分。连带里面servers字段也更新了。
-      // props.isGroup ? void store.loadGroupQuotaTable() : void store.loadPersonalQuotaTable()
-      // notify
-      Notify.create({
-        classes: 'notification-positive shadow-15',
-        icon: 'check_circle',
-        textColor: 'positive',
-        message: `成功新建云主机: ${props.isGroup ? store.tables.groupServerTable.byId[respPostServer.data.id].ipv4 : store.tables.personalServerTable.byId[respPostServer.data.id].ipv4}`,
-        position: 'bottom',
-        closeBtn: true,
-        timeout: 15000,
-        multiLine: false
-      })
-      // 跳转
-      void router.back()
-    } else if (respPostServer.status === 202) {
-      // notify
-      Notify.create({
-        classes: 'notification-positive shadow-15',
-        icon: 'check_circle',
-        textColor: 'positive',
-        message: '云主机新建中，请稍候...',
-        position: 'bottom',
-        closeBtn: true,
-        timeout: 15000,
-        multiLine: false
-      })
+    // 创建后处理方式分两种，预付费和后付费
+    if (radioPayment.value === 'prepaid') {
+      // 预付费
+      if (respPostServer.status === 200) {
+        const orderId = respPostServer.data.order_id
+        console.log(orderId)
+        // todo 订单table完成后做
+        // 更新订单table
+        // 跳转至订单list
+      }
+    } else if (radioPayment.value === 'postpaid') {
+      // 后付费
+      // todo 根据最新状态码重新设计交互
+      if (respPostServer.status === 201) {
+        // 更新personal/group ServerTable,根据返回的serverId获取该server的全部信息，存入table
+        void await store.loadSingleServer({
+          serverId: respPostServer.data.id,
+          isGroup: props.isGroup
+        })
+        // notify
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          icon: 'check_circle',
+          textColor: 'positive',
+          message: `成功新建云主机: ${props.isGroup ? store.tables.groupServerTable.byId[respPostServer.data.id].ipv4 : store.tables.personalServerTable.byId[respPostServer.data.id].ipv4}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+      } else if (respPostServer.status === 202) {
+        // notify
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          icon: 'check_circle',
+          textColor: 'positive',
+          message: '云主机新建中，请稍候...',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+      }
       // 跳转
       void router.back()
     }
+
     // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
     isDeploying.value = false
   }
@@ -247,17 +267,17 @@ const deployServer = async () => {
 
           <div class="row items-center q-pt-md">
             <q-input style="max-width: 300px"
-                     outlined v-model.number="radioPeriod" input-class="text-center"
+                     outlined v-model.number="radioPeriod" input-class="text-center text-primary"
                      :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
                      :rules="[val => (Number.isInteger(val) && val>0 && val<=120) || (i18n.global.locale === 'zh' ? '应为介于1-120之间的整数' : 'Must be an integer between 1 and 120')]">
 
               <template v-slot:prepend>
-                <q-icon name="remove" @click="radioPeriod = (radioPeriod === 1 ? 1 : radioPeriod - 1)"
+                <q-icon name="remove" color="primary" @click="radioPeriod = (radioPeriod === 1 ? 1 : radioPeriod - 1)"
                         class="cursor-pointer"/>
               </template>
 
               <template v-slot:append>
-                <q-icon name="add" @click="radioPeriod = radioPeriod + 1" class="cursor-pointer"/>
+                <q-icon name="add" color="primary" @click="radioPeriod = radioPeriod + 1" class="cursor-pointer"/>
               </template>
 
             </q-input>
@@ -530,6 +550,24 @@ const deployServer = async () => {
           {{ tc('所选配置') }}
         </div>
 
+        <div class="row item-row items-center">
+          <div class="col-shrink item-title-narrow text-grey">
+            {{ tc('支付类型') }}
+          </div>
+          <div class="col">
+            {{ radioPayment === 'prepaid' ? tc('预付费') : tc('后付费') }}
+          </div>
+        </div>
+
+        <div v-if="radioPayment === 'prepaid'" class="row item-row items-center">
+          <div class="col-shrink item-title-narrow text-grey">
+            {{ tc('预付时长') }}
+          </div>
+          <div class="col">
+            {{ radioPeriod }} {{ tc('个月') }}
+          </div>
+        </div>
+
         <div v-if="isGroup" class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
             {{ tc('项目组') }}
@@ -552,7 +590,7 @@ const deployServer = async () => {
 
               <span>
                 {{
-                  locale === 'zh' ?
+                  i18n.global.locale === 'zh' ?
                     `${store.tables.dataCenterTable.byId[radioDataCenter]?.name} - ${store.tables.serviceTable.byId[radioService]?.name}` :
                     `${store.tables.dataCenterTable.byId[radioDataCenter]?.name_en} - ${store.tables.serviceTable.byId[radioService]?.name_en}`
                 }}
@@ -578,6 +616,7 @@ const deployServer = async () => {
             <div v-else class="text-red">{{ tc('请选择服务节点') }}</div>
           </div>
         </div>
+
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
             {{ tc('网络类型') }}
@@ -585,7 +624,9 @@ const deployServer = async () => {
           <div class="col">
             <div
               v-if="store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name">
-              {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
+              {{
+                store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.public ? tc('公网IP段') : tc('私网IP段')
+              }} {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
             </div>
             <div v-else class="text-red">{{ tc('请选择网络类型') }}</div>
           </div>
@@ -635,7 +676,7 @@ const deployServer = async () => {
       </div>
 
       <q-btn color="primary q-mb-xl" @click="deployServer" unelevated :loading="isDeploying">
-        {{ tc('新建云主机') }}
+        {{ radioPayment === 'prepaid' ? tc('创建云主机订单') : tc('新建云主机') }}
       </q-btn>
 
     </div>
