@@ -250,6 +250,45 @@ export interface ServerInterface {
   status?: string
 }
 
+export interface OrderResourceInterface {
+  id: string
+  order_id: string
+  resource_type: string
+  instance_id: string
+  instance_status: string
+}
+
+export interface OrderInterface {
+  id: string
+  order_type: string
+  status: string
+  total_amount: string
+  pay_amount: string
+  service_id: string
+  service_name: string
+  resource_type: string
+  instance_config: {
+    vm_cpu: number
+    vm_ram: number
+    vm_systemdisk_size: number
+    vm_public_ip: boolean
+    vm_image_id: string
+    vm_network_id: number
+    vm_azone_id: string
+    vm_azone_name: string
+  },
+  period: 1,
+  payment_time: null,
+  pay_type: string
+  creation_time: string
+  user_id: string
+  username: string
+  vo_id: string
+  vo_name: string
+  owner_type: string
+  resources?: OrderResourceInterface
+}
+
 // 配额申请接口
 // export interface QuotaApplicationInterface {
 //   // 以下字段出现在列举接口的响应里
@@ -359,6 +398,10 @@ export interface GroupMemberTableInterface extends totalTable, idTable<GroupMemb
 export interface GroupBalanceTableInterface extends totalTable, idTable<GroupBalanceInterface> {
 }
 
+// 组订单table
+export interface GroupOrderTableInterface extends totalTable, idTable<OrderInterface> {
+}
+
 // 联邦层级datacenter
 export interface DataCenterTableInterface extends totalTable, idTable<DataCenterInterface> {
 }
@@ -416,6 +459,10 @@ export interface UserVpnTableInterface extends totalTable, idTable<VpnInterface>
 export interface PersonalServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
+// 个人订单
+export interface PersonalOrderTableInterface extends totalTable, idTable<OrderInterface> {
+}
+
 // 项目组云主机配额申请
 // export interface GroupQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
 // }
@@ -458,6 +505,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupBalanceTableInterface,
+        groupOrderTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupOrderTableInterface,
         dataCenterTable: {
           byId: {},
           allIds: [],
@@ -528,6 +580,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as PersonalServerTableInterface,
+        personalOrderTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as PersonalOrderTableInterface,
         // groupQuotaApplicationTable: {
         //   byId: {},
         //   allIds: [],
@@ -1060,6 +1117,7 @@ export const useStore = defineStore('server', {
         void this.loadGroupServerTable()
         // void this.loadGroupQuotaTable()
         void this.loadGroupBalanceTable()
+        // todo loadGroupOrderTable
       })
     },
     loadAllTables () {
@@ -1085,6 +1143,7 @@ export const useStore = defineStore('server', {
               if (this.tables.personalServerTable.status === 'init') {
                 void this.loadPersonalServerTable()
               }
+              // todo loadPersonalOrderTable
             })
           }
         })
@@ -1123,6 +1182,7 @@ export const useStore = defineStore('server', {
           if (this.tables.groupBalanceTable.status === 'init') {
             void this.loadGroupBalanceTable()
           }
+          // todo loadGroupOrderTable
         })
       }
 
@@ -1217,6 +1277,8 @@ export const useStore = defineStore('server', {
       // load table的最后再改status
       this.tables.groupMemberTable.status = 'total'
     },
+    // 根据groupTable, 建立groupOrderTable
+    // async loadGroupOrderTable() {}
 
     /* dataCenterTable */
     async loadDataCenterTable () {
@@ -1473,6 +1535,14 @@ export const useStore = defineStore('server', {
     //   // load table的最后再改isLoaded
     //   this.tables.personalQuotaTable.status = 'total'
     // },
+    // 加载personalOrderTable
+    async loadPersonalOrderTable () {
+      this.tables.personalOrderTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+    },
     // 更新整个userServerTable
     async loadPersonalServerTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）

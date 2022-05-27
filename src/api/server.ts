@@ -312,6 +312,33 @@ export default {
       return axiosServer.get('/network/' + payload.path.network_id, config)
     }
   },
+  order: {
+    getOrder (payload: {
+      query: {
+        page?: number,
+        page_size?: number,
+        resource_type?: 'vm' | 'disk' | 'bucket',
+        order_type?: 'new' | 'renewal' | 'upgrade' | 'downgrade',
+        status?: 'paid' | 'unpaid' | 'cancelled' | 'refund',
+        time_start?: string,
+        time_end?: string,
+        vo_id?: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/order', config)
+    },
+    getOrderId (payload: {
+      path: { id: string }
+    }) {
+      return axiosServer.get('/order/' + payload.path.id)
+    },
+    postOrderIdCancel () {},
+    postOrderIdClaim () {},
+    postOrderIdPay () {}
+  },
   quota: {
     getQuota (payload?: {
       query?: {
