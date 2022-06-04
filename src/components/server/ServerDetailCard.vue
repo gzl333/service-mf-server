@@ -22,7 +22,7 @@ const props = defineProps({
 })
 // const emits = defineEmits(['change', 'delete'])
 
-const { tc, locale } = i18n.global
+const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 const router = useRouter()
@@ -60,7 +60,7 @@ const getOsIconName = useGetOsIconName()
 
 const gotoManualVpn = () => {
   // 中文访问/manual 英文访问/manual/en
-  const url = computed(() => location.origin + (locale === 'zh' ? '/manual/vpn' : '/manual/en/vpn'))
+  const url = computed(() => location.origin + (i18n.global.locale === 'zh' ? '/manual/vpn' : '/manual/en/vpn'))
   window.open(url.value)
 }
 
@@ -81,7 +81,7 @@ const gotoManualVpn = () => {
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row">
 
-<!--todo 区分读取中和读取错误          -->
+          <!--todo 区分读取中和读取错误          -->
           <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">
             正在加载，请稍候
           </div>
@@ -312,9 +312,10 @@ const gotoManualVpn = () => {
 
                   <div class="col-shrink">
                     <!--根据内容改变长度的input. 一个字母占8像素，一个汉字占16像素.https://github.com/quasarframework/quasar/issues/1958-->
-                    <q-input :input-style="{width:`${vpn.password.length * (isPwdVpn?5:8)}px`, maxWidth: '200px', minWidth: '32px'}"
-                             v-model="vpn.password" readonly borderless dense
-                             :type="isPwdVpn ? 'password' : 'text'">
+                    <q-input
+                      :input-style="{width:`${vpn.password.length * (isPwdVpn?5:8)}px`, maxWidth: '200px', minWidth: '32px'}"
+                      v-model="vpn.password" readonly borderless dense
+                      :type="isPwdVpn ? 'password' : 'text'">
                       <template v-slot:append>
                         <q-icon :name="isPwdVpn ? 'visibility' : 'visibility_off'" @click="isPwdVpn = !isPwdVpn"/>
                         <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
@@ -323,12 +324,12 @@ const gotoManualVpn = () => {
                             复制
                           </q-tooltip>
                         </q-btn>
-<!--                        <q-btn icon="edit" size="sm" dense flat color="primary"-->
-<!--                               @click="$store.dispatch('server/popEditVpnPass',  vpn)">-->
-<!--                          <q-tooltip>-->
-<!--                            修改-->
-<!--                          </q-tooltip>-->
-<!--                        </q-btn>-->
+                        <!--                        <q-btn icon="edit" size="sm" dense flat color="primary"-->
+                        <!--                               @click="$store.dispatch('server/popEditVpnPass',  vpn)">-->
+                        <!--                          <q-tooltip>-->
+                        <!--                            修改-->
+                        <!--                          </q-tooltip>-->
+                        <!--                        </q-btn>-->
                       </template>
                     </q-input>
                   </div>
@@ -367,7 +368,7 @@ const gotoManualVpn = () => {
                   <div class="col-shrink">
                     <q-btn flat dense color="primary" padding="none"
                            :to="{path:  `/my/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
-                      {{store.tables.groupTable.byId[server.vo_id].name }}
+                      {{ store.tables.groupTable.byId[server.vo_id].name }}
                       <q-tooltip>
                         项目组详情
                       </q-tooltip>
@@ -382,24 +383,24 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-<!--                <div class="row q-pb-md items-center">-->
-<!--                  <div class="col-3 text-grey">关联配额</div>-->
-<!--                  <div class="col-shrink">-->
+                <!--                <div class="row q-pb-md items-center">-->
+                <!--                  <div class="col-3 text-grey">关联配额</div>-->
+                <!--                  <div class="col-shrink">-->
 
-<!--                    <div v-if="quota">-->
-<!--                      <q-btn label="配额详情" flat dense color="primary" padding="none"-->
-<!--                             :to="{path: isGroup ? `/my/group/quota/detail/${quota?.id}` : `/my/personal/quota/detail/${quota?.id}`}">-->
-<!--                        <q-tooltip>-->
-<!--                          配额详情-->
-<!--                        </q-tooltip>-->
-<!--                      </q-btn>-->
-<!--                      &lt;!&ndash;                      {{ quota?.display }}&ndash;&gt;-->
-<!--                    </div>-->
+                <!--                    <div v-if="quota">-->
+                <!--                      <q-btn label="配额详情" flat dense color="primary" padding="none"-->
+                <!--                             :to="{path: isGroup ? `/my/group/quota/detail/${quota?.id}` : `/my/personal/quota/detail/${quota?.id}`}">-->
+                <!--                        <q-tooltip>-->
+                <!--                          配额详情-->
+                <!--                        </q-tooltip>-->
+                <!--                      </q-btn>-->
+                <!--                      &lt;!&ndash;                      {{ quota?.display }}&ndash;&gt;-->
+                <!--                    </div>-->
 
-<!--                    <div v-else>关联配额已删除</div>-->
+                <!--                    <div v-else>关联配额已删除</div>-->
 
-<!--                  </div>-->
-<!--                </div>-->
+                <!--                  </div>-->
+                <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">创建者</div>
@@ -411,7 +412,7 @@ const gotoManualVpn = () => {
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">创建时间</div>
                   <div class="col">
-                    {{ new Date(server.creation_time).toLocaleString(locale) }}
+                    {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
                   </div>
                 </div>
 
@@ -419,7 +420,9 @@ const gotoManualVpn = () => {
                   <div class="col-3 text-grey">到期时间</div>
                   <div class="col">
                     <div>
-                      {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(locale) : '永久有效' }}
+                      {{
+                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
+                      }}
                     </div>
                     <!--                    <q-icon-->
                     <!--                      v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
@@ -494,10 +497,10 @@ const gotoManualVpn = () => {
                   <div class="col-2 text-grey">服务类型</div>
                   <div class="col">
 
-<!--                    <q-icon-->
-<!--                      v-if="service.service_type.toLowerCase().includes('ev')"-->
-<!--                      name="img:~assets/svg/EVCloud-Logo-Horizontal.svg"-->
-<!--                      style="width: 130px;height: 25px"/>-->
+                    <!--                    <q-icon-->
+                    <!--                      v-if="service.service_type.toLowerCase().includes('ev')"-->
+                    <!--                      name="img:~assets/svg/EVCloud-Logo-Horizontal.svg"-->
+                    <!--                      style="width: 130px;height: 25px"/>-->
 
                     <q-icon
                       v-if="service.service_type.toLowerCase().includes('ev')" style="width: 130px;height: 25px">
@@ -526,6 +529,7 @@ const gotoManualVpn = () => {
 <style lang="scss" scoped>
 .ServerDetailCard {
 }
+
 .title-area {
   width: 1230px;
   text-align: left;
