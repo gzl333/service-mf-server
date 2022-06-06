@@ -1661,7 +1661,7 @@ export const useStore = defineStore('server', {
       }
       this.tables.personalServerTable.status = 'loading'
       // 发送请求
-      const respServer = await api.server.server.getServer()
+      const respServer = await api.server.server.getServer({ query: { page_size: 999 } })
       // 将响应normalize，存入state里的userServerTable
       const service = new schema.Entity('service')
       const user_quota = new schema.Entity('user_quota')
@@ -1697,7 +1697,14 @@ export const useStore = defineStore('server', {
       // 根据groupTable,建立groupServerTable
       for (const groupId of this.tables.groupTable.allIds) {
         // 发送请求
-        const respGroupServer = await api.server.server.getServerVo({ path: { vo_id: groupId } })
+        const respGroupServer = await api.server.server.getServerVo({
+          path: {
+            vo_id: groupId
+          },
+          query: {
+            page_size: 999
+          }
+        })
         // 将响应normalize
         const service = new schema.Entity('service')
         const user_quota = new schema.Entity('user_quota')
