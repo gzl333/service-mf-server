@@ -107,7 +107,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
                 </div>
 
-                <q-btn color="primary" unelevated>支付</q-btn>
+                <q-btn color="primary" unelevated @click="store.payOrderDialog(order.id, isGroup)">支付</q-btn>
 
               </div>
 

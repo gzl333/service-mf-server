@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PropType, ref, computed } from 'vue'
-// import { navigateToUrl } from 'single-spa'
+import { navigateToUrl } from 'single-spa'
 import { useStore, ServerInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
@@ -58,7 +58,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
 
         <q-list style="text-align:center">
           <q-item clickable v-close-popup class="bg-white text-primary"
-                  :to="{path: isGroup? `/my/server/group/detail/${server.id}` : `/my/server/personal/detail/${server.id}`}">
+                  @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}` : `/my/server/personal/detail/${server.id}`)">
             <div class="row">
               <q-item-section class="col-auto">
                 <q-icon name="info" size="sm"/>

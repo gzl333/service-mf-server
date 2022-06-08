@@ -234,6 +234,20 @@ export default {
       return axiosServer.post('/apply/service/' + payload.path.id + '/action/' + payload.path.action)
     }
   },
+  azone: {},
+  cashcoupon: {
+    getCashcoupon (payload: {
+      query?: {
+        page?: number,
+        page_size?: number,
+        vo_id?: string,
+        available?: string
+      }
+    }) {
+      return axiosServer.get('/cashcoupon')
+    }
+  },
+  'describe-price': {},
   flavor: {
     getFlavor () {
       return axiosServer.get('/flavor')
@@ -364,99 +378,100 @@ export default {
       return axiosServer.post('/order/' + payload.path.id + '/pay', null, config)
     }
   },
-  quota: {
-    getQuota (payload?: {
-      query?: {
-        page?: number;
-        page_size?: number;
-        service?: string;
-        usable?: boolean;
-        deleted?: boolean
-      }
-    }) {
-      const config = {
-        params: payload?.query
-      }
-      return axiosServer.get('/quota', config)
-    },
-    getQuotaVo (payload: {
-      query?: {
-        page?: number;
-        page_size?: number;
-        service?: string;
-        usable?: boolean
-      },
-      path: { vo_id: string }
-    }) {
-      const config = {
-        params: payload?.query
-      }
-      return axiosServer.get('/quota/vo/' + payload.path.vo_id, config)
-    },
-    getQuotaId (payload: { query: { 'as-admin': boolean }, path: { id: string } }) {
-      const config = {
-        params: payload.query
-      }
-      return axiosServer.get('/quota/vo/' + payload.path.id, config)
-    },
-    deleteQuota (payload: { path: { id: string } }) {
-      return axiosServer.delete('/quota/' + payload.path.id)
-    },
-    getQuotaServers (payload: {
-      query?: {
-        page?: number;
-        page_size?: number;
-      },
-      path: { id: string }
-    }) {
-      const config = {
-        params: payload.query
-      }
-      return axiosServer.get('/quota/' + payload.path.id + '/servers', config)
-    }
-  },
-  quota_activity: {
-    getQuotaActivity (payload: {
-      query?: {
-        page?: number;
-        page_size?: number;
-        status?: string;
-        'exclude-not-start'?: boolean;
-        'exclude-ended'?: boolean
-      }
-    }) {
-      const config = {
-        params: payload?.query
-      }
-      return axiosServer.get('/quota-activity', config)
-    },
-    postQuotaActivity (payload: {
-      body: {
-        service_id: string;
-        name: string;
-        name_en: string;
-        start_time: string;
-        end_time: string;
-        count: number;
-        times_per_user: number;
-        status: string;
-        tag: string;
-        cpus: number;
-        private_ip: number;
-        public_ip: number;
-        ram: number;
-        disk_size: number;
-        expiration_time: string;
-        duration_days: number
-      }
-    }) {
-      const data = payload.body
-      return axiosServer.post('/quota-activity', data)
-    },
-    getQuotaActivityGet (payload: { path: { id: string } }) {
-      return axiosServer.get('/quota-activity/' + payload.path.id + '/get')
-    }
-  },
+  // quota: {
+  //   getQuota (payload?: {
+  //     query?: {
+  //       page?: number;
+  //       page_size?: number;
+  //       service?: string;
+  //       usable?: boolean;
+  //       deleted?: boolean
+  //     }
+  //   }) {
+  //     const config = {
+  //       params: payload?.query
+  //     }
+  //     return axiosServer.get('/quota', config)
+  //   },
+  //   getQuotaVo (payload: {
+  //     query?: {
+  //       page?: number;
+  //       page_size?: number;
+  //       service?: string;
+  //       usable?: boolean
+  //     },
+  //     path: { vo_id: string }
+  //   }) {
+  //     const config = {
+  //       params: payload?.query
+  //     }
+  //     return axiosServer.get('/quota/vo/' + payload.path.vo_id, config)
+  //   },
+  //   getQuotaId (payload: { query: { 'as-admin': boolean }, path: { id: string } }) {
+  //     const config = {
+  //       params: payload.query
+  //     }
+  //     return axiosServer.get('/quota/vo/' + payload.path.id, config)
+  //   },
+  //   deleteQuota (payload: { path: { id: string } }) {
+  //     return axiosServer.delete('/quota/' + payload.path.id)
+  //   },
+  //   getQuotaServers (payload: {
+  //     query?: {
+  //       page?: number;
+  //       page_size?: number;
+  //     },
+  //     path: { id: string }
+  //   }) {
+  //     const config = {
+  //       params: payload.query
+  //     }
+  //     return axiosServer.get('/quota/' + payload.path.id + '/servers', config)
+  //   }
+  // },
+  // quota_activity: {
+  //   getQuotaActivity (payload: {
+  //     query?: {
+  //       page?: number;
+  //       page_size?: number;
+  //       status?: string;
+  //       'exclude-not-start'?: boolean;
+  //       'exclude-ended'?: boolean
+  //     }
+  //   }) {
+  //     const config = {
+  //       params: payload?.query
+  //     }
+  //     return axiosServer.get('/quota-activity', config)
+  //   },
+  //   postQuotaActivity (payload: {
+  //     body: {
+  //       service_id: string;
+  //       name: string;
+  //       name_en: string;
+  //       start_time: string;
+  //       end_time: string;
+  //       count: number;
+  //       times_per_user: number;
+  //       status: string;
+  //       tag: string;
+  //       cpus: number;
+  //       private_ip: number;
+  //       public_ip: number;
+  //       ram: number;
+  //       disk_size: number;
+  //       expiration_time: string;
+  //       duration_days: number
+  //     }
+  //   }) {
+  //     const data = payload.body
+  //     return axiosServer.post('/quota-activity', data)
+  //   },
+  //   getQuotaActivityGet (payload: { path: { id: string } }) {
+  //     return axiosServer.get('/quota-activity/' + payload.path.id + '/get')
+  //   }
+  // },
+  'payment-history': {},
   registry: {
     getRegistry () {
       return axiosServer.get('/registry')

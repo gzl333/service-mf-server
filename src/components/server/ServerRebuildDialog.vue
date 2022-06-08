@@ -20,10 +20,7 @@ const props = defineProps({
 /* const emits =  */
 defineEmits([...useDialogPluginComponent.emits])
 
-const {
-  tc,
-  locale
-} = i18n.global
+const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
@@ -113,7 +110,7 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{
-              locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name :
+              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name :
                 store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name_en
             }}
           </div>
@@ -125,7 +122,7 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{
-              locale === 'zh' ? store.tables.serviceTable.byId[server.service]?.name : store.tables.serviceTable.byId[server.service]?.name_en
+              i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[server.service]?.name : store.tables.serviceTable.byId[server.service]?.name_en
             }}
 
             <span>
@@ -170,8 +167,8 @@ const onOKClick = () => {
             可用期
           </div>
           <div class="col">
-            {{ new Date(server.creation_time).toLocaleString(locale) }} -
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(locale) : '永久有效' }}
+            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
+            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效' }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->

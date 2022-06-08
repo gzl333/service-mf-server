@@ -12,6 +12,7 @@ import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
 import GroupEditCard from 'components/group/GroupEditCard.vue'
 import GroupAddMemberCard from 'components/group/GroupAddMemberCard.vue'
+import PayOrderCard from 'components/order/PayOrderCard.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -55,6 +56,8 @@ export interface GroupInterface {
   balance: string // groupBalanceTable 内的id值
   // 订单
   order: string[] // orderId
+  // coupon
+  coupon: string[] // couponId
 }
 
 export interface SingleMemberInterface {
@@ -291,6 +294,36 @@ export interface OrderInterface {
   resources?: OrderResourceInterface
 }
 
+export interface CouponInterface {
+  id: string
+  face_value: string
+  creation_time: string
+  effective_time: string
+  expiration_time: string
+  coupon_type: 'special' | 'universal'
+  applicable_resource: ('vm' | 'disk' | 'bucket')[] // https://stackoverflow.com/questions/57264080/typescript-array-of-specific-string-values
+  balance: string
+  status: 'wait' | 'available' | 'cancelled' | 'deleted'
+  granted_time?: string
+  owner_type?: 'user' | 'vo'
+  service?: {
+    id: string
+    name: string
+  }
+  user?: {
+    id: string
+    username: string
+  }
+  vo?: {
+    id: string
+    name: string
+  }
+  activity?: {
+    id: string
+    name: string
+  }
+}
+
 // 配额申请接口
 // export interface QuotaApplicationInterface {
 //   // 以下字段出现在列举接口的响应里
@@ -477,6 +510,10 @@ export interface PersonalOrderTableInterface extends totalTable, idTable<OrderIn
 export interface GroupServerTableInterface extends totalTable, idTable<ServerInterface> {
 }
 
+// 代金券table
+export interface CouponTableInterface extends totalTable, idTable<CouponInterface> {
+}
+
 export const useStore = defineStore('server', {
   state: () => {
     return {
@@ -601,7 +638,12 @@ export const useStore = defineStore('server', {
           byId: {},
           allIds: [],
           status: 'init'
-        } as GroupServerTableInterface
+        } as GroupServerTableInterface,
+        couponTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as CouponTableInterface
         /* 整体加载表：一旦加载则全部加载 */
 
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
@@ -1150,6 +1192,8 @@ export const useStore = defineStore('server', {
         void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
         // void this.loadGroupQuotaTable()
         void this.loadGroupBalanceTable()
+        // couponTable 本表为混合表，有个人的有vo的，vo部分要把couponId补充给groupTable里，因此依赖groupTable
+        void this.loadCouponTable()
       })
     },
     loadAllTables () {
@@ -1218,6 +1262,11 @@ export const useStore = defineStore('server', {
           // }
           if (this.tables.groupBalanceTable.status === 'init') {
             void this.loadGroupBalanceTable()
+          }
+
+          // loadCouponTable 本表为混合表，有个人的有vo的，vo部分要把couponId补充给groupTable里，因此依赖groupTable
+          if (this.tables.couponTable.status === 'init') {
+            void this.loadCouponTable()
           }
         })
       }
@@ -1775,6 +1824,33 @@ export const useStore = defineStore('server', {
         })
         this.tables.personalServerTable.status = 'total'
       }
+    },
+    // 读取couponTable
+    async loadCouponTable () {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.couponTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      this.tables.couponTable.status = 'loading'
+      // 发送请求
+      const respCoupon = await api.server.cashcoupon.getCashcoupon({ query: { page_size: 999 } })
+      // 将响应normalize，存入state里的userServerTable
+      const coupon = new schema.Entity('coupon')
+      for (const data of respCoupon.data.results) {
+        const normalizedData = normalize(data, coupon)
+        Object.assign(this.tables.couponTable.byId, normalizedData.entities.coupon)
+        this.tables.couponTable.allIds.unshift(Object.keys(normalizedData.entities.coupon as Record<string, unknown>)[0])
+        this.tables.couponTable.allIds = [...new Set(this.tables.couponTable.allIds)]
+        // 如果coupon是vo的，把该couponId补充到groupTable里
+        // todo 测试
+        if (data.vo !== null) {
+          this.tables.groupTable.byId[data.vo.id].coupon.push(data.id)
+        }
+      }
+      // 存完所有item再改isLoaded
+      this.tables.personalServerTable.status = 'total'
     },
     // 所有groupQuota根据quotaId存在一个对象里，不区分group，getter里区分group取
     // async loadGroupQuotaTable () {
@@ -2552,13 +2628,65 @@ export const useStore = defineStore('server', {
           }
         })
       }
-    }
+    },
     /* 删除group */
     /* account */
 
-    /* provider */
-
-    /* provider */
+    /* order */
+    /* 支付订单 */
+    payOrderDialog (orderId: string, isGroup: boolean) {
+      Dialog.create({
+        component: PayOrderCard,
+        componentProps: {
+          orderId,
+          isGroup
+        }
+      }).onOk(async (val: { /* groupId: string; */usernames: string[] }) => { // val是onDialogOK调用时传入的实参
+        // 发送patch请求
+        // const respPostAddMembers = await api.server.vo.postVoAddMembers({
+        //   path: { id: groupId },
+        //   body: val
+        // })
+        // // 此请求可能有多个成功，多个失败混在一起。因此不能用状态码判断。
+        // // 把成功的账户member信息存入table
+        // for (const member of respPostAddMembers.data.success) {
+        //   // 存入单个member
+        //   // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
+        //   // 删掉已有的同名member
+        //   this.tables.groupMemberTable.byId[groupId].members = this.tables.groupMemberTable.byId[groupId].members.filter((memberGroup) => {
+        //     return memberGroup.user.username !== member.user.username
+        //   })
+        //   // 增加新拿到的member
+        //   this.tables.groupMemberTable.byId[groupId].members.unshift(member)
+        //   // 通知：单个member成功信息
+        //   Notify.create({
+        //     classes: 'notification-positive shadow-15',
+        //     icon: 'mdi-check-circle',
+        //     textColor: 'light-green',
+        //     message: '已经成功添加成员:' + member.user.username,
+        //     position: 'bottom',
+        //     closeBtn: true,
+        //     timeout: 5000,
+        //     multiLine: false
+        //   })
+        // }
+        // // 通知：失败账户错误信息
+        // for (const member of respPostAddMembers.data.failed) {
+        //   Notify.create({
+        //     classes: 'notification-negative shadow-15',
+        //     icon: 'mdi-alert',
+        //     textColor: 'negative',
+        //     message: '添加成员失败：' + member.username + ' - ' + member.message,
+        //     position: 'bottom',
+        //     closeBtn: true,
+        //     timeout: 5000,
+        //     multiLine: false
+        //   })
+        // }
+      })
+    }
+    /* 支付订单 */
+    /* order */
 
     /* dialogs */
   }
