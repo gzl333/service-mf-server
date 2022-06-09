@@ -57,7 +57,7 @@ export interface GroupInterface {
   // 订单
   order: string[] // orderId
   // coupon
-  coupon: string[] // couponId
+  coupons: string[] // couponId
 }
 
 export interface SingleMemberInterface {
@@ -1300,7 +1300,8 @@ export const useStore = defineStore('server', {
         Object.assign(data, {
           myRole,
           balance: '',
-          order: []
+          order: [],
+          coupons: []
         })
         // normalize
         const normalizedData = normalize(data, group)
@@ -1844,9 +1845,8 @@ export const useStore = defineStore('server', {
         this.tables.couponTable.allIds.unshift(Object.keys(normalizedData.entities.coupon as Record<string, unknown>)[0])
         this.tables.couponTable.allIds = [...new Set(this.tables.couponTable.allIds)]
         // 如果coupon是vo的，把该couponId补充到groupTable里
-        // todo 测试
         if (data.vo !== null) {
-          this.tables.groupTable.byId[data.vo.id].coupon.push(data.id)
+          this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
         }
       }
       // 存完所有item再改isLoaded
@@ -2261,7 +2261,6 @@ export const useStore = defineStore('server', {
         })
         // 发送请求
         const respPostServerRebuild = await axios.post(api, data)
-        // console.log(payload.serverId, api, data)
         if (respPostServerRebuild.status === 202) {
           // 应延时
           void await new Promise(resolve => (
@@ -2641,7 +2640,8 @@ export const useStore = defineStore('server', {
           orderId,
           isGroup
         }
-      }).onOk(async (val: { /* groupId: string; */usernames: string[] }) => { // val是onDialogOK调用时传入的实参
+      }).onOk(async (val: { payment_method: 'balance' | 'cashcoupon' | 'coupon-balance', coupon_ids?: string[] }) => { // val是onDialogOK调用时传入的实参
+        console.log(val)
         // 发送patch请求
         // const respPostAddMembers = await api.server.vo.postVoAddMembers({
         //   path: { id: groupId },

@@ -244,7 +244,10 @@ export default {
         available?: string
       }
     }) {
-      return axiosServer.get('/cashcoupon')
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/cashcoupon', config)
     }
   },
   'describe-price': {},

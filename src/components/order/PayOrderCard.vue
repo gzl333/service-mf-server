@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import { /* Notify, */ useDialogPluginComponent } from 'quasar'
+import { Notify, useDialogPluginComponent } from 'quasar'
 
 const props = defineProps({
   orderId: {
@@ -32,45 +32,36 @@ const {
 } = useDialogPluginComponent()
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
-const methodSelect = ref('balance')
-const methods = [
-  {
-    name: '账户余额',
-    name_en: 'Balance Only',
-    value: 'balance'
-  },
-  {
-    name: '代金券',
-    name_en: 'Coupon Only',
-    value: 'cashcoupon'
-  },
-  {
-    name: '余额+代金券组合支付(优先扣除代金券)',
-    name_en: 'Balance and Coupon Mixed Payment(Coupon First)',
-    value: 'coupon_balance'
-  }
-]
+const coupons = computed(() => Object.values(store.tables.couponTable.byId)
+  .filter(coupon => props.isGroup ? coupon.vo?.id === order.value.vo_id : coupon.vo === null)
+  .map(coupon => Object.assign(coupon, {
+    label: coupon.id,
+    value: coupon.id
+  })))
 
-// 确定时
-// const onOKClick = () => {
-//   // if (select.value === '') {
-//   //   Notify.create({
-//   //     classes: 'notification-negative shadow-15',
-//   //     icon: 'mdi-alert',
-//   //     textColor: 'negative',
-//   //     message: '请选择目标操作系统',
-//   //     position: 'bottom',
-//   //     closeBtn: true,
-//   //     timeout: 5000,
-//   //     multiLine: false
-//   //   })
-//   //   selectDom.value?.focus()
-// }
-// else
-// {
-//   // onDialogOK(select.value)
-// }
-// }
+const methodSelect = ref('balance')
+const couponSelect = ref([])
+
+const onOKClick = () => {
+  if (methodSelect.value === 'cashcoupon' && couponSelect.value.length === 0) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'mdi-alert',
+      textColor: 'negative',
+      message: `${tc('请选择要使用的代金券')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+  } else {
+    onDialogOK({
+      payment_method: methodSelect.value,
+      coupon_ids: couponSelect.value
+    })
+  }
+}
+
 </script>
 
 <template>
@@ -117,33 +108,30 @@ const methods = [
             {{ tc('支付方式') }}
           </div>
           <div class="col-8">
-            <q-select outlined v-model="methodSelect" dense
-                      :options="methods" map-options emit-value
-                      :option-label="i18n.global.locale==='zh'?'name':'name_en'" option-value="value">
+            <q-btn-toggle
+              style="border: 1px solid #1976D2"
+              v-model="methodSelect"
+              unelevated
+              no-caps
+              toggle-color="primary"
+              :options="[{value: 'balance', slot: 'one'},
+                         {value: 'cashcoupon', slot: 'two'},
+                         {value: 'coupon_balance', slot: 'three'}]">
+              <template v-slot:one>
+                {{ tc('账户余额') }}
+                <q-tooltip>{{ tc('只从账户余额中扣除') }}</q-tooltip>
+              </template>
 
-              <!--              &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
-              <!--              <template v-slot:selected-item="scope">-->
-              <!--                      <span :class="select===scope.opt.id ? 'text-primary' : 'text-black'">-->
-              <!--                        <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)"-->
-              <!--                                class="q-pl-xs q-pr-md" flat size="md"/>-->
-              <!--                      {{ scope.opt.name }}-->
-              <!--                      </span>-->
-              <!--              </template>-->
+              <template v-slot:two>
+                {{ tc('代金券') }}
+                <q-tooltip>{{ tc('只从代金券中扣除') }}</q-tooltip>
+              </template>
 
-              <!--              &lt;!&ndash;待选项的内容插槽&ndash;&gt;-->
-              <!--              <template v-slot:option="scope">-->
-              <!--                <q-item v-bind="scope.itemProps">-->
-              <!--                  <q-item-section avatar>-->
-              <!--                    <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)" flat size="md"/>-->
-              <!--                  </q-item-section>-->
-              <!--                  <q-item-section>-->
-              <!--                    <q-item-label>{{ scope.opt.name }}</q-item-label>-->
-              <!--                    &lt;!&ndash;                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>&ndash;&gt;-->
-              <!--                  </q-item-section>-->
-              <!--                </q-item>-->
-              <!--              </template>-->
-
-            </q-select>
+              <template v-slot:three>
+                {{ tc('组合支付') }}
+                <q-tooltip>{{ tc('余额+代金券组合支付，优先扣除代金券') }}</q-tooltip>
+              </template>
+            </q-btn-toggle>
           </div>
         </div>
 
@@ -157,6 +145,28 @@ const methods = [
             </div>
           </div>
 
+          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
+               class="row q-pb-lg items-center">
+            <div class="col-3 text-grey-7">
+              项目组代金券
+            </div>
+            <div class="col">
+
+              <q-option-group
+                v-model="couponSelect"
+                type="checkbox"
+                :options="coupons"
+              >
+                <template v-slot:label="opt">
+                  <div class="row items-center">
+                    <span class="text-teal">{{ opt.balance }}</span>
+                  </div>
+                </template>
+              </q-option-group>
+
+            </div>
+          </div>
+
           <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
             <div class="col-3 text-grey-7">
               项目组账户余额
@@ -167,56 +177,60 @@ const methods = [
             </div>
           </div>
 
-          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              项目组代金券
-            </div>
-            <div class="col">
-              a list of coupons
-            </div>
-          </div>
-
         </div>
 
         <div v-else>
 
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              个人账户余额
-            </div>
-            <div class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
-              {{ store.items.personalBalance.balance }}
-            </div>
-          </div>
-
-          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
+          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
+               class="row q-pb-lg items-center">
             <div class="col-3 text-grey-7">
               个人代金券
             </div>
             <div class="col">
-              a list of coupons
+
+              <q-option-group
+                v-model="couponSelect"
+                type="checkbox"
+                :options="coupons"
+              >
+                <template v-slot:label="opt">
+                  <div class="row items-center">
+                    <span class="text-teal">{{ opt }}</span>
+                  </div>
+                </template>
+              </q-option-group>
+
+            </div>
+          </div>
+
+          <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
+            <div class="col-3 text-grey-7">
+              个人账户余额
+            </div>
+            <div class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
+              {{ store.items.personalBalance.balance }}点
             </div>
           </div>
 
         </div>
 
-        <div class="row items-center">
-          <div class="col text-grey-7">
-            请仔细阅读以下事项，并在确认后勾选：
-          </div>
-        </div>
+        <!--        <div class="row items-center">-->
+        <!--          <div class="col text-grey-7">-->
+        <!--            请仔细阅读以下事项，并在确认后勾选：-->
+        <!--          </div>-->
+        <!--        </div>-->
 
-        <q-checkbox style="margin-left: -10px;" v-model="check" color="primary">
-          <div :class="check?'text-primary':'text-black'">
-            {{ tc('我了解重建云主机会抹去全部数据，且无法恢复') }}
-          </div>
-        </q-checkbox>
+        <!--        <q-checkbox style="margin-left: -10px;" v-model="check" color="primary">-->
+        <!--          <div :class="check?'text-primary':'text-black'">-->
+        <!--            {{ tc('我了解重建云主机会抹去全部数据，且无法恢复') }}-->
+        <!--          </div>-->
+        <!--        </q-checkbox>-->
 
       </q-card-section>
 
       <!-- buttons example -->
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('确认')" @click="onDialogOK"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('确认支付')" @click="onOKClick"/>
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
