@@ -6,6 +6,8 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import { Notify, useDialogPluginComponent } from 'quasar'
 
+import CouponCard from 'components/coupon/CouponCard.vue'
+
 const props = defineProps({
   orderId: {
     type: String,
@@ -33,14 +35,46 @@ const {
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 const coupons = computed(() => Object.values(store.tables.couponTable.byId)
+  // 区分个人和项目组
   .filter(coupon => props.isGroup ? coupon.vo?.id === order.value.vo_id : coupon.vo === null)
-  .map(coupon => Object.assign(coupon, {
+  // 如果是专用券：只留能用vm && 与当前order的service相同的
+  .filter(coupon => coupon.coupon_type === 'special' ? coupon.applicable_resource.includes('vm') && coupon?.service?.id === order.value.service_id : true)
+  // 映射为couponId，供option group使用
+  .map(coupon => ({
     label: coupon.id,
     value: coupon.id
-  })))
+  }))
+)
 
 const methodSelect = ref('balance')
 const couponSelect = ref([])
+
+// 计算选择coupon区域的理想高度
+const heightCouponFull = computed(() => {
+  if (coupons.value.length === 0) {
+    return 8
+  } else if (coupons.value.length === 1) {
+    return 66
+  } else if (coupons.value.length === 2) {
+    return 124
+  } else {
+    return 182
+  }
+})
+const heightCouponMin = computed(() => {
+  if (coupons.value.length === 0) {
+    return 8
+  } else if (coupons.value.length === 1) {
+    return 66
+  } else if (coupons.value.length === 2) {
+    return 124
+  } else {
+    return 150
+  }
+})
+
+// 计算对话框的总体高度
+const heightTotal = computed(() => props.isGroup ? (heightCouponFull.value + 410) : (heightCouponFull.value + 380))
 
 const onOKClick = () => {
   if (methodSelect.value === 'cashcoupon' && couponSelect.value.length === 0) {
@@ -61,13 +95,12 @@ const onOKClick = () => {
     })
   }
 }
-
 </script>
 
 <template>
   <!-- notice dialogRef here -->
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin dialog-primary ">
+    <q-card class="q-dialog-plugin dialog-primary" :style="`height: ${heightTotal}px;`">
 
       <q-card-section class="row items-center justify-center q-pb-md">
         <div class="text-primary">{{ isGroup ? tc('支付项目组订单') : tc('支付个人订单') }}</div>
@@ -109,10 +142,11 @@ const onOKClick = () => {
           </div>
           <div class="col-8">
             <q-btn-toggle
-              style="border: 1px solid #1976D2"
               v-model="methodSelect"
+              :ripple="false"
               unelevated
               no-caps
+              text-color="primary"
               toggle-color="primary"
               :options="[{value: 'balance', slot: 'one'},
                          {value: 'cashcoupon', slot: 'two'},
@@ -136,6 +170,7 @@ const onOKClick = () => {
         </div>
 
         <div v-if="isGroup">
+
           <div class="row q-pb-lg items-center">
             <div class="col-3 text-grey-7">
               所属项目组
@@ -146,25 +181,37 @@ const onOKClick = () => {
           </div>
 
           <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
-               class="row q-pb-lg items-center">
+               class="row q-pb-lg items-start">
+
             <div class="col-3 text-grey-7">
               项目组代金券
             </div>
+
             <div class="col">
 
-              <q-option-group
-                v-model="couponSelect"
-                type="checkbox"
-                :options="coupons"
-              >
-                <template v-slot:label="opt">
-                  <div class="row items-center">
-                    <span class="text-teal">{{ opt.balance }}</span>
-                  </div>
-                </template>
-              </q-option-group>
+              <div class="row">
+                <div>已选</div>
+                <div class="text-black">{{ couponSelect.length }}个</div>
+              </div>
+
+              <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
+
+              <q-scroll-area v-else class="col bg-grey-2"
+                             :style="methodSelect === 'cashcoupon' ? `height: ${heightCouponFull}px;` : `height: ${heightCouponMin}px;`"
+                             visible>
+                <q-option-group
+                  v-model="couponSelect"
+                  type="checkbox"
+                  :options="coupons"
+                >
+                  <template v-slot:label="opt">
+                    <CouponCard class="q-pt-sm" :coupon-id="opt.value"/>
+                  </template>
+                </q-option-group>
+              </q-scroll-area>
 
             </div>
+
           </div>
 
           <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
@@ -182,25 +229,37 @@ const onOKClick = () => {
         <div v-else>
 
           <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
-               class="row q-pb-lg items-center">
+               class="row q-pb-lg items-start">
+
             <div class="col-3 text-grey-7">
               个人代金券
             </div>
+
             <div class="col">
 
-              <q-option-group
-                v-model="couponSelect"
-                type="checkbox"
-                :options="coupons"
-              >
-                <template v-slot:label="opt">
-                  <div class="row items-center">
-                    <span class="text-teal">{{ opt }}</span>
-                  </div>
-                </template>
-              </q-option-group>
+              <div class="row">
+                <div>已选</div>
+                <div class="text-black">{{ couponSelect.length }}个</div>
+              </div>
+
+              <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
+
+              <q-scroll-area v-else class="col bg-grey-2"
+                             :style="methodSelect === 'cashcoupon' ? `height: ${heightCouponFull}px;` : `height: ${heightCouponMin}px;`"
+                             visible>
+                <q-option-group
+                  v-model="couponSelect"
+                  type="checkbox"
+                  :options="coupons"
+                >
+                  <template v-slot:label="opt">
+                    <CouponCard class="q-pt-sm" :coupon-id="opt.value"/>
+                  </template>
+                </q-option-group>
+              </q-scroll-area>
 
             </div>
+
           </div>
 
           <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
@@ -214,22 +273,9 @@ const onOKClick = () => {
 
         </div>
 
-        <!--        <div class="row items-center">-->
-        <!--          <div class="col text-grey-7">-->
-        <!--            请仔细阅读以下事项，并在确认后勾选：-->
-        <!--          </div>-->
-        <!--        </div>-->
-
-        <!--        <q-checkbox style="margin-left: -10px;" v-model="check" color="primary">-->
-        <!--          <div :class="check?'text-primary':'text-black'">-->
-        <!--            {{ tc('我了解重建云主机会抹去全部数据，且无法恢复') }}-->
-        <!--          </div>-->
-        <!--        </q-checkbox>-->
-
       </q-card-section>
 
-      <!-- buttons example -->
-      <q-card-actions align="between">
+      <q-card-actions align="between" class="absolute-bottom">
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('确认支付')" @click="onOKClick"/>
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
       </q-card-actions>

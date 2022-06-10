@@ -94,11 +94,6 @@ const getOsIconName = useGetOsIconName()
               <div class="col-4 row justify-end">
 
                 <div class="col-auto q-pr-lg">
-                  <div class="text-grey">应付金额</div>
-                  <div class="text-h6">{{ order.pay_amount }}点</div>
-                </div>
-
-                <div class="col-auto q-pr-lg">
                   <div class="text-grey">订单状态</div>
                   <div class="text-h6">
                     {{
@@ -107,7 +102,19 @@ const getOsIconName = useGetOsIconName()
                   </div>
                 </div>
 
-                <q-btn color="primary" unelevated @click="store.payOrderDialog(order.id, isGroup)">支付</q-btn>
+                <div v-if="order.status === 'unpaid'" class="col-auto q-pr-lg">
+                  <div class="text-grey">应付金额</div>
+                  <div class="text-h6">{{ order.pay_amount }}点</div>
+                </div>
+
+                <q-btn class="col-auto q-mr-sm" v-if="order.status === 'unpaid'" color="primary" outline>
+                  取消
+                </q-btn>
+
+                <q-btn class="col-auto " v-if="order.status === 'unpaid'" color="primary" unelevated
+                       @click="store.payOrderDialog(order.id, isGroup)">
+                  支付
+                </q-btn>
 
               </div>
 
@@ -131,16 +138,38 @@ const getOsIconName = useGetOsIconName()
                   </div>
                 </div>
 
-                <div class="row items-center">
+                <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">系统磁盘</div>
                   <div class="col-shrink">
                     {{ order.instance_config.vm_systemdisk_size }}GB
                   </div>
                 </div>
 
+                <div v-if="order.status === 'paid'" class="row  items-center">
+                  <div class="col-3 text-grey">云主机ID</div>
+                  <div class="col-shrink">
+                    <div v-for="server in order.resources" :key="server.id">
+                      {{ server.id }}
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               <div class="col-4">
+
+                <div v-if="order.status === 'paid'" class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">IP地址</div>
+                  <div class="col-shrink">
+                    <q-btn v-for="server in order.resources" :key="server.id" flat color="primary" no-caps
+                           padding="none"
+                           @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${server.id}`:`/my/server/personal/detail/${server.id}`)">
+                      {{
+                        isGroup ? store.tables.groupServerTable.byId[server.id].ipv4 : store.tables.personalServerTable.byId[server.id].ipv4
+                      }}
+                    </q-btn>
+                  </div>
+                </div>
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">IP地址类型</div>
@@ -300,7 +329,7 @@ const getOsIconName = useGetOsIconName()
           </div>
         </div>
 
-        <!--        <pre>{{ order }}</pre>-->
+<!--        <pre>{{ order }}</pre>-->
 
       </div>
     </div>
