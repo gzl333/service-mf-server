@@ -9,6 +9,10 @@ const props = defineProps({
   couponId: {
     type: String,
     required: true
+  },
+  isGroup: {
+    type: Boolean,
+    required: true
   }
 })
 // const emits = defineEmits(['change', 'delete'])
@@ -18,7 +22,7 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
-const coupon = computed(() => store.tables.couponTable.byId[props.couponId])
+const coupon = computed(() => props.isGroup ? store.tables.groupCouponTable.byId[props.couponId] : store.tables.personalCouponTable.byId[props.couponId])
 
 </script>
 
@@ -29,7 +33,7 @@ const coupon = computed(() => store.tables.couponTable.byId[props.couponId])
 
         <q-card-section class="text-white bg-positive q-pa-sm full-height">
 
-          <span class="text-h6">{{ coupon.face_value }}</span>
+          <span class="text-h6">{{ coupon.balance }}</span>
           <span class="text-caption">{{ tc('点') }}</span>
 
         </q-card-section>

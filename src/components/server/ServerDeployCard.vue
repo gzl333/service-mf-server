@@ -192,11 +192,8 @@ const deployServer = async () => {
       if (respPostServer.status === 200) {
         const orderId = respPostServer.data.order_id
         // 更新订单table
-        props.isGroup ? void await store.loadSingleOrder({
-          isGroup: true,
-          orderId
-        }) : void await store.loadSingleOrder({
-          isGroup: false,
+        void await store.loadSingleOrder({
+          isGroup: props.isGroup,
           orderId
         })
         // 跳转至订单list

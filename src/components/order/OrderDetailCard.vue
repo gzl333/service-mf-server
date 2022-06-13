@@ -158,17 +158,22 @@ const getOsIconName = useGetOsIconName()
 
               <div class="col-4">
 
-                <div v-if="order.status === 'paid'" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">IP地址</div>
+                <div
+                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
+                  class="row q-pb-md items-center">
+
+                  <div class="col-3 text-grey">IP地址
+                  </div>
                   <div class="col-shrink">
-                    <q-btn v-for="server in order.resources" :key="server.id" flat color="primary" no-caps
+                    <q-btn flat color="primary" no-caps
                            padding="none"
-                           @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${server.id}`:`/my/server/personal/detail/${server.id}`)">
+                           @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
                       {{
-                        isGroup ? store.tables.groupServerTable.byId[server.id].ipv4 : store.tables.personalServerTable.byId[server.id].ipv4
+                        isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4
                       }}
                     </q-btn>
                   </div>
+
                 </div>
 
                 <div class="row q-pb-md items-center">
@@ -329,7 +334,7 @@ const getOsIconName = useGetOsIconName()
           </div>
         </div>
 
-<!--        <pre>{{ order }}</pre>-->
+        <!--        <pre>{{ order }}</pre>-->
 
       </div>
     </div>

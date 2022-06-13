@@ -34,9 +34,7 @@ const {
 } = useDialogPluginComponent()
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
-const coupons = computed(() => Object.values(store.tables.couponTable.byId)
-  // 区分个人和项目组
-  .filter(coupon => props.isGroup ? coupon.vo?.id === order.value.vo_id : coupon.vo === null)
+const coupons = computed(() => (props.isGroup ? Object.values(store.tables.groupCouponTable.byId) : Object.values(store.tables.personalCouponTable.byId))
   // 如果是专用券：只留能用vm && 与当前order的service相同的
   .filter(coupon => coupon.coupon_type === 'special' ? coupon.applicable_resource.includes('vm') && coupon?.service?.id === order.value.service_id : true)
   // 映射为couponId，供option group使用
@@ -205,7 +203,7 @@ const onOKClick = () => {
                   :options="coupons"
                 >
                   <template v-slot:label="opt">
-                    <CouponCard class="q-pt-sm" :coupon-id="opt.value"/>
+                    <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
                   </template>
                 </q-option-group>
               </q-scroll-area>
@@ -253,7 +251,7 @@ const onOKClick = () => {
                   :options="coupons"
                 >
                   <template v-slot:label="opt">
-                    <CouponCard class="q-pt-sm" :coupon-id="opt.value"/>
+                    <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
                   </template>
                 </q-option-group>
               </q-scroll-area>
