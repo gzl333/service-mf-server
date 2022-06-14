@@ -39,15 +39,6 @@ const input = ref<HTMLElement>()
 
 // radio选项数据
 // // 全局数据
-const payments = [{
-  type: '预付费',
-  type_en: 'Pre-Paid',
-  value: 'prepaid'
-}, {
-  type: '后付费',
-  type_en: 'Post-Paid',
-  value: 'postpaid'
-}]
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
 const dataCenters = computed(() => Object.values(store.tables.dataCenterTable.byId))
@@ -260,14 +251,21 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row">
-          <div class="col">
-            <q-radio v-for="payment in payments" :val="payment.value" :key="payment.value"
-                     class="radio non-selectable" dense v-model="radioPayment">
-              <div :class="radioPayment===payment.value ? 'text-primary' : 'text-black'">
-                {{ i18n.global.locale === 'zh' ? payment.type : payment.type_en }}
-              </div>
-            </q-radio>
-          </div>
+          <q-radio class="radio non-selectable" v-model="radioPayment" val="prepaid" dense>
+            <span class="text-bold q-pr-lg" :class="radioPayment==='prepaid' ? 'text-primary' : 'text-black'">
+              {{ tc('预付费') }}
+            </span>
+            <span>云主机将在付费后交付</span>
+          </q-radio>
+        </div>
+
+        <div class="row item-row">
+          <q-radio class="radio non-selectable" v-model="radioPayment" val="postpaid" dense>
+            <span class="text-bold q-pr-lg" :class="radioPayment==='postpaid' ? 'text-primary' : 'text-black'">
+              {{ tc('后付费') }}
+            </span>
+            <span>云主机将立即交付，并开始计费</span>
+          </q-radio>
         </div>
       </div>
 
@@ -615,18 +613,20 @@ const deployServer = async () => {
 
               <span>
                 <q-icon
+                  class="q-px-sm"
                   v-if="store.tables.serviceTable.byId[radioService]?.service_type.toLowerCase().includes('ev')"
-                  name="img:svg/EVCloud-Logo-Horizontal.svg"
-                  style="width: 100px;height: 20px"/>
-                <!--                <q-tooltip>{{ tc('该节点的服务类型为EVCloud') }}</q-tooltip>-->
+                  style="width: 100px;height: 20px">
+                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+                </q-icon>
               </span>
 
               <span>
                 <q-icon
+                  class="q-px-sm"
                   v-if="store.tables.serviceTable.byId[radioService]?.service_type.toLowerCase().includes('open')"
-                  name="img:svg/OpenStack-Logo-Horizontal.svg"
-                  style="width: 100px;height: 20px"/>
-                <!--                <q-tooltip>{{ tc('该节点的服务类型为OpenStack') }}</q-tooltip>-->
+                  style="width: 100px;height: 20px">
+                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+                </q-icon>
               </span>
 
             </div>

@@ -82,7 +82,8 @@ const gotoManualVpn = () => {
         <div class="row">
 
           <!--todo 区分读取中和读取错误          -->
-          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">
+          <!--          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">-->
+          <div v-if="!server || !service " class="col">
             正在加载，请稍候
           </div>
 
@@ -159,7 +160,7 @@ const gotoManualVpn = () => {
                 </q-btn>
 
                 <!--loading button-->
-                <q-btn v-if="!server.status" :loading="!server.status" color="primary" flat>
+                <q-btn v-if="!server.status" :loading="server.status===-1" color="primary" flat>
                   <q-tooltip>
                     {{ tc('获取中') }}
                   </q-tooltip>
@@ -289,7 +290,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="!service.need_vpn" class="row q-pb-md items-center">
+                <div v-if="!service.need_vpn && vpn" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN</div>
                   <div class="col-auto">无需VPN连接</div>
                 </div>
@@ -297,9 +298,9 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn" class="row q-pb-md items-center ">
                   <div class="col-3 text-grey ">VPN 用户名</div>
                   <div class="col">
-                    {{ vpn.username }}
+                    {{ vpn?.username }}
                     <q-btn class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                           @click="clickToCopy(vpn.username)">
+                           @click="clickToCopy(vpn?.username)">
                       <q-tooltip>
                         复制
                       </q-tooltip>
@@ -307,19 +308,19 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN 密码</div>
 
                   <div class="col-shrink">
                     <!--根据内容改变长度的input. 一个字母占8像素，一个汉字占16像素.https://github.com/quasarframework/quasar/issues/1958-->
                     <q-input
-                      :input-style="{width:`${vpn.password.length * (isPwdVpn?5:8)}px`, maxWidth: '200px', minWidth: '32px'}"
+                      :input-style="{width:`${vpn?.password.length * (isPwdVpn?5:8)}px`, maxWidth: '200px', minWidth: '32px'}"
                       v-model="vpn.password" readonly borderless dense
                       :type="isPwdVpn ? 'password' : 'text'">
                       <template v-slot:append>
                         <q-icon :name="isPwdVpn ? 'visibility' : 'visibility_off'" @click="isPwdVpn = !isPwdVpn"/>
                         <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                               @click="clickToCopy(vpn.password, true)">
+                               @click="clickToCopy(vpn?.password, true)">
                           <q-tooltip>
                             复制
                           </q-tooltip>

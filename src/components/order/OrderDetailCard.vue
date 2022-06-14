@@ -7,6 +7,7 @@ import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import useGetOsIconName from 'src/hooks/useGetOsIconName'
+import OrderStatus from 'components/order/OrderStatus.vue'
 
 const props = defineProps({
   orderId: {
@@ -93,25 +94,24 @@ const getOsIconName = useGetOsIconName()
 
               <div class="col-4 row justify-end">
 
-                <div class="col-auto q-pr-lg">
+                <div class="col-auto column items-center">
                   <div class="text-grey">订单状态</div>
                   <div class="text-h6">
-                    {{
-                      order.status === 'paid' ? '已支付' : order.status === 'unpaid' ? '未支付' : order.status === 'cancelled' ? '取消' : '退款'
-                    }}
+                    <OrderStatus :is-group="isGroup" :order-id="order.id"/>
                   </div>
                 </div>
 
-                <div v-if="order.status === 'unpaid'" class="col-auto q-pr-lg">
+                <div v-if="order.status === 'unpaid'" class="col-auto q-pl-lg">
                   <div class="text-grey">应付金额</div>
                   <div class="text-h6">{{ order.pay_amount }}点</div>
                 </div>
 
-                <q-btn class="col-auto q-mr-sm" v-if="order.status === 'unpaid'" color="primary" outline>
+                <q-btn class="col-auto q-ml-lg" v-if="order.status === 'unpaid'" color="primary" outline
+                       @click="store.cancelOrderDialog(order.id, isGroup)">
                   取消
                 </q-btn>
 
-                <q-btn class="col-auto " v-if="order.status === 'unpaid'" color="primary" unelevated
+                <q-btn class="col-auto q-ml-sm" v-if="order.status === 'unpaid'" color="primary" unelevated
                        @click="store.payOrderDialog(order.id, isGroup)">
                   支付
                 </q-btn>
@@ -213,7 +213,9 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-3 text-grey">所属机构</div>
                   <div class="col-shrink">
                     {{
-                      store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name
+                      i18n.global.locale === 'zh' ?
+                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name :
+                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name_en
                     }}
                   </div>
                 </div>
@@ -222,7 +224,9 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-3 text-grey">服务节点</div>
                   <div class="col-shrink">
                     {{
-                      store.tables.serviceTable.byId[order.service_id].name
+                      i18n.global.locale === 'zh' ?
+                        store.tables.serviceTable.byId[order.service_id].name :
+                        store.tables.serviceTable.byId[order.service_id].name_en
                     }}
                   </div>
                 </div>

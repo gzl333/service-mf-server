@@ -12,7 +12,8 @@ import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
 import GroupEditCard from 'components/group/GroupEditCard.vue'
 import GroupAddMemberCard from 'components/group/GroupAddMemberCard.vue'
-import PayOrderCard from 'components/order/PayOrderCard.vue'
+import OrderPayCard from 'components/order/OrderPayCard.vue'
+import OrderCancelCard from 'components/order/OrderCancelCard.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -250,9 +251,10 @@ export interface ServerInterface {
   }
   lock: 'free' | 'lock-delete' | 'lock-operation'
 
-  // 来自status接口 根据status_code映射为文字状态
+  // 来自vnc接口
   vnc?: string
-  status?: string
+  // 来自status接口，类型为number
+  status?: number
 }
 
 export interface OrderResourceInterface {
@@ -399,12 +401,12 @@ export interface CouponInterface {
 
 // 整体加载表
 export interface totalTable {
-  status: 'init' | 'loading' | 'total'
+  status: 'init' | 'loading' | 'total' | 'error'
 }
 
 // 累计加载表
 export interface partTable {
-  status: 'init' | 'loading' | 'part'
+  status: 'init' | 'loading' | 'part' | 'error'
 }
 
 // id
@@ -673,6 +675,28 @@ export const useStore = defineStore('server', {
             labelEn: group.name
           }
         )
+      }
+      // 排序
+      groupOptions = groupOptions.sort((a, b) => -a.label.localeCompare(b.label, 'zh-CN'))
+      groupOptions.unshift({
+        value: '0',
+        label: '全部项目组',
+        labelEn: 'All Groups'
+      })
+      return groupOptions
+    },
+    getGroupOptionsByMyRole: (state) => (roles: string[]): { value: string; label: string; }[] => {
+      let groupOptions = []
+      for (const group of Object.values(state.tables.groupTable.byId)) {
+        if (roles.includes(group.myRole)) {
+          groupOptions.push(
+            {
+              value: group.id,
+              label: group.name,
+              labelEn: group.name
+            }
+          )
+        }
       }
       // 排序
       groupOptions = groupOptions.sort((a, b) => -a.label.localeCompare(b.label, 'zh-CN'))
@@ -1385,7 +1409,7 @@ export const useStore = defineStore('server', {
         this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
       }
       // load table的最后再改status
-      this.tables.groupMemberTable.status = 'total'
+      this.tables.groupBalanceTable.status = 'total'
     },
     // 更新单个的groupBalance
     async loadSingleGroupBalance (groupId: string) {
@@ -1401,7 +1425,7 @@ export const useStore = defineStore('server', {
       // 给groupTable补充balance字段
       this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
       // load table的最后再改status
-      this.tables.groupMemberTable.status = 'total'
+      this.tables.groupBalanceTable.status = 'total'
     },
     // 根据groupTable, 建立groupOrderTable
     async loadGroupOrderTable () {
@@ -1597,40 +1621,57 @@ export const useStore = defineStore('server', {
       this.tables.fedFlavorTable.status = 'total'
     },
     async loadServiceNetworkTable () {
-      for (const serviceId of this.tables.serviceTable.allIds) {
-        const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
-        for (const network of respNetwork.data) {
-          // 将service 和 localId补充进network对象
-          Object.assign(network, {
-            service: serviceId,
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            localId: `${serviceId}-${network.id}`
-          })
-          Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
-          this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
-          this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
-        }
+      this.tables.serviceNetworkTable = {
+        byLocalId: {},
+        allLocalIds: [],
+        status: 'init'
       }
-      // load table的最后再改isLoaded
-      this.tables.serviceNetworkTable.status = 'total'
+      this.tables.serviceNetworkTable.status = 'loading'
+      try {
+        for (const serviceId of this.tables.serviceTable.allIds) {
+          const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+          for (const network of respNetwork.data) {
+            // 将service 和 localId补充进network对象
+            Object.assign(network, {
+              service: serviceId,
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              localId: `${serviceId}-${network.id}`
+            })
+            Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
+            this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
+            this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
+          }
+        }
+        this.tables.serviceNetworkTable.status = 'total'
+      } catch (e) {
+        this.tables.serviceNetworkTable.status = 'error'
+      }
     },
     async loadServiceImageTable () {
-      for (const serviceId of this.tables.serviceTable.allIds) {
-        const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
-        for (const image of respImage.data) {
-          // 将service 和 localId补充进image对象
-          Object.assign(image, {
-            service: serviceId,
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            localId: `${serviceId}-${image.id}`
-          })
-          Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
-          this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
-          this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
-        }
+      this.tables.serviceImageTable = {
+        byLocalId: {},
+        allLocalIds: [],
+        status: 'init'
       }
-      // load table的最后再改isLoaded
-      this.tables.serviceImageTable.status = 'total'
+      this.tables.serviceImageTable.status = 'loading'
+      try {
+        for (const serviceId of this.tables.serviceTable.allIds) {
+          const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+          for (const image of respImage.data) {
+            // 将service 和 localId补充进image对象
+            Object.assign(image, {
+              service: serviceId,
+              localId: `${serviceId}-${image.id}`
+            })
+            Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
+            this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
+            this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
+          }
+        }
+        this.tables.serviceImageTable.status = 'total'
+      } catch (e) {
+        this.tables.serviceImageTable.status = 'error'
+      }
     },
     async loadUserVpnTable () {
       this.tables.userVpnTable = {
@@ -1639,17 +1680,20 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.userVpnTable.status = 'loading'
-      for (const serviceId of this.tables.serviceTable.allIds) {
-        if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
-          const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
-          Object.assign(respVpn.data.vpn, { id: serviceId })
-          Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
-          this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
-          this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+      try {
+        for (const serviceId of this.tables.serviceTable.allIds) {
+          if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
+            const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
+            Object.assign(respVpn.data.vpn, { id: serviceId })
+            Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
+            this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
+            this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+          }
         }
+        this.tables.userVpnTable.status = 'total'
+      } catch (e) {
+        this.tables.userVpnTable.status = 'error'
       }
-      // load table的最后再改isLoaded
-      this.tables.userVpnTable.status = 'total'
     },
     // async loadPersonalQuotaTable () {
     //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
@@ -1814,24 +1858,39 @@ export const useStore = defineStore('server', {
           serverId
         })
       }
-      // load table的最后再改isLoaded
       this.tables.groupServerTable.status = 'total'
     },
     // 获取并保存单个server的status
+    /* *
+    status code:
+    -1  ->  自己加的，获取中
+    0       # no state
+    1       # the domain is running
+    2       # the domain is blocked on resource
+    3       # the domain is paused by user
+    4       # the domain is being shut down
+    5       # the domain is shut off
+    6       # the domain is crashed
+    7       # the domain is suspended by guest power management
+    9       # host connect failed
+    10      # domain miss
+    11      # The domain is being built
+    12      # Failed to build the domain
+    13      # An error occurred in the domain.
+    *  */
     async loadSingleServerStatus (payload: {
-      // table: {
-      //   byId: Record<string, ServerInterface> // 此处固定为ServerInterface
-      //   allIds: string[]
-      //   isLoaded: boolean
-      // }
       isGroup: boolean
       serverId: string
     }) {
       const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
-      // 先清空server status，让状态变为空，UI则显示为获取中
-      table.byId[payload.serverId].status = ''
-      const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
-      table.byId[payload.serverId].status = respStatus.data.status.status_code
+      // status -> -1，UI则显示为获取中
+      table.byId[payload.serverId].status = -1
+      try {
+        const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
+        table.byId[payload.serverId].status = respStatus.data.status.status_code
+      } catch (e) {
+        table.byId[payload.serverId].status = 0
+      }
     },
     // 更新单个server的信息
     async loadSingleServer (payload: { serverId: string; isGroup: boolean }) {
@@ -2157,9 +2216,9 @@ export const useStore = defineStore('server', {
       const executeOperation = async () => {
         // 将主机状态清空，界面将显示loading
         if (payload.isGroup) {
-          this.tables.groupServerTable.byId[payload.serverId].status = ''
+          this.tables.groupServerTable.byId[payload.serverId].status = -1
         } else {
-          this.tables.personalServerTable.byId[payload.serverId].status = ''
+          this.tables.personalServerTable.byId[payload.serverId].status = -1
         }
 
         try {
@@ -2196,9 +2255,9 @@ export const useStore = defineStore('server', {
         }).onOk(async () => {
           // 将主机状态清空，界面将显示loading
           if (payload.isGroup) {
-            this.tables.groupServerTable.byId[payload.serverId].status = ''
+            this.tables.groupServerTable.byId[payload.serverId].status = -1
           } else {
-            this.tables.personalServerTable.byId[payload.serverId].status = ''
+            this.tables.personalServerTable.byId[payload.serverId].status = -1
           }
           try {
             // 发送请求
@@ -2701,7 +2760,7 @@ export const useStore = defineStore('server', {
     /* 支付订单 */
     payOrderDialog (orderId: string, isGroup: boolean) {
       Dialog.create({
-        component: PayOrderCard,
+        component: OrderPayCard,
         componentProps: {
           orderId,
           isGroup
@@ -2766,8 +2825,47 @@ export const useStore = defineStore('server', {
           navigateToUrl(isGroup ? `/my/server/order/group/detail/${orderId}` : `/my/server/order/personal/detail/${orderId}`)
         }
       })
-    }
+    },
     /* 支付订单 */
+
+    /* 取消订单 */
+    cancelOrderDialog (orderId: string, isGroup: boolean) {
+      Dialog.create({
+        component: OrderCancelCard,
+        componentProps: {
+          orderId,
+          isGroup
+        }
+      }).onOk(async (val: boolean) => {
+        if (val) {
+          const respPostOrderCancel = await api.server.order.postOrderIdCancel({
+            path: {
+              id: orderId
+            }
+          })
+          if (respPostOrderCancel.status === 200) {
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              icon: 'mdi-check-circle',
+              textColor: 'positive',
+              message: '已经成功取消订单',
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+            // 更新orderId对应order
+            void await this.loadSingleOrder({
+              isGroup,
+              orderId
+            })
+            // 跳转到该order详情页面
+            navigateToUrl(isGroup ? `/my/server/order/group/detail/${orderId}` : `/my/server/order/personal/detail/${orderId}`)
+          }
+        }
+      })
+    }
+    /* 取消订单 */
     /* order */
 
     /* dialogs */

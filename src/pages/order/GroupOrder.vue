@@ -24,7 +24,7 @@ const store = useStore()
 // group filter
 const groupSelection = ref('0')
 
-const groupOptions = computed(() => store.getGroupOptions)
+const groupOptions = computed(() => store.getGroupOptionsByMyRole(['owner', 'leader']))
 
 const rows = computed(() => store.getGroupOrdersByGroupId(groupSelection.value))
 
@@ -45,7 +45,7 @@ const search = ref('')
                 <q-icon name="search"/>
               </template>
               <template v-slot:append v-if="search">
-                <q-icon name="close" @click="search = ''" class="cursor-pointer" />
+                <q-icon name="close" @click="search = ''" class="cursor-pointer"/>
               </template>
             </q-input>
           </div>

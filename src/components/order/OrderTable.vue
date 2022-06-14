@@ -6,6 +6,8 @@ import { useStore, OrderInterface } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
+import OrderStatus from 'components/order/OrderStatus.vue'
+
 const props = defineProps({
   orders: {
     type: Array as PropType<OrderInterface[]>,
@@ -145,7 +147,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
       <template v-slot:body="props">
         <q-tr :props="props"
-              @mouseenter="onMouseEnterRow(props.row.name)"
+              @mouseenter="onMouseEnterRow(props.row.id)"
               @mouseleave="onMouseLeaveRow"
         >
           <q-td key="id" :props="props">
@@ -164,7 +166,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               </q-badge>
             </q-btn>
 
-            <q-btn v-if="hoverRow === props.row.name"
+            <q-btn v-if="hoverRow === props.row.id"
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.id)">
               <q-tooltip>
@@ -237,14 +239,32 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
             </div>
           </q-td>
+
           <q-td key="status" :props="props" class="non-selectable">
-            <!--            <ServerStatus :server="props.row" :is-group="isGroup"/>-->
-            {{ props.row.status }}
+            <OrderStatus :order-id="props.row.id" :is-group="isGroup"/>
           </q-td>
 
           <q-td key="operation" :props="props" class="non-selectable">
-            <!--            <ServerOperationBtnGroup :server="props.row" :is-group="isGroup"/>-->
-            支付、查看详情、取消
+            <div class="column justify-center items-center q-gutter-xs">
+
+              <q-btn icon="info" flat dense padding="none" color="primary"
+                     @click="navigateToUrl(isGroup ? `/my/server/order/group/detail/${props.row.id}` : `/my/server/order/personal/detail/${props.row.id}`)">
+                {{ tc('查看详情') }}
+              </q-btn>
+
+              <q-btn v-if="props.row.status === 'unpaid'"
+                     icon="paid" flat dense padding="none" color="primary"
+                     @click="store.payOrderDialog(props.row.id, isGroup)">
+                {{ tc('支付订单') }}
+              </q-btn>
+
+              <q-btn v-if="props.row.status === 'unpaid'"
+                     icon="cancel" flat dense padding="none" color="primary"
+                     @click="store.cancelOrderDialog(props.row.id, isGroup)">
+                {{ tc('取消订单') }}
+              </q-btn>
+
+            </div>
           </q-td>
 
         </q-tr>

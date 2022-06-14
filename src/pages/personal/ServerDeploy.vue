@@ -49,4 +49,12 @@ const quotaId = route.query.quota as string
 <style lang="scss" scoped>
 .ServerDeploy {
 }
+
+.title-area {
+  width: 1230px;
+  text-align: left;
+  color: $primary;
+  font-size: large;
+  font-weight: bold;
+}
 </style>

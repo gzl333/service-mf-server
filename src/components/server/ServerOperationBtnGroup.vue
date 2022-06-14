@@ -50,7 +50,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
 
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
                       :disable-main-btn="server.lock === 'lock-operation'"
-                      :loading="!server?.status"
+                      :loading="server?.status===-1"
                       :icon="server?.status===5?'play_arrow':server?.status==1?'power_settings_new':'refresh'"
                       @click="server?.status===5 ? store.serverOperationDialog({serverId: server.id, action: 'start', isGroup})
                       : server?.status==1?store.serverOperationDialog({serverId: server.id, action: 'shutdown', isGroup})

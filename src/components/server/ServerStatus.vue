@@ -25,7 +25,7 @@ const tc = i18n.global.tc
 
 <template>
   <span class="ServerStatus">
-     <q-chip v-if="!server.status"
+     <q-chip v-if="server.status === -1"
              class="text-bold" outline ripple="false" color="grey-5" :label="tc('获取中')"
              clickable
              @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
