@@ -28,23 +28,23 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
 <template>
   <span class="OrderStatus">
-     <q-chip v-if="order.status === 'paid'" :clickable="false"
+     <q-chip v-if="order.status === 'paid'" :clickable="false" square
              class="text-bold" outline ripple="false" color="light-green">
        {{ tc('已支付') }}
     </q-chip>
 
-         <q-chip v-if="order.status === 'unpaid'" :clickable="false"
-                 class="text-bold" outline ripple="false" color="red">
+    <q-chip v-if="order.status === 'unpaid'" :clickable="false" square
+            class="text-bold" outline ripple="false" color="red">
        {{ tc('待支付') }}
     </q-chip>
 
-         <q-chip v-if="order.status === 'cancelled'" :clickable="false"
-                 class="text-bold" outline ripple="false" color="black">
+    <q-chip v-if="order.status === 'cancelled'" :clickable="false" square
+            class="text-bold" outline ripple="false" color="black">
        {{ tc('已取消') }}
     </q-chip>
 
-         <q-chip v-if="order.status === 'refund'" :clickable="false"
-                 class="text-bold" outline ripple="false" color="primary">
+    <q-chip v-if="order.status === 'refund'" :clickable="false" square
+            class="text-bold" outline ripple="false" color="primary">
        {{ tc('已退款') }}
     </q-chip>
   </span>
