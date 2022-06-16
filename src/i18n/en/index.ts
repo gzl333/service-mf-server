@@ -1,5 +1,6 @@
 // en
 export default {
+
   忽略: 'Dismiss',
   翻译测试: 'Translation Test',
 
@@ -11,9 +12,11 @@ export default {
   云主机: 'Cloud Server',
   个人: 'Personal',
   项目组: 'Group',
+  订单: 'Orders',
   提供者: 'Provider',
   资源管理: 'Management',
   个人资源: 'Personal Resource',
+  项目组资源: 'Group Resource',
 
   联邦机构: 'Federation Organizations',
   接入机构: 'Organization Connected',
@@ -22,6 +25,13 @@ export default {
   快捷入口: 'Shortcuts',
   搜索: 'Search',
   筛选服务节点: 'Service Node Filter',
-  个人云主机: 'Personal Servers'
+  个人云主机: 'Personal Servers',
 
+  // 通用翻译点，全局统一的翻译
+  general: {},
+
+  // 独立翻译点,按照工程文件结构组织
+  components: {},
+  layouts: {},
+  pages: {}
 }

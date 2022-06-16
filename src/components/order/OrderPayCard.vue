@@ -35,8 +35,6 @@ const {
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 const coupons = computed(() => (props.isGroup ? Object.values(store.tables.groupCouponTable.byId) : Object.values(store.tables.personalCouponTable.byId))
-  // 如果是专用券：只留能用vm && 与当前order的service相同的
-  .filter(coupon => coupon.coupon_type === 'special' ? coupon.applicable_resource.includes('vm') && coupon?.service?.id === order.value.service_id : true)
   // 映射为couponId，供option group使用
   .map(coupon => ({
     label: coupon.id,
@@ -46,33 +44,6 @@ const coupons = computed(() => (props.isGroup ? Object.values(store.tables.group
 
 const methodSelect = ref('balance')
 const couponSelect = ref([])
-
-// 计算选择coupon区域的理想高度
-const heightCouponFull = computed(() => {
-  if (coupons.value.length === 0) {
-    return 8
-  } else if (coupons.value.length === 1) {
-    return 66
-  } else if (coupons.value.length === 2) {
-    return 124
-  } else {
-    return 182
-  }
-})
-const heightCouponMin = computed(() => {
-  if (coupons.value.length === 0) {
-    return 8
-  } else if (coupons.value.length === 1) {
-    return 66
-  } else if (coupons.value.length === 2) {
-    return 124
-  } else {
-    return 150
-  }
-})
-
-// 计算对话框的总体高度
-const heightTotal = computed(() => props.isGroup ? (heightCouponFull.value + 410) : (heightCouponFull.value + 380))
 
 const onOKClick = () => {
   if (methodSelect.value === 'cashcoupon' && couponSelect.value.length === 0) {
@@ -98,7 +69,7 @@ const onOKClick = () => {
 <template>
   <!-- notice dialogRef here -->
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card class="q-dialog-plugin dialog-primary" :style="`height: ${heightTotal}px;`">
+    <q-card class="q-dialog-plugin dialog-primary" style="height: 550px;">
 
       <q-card-section class="row items-center justify-center q-pb-md">
         <div class="text-primary">{{ isGroup ? tc('支付项目组订单') : tc('支付个人订单') }}</div>
@@ -138,135 +109,82 @@ const onOKClick = () => {
           <div class="col-3 text-grey-7">
             {{ tc('支付方式') }}
           </div>
-          <div class="col-8">
-            <q-btn-toggle
-              v-model="methodSelect"
-              :ripple="false"
-              unelevated
-              no-caps
-              text-color="primary"
-              toggle-color="primary"
-              :options="[{value: 'balance', slot: 'one'},
-                         {value: 'cashcoupon', slot: 'two'},
-                         {value: 'coupon_balance', slot: 'three'}]">
-              <template v-slot:one>
-                {{ tc('账户余额') }}
-                <q-tooltip>{{ tc('只从账户余额中扣除') }}</q-tooltip>
-              </template>
+          <div class="col-8 q-gutter-sm">
 
-              <template v-slot:two>
-                {{ tc('代金券') }}
-                <q-tooltip>{{ tc('只从代金券中扣除') }}</q-tooltip>
-              </template>
+            <q-btn style="width: 150px;"
+                   :outline="methodSelect==='balance'?false:true"
+                   :ripple="false" dense unelevated
+                   :color="methodSelect==='balance'?'primary':'grey'"
+                   @click="methodSelect = 'balance'">
+              {{ tc('余额') }}
+            </q-btn>
 
-              <template v-slot:three>
-                {{ tc('组合支付') }}
-                <q-tooltip>{{ tc('余额+代金券组合支付，优先扣除代金券') }}</q-tooltip>
-              </template>
-            </q-btn-toggle>
+            <q-btn style="width: 150px;"
+                   :outline="methodSelect==='cashcoupon'?false:true"
+                   :ripple="false" dense unelevated
+                   :color="methodSelect==='cashcoupon'?'primary':'grey'"
+                   @click="methodSelect = 'cashcoupon'">
+              {{ tc('代金券') }}
+            </q-btn>
+
           </div>
         </div>
 
-        <div v-if="isGroup">
+        <div v-if="isGroup" class="row q-pb-lg items-center">
+          <div class="col-3 text-grey-7">
+            所属项目组
+          </div>
+          <div class="col">
+            {{ order.vo_name }}
+          </div>
+        </div>
 
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              所属项目组
-            </div>
-            <div class="col">
-              {{ order.vo_name }}
-            </div>
+        <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
+             class="row q-pb-lg items-start">
+
+          <div class="col-3 text-grey-7">
+            {{ isGroup ? tc('项目组代金券') : tc('个人代金券') }}
           </div>
 
-          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
-               class="row q-pb-lg items-start">
+          <div class="col">
 
-            <div class="col-3 text-grey-7">
-              项目组代金券
+            <div class="row">
+              <div>已选</div>
+              <div class="text-black">{{ couponSelect.length }}个</div>
             </div>
 
-            <div class="col">
+            <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
 
-              <div class="row">
-                <div>已选</div>
-                <div class="text-black">{{ couponSelect.length }}个</div>
-              </div>
+            <q-scroll-area v-else class="col bg-grey-2"
+                           style="height: 170px;"
+                           visible>
+              <q-option-group
+                v-model="couponSelect"
+                type="checkbox"
+                :options="coupons"
+              >
+                <template v-slot:label="opt">
+                  <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
+                </template>
+              </q-option-group>
+            </q-scroll-area>
 
-              <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
-
-              <q-scroll-area v-else class="col bg-grey-2"
-                             :style="methodSelect === 'cashcoupon' ? `height: ${heightCouponFull}px;` : `height: ${heightCouponMin}px;`"
-                             visible>
-                <q-option-group
-                  v-model="couponSelect"
-                  type="checkbox"
-                  :options="coupons"
-                >
-                  <template v-slot:label="opt">
-                    <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
-                  </template>
-                </q-option-group>
-              </q-scroll-area>
-
-            </div>
-
-          </div>
-
-          <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              项目组账户余额
-            </div>
-            <div class="col"
-                 :class="store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[order.vo_id].balance].balance.startsWith('-')?'text-red':''">
-              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[order.vo_id].balance].balance }}
-            </div>
           </div>
 
         </div>
 
-        <div v-else>
-
-          <div v-if="methodSelect==='cashcoupon' || methodSelect==='coupon_balance'"
-               class="row q-pb-lg items-start">
-
-            <div class="col-3 text-grey-7">
-              个人代金券
-            </div>
-
-            <div class="col">
-
-              <div class="row">
-                <div>已选</div>
-                <div class="text-black">{{ couponSelect.length }}个</div>
-              </div>
-
-              <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
-
-              <q-scroll-area v-else class="col bg-grey-2"
-                             :style="methodSelect === 'cashcoupon' ? `height: ${heightCouponFull}px;` : `height: ${heightCouponMin}px;`"
-                             visible>
-                <q-option-group
-                  v-model="couponSelect"
-                  type="checkbox"
-                  :options="coupons"
-                >
-                  <template v-slot:label="opt">
-                    <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
-                  </template>
-                </q-option-group>
-              </q-scroll-area>
-
-            </div>
-
+        <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
+          <div class="col-3 text-grey-7">
+            {{ isGroup ? tc('项目组账户余额') : tc('个人账户余额') }}
           </div>
 
-          <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              个人账户余额
-            </div>
-            <div class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
-              {{ store.items.personalBalance.balance }}点
-            </div>
+          <div v-if="isGroup" class="col"
+               :class="store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[order.vo_id].balance].balance.startsWith('-')?'text-red':''">
+            {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[order.vo_id].balance].balance }}
+          </div>
+
+          <div v-else class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
+            {{ store.items.personalBalance.balance }}点
           </div>
 
         </div>

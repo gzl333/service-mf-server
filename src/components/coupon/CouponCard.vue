@@ -31,39 +31,34 @@ const coupon = computed(() => props.isGroup ? store.tables.groupCouponTable.byId
     <q-card class="non-selectable" style="height: 50px; width: 330px;" flat bordered>
       <q-card-section horizontal>
 
-        <q-card-section class="text-white bg-positive q-pa-sm full-height">
+        <q-card-section style="width: 120px;" class="text-white bg-positive q-pa-sm full-height">
 
-          <span class="text-h6">{{ coupon.balance }}</span>
-          <span class="text-caption">{{ tc('点') }}</span>
+          <div class="row items-center justify-center">
+            <span class="text-h6">{{ coupon.balance }}</span>
+            <span class="text-caption">{{ tc('点') }}</span>
+          </div>
 
         </q-card-section>
 
         <!--        <q-separator vertical/>-->
 
-        <q-card-section class="q-pa-sm text-caption items-center" style="width: 230px;">
-          <div class="row">
-            <div class="col-4 text-grey"> {{ tc('适用资源') }}</div>
-            <div v-if="coupon.coupon_type==='universal'" class="col-auto">全部资源</div>
-            <div v-else>{{
-                [...new Set(coupon.applicable_resource)]
-                  .map(type => {
-                    if (type === 'vm') {
-                      return tc('云主机')
-                    } else if (type === 'disk') {
-                      return tc('云硬盘')
-                    } else if (type === 'bucket') {
-                      return tc('存储桶')
-                    }
-                  })
-                  .reduce((prev, curr) => prev + '/' + curr)
+        <q-card-section style="width: 210px;" class="q-pa-sm text-caption items-center full-height">
+
+          <div class="row justify-start">
+            <span class="col-4 text-grey"> {{ tc('所属服务') }}</span>
+            <span class="col-auto">{{
+                i18n.global.locale === 'zh' ?
+                  store.tables.serviceTable.byId[coupon?.service?.id]?.name :
+                  store.tables.serviceTable.byId[coupon?.service?.id]?.name_en
               }}
-            </div>
+            </span>
           </div>
 
           <div class="row">
-            <div class="col-4 text-grey"> {{ tc('到期时间') }}</div>
-            <div class="col-auto">{{ new Date(coupon.expiration_time).toLocaleString(i18n.global.locale) }}</div>
+            <span class="col-4 text-grey"> {{ tc('到期时间') }}</span>
+            <span class="col-auto">{{ new Date(coupon.expiration_time).toLocaleString(i18n.global.locale) }}</span>
           </div>
+
         </q-card-section>
 
       </q-card-section>

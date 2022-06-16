@@ -191,8 +191,18 @@ const gotoManualVpn = () => {
                     style="min-height: 192px;"
                   >
 
-                    <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
-                      {{ tc('该服务无需VPN。如有疑问，请联系该服务管理员。') }}
+                    <div
+                      v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||
+                      !store.tables.serviceTable.byId[tabService].need_vpn"
+                    >
+                      <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
+                        {{ tc('该服务无需VPN。如有疑问，请联系该服务管理员。') }}
+                      </div>
+
+                      <div v-else>
+                        {{ tc('暂时无法获取该服务的VPN信息。如有疑问，请联系该服务管理员。') }}
+                      </div>
+
                     </div>
 
                     <div v-else>

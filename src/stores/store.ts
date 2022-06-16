@@ -302,8 +302,6 @@ export interface CouponInterface {
   creation_time: string
   effective_time: string
   expiration_time: string
-  coupon_type: 'special' | 'universal'
-  applicable_resource: ('vm' | 'disk' | 'bucket')[] // https://stackoverflow.com/questions/57264080/typescript-array-of-specific-string-values
   balance: string
   status: 'wait' | 'available' | 'cancelled' | 'deleted'
   granted_time?: string
@@ -1221,13 +1219,11 @@ export const useStore = defineStore('server', {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
           // void this.loadGroupQuotaApplicationTable()
         })
-        void this.loadGroupServerTable()
         void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-        // void this.loadGroupQuotaTable()
         void this.loadGroupBalanceTable()
-        // to del UserCouponTable 本表为混合表，有个人的有vo的，vo部分要把couponId补充给groupTable里，因此依赖groupTable
-        // void this.loadUserCouponTable()
         void this.loadGroupCouponTable()
+        // serverTable涉及到很多server status请求，应放在最后
+        void this.loadGroupServerTable()
       })
     },
     loadAllTables () {
@@ -1288,26 +1284,18 @@ export const useStore = defineStore('server', {
               // }
             })
           }
-          if (this.tables.groupServerTable.status === 'init') {
-            void this.loadGroupServerTable()
-          }
           if (this.tables.groupOrderTable.status === 'init') {
             void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
           }
-          // if (this.tables.groupQuotaTable.status === 'init') {
-          //   void this.loadGroupQuotaTable()
-          // }
           if (this.tables.groupBalanceTable.status === 'init') {
             void this.loadGroupBalanceTable()
           }
-
-          // // loadUserCouponTable 本表为混合表，有个人的有vo的，vo部分要把couponId补充给groupTable里，因此依赖groupTable
-          // if (this.tables.userCouponTable.status === 'init') {
-          //   void this.loadUserCouponTable()
-          // }
-          //
           if (this.tables.groupCouponTable.status === 'init') {
             void this.loadGroupCouponTable()
+          }
+          // serverTable涉及到很多server status请求，应放在最后
+          if (this.tables.groupServerTable.status === 'init') {
+            void this.loadGroupServerTable()
           }
         })
       }
