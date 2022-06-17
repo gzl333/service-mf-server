@@ -90,7 +90,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="list_alt" size="lg"/>
-                <div class="active-text text-center">{{ tc('订单')}}</div>
+                <div class="active-text text-center">{{ tc('订单') }}</div>
               </q-item-section>
             </q-item>
 
@@ -121,8 +121,17 @@ const releaseTime = process.env.releaseTime
 
           </q-list>
 
-          <div class="text-grey text-body2 text-center q-pt-xl">v0.3.1</div>
-          <div class="text-grey text-body2 text-center">{{ new Date(releaseTime).toLocaleString() }}</div>
+          <div class="row justify-center q-pt-lg">
+            <q-icon class="text-center" name="info" color="grey-5" size="xs">
+              <q-tooltip class="bg-grey-3">
+                <div class="text-grey text-caption text-center">{{ tc('发布时间') }}</div>
+                <div class="text-grey text-caption text-center">
+                  {{ new Date(releaseTime).toLocaleString(i18n.global.locale) }}
+                </div>
+              </q-tooltip>
+            </q-icon>
+          </div>
+
         </q-scroll-area>
       </div>
     </q-drawer>

@@ -1246,14 +1246,15 @@ export const useStore = defineStore('server', {
               if (this.tables.serviceImageTable.status === 'init') {
                 void this.loadServiceImageTable()
               }
-              if (this.tables.personalServerTable.status === 'init') {
-                void this.loadPersonalServerTable()
-              }
               if (this.tables.personalOrderTable.status === 'init') {
                 void this.loadPersonalOrderTable() // 如果要把orderId补充进server实例里，则应在personalServerTable加载后加载
               }
               if (this.tables.personalCouponTable.status === 'init') {
                 void this.loadPersonalCouponTable() // 有service字段，倒不是强依赖，放在这里和外面都可以
+              }
+              // serverTable涉及到很多server status请求，应放在最后
+              if (this.tables.personalServerTable.status === 'init') {
+                void this.loadPersonalServerTable()
               }
             })
           }

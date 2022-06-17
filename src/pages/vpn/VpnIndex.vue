@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+
+import PasswordToggle from 'components/ui/PasswordToggle.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -44,30 +46,18 @@ chooseTabDataCenter()
 chooseTabService()
 
 // (4)dataCenterTable变化，filter变化时：横向tab默认选择第一项，
-watch([store.tables.dataCenterTable, filter], chooseTabDataCenter)
+watch([store.tables.dataCenterTable.allIds, filter], chooseTabDataCenter)
 
 // (5)serviceTable或者tabDataCenter变化时： 属相tab选择services里第一项
-watch([store.tables.serviceTable, tabDataCenter], chooseTabService)
+// ?直接watch serviceTable不起作用。有些table可以，有些不可以。
+const servicesCurrentDataCenter = computed(() => store.tables.dataCenterTable.byId[tabDataCenter.value]?.services)
+watch([servicesCurrentDataCenter, tabDataCenter], chooseTabService)
 
 // 全部vpn对象
 const vpn = computed(() => store.tables.userVpnTable.byId[tabService.value])
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
-
-// 所有password input的可见性
-const pwdVisibilities = computed(() => {
-  const pwdVisibilities = {}
-  store.tables.serviceTable.allIds.forEach((serviceId: string) => {
-    Object.assign(pwdVisibilities, {
-      [serviceId]: true
-    })
-  })
-  return reactive(pwdVisibilities)
-})
-
-// pwd 值
-const pwdValue = computed(() => store.tables.userVpnTable.byId[tabService.value]?.password)
 
 const gotoManualVpn = () => {
   // 中文访问/manual 英文访问/manual/en
@@ -228,23 +218,17 @@ const gotoManualVpn = () => {
                         </div>
 
                         <div class="col-shrink">
-                          <!-- 根据内容改变长度的input. 一个字母占8像素，一个汉字占16像素.https://github.com/quasarframework/quasar/issues/1958-->
-                          <q-input
-                            :input-style="{width:`${vpn?.password.length * 8}px`, maxWidth: '200px', minWidth: '32px'}"
-                            v-model="pwdValue" readonly borderless dense
-                            :type="pwdVisibilities[tabService] ? 'password' : 'text'">
-                            <template v-slot:append>
-                              <q-icon :name="pwdVisibilities[tabService] ? 'visibility' : 'visibility_off'"
-                                      @click="pwdVisibilities[tabService] = !pwdVisibilities[tabService]"/>
-                              <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                                     @click="clickToCopy(vpn?.password, true)">
-                                <q-tooltip>
-                                  复制
-                                </q-tooltip>
-                              </q-btn>
-                            </template>
-                          </q-input>
 
+                          <div class="row">
+                            <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+
+                            <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                   @click="clickToCopy(vpn?.password, true)">
+                              <q-tooltip>
+                                {{ tc(' 复制') }}
+                              </q-tooltip>
+                            </q-btn>
+                          </div>
                         </div>
 
                       </div>

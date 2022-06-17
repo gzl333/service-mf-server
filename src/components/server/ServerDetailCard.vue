@@ -7,8 +7,10 @@ import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import useGetOsIconName from 'src/hooks/useGetOsIconName'
+
 import ServerStatus from 'components/server/ServerStatus.vue'
 import GroupRoleChip from 'components/group/GroupRoleChip.vue'
+import PasswordToggle from 'components/ui/PasswordToggle.vue'
 
 const props = defineProps({
   serverId: {
@@ -46,11 +48,6 @@ const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
 
 // 当前用户在group内的角色
 const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id || '']?.myRole)
-
-// password可见性
-const isPwd = ref(true)
-// VPN password可见性
-const isPwdVpn = ref(true)
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
@@ -272,21 +269,17 @@ const gotoManualVpn = () => {
                     <div v-if="server?.default_password === null || server?.default_password===''">
                       {{ tc('服务节点未提供') }}
                     </div>
-                    <!--根据内容改变长度的input. 一个字母占8像素，一个汉字占16像素.https://github.com/quasarframework/quasar/issues/1958-->
-                    <q-input v-else
-                             :input-style="{width:`${server?.default_password.length * 8}px`, maxWidth: '200px', minWidth: '32px'}"
-                             v-model="server.default_password" readonly borderless dense
-                             :type="isPwd ? 'password' : 'text'">
-                      <template v-slot:append>
-                        <q-icon :name="isPwd ? 'visibility' : 'visibility_off'" @click="isPwd = !isPwd"/>
-                        <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                               @click="clickToCopy(server?.default_password, true)">
-                          <q-tooltip>
-                            复制
-                          </q-tooltip>
-                        </q-btn>
-                      </template>
-                    </q-input>
+
+                    <div class="row">
+                      <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="server?.default_password"/>
+
+                      <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                             @click="clickToCopy(server?.default_password, true)">
+                        <q-tooltip>
+                          {{ tc(' 复制') }}
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
                   </div>
                 </div>
 
@@ -312,27 +305,18 @@ const gotoManualVpn = () => {
                   <div class="col-3 text-grey">VPN 密码</div>
 
                   <div class="col-shrink">
-                    <!--根据内容改变长度的input. 一个字母占8像素，一个汉字占16像素.https://github.com/quasarframework/quasar/issues/1958-->
-                    <q-input
-                      :input-style="{width:`${vpn?.password.length * (isPwdVpn?5:8)}px`, maxWidth: '200px', minWidth: '32px'}"
-                      v-model="vpn.password" readonly borderless dense
-                      :type="isPwdVpn ? 'password' : 'text'">
-                      <template v-slot:append>
-                        <q-icon :name="isPwdVpn ? 'visibility' : 'visibility_off'" @click="isPwdVpn = !isPwdVpn"/>
-                        <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                               @click="clickToCopy(vpn?.password, true)">
-                          <q-tooltip>
-                            复制
-                          </q-tooltip>
-                        </q-btn>
-                        <!--                        <q-btn icon="edit" size="sm" dense flat color="primary"-->
-                        <!--                               @click="$store.dispatch('server/popEditVpnPass',  vpn)">-->
-                        <!--                          <q-tooltip>-->
-                        <!--                            修改-->
-                        <!--                          </q-tooltip>-->
-                        <!--                        </q-btn>-->
-                      </template>
-                    </q-input>
+
+                    <div class="row">
+                      <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+
+                      <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                             @click="clickToCopy(vpn?.password, true)">
+                        <q-tooltip>
+                          {{ tc(' 复制') }}
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
+
                   </div>
 
                 </div>

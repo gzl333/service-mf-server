@@ -97,15 +97,15 @@ const columns = [
     align: 'center',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
-  },
-  {
-    name: 'center_quota',
-    label: '配额类型',
-    field: 'center_quota',
-    align: 'center',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 5px'
   }
+  // {
+  //   name: 'center_quota',
+  //   label: '配额类型',
+  //   field: 'center_quota',
+  //   align: 'center',
+  //   style: 'padding: 15px 0px',
+  //   headerStyle: 'padding: 0 5px'
+  // }
 ]
 
 // todo WTF are these any???!!!
@@ -255,9 +255,9 @@ onMounted(() => {
           <q-td key="expiration_time" :props="props">
             {{ new Date(props.row.expiration_time).toLocaleString() }}
           </q-td>
-          <q-td key="center_quota" :props="props">
-            {{ props.row.center_quota === 1 ? '私有配额' : '共享配额' }}
-          </q-td>
+<!--          <q-td key="center_quota" :props="props">-->
+          <!--            {{ props.row.center_quota === 1 ? '私有配额' : '共享配额' }}-->
+          <!--          </q-td>-->
         </q-tr>
       </template>
     </q-table>

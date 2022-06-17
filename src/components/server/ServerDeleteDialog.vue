@@ -25,10 +25,7 @@ defineEmits([
   ...useDialogPluginComponent.emits
 ])
 
-const {
-  tc,
-  locale
-} = i18n.global
+const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
@@ -39,6 +36,7 @@ const {
   onDialogOK,
   onDialogCancel
 } = useDialogPluginComponent()
+
 const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId[props.serverId] : store.tables.personalServerTable.byId[props.serverId])
 
 const keepServerDeleteLock = () => {
@@ -65,11 +63,13 @@ const onHideClick = () => {
   keepServerDeleteLock()
   onDialogHide()
 }
+
 // 取消时
 const onCancelClick = () => {
   keepServerDeleteLock()
   onDialogCancel()
 }
+
 // 确定时
 const onOKClick = () => {
   if (server.value.lock !== 'free') {
@@ -140,7 +140,8 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{
-              locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name :
+              i18n.global.locale === 'zh' ?
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name :
                 store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name_en
             }}
           </div>
@@ -152,7 +153,9 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{
-              locale === 'zh' ? store.tables.serviceTable.byId[server.service]?.name : store.tables.serviceTable.byId[server.service]?.name_en
+              i18n.global.locale === 'zh' ?
+                store.tables.serviceTable.byId[server.service]?.name :
+                store.tables.serviceTable.byId[server.service]?.name_en
             }}
 
             <span>
@@ -179,7 +182,7 @@ const onOKClick = () => {
             配置
           </div>
           <div class="col">
-            {{ server.vcpus }}核 / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }}{{ tc('核') }} / {{ server.ram / 1024 }}GB
           </div>
         </div>
 
@@ -197,7 +200,7 @@ const onOKClick = () => {
             IP类型
           </div>
           <div class="col">
-            {{ server.public_ip ? '公网' : '私网' }}
+            {{ server.public_ip ? tc('公网') : tc('私网') }}
           </div>
         </div>
 
@@ -206,8 +209,8 @@ const onOKClick = () => {
             可用期
           </div>
           <div class="col">
-            {{ new Date(server.creation_time).toLocaleString(locale) }} -
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(locale) : '永久有效' }}
+            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
+            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效' }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -236,7 +239,7 @@ const onOKClick = () => {
 
         <q-checkbox style="margin-left: -10px;" v-model="check2" color="primary">
           <div :class="check2?'text-primary':'text-black'">
-            {{ tc('我了解已经消耗的云主机配额不会释放') }}
+            {{ tc('我了解已经支付的费用无法退款') }}
           </div>
         </q-checkbox>
 
@@ -249,13 +252,13 @@ const onOKClick = () => {
         <q-toggle
           style="margin-left: -12px;"
           ref="toggleBtn"
-          :disable="!check1 || !check2"
+          :disable="!check1"
           v-model="toggle"
           checked-icon="lock"
           unchecked-icon="lock_open"
           color="light-green"
           size="lg"
-          @update:model-value="store.toggleDeleteLock({isGroup:isGroup, serverId: serverId})"
+          @update:model-value="store.toggleDeleteLock({isGroup, serverId})"
         >
           <span :class="toggle?'text-black':'text-primary'">{{ toggle ? tc('已锁定') : tc('已解除锁定') }}</span>
           <q-tooltip v-if="server.lock === 'free'">
@@ -268,17 +271,16 @@ const onOKClick = () => {
 
       </q-card-section>
 
-      <!-- buttons example -->
       <q-card-actions align="between">
 
         <div class="row justify-center items-center">
-          <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'primary'"
+          <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'red'"
                  unelevated
                  :disable="toggle || !check1 || !check2"
                  :label="tc('确认')"
                  @click="onOKClick"/>
           <div class="col">
-            {{ tc('不想重新申请配额？请尝试') }}
+            {{ tc('不想再次支付费用？请尝试') }}
             <q-btn type="a" color="primary" flat padding="none" label="重建云主机"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
@@ -292,5 +294,4 @@ const onOKClick = () => {
 </template>
 
 <style lang="scss" scoped>
-
 </style>

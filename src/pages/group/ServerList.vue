@@ -44,7 +44,7 @@ const search = ref('')
                 <q-icon name="search"/>
               </template>
               <template v-slot:append v-if="search">
-                <q-icon name="close" @click="search = ''" class="cursor-pointer" />
+                <q-icon name="close" @click="search = ''" class="cursor-pointer"/>
               </template>
             </q-input>
           </div>
@@ -70,6 +70,11 @@ const search = ref('')
     </div>
 
     <server-table :servers="rows" :search="search.trim().toLowerCase()" is-group/>
+
+<!--    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">-->
+<!--      <q-btn fab icon="keyboard_arrow_up" color="primary"/>-->
+<!--    </q-page-scroller>-->
+
   </div>
 </template>
 
