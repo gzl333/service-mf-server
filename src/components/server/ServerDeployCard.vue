@@ -31,6 +31,9 @@ const store = useStore()
 // const route = useRoute()
 const router = useRouter()
 
+// 预付最大月份
+const MAX_MONTHS = 60
+
 // 获取os的icon名称
 const getOsIconName = useGetOsIconName()
 
@@ -94,12 +97,12 @@ watch(radioService, () => {
 const isDeploying = ref(false)
 // check inputs
 const checkInputs = () => {
-  if (radioPeriod.value <= 0 || radioPeriod.value > 120) {
+  if (radioPeriod.value <= 0 || radioPeriod.value > MAX_MONTHS) {
     Notify.create({
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: '预付时长应介于1-120个月之间',
+      message: `预付时长应介于1-${MAX_MONTHS}个月之间`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -180,7 +183,8 @@ const deployServer = async () => {
     // 创建后处理方式分两种，预付费和后付费
     if (radioPayment.value === 'prepaid') {
       // 预付费
-      if (respPostServer.status === 200) {
+      // 2xx 成功创建订单
+      if (respPostServer.status.toString().startsWith('2')) {
         const orderId = respPostServer.data.order_id
         // 更新订单table
         void await store.loadSingleOrder({
@@ -189,6 +193,19 @@ const deployServer = async () => {
         })
         // 跳转至订单list
         props.isGroup ? navigateToUrl(`/my/server/order/group/detail/${orderId}`) : navigateToUrl(`/my/server/order/personal/detail/${orderId}`)
+      } else {
+        // 其他非2xx的状态码
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: respPostServer.data.message,
+          caption: respPostServer.data.code,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
       }
     } else if (radioPayment.value === 'postpaid') {
       // 后付费
@@ -217,6 +234,18 @@ const deployServer = async () => {
           icon: 'check_circle',
           textColor: 'positive',
           message: '云主机新建中，请稍候...',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+      } else {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: respPostServer.data.message,
+          caption: respPostServer.data.code,
           position: 'bottom',
           closeBtn: true,
           timeout: 15000,
@@ -283,7 +312,7 @@ const deployServer = async () => {
             <q-input style="max-width: 300px"
                      outlined v-model.number="radioPeriod" input-class="text-center text-primary"
                      :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
-                     :rules="[val => (Number.isInteger(val) && val>0 && val<=120) || (i18n.global.locale === 'zh' ? '应为介于1-120之间的整数' : 'Must be an integer between 1 and 120')]">
+                     :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
 
               <template v-slot:prepend>
                 <q-icon name="remove" color="primary" @click="radioPeriod = (radioPeriod === 1 ? 1 : radioPeriod - 1)"
@@ -578,7 +607,7 @@ const deployServer = async () => {
             {{ tc('预付时长') }}
           </div>
           <div class="col"
-               :class="(radioPeriod<=0 || radioPeriod >120 || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
+               :class="(radioPeriod <= 0 || radioPeriod > MAX_MONTHS || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
             {{ radioPeriod }} {{ tc('个月') }}
           </div>
         </div>
@@ -693,7 +722,7 @@ const deployServer = async () => {
       </div>
 
       <q-btn color="primary q-mb-xl" @click="deployServer" unelevated :loading="isDeploying">
-        {{ radioPayment === 'prepaid' ? tc('创建云主机订单') : tc('新建云主机') }}
+        {{ radioPayment === 'prepaid' ? tc('新建云主机订单') : tc('新建云主机') }}
       </q-btn>
 
     </div>

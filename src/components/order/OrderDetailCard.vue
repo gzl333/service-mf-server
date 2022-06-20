@@ -62,13 +62,15 @@ const getOsIconName = useGetOsIconName()
                 <div class="col-auto">
                   <div class="text-grey">订单ID</div>
                   <div class="row items-center">
-                    <div class="text-h6">{{ order.id }}</div>
-                    <!--创建时间距离当下小于1小时则打上new标记-->
-                    <q-badge style="top:-10px;"
-                             v-if="(new Date() - new Date(order.creation_time)) < 1000 * 60 * 60 * 1 "
-                             color="light-green" floating transparent rounded align="middle">
-                      new
-                    </q-badge>
+                    <div class="text-h6">
+                      {{ order.id }}
+                      <!--创建时间距离当下小于1小时则打上new标记-->
+                      <q-badge v-if="(new Date() - new Date(order.creation_time)) < 1000 * 60 * 60 * 1 "
+                               color="light-green" transparent rounded align="top">
+                        new
+                      </q-badge>
+                    </div>
+
                     <q-btn class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
                            @click="clickToCopy(order.id)">
                       <q-tooltip>
@@ -114,6 +116,15 @@ const getOsIconName = useGetOsIconName()
                 <q-btn class="col-auto q-ml-sm" v-if="order.status === 'unpaid'" color="primary" unelevated
                        @click="store.payOrderDialog(order.id, isGroup)">
                   支付
+                </q-btn>
+
+                <q-btn
+                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
+                  class="col-auto q-ml-sm"
+                  color="primary"
+                  unelevated
+                  @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+                  查看资源
                 </q-btn>
 
               </div>
@@ -187,7 +198,7 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-3 text-grey">网段</div>
                   <div class="col-shrink">
                     {{
-                      store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`].name
+                      store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
                     }}
                   </div>
                 </div>
@@ -196,11 +207,11 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-3 text-grey">操作系统</div>
                   <div class="col-shrink">
                     <q-icon
-                      v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`].name)"
-                      :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`].name)"
+                      v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
+                      :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
                       flat size="md"/>
                     {{
-                      store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`].name
+                      store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
                     }}
                   </div>
                 </div>
@@ -214,8 +225,8 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-shrink">
                     {{
                       i18n.global.locale === 'zh' ?
-                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name :
-                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name_en
+                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
+                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name_en
                     }}
                   </div>
                 </div>
@@ -225,8 +236,8 @@ const getOsIconName = useGetOsIconName()
                   <div class="col-shrink">
                     {{
                       i18n.global.locale === 'zh' ?
-                        store.tables.serviceTable.byId[order.service_id].name :
-                        store.tables.serviceTable.byId[order.service_id].name_en
+                        store.tables.serviceTable.byId[order.service_id]?.name :
+                        store.tables.serviceTable.byId[order.service_id]?.name_en
                     }}
                   </div>
                 </div>

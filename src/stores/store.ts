@@ -293,7 +293,7 @@ export interface OrderInterface {
   vo_id: string
   vo_name: string
   owner_type: string
-  resources?: OrderResourceInterface
+  resources: OrderResourceInterface[]
 }
 
 export interface CouponInterface {
@@ -2194,11 +2194,15 @@ export const useStore = defineStore('server', {
       // 所有操作都要用的信息
       const server = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
       // 去掉协议
-      const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
+      // const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
       // 判断结尾有没有'/'，并加上当前用户使用的协议
       // 以下写法失败, 二元选择问号前都是条件
       // const api = window.location.protocol + endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action'
-      const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action')
+      // const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action')
+
+      // 废弃endpoint_url字段，改为统一vms的后端api
+      const api = baseURLServer + '/server/' + payload.serverId + '/action'
+
       const data = { action: payload.action }
 
       // 执行操作的函数。delete/force_delete不用。start直接用。其他经dialog确认后用。
@@ -2755,7 +2759,6 @@ export const useStore = defineStore('server', {
           isGroup
         }
       }).onOk(async (val: { payment_method: 'balance' | 'cashcoupon' | 'coupon-balance', coupon_ids?: string[] }) => { // val是onDialogOK调用时传入的实参
-        console.log(val)
         const respPostOrderIdPay = await api.server.order.postOrderIdPay({
           path: { id: orderId },
           query: {
@@ -2763,7 +2766,6 @@ export const useStore = defineStore('server', {
             coupon_ids: val.coupon_ids
           }
         })
-        console.log(respPostOrderIdPay)
         if (respPostOrderIdPay.status !== 200) {
           Notify.create({
             classes: 'notification-negative shadow-15',
@@ -2788,19 +2790,29 @@ export const useStore = defineStore('server', {
             multiLine: false
           })
           // 成功交付后，应更新多个table
-          // 更新order交付的server
-          const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources?.instance_id
-          if (serverId) {
-            void await this.loadSingleServer({
-              isGroup,
-              serverId
-            })
-          }
           // 更新orderId对应order
           void await this.loadSingleOrder({
             isGroup,
             orderId
           })
+          // 更新order交付的server
+          const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
+          if (serverId) {
+            // 持续尝试取回交付的server信息
+            const timerId = setInterval(
+              async () => {
+                // 取回server信息
+                void await this.loadSingleServer({
+                  isGroup,
+                  serverId
+                })
+                // 表里存在该server则表示取回成功，消除timer
+                if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
+                  clearInterval(timerId)
+                }
+              }, 1000
+            )
+          }
           // 更新order影响的余额
           if (isGroup) {
             const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id

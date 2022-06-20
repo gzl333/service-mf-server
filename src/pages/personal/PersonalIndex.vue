@@ -5,7 +5,7 @@ import { useStore } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
-import ButtonAdd from 'components/personal/ButtonAdd.vue'
+// import ButtonAdd from 'components/personal/ButtonAdd.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -67,7 +67,20 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                 </q-tabs>
               </div>
               <div class="col-1">
-                <ButtonAdd/>
+                <q-btn style="float: right;
+                              transform: translate(0, 65%);
+                              padding: 16px;
+                              border-radius: 28px;
+                              min-height: 56px;
+                              min-width: 56px;"
+                       rounded
+                       color="primary"
+                       icon="add"
+                       @click="navigateToUrl('/my/server/personal/deploy')"
+                >
+                  {{ tc('新建') }}
+                </q-btn>
+                <!--                <ButtonAdd/>-->
               </div>
             </div>
           </div>

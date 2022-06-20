@@ -111,6 +111,7 @@ const gotoManualVpn = () => {
                     icon="vpn_lock"
                     :label="i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[id].name : store.tables.dataCenterTable.byId[id].name_en"
                     :ripple="false"
+                    no-caps
                   />
                 </q-tabs>
               </div>

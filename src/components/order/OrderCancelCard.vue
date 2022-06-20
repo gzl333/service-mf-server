@@ -127,7 +127,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
       <q-card-actions align="between">
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消订单')" @click="onDialogOK(true)"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('放弃')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('保留订单')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
