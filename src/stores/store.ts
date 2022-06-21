@@ -18,6 +18,8 @@ import OrderCancelCard from 'components/order/OrderCancelCard.vue'
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
 
+const { tc } = i18n.global
+
 const actionMap = new Map<string, string>(
   [
     ['start', '开机'],
@@ -2366,48 +2368,79 @@ export const useStore = defineStore('server', {
         const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
         const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/rebuild' : endpoint_url + '/api/server/' + payload.serverId + '/rebuild')
         const data = { image_id }
-        // notify
+
+        // 发送请求
         Notify.create({
           classes: 'notification-positive shadow-15',
           textColor: 'positive',
           spinner: true,
-          message: `正在重建云主机: ${server.ipv4 || ''}`,
+          message: `正在重建云主机 ${server.ipv4 || ''}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 5000,
           multiLine: false
         })
-        // 发送请求
         const respPostServerRebuild = await axios.post(api, data)
+
+        // vms响应表明正在重建：则不保证重建成功，须持续取回新的信息，以判定是否重建成功
         if (respPostServerRebuild.status === 202) {
-          // 应延时
-          void await new Promise(resolve => (
-            setTimeout(resolve, 5000)
-          ))
-          // 更新该server
-          void await this.loadSingleServer({
-            serverId: payload.serverId,
-            isGroup: payload.isGroup || false
+          // 持续尝试取回新的server信息
+          let countGetter = 0
+          const timerId = setInterval(
+            async () => {
+              // 取回计数
+              countGetter += 1
+
+              // 更新该server
+              void await this.loadSingleServer({
+                serverId: payload.serverId,
+                isGroup: payload.isGroup || false
+              })
+
+              // 镜像更新成功则判定为成功
+              const newServer = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
+              if (newServer.image_id === image_id) {
+                clearInterval(timerId)
+                Notify.create({
+                  classes: 'notification-positive shadow-15',
+                  textColor: 'positive',
+                  icon: 'check_circle',
+                  message: `成功重建云主机: ${server.ipv4 || ''}`,
+                  position: 'bottom',
+                  closeBtn: true,
+                  timeout: 5000,
+                  multiLine: false
+                })
+              }
+
+              // 超出一定次数则判定为失败
+              if (countGetter === 10) {
+                clearInterval(timerId)
+                Notify.create({
+                  classes: 'notification-negative shadow-15',
+                  icon: 'mdi-alert',
+                  textColor: 'negative',
+                  message: `${tc('重建云主机超时，请重试')}`,
+                  position: 'bottom',
+                  closeBtn: true,
+                  timeout: 5000,
+                  multiLine: false
+                })
+              }
+            }, 1000)
+        } else {
+          // vms响应表明错误，则直接显示错误信息
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: respPostServerRebuild.data.message,
+            caption: respPostServerRebuild.data.code,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
           })
-          // notify
-          const newServer = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
-          if (newServer.image_id === image_id) {
-            Notify.create({
-              classes: 'notification-positive shadow-15',
-              textColor: 'positive',
-              icon: 'check_circle',
-              message: `成功重建云主机: ${server.ipv4 || ''}`,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          } else {
-            // 可能重建失败，也可能是延时超过上面的5000
-          }
-          // jump 成功才跳转
-          // @ts-ignore
-          // payload.isGroup ? this.$router.push(`/my/group/server/detail/${payload.serverId}`) : this.$router.push(`/my/personal/server/detail/${payload.serverId}`)
         }
       })
     },
