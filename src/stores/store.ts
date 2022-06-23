@@ -2137,7 +2137,7 @@ export const useStore = defineStore('server', {
     async gotoVNC (id: string) {
       const response = await api.server.server.getServerVnc({ path: { id } })
       const url = response.data.vnc.url
-      window.open(url)
+      window.open(url, 'new', 'height=900, width=1400, top=150, left=150, title=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no')
     },
     // 下载vpn ca
     fetchCa (serviceId: string) {

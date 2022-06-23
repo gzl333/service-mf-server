@@ -276,13 +276,13 @@ const deployServer = async () => {
 
       <div class="col section">
         <div class="text-h7 text-primary section-title">
-          支付类型
+          {{ tc('计费方式') }}
         </div>
 
         <div class="row item-row">
           <q-radio class="radio non-selectable" v-model="radioPayment" val="prepaid" dense>
             <span class="text-bold q-pr-lg" :class="radioPayment==='prepaid' ? 'text-primary' : 'text-black'">
-              {{ tc('预付费') }}
+              {{ tc('包月预付') }}
             </span>
             <span>云主机将在付费后交付</span>
           </q-radio>
@@ -291,7 +291,7 @@ const deployServer = async () => {
         <div class="row item-row">
           <q-radio class="radio non-selectable" v-model="radioPayment" val="postpaid" dense>
             <span class="text-bold q-pr-lg" :class="radioPayment==='postpaid' ? 'text-primary' : 'text-black'">
-              {{ tc('后付费') }}
+              {{ tc('按量计费') }}
             </span>
             <span>云主机将立即交付，并开始计费</span>
           </q-radio>
@@ -381,10 +381,9 @@ const deployServer = async () => {
 
               <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id"
                        :key="service.id">
+                <div class="column">
 
-                <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
-                  {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
-                </span>
+                </div>
                 <span>
                   <q-icon
                     class="q-px-sm"
@@ -393,6 +392,7 @@ const deployServer = async () => {
                       <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
                   </q-icon>
                 </span>
+
                 <span>
                   <q-icon
                     class="q-px-sm"
@@ -400,6 +400,10 @@ const deployServer = async () => {
                     style="width: 100px;height: 20px">
                       <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
                   </q-icon>
+                </span>
+
+                <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
+                  {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                 </span>
 
               </q-radio>
@@ -595,10 +599,10 @@ const deployServer = async () => {
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('支付类型') }}
+            {{ tc('计费方式') }}
           </div>
           <div class="col">
-            {{ radioPayment === 'prepaid' ? tc('预付费') : tc('后付费') }}
+            {{ radioPayment === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
           </div>
         </div>
 

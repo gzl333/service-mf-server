@@ -5,9 +5,9 @@ import { useStore } from 'stores/store'
 import { /* useRoute, */ useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
-import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+// import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import useGetOsIconName from 'src/hooks/useGetOsIconName'
-import OrderStatus from 'components/order/OrderStatus.vue'
+// import OrderStatus from 'components/order/OrderStatus.vue'
 
 const props = defineProps({
   orderId: {
@@ -29,7 +29,7 @@ const router = useRouter()
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 
 // 复制信息到剪切板
-const clickToCopy = useCopyToClipboard()
+// const clickToCopy = useCopyToClipboard()
 // 获取os的icon名称
 const getOsIconName = useGetOsIconName()
 
@@ -55,77 +55,206 @@ const getOsIconName = useGetOsIconName()
           </div>
 
           <div v-else class="col content-area">
-            <div class="row justify-end items-center q-pt-md">
 
-              <div class="col-8 row">
+            <div class="q-mt-lg text-grey">订单状态</div>
 
-                <div class="col-auto">
-                  <div class="text-grey">订单ID</div>
-                  <div class="row items-center">
-                    <div class="text-h6">
-                      {{ order.id }}
-                      <!--创建时间距离当下小于1小时则打上new标记-->
-                      <q-badge v-if="(new Date() - new Date(order.creation_time)) < 1000 * 60 * 60 * 1 "
-                               color="light-green" transparent rounded align="top">
-                        new
-                      </q-badge>
-                    </div>
+            <div class="row no-wrap justify-center items-center section" style="height: 160px;">
 
-                    <q-btn class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                           @click="clickToCopy(order.id)">
-                      <q-tooltip>
-                        复制
-                      </q-tooltip>
-                    </q-btn>
+              <div class="col-8 q-lr-md">
+                <q-stepper
+                  flat
+                  done-color="light-green"
+                >
+                  <q-step
+                    name="placed"
+                    :title="tc('提交订单')"
+                    :caption="new Date(order.creation_time).toLocaleString(i18n.global.locale)"
+                    icon="settings"
+                    :done="true"
+                  >
+                  </q-step>
+
+                  <q-step
+                    v-if="order.status === 'cancelled'"
+                    name="cancelled"
+                    :title="tc('取消订单')"
+                    caption="取消时间"
+                    icon="create_new_folder"
+                    :done="order.status === 'cancelled'"
+                  >
+                  </q-step>
+
+                  <q-step
+                    v-else
+                    name="paid"
+                    :title="tc('支付订单')"
+                    :caption="order.status === 'paid' ?'付款时间': tc('待支付')"
+                    icon="create_new_folder"
+                    :done="order.status === 'paid'"
+                  >
+                  </q-step>
+
+                  <q-step
+                    v-if="order.status === 'unpaid' || order.status === 'paid'"
+                    name="delivered"
+                    :title="tc('资源交付')"
+                    :caption="order.status === 'paid' ? '交付时间': tc('待交付')"
+                    icon="assignment"
+                    :done="order.status === 'paid'"
+                  >
+                  </q-step>
+
+                </q-stepper>
+
+              </div>
+
+              <q-separator vertical/>
+
+              <div class="col-4 q-pl-md column full-height">
+
+                <div class="col row items-center text-grey"
+                     :class="order.status === 'unpaid' ? 'justify-between':'justify-center'">
+
+                  <div class="col-auto">
+                    {{ tc('订单ID') }}
+                    {{ order.id }}
+                  </div>
+
+                  <q-btn v-if="order.status === 'unpaid'"
+                         class="col-auto"
+                         color="primary"
+                         flat
+                         dense
+                         @click="store.cancelOrderDialog(order.id, isGroup)">
+                    {{ tc('取消订单') }}
+                  </q-btn>
+                </div>
+
+                <div class="col row justify-center q-pa-md">
+
+                  <div v-if="order.status === 'unpaid'"
+                       class="text-bold text-h5 text-red">
+                    {{ tc('待支付') }}
+                  </div>
+
+                  <div v-if="order.status === 'cancelled'"
+                       class="text-bold text-h5 text-black">
+                    {{ tc('已取消') }}
+                  </div>
+
+                  <div v-if="order.status === 'paid'"
+                       class="text-bold text-h5 text-light-green">
+                    {{ tc('已支付') }}
+                  </div>
+
+                  <div v-if="order.status === 'refund'"
+                       class="text-bold text-h5 text-black">
+                    {{ tc('已退款') }}
                   </div>
                 </div>
 
-                <div class="col-auto q-pl-lg">
-                  <div class="text-grey">资源类型</div>
-                  <div class="text-h6">
-                    {{ order.resource_type === 'vm' ? '云主机' : order.resource_type === 'disk' ? '云硬盘' : '存储桶' }}
-                  </div>
-                </div>
+                <div class="row justify-center">
 
-                <div class="col-auto q-pl-lg">
-                  <div class="text-grey">下单时间</div>
-                  <div class="text-h6">{{ new Date(order.creation_time).toLocaleString(i18n.global.locale) }}</div>
+                  <q-btn v-if="order.status === 'unpaid'"
+                         class="col-auto"
+                         color="primary"
+                         unelevated
+                         @click="store.payOrderDialog(order.id, isGroup)">
+                    {{ tc('支付订单') }}
+                  </q-btn>
+
+                  <q-btn
+                    v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
+                    class="col-auto"
+                    color="primary"
+                    unelevated
+                    @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+                    查看资源
+                  </q-btn>
                 </div>
 
               </div>
 
-              <div class="col-4 row justify-end">
+            </div>
 
-                <div class="col-auto column items-center">
-                  <div class="text-grey">订单状态</div>
-                  <div class="text-h6">
-                    <OrderStatus :is-group="isGroup" :order-id="order.id"/>
+            <div class="q-mt-lg text-grey">订单信息</div>
+            <div class="row justify-center section">
+              <div class="col-4">
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">计费类型</div>
+                  <div class="col-shrink">
+                    {{ order.pay_type === 'prepaid' ? '包月预付' : '按量计费' }}
                   </div>
                 </div>
 
-                <div v-if="order.status === 'unpaid'" class="col-auto q-pl-lg">
-                  <div class="text-grey">应付金额</div>
-                  <div class="text-h6">{{ order.pay_amount }}点</div>
+                <div class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">支付时间</div>
+                  <div class="col-shrink">
+                    {{ order.payment_time === null ? '待支付' : order.payment_time }}
+                  </div>
                 </div>
 
-                <q-btn class="col-auto q-ml-lg" v-if="order.status === 'unpaid'" color="primary" outline
-                       @click="store.cancelOrderDialog(order.id, isGroup)">
-                  取消
-                </q-btn>
+                <div class="row items-center">
+                  <div class="col-3 text-grey">订单类型</div>
+                  <div class="col-shrink">
+                    {{
+                      order.order_type === 'new' ? '新购' : order.order_type === 'renewal' ? '续费' : order.order_type === 'upgrade' ? '升级' : '降级'
+                    }}
+                  </div>
+                </div>
 
-                <q-btn class="col-auto q-ml-sm" v-if="order.status === 'unpaid'" color="primary" unelevated
-                       @click="store.payOrderDialog(order.id, isGroup)">
-                  支付
-                </q-btn>
+              </div>
 
-                <q-btn
-                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
-                  class="col-auto q-ml-sm"
-                  color="primary"
-                  unelevated
-                  @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
-                  查看资源
-                </q-btn>
+              <div class="col-4">
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">订单金额</div>
+                  <div class="col-shrink">
+                    {{ order.total_amount }}点
+                  </div>
+                </div>
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">折扣金额</div>
+                  <div class="col-shrink">
+                    {{ Number.parseFloat(order.total_amount - order.pay_amount).toFixed(2) }}点
+                  </div>
+                </div>
+
+                <div class="row items-center">
+                  <div class="col-3 text-grey">应付金额</div>
+                  <div class="col-shrink">
+                    {{ order.pay_amount }}点
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="col-4">
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">下单用户</div>
+                  <div class="col-shrink">
+                    {{ order.username }}
+                  </div>
+                </div>
+
+                <div v-if="isGroup" class="row q-pb-md items-center">
+                  <div class="col-3 text-grey">所属项目组</div>
+                  <div class="col-shrink">
+                    <q-btn
+                      class="q-ma-none"
+                      color="primary"
+                      padding="none" flat dense unelevated
+                      :label="order.vo_name"
+                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
+                      <q-tooltip>
+                        {{ tc('项目组详情') }}
+                      </q-tooltip>
+                    </q-btn>
+                  </div>
+                </div>
 
               </div>
 
@@ -263,88 +392,11 @@ const getOsIconName = useGetOsIconName()
 
             </div>
 
-            <div class="q-mt-lg text-grey">订单信息</div>
-            <div class="row justify-center section">
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">支付类型</div>
-                  <div class="col-shrink">
-                    {{ order.pay_type === 'prepaid' ? '预付费' : '后付费' }}
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">支付时间</div>
-                  <div class="col-shrink">
-                    {{ order.payment_time === null ? '待支付' : order.payment_time }}
-                  </div>
-                </div>
-
-                <div class="row items-center">
-                  <div class="col-3 text-grey">订单类型</div>
-                  <div class="col-shrink">
-                    {{
-                      order.order_type === 'new' ? '新购' : order.order_type === 'renewal' ? '续费' : order.order_type === 'upgrade' ? '升级' : '降级'
-                    }}
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">订单金额</div>
-                  <div class="col-shrink">
-                    {{ order.total_amount }}点
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">折扣金额</div>
-                  <div class="col-shrink">
-                    {{ Number.parseFloat(order.total_amount - order.pay_amount).toFixed(2) }}点
-                  </div>
-                </div>
-
-                <div class="row items-center">
-                  <div class="col-3 text-grey">应付金额</div>
-                  <div class="col-shrink">
-                    {{ order.pay_amount }}点
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">下单用户</div>
-                  <div class="col-shrink">
-                    {{ order.username }}
-                  </div>
-                </div>
-
-                <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">所属项目组</div>
-                  <div class="col-shrink">
-                    <q-btn
-                      class="q-ma-none"
-                      color="primary"
-                      padding="none" flat dense unelevated
-                      :label="order.vo_name"
-                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
-                      <q-tooltip>
-                        {{ tc('项目组详情') }}
-                      </q-tooltip>
-                    </q-btn>
-                  </div>
-                </div>
-
-              </div>
-
+            <div class="row justify-end">
+              计费详情
             </div>
+
+<!--            <pre> {{ order }} </pre>-->
 
           </div>
         </div>
