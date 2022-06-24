@@ -95,7 +95,7 @@ const onOKClick = () => {
             应付金额
           </div>
           <div class="col">
-            {{ order.pay_amount }}点
+            {{ order.payable_amount }}点
           </div>
         </div>
 

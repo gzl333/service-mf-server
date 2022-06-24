@@ -7,7 +7,7 @@ import { i18n } from 'boot/i18n'
 
 // import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import useGetOsIconName from 'src/hooks/useGetOsIconName'
-// import OrderStatus from 'components/order/OrderStatus.vue'
+import OrderStatus from 'components/order/OrderStatus.vue'
 
 const props = defineProps({
   orderId: {
@@ -56,11 +56,21 @@ const getOsIconName = useGetOsIconName()
 
           <div v-else class="col content-area">
 
-            <div class="q-mt-lg text-grey">订单状态</div>
+            <div class="q-mt-lg text-grey">订单信息</div>
 
             <div class="row no-wrap justify-center items-center section" style="height: 160px;">
 
-              <div class="col-8 q-lr-md">
+              <div class="col-1 q-lr-md row items-center">
+
+                <div class="col-auto text-bold text-h6">
+                  {{ order.pay_type === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
+                </div>
+
+              </div>
+
+              <q-separator vertical/>
+
+              <div class="col-7 q-lr-md">
                 <q-stepper
                   flat
                   done-color="light-green"
@@ -69,7 +79,7 @@ const getOsIconName = useGetOsIconName()
                     name="placed"
                     :title="tc('提交订单')"
                     :caption="new Date(order.creation_time).toLocaleString(i18n.global.locale)"
-                    icon="settings"
+                    icon="list_alt"
                     :done="true"
                   >
                   </q-step>
@@ -79,17 +89,20 @@ const getOsIconName = useGetOsIconName()
                     name="cancelled"
                     :title="tc('取消订单')"
                     caption="取消时间"
-                    icon="create_new_folder"
+                    icon="close"
                     :done="order.status === 'cancelled'"
+                    done-icon="close"
+                    done-color="black"
                   >
                   </q-step>
 
                   <q-step
                     v-else
+                    :disable="order.pay_type === 'postpaid'"
                     name="paid"
                     :title="tc('支付订单')"
-                    :caption="order.status === 'paid' ?'付款时间': tc('待支付')"
-                    icon="create_new_folder"
+                    :caption="order.pay_type === 'postpaid' ? tc('按量计费无需预付'): order.status === 'paid' ?'付款时间': tc('待支付')"
+                    icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
                   </q-step>
@@ -99,7 +112,7 @@ const getOsIconName = useGetOsIconName()
                     name="delivered"
                     :title="tc('资源交付')"
                     :caption="order.status === 'paid' ? '交付时间': tc('待交付')"
-                    icon="assignment"
+                    icon="task_alt"
                     :done="order.status === 'paid'"
                   >
                   </q-step>
@@ -110,141 +123,26 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <div class="col-4 q-pl-md column full-height">
+              <div class="col-3 q-pl-md column justify-center full-height">
 
-                <div class="col row items-center text-grey"
-                     :class="order.status === 'unpaid' ? 'justify-between':'justify-center'">
-
-                  <div class="col-auto">
-                    {{ tc('订单ID') }}
+                <div class="row items-center">
+                  <div class="col-3 text-grey">订单ID</div>
+                  <div class="col-shrink">
                     {{ order.id }}
                   </div>
-
-                  <q-btn v-if="order.status === 'unpaid'"
-                         class="col-auto"
-                         color="primary"
-                         flat
-                         dense
-                         @click="store.cancelOrderDialog(order.id, isGroup)">
-                    {{ tc('取消订单') }}
-                  </q-btn>
-                </div>
-
-                <div class="col row justify-center q-pa-md">
-
-                  <div v-if="order.status === 'unpaid'"
-                       class="text-bold text-h5 text-red">
-                    {{ tc('待支付') }}
-                  </div>
-
-                  <div v-if="order.status === 'cancelled'"
-                       class="text-bold text-h5 text-black">
-                    {{ tc('已取消') }}
-                  </div>
-
-                  <div v-if="order.status === 'paid'"
-                       class="text-bold text-h5 text-light-green">
-                    {{ tc('已支付') }}
-                  </div>
-
-                  <div v-if="order.status === 'refund'"
-                       class="text-bold text-h5 text-black">
-                    {{ tc('已退款') }}
-                  </div>
-                </div>
-
-                <div class="row justify-center">
-
-                  <q-btn v-if="order.status === 'unpaid'"
-                         class="col-auto"
-                         color="primary"
-                         unelevated
-                         @click="store.payOrderDialog(order.id, isGroup)">
-                    {{ tc('支付订单') }}
-                  </q-btn>
-
-                  <q-btn
-                    v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
-                    class="col-auto"
-                    color="primary"
-                    unelevated
-                    @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
-                    查看资源
-                  </q-btn>
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="q-mt-lg text-grey">订单信息</div>
-            <div class="row justify-center section">
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">计费类型</div>
-                  <div class="col-shrink">
-                    {{ order.pay_type === 'prepaid' ? '包月预付' : '按量计费' }}
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">支付时间</div>
-                  <div class="col-shrink">
-                    {{ order.payment_time === null ? '待支付' : order.payment_time }}
-                  </div>
                 </div>
 
                 <div class="row items-center">
-                  <div class="col-3 text-grey">订单类型</div>
-                  <div class="col-shrink">
-                    {{
-                      order.order_type === 'new' ? '新购' : order.order_type === 'renewal' ? '续费' : order.order_type === 'upgrade' ? '升级' : '降级'
-                    }}
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">订单金额</div>
-                  <div class="col-shrink">
-                    {{ order.total_amount }}点
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">折扣金额</div>
-                  <div class="col-shrink">
-                    {{ Number.parseFloat(order.total_amount - order.pay_amount).toFixed(2) }}点
-                  </div>
-                </div>
-
-                <div class="row items-center">
-                  <div class="col-3 text-grey">应付金额</div>
-                  <div class="col-shrink">
-                    {{ order.pay_amount }}点
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">下单用户</div>
                   <div class="col-shrink">
                     {{ order.username }}
                   </div>
                 </div>
 
-                <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">所属项目组</div>
+                <div v-if="isGroup" class="row items-center">
+                  <div class="col-3 text-grey">项目组</div>
                   <div class="col-shrink">
                     <q-btn
-                      class="q-ma-none"
                       color="primary"
                       padding="none" flat dense unelevated
                       :label="order.vo_name"
@@ -258,150 +156,290 @@ const getOsIconName = useGetOsIconName()
 
               </div>
 
+              <q-separator vertical/>
+
+              <div class="col-1 q-pl-md column items-center justify-center full-height">
+
+                <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
+
+                <q-btn v-if="order.status === 'unpaid'"
+                       class="col-auto"
+                       color="primary"
+                       unelevated
+                       dense
+                       @click="store.payOrderDialog(order.id, isGroup)">
+                  {{ tc('支付') }}
+                </q-btn>
+
+                <q-btn v-if="order.status === 'unpaid'"
+                       class="col-auto"
+                       color="primary"
+                       flat
+                       dense
+                       @click="store.cancelOrderDialog(order.id, isGroup)">
+                  {{ tc('取消') }}
+                </q-btn>
+
+                <q-btn
+                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
+                  class="col-auto"
+                  color="primary"
+                  unelevated
+                  dense
+                  @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+                  查看资源
+                </q-btn>
+              </div>
+
             </div>
+
+            <!--            <div class="q-mt-lg text-grey">订单信息</div>-->
+            <!--            <div class="row justify-start section">-->
+            <!--              <div class="col-4">-->
+
+            <!--                <div class="row items-center">-->
+            <!--                  <div class="col-3 text-grey">订单类型</div>-->
+            <!--                  <div class="col-shrink">-->
+            <!--                    {{-->
+            <!--                      order.order_type === 'new' ? '新购' : order.order_type === 'renewal' ? '续费' : order.order_type === 'upgrade' ? '升级' : '降级'-->
+            <!--                    }}-->
+            <!--                  </div>-->
+            <!--                </div>-->
+
+            <!--                &lt;!&ndash;                <div class="row items-center">&ndash;&gt;-->
+            <!--                &lt;!&ndash;                  <div class="col-3 text-grey">计费方式</div>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                  <div class="col-shrink">&ndash;&gt;-->
+            <!--                &lt;!&ndash;                    {{ order.pay_type === 'prepaid' ? '包月预付' : '按量计费' }}&ndash;&gt;-->
+            <!--                &lt;!&ndash;                  </div>&ndash;&gt;-->
+            <!--                &lt;!&ndash;                </div>&ndash;&gt;-->
+
+            <!--              </div>-->
+
+            <!--              <div class="col-4">-->
+
+            <!--                <div class="row items-center">-->
+            <!--                  <div class="col-3 text-grey">下单用户</div>-->
+            <!--                  <div class="col-shrink">-->
+            <!--                    {{ order.username }}-->
+            <!--                  </div>-->
+            <!--                </div>-->
+
+            <!--              </div>-->
+
+            <!--              <div class="col-4">-->
+
+            <!--                <div v-if="isGroup" class="row items-center">-->
+            <!--                  <div class="col-3 text-grey">所属项目组</div>-->
+            <!--                  <div class="col-shrink">-->
+            <!--                    <q-btn-->
+            <!--                      class="q-ma-none"-->
+            <!--                      color="primary"-->
+            <!--                      padding="none" flat dense unelevated-->
+            <!--                      :label="order.vo_name"-->
+            <!--                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">-->
+            <!--                      <q-tooltip>-->
+            <!--                        {{ tc('项目组详情') }}-->
+            <!--                      </q-tooltip>-->
+            <!--                    </q-btn>-->
+            <!--                  </div>-->
+            <!--                </div>-->
+
+            <!--              </div>-->
+
+            <!--            </div>-->
 
             <div class="q-mt-lg text-grey">资源信息</div>
-            <div class="row justify-center section">
-              <div class="col-4">
+            <div class="justify-center section">
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">CPU</div>
-                  <div class="col-shrink">
-                    {{ order.instance_config.vm_cpu }}核
-                  </div>
-                </div>
+              <div class="row">
+                <div class="col-4">
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">内存</div>
-                  <div class="col-shrink">
-                    {{ order.instance_config.vm_ram / 1024 }}GB
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">系统磁盘</div>
-                  <div class="col-shrink">
-                    {{ order.instance_config.vm_systemdisk_size }}GB
-                  </div>
-                </div>
-
-                <div v-if="order.status === 'paid'" class="row  items-center">
-                  <div class="col-3 text-grey">云主机ID</div>
-                  <div class="col-shrink">
-                    <div v-for="server in order.resources" :key="server.id">
-                      {{ server.id }}
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">CPU</div>
+                    <div class="col-shrink">
+                      {{ order.instance_config.vm_cpu }}核
                     </div>
                   </div>
+
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">内存</div>
+                    <div class="col-shrink">
+                      {{ order.instance_config.vm_ram / 1024 }}GB
+                    </div>
+                  </div>
+
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">系统磁盘</div>
+                    <div class="col-shrink">
+                      {{ order.instance_config.vm_systemdisk_size }}GB
+                    </div>
+                  </div>
+
+                  <div v-if="order.status === 'paid'" class="row  items-center">
+                    <div class="col-3 text-grey">云主机ID</div>
+                    <div class="col-shrink">
+                      <div v-for="server in order.resources" :key="server.id">
+                        {{ server.id }}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
-              </div>
+                <div class="col-4">
 
-              <div class="col-4">
+                  <div
+                    v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
+                    class="row q-pb-md items-center">
 
-                <div
-                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
-                  class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">IP地址
+                    </div>
+                    <div class="col-shrink">
+                      <q-btn flat color="primary" no-caps
+                             padding="none"
+                             @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+                        {{
+                          isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4
+                        }}
+                      </q-btn>
+                    </div>
 
-                  <div class="col-3 text-grey">IP地址
                   </div>
-                  <div class="col-shrink">
-                    <q-btn flat color="primary" no-caps
-                           padding="none"
-                           @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">IP地址类型</div>
+                    <div class="col-shrink">
+                      {{ order.instance_config.vm_public_ip ? '公网' : '私网' }}
+                    </div>
+                  </div>
+
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">网段</div>
+                    <div class="col-shrink">
                       {{
-                        isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4
+                        store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
                       }}
-                    </q-btn>
+                    </div>
+                  </div>
+
+                  <div class="row items-center">
+                    <div class="col-3 text-grey">操作系统</div>
+                    <div class="col-shrink">
+                      <q-icon
+                        v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
+                        :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
+                        flat size="md"/>
+                      {{
+                        store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
+                      }}
+                    </div>
                   </div>
 
                 </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">IP地址类型</div>
-                  <div class="col-shrink">
-                    {{ order.instance_config.vm_public_ip ? '公网' : '私网' }}
-                  </div>
-                </div>
+                <div class="col-4">
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">网段</div>
-                  <div class="col-shrink">
-                    {{
-                      store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
-                    }}
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">所属机构</div>
+                    <div class="col-shrink">
+                      {{
+                        i18n.global.locale === 'zh' ?
+                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
+                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name_en
+                      }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="row items-center">
-                  <div class="col-3 text-grey">操作系统</div>
-                  <div class="col-shrink">
-                    <q-icon
-                      v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
-                      :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
-                      flat size="md"/>
-                    {{
-                      store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
-                    }}
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">服务节点</div>
+                    <div class="col-shrink">
+                      {{
+                        i18n.global.locale === 'zh' ?
+                          store.tables.serviceTable.byId[order.service_id]?.name :
+                          store.tables.serviceTable.byId[order.service_id]?.name_en
+                      }}
+                    </div>
                   </div>
-                </div>
 
+                  <div class="row items-center">
+                    <div class="col-3 text-grey">服务类型</div>
+                    <div class="col-shrink">
+                      <q-icon
+                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"
+                        style="width: 130px;height: 25px">
+                        <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
+                      </q-icon>
+
+                      <q-icon
+                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('open')"
+                        style="width: 130px;height: 25px">
+                        <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
+                      </q-icon>
+                    </div>
+                  </div>
+
+                </div>
               </div>
 
-              <div class="col-4">
+              <q-separator class="q-mb-lg q-mt-md"/>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">所属机构</div>
-                  <div class="col-shrink">
-                    {{
-                      i18n.global.locale === 'zh' ?
-                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
-                        store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name_en
-                    }}
+              <div class="row justify-end">
+                <div class="col-4">
+
+                  <div class="row q-pb-md items-center">
+                    <div class="col-3 text-grey">计费总额</div>
+                    <div class="col-shrink">
+                      {{ order.total_amount }}点
+                    </div>
                   </div>
-                </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">服务节点</div>
-                  <div class="col-shrink">
-                    {{
-                      i18n.global.locale === 'zh' ?
-                        store.tables.serviceTable.byId[order.service_id]?.name :
-                        store.tables.serviceTable.byId[order.service_id]?.name_en
-                    }}
+                  <div v-if="order.status === 'unpaid' || order.status === 'cancelled'">
+
+                    <div v-if="(Number(order.payable_amount) - Number(order.total_amount)) < 0"
+                         class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">优惠</div>
+                      <div class="col-shrink">
+                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }}点
+                      </div>
+                    </div>
+
+                    <div class="row items-center text-primary">
+                      <div class="col-3">应付</div>
+                      <div class="col-shrink text-bold text-h5">
+                        {{ order.payable_amount }}点
+                      </div>
+                    </div>
+
                   </div>
-                </div>
 
-                <div class="row items-center">
-                  <div class="col-3 text-grey">服务类型</div>
-                  <div class="col-shrink">
-                    <q-icon
-                      v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"
-                      style="width: 130px;height: 25px">
-                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                    </q-icon>
+                  <div v-if="order.status === 'paid'">
 
-                    <q-icon
-                      v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('open')"
-                      style="width: 130px;height: 25px">
-                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                    </q-icon>
+                    <div v-if="(order.pay_amount - order.total_amount) < 0"
+                         class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">优惠</div>
+                      <div class="col-shrink">
+                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }}点
+                      </div>
+                    </div>
+
+                    <div class="row items-center text-primary">
+                      <div class="col-3 ">实付</div>
+                      <div class="col-shrink text-bold text-h5 ">
+                        {{ order.pay_amount }}点
+                      </div>
+                    </div>
+
                   </div>
-                </div>
 
+                </div>
               </div>
 
             </div>
 
-            <div class="row justify-end">
-              计费详情
-            </div>
-
-<!--            <pre> {{ order }} </pre>-->
+            <!--            <pre> {{ order }} </pre>-->
 
           </div>
         </div>
-
-        <!--        <pre>{{ order }}</pre>-->
 
       </div>
     </div>

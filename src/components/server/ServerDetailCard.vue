@@ -417,14 +417,14 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div class="row q-pb-md items-center" v-if="server.expiration_time">
-                  <div class="col-3 text-grey">可用天数</div>
-                  <div class="col">
-                    {{
-                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))
-                    }}天
-                  </div>
-                </div>
+<!--                <div class="row q-pb-md items-center" v-if="server.expiration_time">-->
+<!--                  <div class="col-3 text-grey">可用天数</div>-->
+<!--                  <div class="col">-->
+<!--                    {{-->
+<!--                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))-->
+<!--                    }}天-->
+<!--                  </div>-->
+<!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">云主机ID</div>

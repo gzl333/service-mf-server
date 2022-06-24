@@ -103,21 +103,21 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
           </div>
         </div>
 
-        <div class="row q-pb-lg items-center">
-          <div class="col-3 text-grey-7">
-            订单金额
-          </div>
-          <div class="col">
-            {{ order.total_amount }}点
-          </div>
-        </div>
+<!--        <div class="row q-pb-lg items-center">-->
+<!--          <div class="col-3 text-grey-7">-->
+<!--            订单金额-->
+<!--          </div>-->
+<!--          <div class="col">-->
+<!--            {{ order.total_amount }}点-->
+<!--          </div>-->
+<!--        </div>-->
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
             应付金额
           </div>
           <div class="col">
-            {{ order.pay_amount }}点
+            {{ order.payable_amount }}点
           </div>
         </div>
 

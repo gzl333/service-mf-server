@@ -63,27 +63,54 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'total',
-    label: i18n.global.locale === 'zh' ? '订单金额' : 'Order Due',
-    field: 'total',
-    align: 'center',
-    classes: 'ellipsis',
-    headerStyle: 'padding: 0 0 0 1px',
-    style: 'max-width: 100px;padding: 15px 0px'
-  },
-  {
-    name: 'pay',
-    label: i18n.global.locale === 'zh' ? '支付金额' : 'Payment Due',
-    field: 'pay',
+    name: 'config',
+    label: i18n.global.locale === 'zh' ? '资源配置' : 'Configuration',
+    field: 'config',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 2px'
   },
   {
+    name: 'network',
+    label: i18n.global.locale === 'zh' ? '网络类型' : 'Network',
+    field: 'network',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  // {
+  //   name: 'total',
+  //   label: i18n.global.locale === 'zh' ? '订单金额' : 'Order Due',
+  //   field: 'total',
+  //   align: 'center',
+  //   classes: 'ellipsis',
+  //   headerStyle: 'padding: 0 0 0 1px',
+  //   style: 'max-width: 100px;padding: 15px 0px'
+  // },
+  {
     name: 'time',
     label: i18n.global.locale === 'zh' ? '下单时间' : 'Time',
     field: 'time',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'type',
+    label: i18n.global.locale === 'zh' ? '计费方式' : 'Payment Type',
+    field: 'type',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'pay',
+    label: i18n.global.locale === 'zh' ? '订单金额' : 'Payment',
+    field: 'pay',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -220,12 +247,12 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             </div>
           </q-td>
 
-          <q-td key="total" :props="props">
-            {{ props.row.total_amount }}点
+          <q-td key="config" :props="props">
+            {{ props.row.instance_config.vm_cpu }}核/{{ props.row.instance_config.vm_ram / 1024 }}GB
           </q-td>
 
-          <q-td key="pay" :props="props">
-            {{ props.row.pay_amount }}点
+          <q-td key="network" :props="props">
+            {{ props.row.instance_config.public_ip ? tc('公网') : tc('私网') }}
           </q-td>
 
           <q-td key="time" :props="props">
@@ -238,6 +265,14 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
               <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
             </div>
+          </q-td>
+
+          <q-td key="type" :props="props">
+            {{ props.row.pay_type === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
+          </q-td>
+
+          <q-td key="pay" :props="props">
+            {{ props.row.payable_amount }}点
           </q-td>
 
           <q-td key="status" :props="props" class="non-selectable">
@@ -253,13 +288,13 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               </q-btn>
 
               <q-btn v-if="props.row.status === 'unpaid'"
-                     icon="paid" flat dense padding="none" color="primary"
+                     icon="currency_yen" flat dense padding="none" color="primary"
                      @click="store.payOrderDialog(props.row.id, isGroup)">
                 {{ tc('支付订单') }}
               </q-btn>
 
               <q-btn v-if="props.row.status === 'unpaid'"
-                     icon="cancel" flat dense padding="none" color="primary"
+                     icon="close" flat dense padding="none" color="primary"
                      @click="store.cancelOrderDialog(props.row.id, isGroup)">
                 {{ tc('取消订单') }}
               </q-btn>

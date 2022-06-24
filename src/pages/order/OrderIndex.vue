@@ -58,7 +58,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       no-caps
                       class="q-px-none q-py-md q-mr-md text-bold"
                       name="personal"
-                      icon="computer"
+                      icon="person"
                       :label="tc('个人订单')"
                       :ripple="false"
                       @click="activeTab = 'personal'; navigateToUrl('/my/server/order/personal')"
@@ -67,7 +67,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       no-caps
                       class="q-px-none q-py-md q-mr-md text-bold"
                       name="group"
-                      icon="computer"
+                      icon="group"
                       :label="tc('项目组订单')"
                       :ripple="false"
                       @click="activeTab = 'group'; navigateToUrl('/my/server/order/group')"

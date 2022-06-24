@@ -273,6 +273,9 @@ export interface OrderInterface {
   status: string
   total_amount: string
   pay_amount: string
+  payable_amount: string
+  balance_amount: string
+  coupon_amount: string
   service_id: string
   service_name: string
   resource_type: string

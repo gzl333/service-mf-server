@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
-import { /*  useRoute, */ useRouter } from 'vue-router'
+// import { /*  useRoute, */ useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import { Notify } from 'quasar'
 import api from 'src/api'
@@ -29,7 +29,7 @@ const props = defineProps({
 const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
-const router = useRouter()
+// const router = useRouter()
 
 // 预付最大月份
 const MAX_MONTHS = 60
@@ -182,11 +182,11 @@ const deployServer = async () => {
 
     // 创建后处理方式分两种，预付费和后付费
     if (radioPayment.value === 'prepaid') {
-      // 预付费
+      // 包月预付
       // 2xx 成功创建订单
       if (respPostServer.status.toString().startsWith('2')) {
-        const orderId = respPostServer.data.order_id
         // 更新订单table
+        const orderId = respPostServer.data.order_id
         void await store.loadSingleOrder({
           isGroup: props.isGroup,
           orderId
@@ -208,12 +208,18 @@ const deployServer = async () => {
         })
       }
     } else if (radioPayment.value === 'postpaid') {
-      // 后付费
-      // todo 根据最新状态码重新设计交互
-      if (respPostServer.status === 201) {
+      // 按量计费
+      if (respPostServer.status.toString().startsWith('2')) {
+        // 更新订单table
+        const orderId = respPostServer.data.order_id
+        void await store.loadSingleOrder({
+          isGroup: props.isGroup,
+          orderId
+        })
         // 更新personal/group ServerTable,根据返回的serverId获取该server的全部信息，存入table
+        const serverId = props.isGroup ? store.tables.groupOrderTable.byId[orderId].resources[0].instance_id : store.tables.personalOrderTable.byId[orderId].resources[0].instance_id
         void await store.loadSingleServer({
-          serverId: respPostServer.data.id,
+          serverId,
           isGroup: props.isGroup
         })
         // notify
@@ -221,24 +227,14 @@ const deployServer = async () => {
           classes: 'notification-positive shadow-15',
           icon: 'check_circle',
           textColor: 'positive',
-          message: `成功新建云主机: ${props.isGroup ? store.tables.groupServerTable.byId[respPostServer.data.id].ipv4 : store.tables.personalServerTable.byId[respPostServer.data.id].ipv4}`,
+          message: `成功新建云主机: ${props.isGroup ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 15000,
           multiLine: false
         })
-      } else if (respPostServer.status === 202) {
-        // notify
-        Notify.create({
-          classes: 'notification-positive shadow-15',
-          icon: 'check_circle',
-          textColor: 'positive',
-          message: '云主机新建中，请稍候...',
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 15000,
-          multiLine: false
-        })
+        // 跳转至server list
+        props.isGroup ? navigateToUrl('/my/server/group/list') : navigateToUrl('/my/server/personal/list')
       } else {
         Notify.create({
           classes: 'notification-negative shadow-15',
@@ -252,8 +248,6 @@ const deployServer = async () => {
           multiLine: false
         })
       }
-      // 跳转
-      void router.back()
     }
 
     // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
