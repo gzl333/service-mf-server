@@ -60,7 +60,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md text-bold"
                     name="list"
                     icon="computer"
-                    :label="tc('云主机')"
+                    :label="tc('云主机列表')"
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/personal/list')"
                   />

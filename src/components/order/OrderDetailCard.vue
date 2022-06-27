@@ -56,11 +56,47 @@ const getOsIconName = useGetOsIconName()
 
           <div v-else class="col content-area">
 
-            <div class="q-mt-lg text-grey">订单信息</div>
+            <div class="row justify-between q-mt-lg text-grey">
+              <div class="col-auto">
+                订单信息
+              </div>
+              <div class="col-auto text-right row justify-end q-gutter-x-md">
+                <div v-if="isGroup" class="col-auto">
+                  所属项目组
+                  <q-btn
+                    color="primary"
+                    padding="none" flat dense unelevated
+                    :label="order.vo_name"
+                    @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
+                    <q-tooltip>
+                      {{ tc('项目组详情') }}
+                    </q-tooltip>
+                  </q-btn>
+                </div>
+                <div class="col-auto">下单用户 {{ order.username }}</div>
+                <div class="col-auto">订单ID {{ order.id }}</div>
+              </div>
+            </div>
 
             <div class="row no-wrap justify-center items-center section" style="height: 160px;">
 
-              <div class="col-1 q-lr-md row items-center">
+              <div class="col-1 q-mr-sm column justify-center items-center">
+
+                <div v-if="order.order_type === 'new'" class="col-auto text-bold text-h6">
+                  {{ tc('新购') }}
+                </div>
+
+                <div v-if="order.order_type === 'renewal'" class="col-auto text-bold text-h6">
+                  {{ tc('续费') }}
+                </div>
+
+                <div v-if="order.order_type === 'upgrade'" class="col-auto text-bold text-h6">
+                  {{ tc('升级') }}
+                </div>
+
+                <div v-if="order.order_type === 'downgrade'" class="col-auto text-bold text-h6">
+                  {{ tc('降级') }}
+                </div>
 
                 <div class="col-auto text-bold text-h6">
                   {{ order.pay_type === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
@@ -70,7 +106,7 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <div class="col-7 q-lr-md">
+              <div class="col-8 q-lr-md">
                 <q-stepper
                   flat
                   done-color="light-green"
@@ -88,7 +124,7 @@ const getOsIconName = useGetOsIconName()
                     v-if="order.status === 'cancelled'"
                     name="cancelled"
                     :title="tc('取消订单')"
-                    caption="取消时间"
+                    :caption="new Date(order.cancelled_time).toLocaleString(i18n.global.locale)"
                     icon="close"
                     :done="order.status === 'cancelled'"
                     done-icon="close"
@@ -101,7 +137,7 @@ const getOsIconName = useGetOsIconName()
                     :disable="order.pay_type === 'postpaid'"
                     name="paid"
                     :title="tc('支付订单')"
-                    :caption="order.pay_type === 'postpaid' ? tc('按量计费无需预付'): order.status === 'paid' ?'付款时间': tc('待支付')"
+                    :caption="order.pay_type === 'postpaid' ? tc('按量计费无需预付'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('待支付')"
                     icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
@@ -111,7 +147,7 @@ const getOsIconName = useGetOsIconName()
                     v-if="order.status === 'unpaid' || order.status === 'paid'"
                     name="delivered"
                     :title="tc('资源交付')"
-                    :caption="order.status === 'paid' ? '交付时间': tc('待交付')"
+                    :caption="order.status === 'paid' ? new Date(order.resources[0]?.delivered_time).toLocaleString(i18n.global.locale): tc('待交付')"
                     icon="task_alt"
                     :done="order.status === 'paid'"
                   >
@@ -123,42 +159,42 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <div class="col-3 q-pl-md column justify-center full-height">
+              <!--              <div class="col-3 q-pl-md column justify-center full-height">-->
 
-                <div class="row items-center">
-                  <div class="col-3 text-grey">订单ID</div>
-                  <div class="col-shrink">
-                    {{ order.id }}
-                  </div>
-                </div>
+              <!--                <div class="row items-center">-->
+              <!--                  <div class="col-3 text-grey">订单ID</div>-->
+              <!--                  <div class="col-shrink">-->
+              <!--                    {{ order.id }}-->
+              <!--                  </div>-->
+              <!--                </div>-->
 
-                <div class="row items-center">
-                  <div class="col-3 text-grey">下单用户</div>
-                  <div class="col-shrink">
-                    {{ order.username }}
-                  </div>
-                </div>
+              <!--                <div class="row items-center">-->
+              <!--                  <div class="col-3 text-grey">下单用户</div>-->
+              <!--                  <div class="col-shrink">-->
+              <!--                    {{ order.username }}-->
+              <!--                  </div>-->
+              <!--                </div>-->
 
-                <div v-if="isGroup" class="row items-center">
-                  <div class="col-3 text-grey">项目组</div>
-                  <div class="col-shrink">
-                    <q-btn
-                      color="primary"
-                      padding="none" flat dense unelevated
-                      :label="order.vo_name"
-                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
-                      <q-tooltip>
-                        {{ tc('项目组详情') }}
-                      </q-tooltip>
-                    </q-btn>
-                  </div>
-                </div>
+              <!--                <div v-if="isGroup" class="row items-center">-->
+              <!--                  <div class="col-3 text-grey">项目组</div>-->
+              <!--                  <div class="col-shrink">-->
+              <!--                    <q-btn-->
+              <!--                      color="primary"-->
+              <!--                      padding="none" flat dense unelevated-->
+              <!--                      :label="order.vo_name"-->
+              <!--                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">-->
+              <!--                      <q-tooltip>-->
+              <!--                        {{ tc('项目组详情') }}-->
+              <!--                      </q-tooltip>-->
+              <!--                    </q-btn>-->
+              <!--                  </div>-->
+              <!--                </div>-->
 
-              </div>
+              <!--              </div>-->
 
-              <q-separator vertical/>
+              <!--              <q-separator vertical/>-->
 
-              <div class="col-1 q-pl-md column items-center justify-center full-height">
+              <div class="col-3 q-pl-md column items-center justify-center full-height">
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 

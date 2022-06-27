@@ -23,6 +23,7 @@ const store = useStore()
 // const router = useRouter()
 
 const coupon = computed(() => props.isGroup ? store.tables.groupCouponTable.byId[props.couponId] : store.tables.personalCouponTable.byId[props.couponId])
+const service = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === coupon.value?.app_service?.id)[0])
 
 </script>
 
@@ -47,9 +48,7 @@ const coupon = computed(() => props.isGroup ? store.tables.groupCouponTable.byId
           <div class="row justify-start">
             <span class="col-4 text-grey"> {{ tc('所属服务') }}</span>
             <span class="col-auto">{{
-                i18n.global.locale === 'zh' ?
-                  store.tables.serviceTable.byId[coupon?.service?.id]?.name :
-                  store.tables.serviceTable.byId[coupon?.service?.id]?.name_en
+                i18n.global.locale === 'zh' ? service.name : service.name_en
               }}
             </span>
           </div>

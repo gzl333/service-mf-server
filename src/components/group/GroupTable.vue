@@ -68,6 +68,14 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 5px'
   },
   {
+    name: 'coupon',
+    label: i18n.global.locale === 'zh' ? '代金券' : 'Coupon',
+    field: 'coupon',
+    align: 'center',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
     name: 'balance',
     label: i18n.global.locale === 'zh' ? '余额' : 'Balance',
     field: 'balance',
@@ -178,8 +186,18 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             </q-btn>
           </q-td>
 
+          <q-td key="coupon" :props="props">
+            <q-btn color="primary" flat padding="none" dense
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
+              {{ store.tables.groupTable.byId[props.row.id].coupons.length }}个
+            </q-btn>
+          </q-td>
+
           <q-td key="balance" :props="props">
-            {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}点
+            <div class="row justify-center items-center"
+                 :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-light-green':'text-red'">
+              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}点
+            </div>
           </q-td>
 
           <q-td key="desc" :props="props">

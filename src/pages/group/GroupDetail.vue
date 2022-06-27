@@ -9,6 +9,7 @@ import GroupMemberTable from 'components/group/GroupMemberTable.vue'
 import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
 import OrderTable from 'components/order/OrderTable.vue'
+import CouponTable from 'components/coupon/CouponTable.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -25,7 +26,7 @@ const router = useRouter()
 const tc = i18n.global.tc
 
 // url传参
-const show = route.query.show as string // 子tab展示哪个部分 server member order
+const show = route.query.show as 'server' | 'member' | 'order' | 'coupon' | undefined // 子tab展示哪个部分
 // 从route对象中读取id参数
 const groupId = route.params.groupId as string
 
@@ -37,6 +38,8 @@ const groupMember = computed(() => store.tables.groupMemberTable.byId[groupId])
 const servers = computed(() => store.getGroupServersByGroupId(groupId))
 // groupOrder
 const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
+// groupCoupon
+const coupons = computed(() => store.getGroupCouponsByGroupId(groupId))
 
 const tab = ref(show ?? 'server')
 
@@ -167,8 +170,10 @@ const tab = ref(show ?? 'server')
                     余额
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
-                      {{ store.tables.groupBalanceTable.byId[group.balance].balance }}点
+                    <div class="row justify-center items-center"
+                         :class="Number(store.tables.groupBalanceTable.byId[group.balance]?.balance) >= 0 ? 'text-light-green':'text-red'"
+                         style="height: 70px">
+                      {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}点
                     </div>
                   </div>
                 </div>
@@ -231,6 +236,12 @@ const tab = ref(show ?? 'server')
                            name="order"
                            icon="list_alt"
                            :label="tc('订单')"/>
+                    <q-tab class="q-px-none q-py-none q-mr-md"
+                           no-caps
+                           :ripple="false"
+                           name="coupon"
+                           icon="currency_yuan"
+                           :label="tc('代金券')"/>
                   </q-tabs>
 
                   <q-btn v-show="tab==='member' && group.myRole !== 'member' " class="col-shrink" icon="add" size="md"
@@ -264,6 +275,10 @@ const tab = ref(show ?? 'server')
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="order">
                     <OrderTable :orders="orders" :isGroup="true" :isHideGroup="true"/>
+                  </q-tab-panel>
+
+                  <q-tab-panel class="q-pa-none overflow-hidden" name="coupon">
+                    <CouponTable :coupons="coupons" :isGroup="true" :isHideGroup="true"/>
                   </q-tab-panel>
 
                 </q-tab-panels>

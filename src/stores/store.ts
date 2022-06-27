@@ -120,12 +120,14 @@ export interface ServiceInterface {
   name: string
   name_en: string
   service_type: string
+  cloud_type: string
   add_time: string
   need_vpn: boolean
-  status: number
-  data_center: string
+  status: 'enable' | 'disable' | 'deleted'
+  data_center: string // 接口原生数据为对象，整理为dataCenterId
   longitude: number
   latitude: number
+  pay_app_service_id: string
 }
 
 // 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述
@@ -260,6 +262,7 @@ export interface ServerInterface {
 }
 
 export interface OrderResourceInterface {
+  delivered_time: string
   id: string
   order_id: string
   resource_type: string
@@ -289,15 +292,17 @@ export interface OrderInterface {
     vm_azone_id: string
     vm_azone_name: string
   },
-  period: 1,
-  payment_time: null,
-  pay_type: string
+  period: number
+  payment_time: string
+  pay_type: 'prepaid' | 'postpaid'
   creation_time: string
   user_id: string
   username: string
   vo_id: string
   vo_name: string
   owner_type: string
+  cancelled_time: string
+  app_service_id: string
   resources: OrderResourceInterface[]
 }
 
@@ -311,10 +316,10 @@ export interface CouponInterface {
   status: 'wait' | 'available' | 'cancelled' | 'deleted'
   granted_time?: string
   owner_type?: 'user' | 'vo'
-  service?: {
+  app_service?: {
     id: string
     name: string
-  }
+  },
   user?: {
     id: string
     username: string
@@ -327,6 +332,9 @@ export interface CouponInterface {
     id: string
     name: string
   }
+
+  // 暂时未用的字段 自行查询serviceTable获得app_service_id -> service_id
+  service_id?: string
 }
 
 // 配额申请接口
@@ -1102,6 +1110,20 @@ export const useStore = defineStore('server', {
         return orders.sort(sortFn)
       }
     },
+    getGroupCouponsByGroupId: (state) => (groupId: string): CouponInterface[] => {
+      const sortFn = (a: CouponInterface, b: CouponInterface) => new Date(b.effective_time).getTime() - new Date(a.effective_time).getTime()
+      if (groupId === '0') {
+        return Object.values(state.tables.groupCouponTable.byId).sort(sortFn)
+      } else {
+        const coupons: CouponInterface[] = []
+        for (const coupon of Object.values(state.tables.groupCouponTable.byId)) {
+          if (groupId === coupon?.vo?.id) {
+            coupons.push(coupon)
+          }
+        }
+        return coupons.sort(sortFn)
+      }
+    },
     // 有四种状态：all -> 全部, valid -> 可用， expired -> 过期, exhausted -> 用尽
     // getGroupQuotasByGroupIdByStatus: (state) => (groupId: string, status: string): QuotaInterface[] => {
     //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time).getTime() - new Date(a.expiration_time).getTime()
@@ -1255,7 +1277,7 @@ export const useStore = defineStore('server', {
                 void this.loadPersonalOrderTable() // 如果要把orderId补充进server实例里，则应在personalServerTable加载后加载
               }
               if (this.tables.personalCouponTable.status === 'init') {
-                void this.loadPersonalCouponTable() // 有service字段，倒不是强依赖，放在这里和外面都可以
+                void this.loadPersonalCouponTable() // 依赖serviceTable获取service_id字段
               }
               // serverTable涉及到很多server status请求，应放在最后
               if (this.tables.personalServerTable.status === 'init') {
@@ -1768,7 +1790,7 @@ export const useStore = defineStore('server', {
       const respGetOrder = await api.server.order.getOrder()
       const order = new schema.Entity('order')
       for (const data of respGetOrder.data.orders) {
-        // get order details
+        // get order detail
         const respGetOrderId = await api.server.order.getOrderId({ path: { id: data.id } })
         const normalizedData = normalize(respGetOrderId.data, order)
         Object.assign(this.tables.personalOrderTable.byId, normalizedData.entities.order)

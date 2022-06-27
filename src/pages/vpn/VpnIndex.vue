@@ -166,6 +166,10 @@ const gotoManualVpn = () => {
                 </q-tabs>
               </div>
 
+              <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
+                {{ tc('该机构暂无可用VPN服务。') }}
+              </div>
+
               <div class="col">
                 <q-tab-panels
                   v-model="tabService"
@@ -197,69 +201,93 @@ const gotoManualVpn = () => {
                     </div>
 
                     <div v-else>
+
                       <div class="row items-center" style="height: 48px">
                         <div class="col-2 text-grey">
-                          VPN 用户名
+                          VPN账户状态
                         </div>
-                        <div class="col">
-                          {{ vpn?.username }}
-                          <q-btn
-                            class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
-                            @click="clickToCopy(vpn?.username)">
-                            <q-tooltip>
-                              复制
-                            </q-tooltip>
-                          </q-btn>
+
+                        <div v-if="vpn.active" class="col-shrink row items-center">
+                          <q-icon name="check_circle" color="light-green" size="sm"/>
+                          {{ tc('已开启') }}
+                        </div>
+
+                        <div v-else class="col-shrink row items-center">
+                          <q-icon name="cancel" color="red" size="sm"/>
+                          {{ tc('已关闭') }}
                         </div>
                       </div>
 
-                      <div class="row items-center" style="height: 48px">
-                        <div class="col-2 text-grey">
-                          VPN 密码
-                        </div>
-
-                        <div class="col-shrink">
-
-                          <div class="row">
-                            <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
-
-                            <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                                   @click="clickToCopy(vpn?.password, true)">
+                      <div v-if="vpn.active">
+                        <div class="row items-center" style="height: 48px">
+                          <div class="col-2 text-grey">
+                            VPN 用户名
+                          </div>
+                          <div class="col">
+                            {{ vpn?.username }}
+                            <q-btn
+                              class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
+                              @click="clickToCopy(vpn?.username)">
                               <q-tooltip>
-                                {{ tc(' 复制') }}
+                                复制
                               </q-tooltip>
                             </q-btn>
                           </div>
                         </div>
 
+                        <div class="row items-center" style="height: 48px">
+                          <div class="col-2 text-grey">
+                            VPN 密码
+                          </div>
+
+                          <div class="col-shrink">
+
+                            <div class="row">
+                              <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+
+                              <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                     @click="clickToCopy(vpn?.password, true)">
+                                <q-tooltip>
+                                  {{ tc(' 复制') }}
+                                </q-tooltip>
+                              </q-btn>
+                            </div>
+                          </div>
+
+                        </div>
+
+                        <div class="row items-center" style="height: 48px">
+                          <div class="col-2 text-grey">
+                            VPN 配置文件
+                          </div>
+                          <div class="col">
+                            <q-btn label="下载" class=" " color="primary" padding="none" dense flat
+                                   @click="store.fetchConfig(tabService)"/>
+                          </div>
+                        </div>
+
+                        <div class="row items-center" style="height: 48px">
+                          <div class="col-2 text-grey">
+                            VPN CA证书
+                          </div>
+                          <div class="col">
+                            <q-btn label="下载" class="" color="primary" padding="none" dense flat
+                                   @click="store.fetchCa(tabService)"/>
+                          </div>
+                        </div>
+
+                        <div class="row items-center" style="height: 48px">
+                          <div class="col">
+                            <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
+                                   @click="gotoManualVpn"/>
+                          </div>
+                        </div>
                       </div>
 
-                      <div class="row items-center" style="height: 48px">
-                        <div class="col-2 text-grey">
-                          VPN 配置文件
-                        </div>
-                        <div class="col">
-                          <q-btn label="下载" class=" " color="primary" padding="none" dense flat
-                                 @click="store.fetchConfig(tabService)"/>
-                        </div>
+                      <div v-else>
+                        {{ tc('如需开启VPN账户，请联系该服务管理员。') }}
                       </div>
 
-                      <div class="row items-center" style="height: 48px">
-                        <div class="col-2 text-grey">
-                          VPN CA证书
-                        </div>
-                        <div class="col">
-                          <q-btn label="下载" class="" color="primary" padding="none" dense flat
-                                 @click="store.fetchCa(tabService)"/>
-                        </div>
-                      </div>
-
-                      <div class="row items-center" style="height: 48px">
-                        <div class="col">
-                          <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
-                                 @click="gotoManualVpn"/>
-                        </div>
-                      </div>
                     </div>
 
                   </q-tab-panel>

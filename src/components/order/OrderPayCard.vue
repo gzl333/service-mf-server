@@ -35,6 +35,8 @@ const {
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 const coupons = computed(() => (props.isGroup ? Object.values(store.tables.groupCouponTable.byId) : Object.values(store.tables.personalCouponTable.byId))
+  // 筛选能适用当前server -> serviceId -> app_service_id的coupon
+  .filter(coupon => coupon?.app_service?.id === store.tables.serviceTable.byId[order.value.service_id].pay_app_service_id)
   // 映射为couponId，供option group使用
   .map(coupon => ({
     label: coupon.id,
