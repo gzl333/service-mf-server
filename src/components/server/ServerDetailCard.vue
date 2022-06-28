@@ -289,6 +289,21 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="service.need_vpn" class="row q-pb-md items-center ">
+                  <div class="col-3 text-grey ">VPN 账户状态</div>
+                  <div class="col">
+                    <div v-if="vpn.active" class="col-shrink row items-center">
+                      <q-icon name="check_circle" color="light-green" size="sm"/>
+                      {{ tc('已开启') }}
+                    </div>
+
+                    <div v-else class="col-shrink row items-center">
+                      <q-icon name="cancel" color="red" size="sm"/>
+                      {{ tc('已关闭') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center ">
                   <div class="col-3 text-grey ">VPN 用户名</div>
                   <div class="col">
                     {{ vpn?.username }}
@@ -301,7 +316,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn && vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn.active && vpn" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN 密码</div>
 
                   <div class="col-shrink">
@@ -321,7 +336,7 @@ const gotoManualVpn = () => {
 
                 </div>
 
-                <div v-if="service.need_vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN 配置文件</div>
                   <div class="col">
                     <q-btn label="下载" class=" " color="primary" padding="none" dense flat
@@ -329,7 +344,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN CA证书</div>
                   <div class="col">
                     <q-btn label="下载" class="" color="primary" padding="none" dense flat
@@ -337,7 +352,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
                   <!--                  <div class="col-3 text-grey">VPN 使用方法</div>-->
                   <!--                  <div class="col">-->
                   <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
@@ -417,25 +432,25 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-<!--                <div class="row q-pb-md items-center" v-if="server.expiration_time">-->
-<!--                  <div class="col-3 text-grey">可用天数</div>-->
-<!--                  <div class="col">-->
-<!--                    {{-->
-<!--                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))-->
-<!--                    }}天-->
-<!--                  </div>-->
-<!--                </div>-->
+                <!--                <div class="row q-pb-md items-center" v-if="server.expiration_time">-->
+                <!--                  <div class="col-3 text-grey">可用天数</div>-->
+                <!--                  <div class="col">-->
+                <!--                    {{-->
+                <!--                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))-->
+                <!--                    }}天-->
+                <!--                  </div>-->
+                <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">云主机ID</div>
                   <div class="col">
                     {{ server.id }}
-                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                           @click="clickToCopy(server.id)">
-                      <q-tooltip>
-                        复制
-                      </q-tooltip>
-                    </q-btn>
+<!--                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"-->
+<!--                           @click="clickToCopy(server.id)">-->
+<!--                      <q-tooltip>-->
+<!--                        复制-->
+<!--                      </q-tooltip>-->
+<!--                    </q-btn>-->
                   </div>
                 </div>
 

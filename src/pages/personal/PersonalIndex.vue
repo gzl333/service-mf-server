@@ -6,6 +6,7 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 
 // import ButtonAdd from 'components/personal/ButtonAdd.vue'
+import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -40,10 +41,30 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
         <div class="row justify-center">
 
           <div class="content-fixed-width">
-            <div class="row">
-              <div class="text-h6 q-pt-lg q-px-none">
+            <div class="row justify-between q-pt-lg q-pb-sm">
+
+              <div class="col-auto row items-end text-h6 q-px-none">
                 {{ tc('个人资源') }}
               </div>
+
+              <div class="col-auto row justify-end items-center q-gutter-x-lg">
+
+                <div class="col-auto column items-end">
+                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>
+                  <CouponRedeemInput style="width: 185px;"/>
+                </div>
+
+                <div class="col-auto column items-end">
+                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('个人账户余额') }}</div>
+                  <div class="row items-end">
+                    <div class="text-h4">{{ store.items.personalBalance.balance }}</div>
+                    <div class="text-h6">{{ tc('点') }}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
 
             <div class="row">
@@ -63,6 +84,24 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     :label="tc('云主机列表')"
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/personal/list')"
+                  />
+                  <q-tab
+                    no-caps
+                    class="q-px-none q-py-md q-mr-md text-bold"
+                    name="order"
+                    icon="list_alt"
+                    :label="tc('订单列表')"
+                    :ripple="false"
+                    @click="activeTab = 'order'; navigateToUrl('/my/server/personal/order')"
+                  />
+                  <q-tab
+                    no-caps
+                    class="q-px-none q-py-md q-mr-md text-bold"
+                    name="coupon"
+                    icon="currency_yuan"
+                    :label="tc('代金券列表')"
+                    :ripple="false"
+                    @click="activeTab = 'coupon'; navigateToUrl('/my/server/personal/coupon')"
                   />
                 </q-tabs>
               </div>

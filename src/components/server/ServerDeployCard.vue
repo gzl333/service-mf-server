@@ -192,7 +192,7 @@ const deployServer = async () => {
           orderId
         })
         // 跳转至订单list
-        props.isGroup ? navigateToUrl(`/my/server/order/group/detail/${orderId}`) : navigateToUrl(`/my/server/order/personal/detail/${orderId}`)
+        props.isGroup ? navigateToUrl(`/my/server/group/order/detail/${orderId}`) : navigateToUrl(`/my/server/personal/order/detail/${orderId}`)
       } else {
         // 其他非2xx的状态码
         Notify.create({

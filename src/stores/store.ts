@@ -1020,7 +1020,7 @@ export const useStore = defineStore('server', {
     },
     // 根据用户选择的serviceId来返回order数组
     getPersonalOrdersByServiceId: (state) => (serviceId: string): OrderInterface[] => {
-      // 排序函数，根据云主机创建时间降序排列
+      // 排序函数，根据order创建时间降序排列
       const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
 
       if (serviceId === '0') {
@@ -1030,6 +1030,26 @@ export const useStore = defineStore('server', {
         for (const order of Object.values(state.tables.personalOrderTable.byId)) {
           if (order.service_id === serviceId) {
             rows.push(order)
+          }
+        }
+        return rows.sort(sortFn)
+      }
+    },
+    // 根据用户选择的serviceId来返回server数组
+    getPersonalCouponsByServiceId: (state) => (serviceId: string): CouponInterface[] => {
+      // 把serviceId映射为app_service_id
+      const appServiceId = state.tables.serviceTable.byId[serviceId]?.pay_app_service_id
+
+      // 排序函数，根据coupon创建时间降序排列
+      const sortFn = (a: CouponInterface, b: CouponInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+
+      if (serviceId === '0') {
+        return Object.values(state.tables.personalCouponTable.byId).sort(sortFn)
+      } else {
+        const rows: CouponInterface[] = []
+        for (const coupon of Object.values(state.tables.personalCouponTable.byId)) {
+          if (coupon?.app_service?.id === appServiceId) {
+            rows.push(coupon)
           }
         }
         return rows.sort(sortFn)
@@ -1949,7 +1969,7 @@ export const useStore = defineStore('server', {
       }
       this.tables.personalCouponTable.status = 'loading'
       // 发送请求,列举全部personal coupon
-      const respCoupon = await api.server.cashcoupon.getCashcoupon({ query: { page_size: 999 } })
+      const respCoupon = await api.server.cashcoupon.getCashCoupon({ query: { page_size: 999 } })
       // 将响应normalize，存入state里的userServerTable
       const coupon = new schema.Entity('coupon')
       for (const data of respCoupon.data.results) {
@@ -1974,7 +1994,7 @@ export const useStore = defineStore('server', {
       this.tables.groupCouponTable.status = 'loading'
       for (const groupId of this.tables.groupTable.allIds) {
         if (this.tables.groupTable.byId[groupId].myRole !== 'member') { // 只有owner和leader才能拿到coupon list
-          const respCoupon = await api.server.cashcoupon.getCashcoupon({
+          const respCoupon = await api.server.cashcoupon.getCashCoupon({
             query: {
               page_size: 999,
               vo_id: groupId
@@ -2817,6 +2837,17 @@ export const useStore = defineStore('server', {
           isGroup
         }
       }).onOk(async (val: { payment_method: 'balance' | 'cashcoupon' | 'coupon-balance', coupon_ids?: string[] }) => { // val是onDialogOK调用时传入的实参
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          icon: 'mdi-check-circle',
+          textColor: 'positive',
+          spinner: true,
+          message: '正在支付',
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
         const respPostOrderIdPay = await api.server.order.postOrderIdPay({
           path: { id: orderId },
           query: {
@@ -2881,7 +2912,7 @@ export const useStore = defineStore('server', {
           // order影响的coupon
           isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
           // 跳转到该order详情页面
-          navigateToUrl(isGroup ? `/my/server/order/group/detail/${orderId}` : `/my/server/order/personal/detail/${orderId}`)
+          navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
         }
       })
     },
@@ -2919,7 +2950,7 @@ export const useStore = defineStore('server', {
               orderId
             })
             // 跳转到该order详情页面
-            navigateToUrl(isGroup ? `/my/server/order/group/detail/${orderId}` : `/my/server/order/personal/detail/${orderId}`)
+            navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
           }
         }
       })

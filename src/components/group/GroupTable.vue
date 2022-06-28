@@ -28,6 +28,14 @@ const store = useStore()
 // group分栏定义
 const columns = computed(() => [
   {
+    name: 'role',
+    label: i18n.global.locale === 'zh' ? '我的角色' : 'My Role',
+    field: 'role',
+    align: 'center',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
     name: 'name',
     label: i18n.global.locale === 'zh' ? '项目组名称' : 'Group',
     field: 'name',
@@ -36,9 +44,25 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 5px'
   },
   {
-    name: 'role',
-    label: i18n.global.locale === 'zh' ? '我的角色' : 'My Role',
-    field: 'role',
+    name: 'company',
+    label: i18n.global.locale === 'zh' ? '所属单位' : 'Organization',
+    field: 'company',
+    align: 'center',
+    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
+    name: 'desc',
+    label: i18n.global.locale === 'zh' ? '备注' : 'Note',
+    field: 'desc',
+    align: 'center',
+    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
+    name: 'creation_time',
+    label: i18n.global.locale === 'zh' ? '创建时间' : 'Creation Time',
+    field: 'creation_time',
     align: 'center',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
@@ -84,36 +108,11 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 5px'
   },
   {
-    name: 'desc',
-    label: i18n.global.locale === 'zh' ? '备注' : 'Note',
-    field: 'desc',
-    align: 'center',
-    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
-    headerStyle: 'padding: 0 5px'
-
-  },
-  {
-    name: 'company',
-    label: i18n.global.locale === 'zh' ? '所属单位' : 'Organization',
-    field: 'company',
-    align: 'center',
-    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
-    headerStyle: 'padding: 0 5px'
-  },
-  {
-    name: 'creation_time',
-    label: i18n.global.locale === 'zh' ? '创建时间' : 'Creation Time',
-    field: 'creation_time',
-    align: 'center',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 5px'
-  },
-  {
     name: 'operation',
     label: i18n.global.locale === 'zh' ? '操作' : 'Operations',
     field: 'operation',
     align: 'center',
-    style: 'padding: 15px 0px',
+    style: 'padding: 15px 0px; height: 105px;', // 每一行被此处撑开，决定行高
     headerStyle: 'padding: 0 5px'
   }
 ])
@@ -147,6 +146,10 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
       <template v-slot:body="props">
         <q-tr :props="props">
 
+          <q-td key="role" :props="props">
+            <GroupRoleChip class="non-selectable" :role="props.row.myRole"/>
+          </q-td>
+
           <q-td key="name" :props="props">
             <q-btn
               class="q-ma-none" :label="props.row.name" color="primary" padding="xs" flat dense unelevated
@@ -161,8 +164,24 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             </q-btn>
           </q-td>
 
-          <q-td key="role" :props="props">
-            <GroupRoleChip class="non-selectable" :role="props.row.myRole"/>
+          <q-td key="company" :props="props">
+            {{ props.row.company }}
+          </q-td>
+
+          <q-td key="desc" :props="props">
+            {{ props.row.description }}
+          </q-td>
+
+          <q-td key="creation_time" :props="props">
+            <div v-if="i18n.global.locale==='zh'">
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+            </div>
+
+            <div v-else>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+            </div>
           </q-td>
 
           <q-td key="member" :props="props">
@@ -195,38 +214,31 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
-                 :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-light-green':'text-red'">
+                 :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-black':'text-red'">
               {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}点
-            </div>
-          </q-td>
-
-          <q-td key="desc" :props="props">
-            {{ props.row.description }}
-          </q-td>
-
-          <q-td key="company" :props="props">
-            {{ props.row.company }}
-          </q-td>
-
-          <q-td key="creation_time" :props="props">
-            <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
-            </div>
-
-            <div v-else>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
             </div>
           </q-td>
 
           <q-td key="operation" :props="props">
 
-            <div class="column justify-center items-start q-gutter-xs">
+            <div class="column justify-center items-start ">
 
               <q-btn icon="info" flat dense padding="none" color="primary"
                      @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
                 {{ tc('查看详情') }}
+              </q-btn>
+
+              <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
+                     icon="edit" flat padding="none" color="primary" size="md" dense
+                     @click="store.editGroupDialog(props.row.id)">
+                {{ tc('编辑项目组') }}
+              </q-btn>
+
+              <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"
+                     icon="group_off" flat padding="none" dense
+                     color="primary" size="md"
+                     @click="store.deleteGroupDialog(props.row.id)">
+                {{ tc('解散项目组') }}
               </q-btn>
 
             </div>

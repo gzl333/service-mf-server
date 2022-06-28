@@ -146,6 +146,13 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
             {{ props.row.id }}
 
+            <!--创建时间距离当下小于1小时则打上new标记-->
+            <q-badge style="top:-10px;"
+                     v-if="(new Date() - new Date(props.row.granted_time)) < 1000 * 60 * 60 * 1 "
+                     color="light-green" floating transparent rounded align="middle">
+              new
+            </q-badge>
+
             <q-btn v-if="hoverRow === props.row.id"
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.id)">

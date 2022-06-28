@@ -82,17 +82,17 @@ const releaseTime = process.env.releaseTime
               </q-item-section>
             </q-item>
 
-            <q-item
-              clickable
-              :active="activeItem === 'order'"
-              @click="activeItem = 'order'; navigateToUrl('/my/server/order')"
-              active-class="active-item"
-            >
-              <q-item-section class="column items-center">
-                <q-icon name="list_alt" size="lg"/>
-                <div class="active-text text-center">{{ tc('订单') }}</div>
-              </q-item-section>
-            </q-item>
+<!--            <q-item-->
+<!--              clickable-->
+<!--              :active="activeItem === 'order'"-->
+<!--              @click="activeItem = 'order'; navigateToUrl('/my/server/order')"-->
+<!--              active-class="active-item"-->
+<!--            >-->
+<!--              <q-item-section class="column items-center">-->
+<!--                <q-icon name="list_alt" size="lg"/>-->
+<!--                <div class="active-text text-center">{{ tc('订单') }}</div>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
 
             <!--有服务管理权限的用户才能看到，同时在路由里进行权限限制-->
             <q-item v-if="store.items.adminServiceIds.length > 0"
@@ -138,7 +138,7 @@ const releaseTime = process.env.releaseTime
 
     <q-page-container>
       <q-scroll-area style="height: calc(100vh - 60px);">
-        <router-view/>
+        <router-view :key="$route.fullPath"/>
       </q-scroll-area>
     </q-page-container>
 

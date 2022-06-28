@@ -181,7 +181,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
             <q-btn
               class="q-ma-none" :label="props.row.id" color="primary" padding="none" flat dense unelevated no-caps
-              @click="navigateToUrl(isGroup ? `/my/server/order/group/detail/${props.row.id}` : `/my/server/order/personal/detail/${props.row.id}`)">
+              @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
               <q-tooltip>
                 {{ tc('订单详情') }}
               </q-tooltip>
@@ -283,7 +283,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             <div class="column justify-center items-center q-gutter-xs">
 
               <q-btn icon="info" flat dense padding="none" color="primary"
-                     @click="navigateToUrl(isGroup ? `/my/server/order/group/detail/${props.row.id}` : `/my/server/order/personal/detail/${props.row.id}`)">
+                     @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
                 {{ tc('查看详情') }}
               </q-btn>
 

@@ -204,7 +204,7 @@ const gotoManualVpn = () => {
 
                       <div class="row items-center" style="height: 48px">
                         <div class="col-2 text-grey">
-                          VPN账户状态
+                          VPN 账户状态
                         </div>
 
                         <div v-if="vpn.active" class="col-shrink row items-center">

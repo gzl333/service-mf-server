@@ -61,7 +61,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       icon="person"
                       :label="tc('个人订单')"
                       :ripple="false"
-                      @click="activeTab = 'personal'; navigateToUrl('/my/server/order/personal')"
+                      @click="activeTab = 'personal'; navigateToUrl('/my/server/personal/order')"
                     />
                     <q-tab
                       no-caps
@@ -70,7 +70,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       icon="group"
                       :label="tc('项目组订单')"
                       :ripple="false"
-                      @click="activeTab = 'group'; navigateToUrl('/my/server/order/group')"
+                      @click="activeTab = 'group'; navigateToUrl('/my/server/group/order')"
                     />
                   </q-tabs>
                 </div>

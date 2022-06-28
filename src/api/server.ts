@@ -236,7 +236,7 @@ export default {
   },
   azone: {},
   cashcoupon: {
-    getCashcoupon (payload: {
+    getCashCoupon (payload: {
       query?: {
         page?: number,
         page_size?: number,
@@ -248,6 +248,18 @@ export default {
         params: payload.query
       }
       return axiosServer.get('/cashcoupon', config)
+    },
+    postCashCoupon (payload: {
+      query: {
+        id: string,
+        coupon_code: string,
+        vo_id?: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/cashcoupon', null, config)
     }
   },
   'describe-price': {},

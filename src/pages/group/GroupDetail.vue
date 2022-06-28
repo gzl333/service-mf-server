@@ -10,6 +10,7 @@ import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
 import OrderTable from 'components/order/OrderTable.vue'
 import CouponTable from 'components/coupon/CouponTable.vue'
+import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -63,6 +64,24 @@ const tab = ref(show ?? 'server')
           </div>
 
           <div v-else class="col">
+
+            <div class="row items-center justify-between q-pt-lg">
+
+              <div class="col-auto column items-start">
+                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>
+                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>
+              </div>
+
+              <div class="col-auto column items-end">
+                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('项目组账户余额') }}</div>
+                <div class="row items-end">
+                  <div class="text-h4">{{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}</div>
+                  <div class="text-h6">{{ tc('点') }}
+                  </div>
+                </div>
+              </div>
+
+            </div>
 
             <!--项目组详情开始-->
             <div class="row items-center justify-evenly detail-area ">
@@ -164,20 +183,20 @@ const tab = ref(show ?? 'server')
                 </div>
               </div>
 
-              <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
-                  <div class="col-2 text-grey">
-                    余额
-                  </div>
-                  <div class="col-10">
-                    <div class="row justify-center items-center"
-                         :class="Number(store.tables.groupBalanceTable.byId[group.balance]?.balance) >= 0 ? 'text-light-green':'text-red'"
-                         style="height: 70px">
-                      {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}点
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!--              <div class="col-auto ">-->
+              <!--                <div class="column justify-start items-center" style="height: 120px">-->
+              <!--                  <div class="col-2 text-grey">-->
+              <!--                    余额-->
+              <!--                  </div>-->
+              <!--                  <div class="col-10">-->
+              <!--                    <div class="row justify-center items-center"-->
+              <!--                         :class="Number(store.tables.groupBalanceTable.byId[group.balance]?.balance) >= 0 ? 'text-light-green':'text-red'"-->
+              <!--                         style="height: 70px">-->
+              <!--                      {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}点-->
+              <!--                    </div>-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
 
               <div v-if="group.myRole !== 'member'" class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
@@ -188,7 +207,7 @@ const tab = ref(show ?? 'server')
                     <div class="row justify-center items-center q-gutter-sm" style="height: 70px">
 
                       <q-btn icon="edit" flat padding="none" color="primary" size="md"
-                             @click="store.editGroupDialog(group.id)">
+                             @click="store.editGroupDialog(groupId)">
                         <q-tooltip>编辑项目组信息</q-tooltip>
                       </q-btn>
 
