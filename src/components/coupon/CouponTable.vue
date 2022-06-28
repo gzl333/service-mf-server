@@ -63,9 +63,18 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'time',
-    label: i18n.global.locale === 'zh' ? '失效期' : 'Expiration Time',
-    field: 'time',
+    name: 'redeemTime',
+    label: i18n.global.locale === 'zh' ? '兑换日期' : 'Redeem Time',
+    field: 'redeemTime',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'expirationTime',
+    label: i18n.global.locale === 'zh' ? '失效日期' : 'Expiration Time',
+    field: 'expirationTime',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -144,25 +153,29 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
         >
           <q-td key="id" :props="props">
 
-            {{ props.row.id }}
+            <div class="column justify-center items-center">
+              <!--创建时间距离当下小于1小时则打上new标记-->
+              <q-badge v-if="(new Date() - new Date(props.row.granted_time)) < 1000 * 60 * 60 * 1 "
+                       class="col-shrink" style="width: 35px;"
+                       color="light-green" transparent rounded align="middle">
+                new
+              </q-badge>
 
-            <!--创建时间距离当下小于1小时则打上new标记-->
-            <q-badge style="top:-10px;"
-                     v-if="(new Date() - new Date(props.row.granted_time)) < 1000 * 60 * 60 * 1 "
-                     color="light-green" floating transparent rounded align="middle">
-              new
-            </q-badge>
+              <div class="col-auto">
+                {{ props.row.id }}
+                <q-btn v-if="hoverRow === props.row.id"
+                       class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
+                       @click="clickToCopy(props.row.id)">
+                  <q-tooltip>
+                    {{ tc('复制到剪切板') }}
+                  </q-tooltip>
+                </q-btn>
+                <q-btn v-else
+                       class="col-shrink q-px-xs q-ma-none invisible" flat dense icon="content_copy" size="xs">
+                </q-btn>
+              </div>
 
-            <q-btn v-if="hoverRow === props.row.id"
-                   class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
-                   @click="clickToCopy(props.row.id)">
-              <q-tooltip>
-                {{ tc('复制到剪切板') }}
-              </q-tooltip>
-            </q-btn>
-            <q-btn v-else
-                   class="col-shrink q-px-xs q-ma-none invisible" flat dense icon="content_copy" size="xs">
-            </q-btn>
+            </div>
 
           </q-td>
 
@@ -214,7 +227,19 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
           </q-td>
 
-          <q-td key="time" :props="props">
+          <q-td key="redeemTime" :props="props">
+            <div v-if="i18n.global.locale==='zh'">
+              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+            </div>
+
+            <div v-else>
+              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+            </div>
+          </q-td>
+
+          <q-td key="expirationTime" :props="props">
             <div v-if="i18n.global.locale==='zh'">
               <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
               <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
