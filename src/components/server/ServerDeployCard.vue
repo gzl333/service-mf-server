@@ -268,6 +268,40 @@ const deployServer = async () => {
 
     <div v-else>
 
+      <div v-if="isGroup" class="section">
+        <div class="text-h7 text-primary section-title">
+          {{ tc('项目组') }}
+        </div>
+        <div class="row items-center q-gutter-md q-pb-lg">
+          <div class="col-auto text-bold row items-center ">
+            {{ tc('使用该云主机的项目组') }}
+            <q-icon name="help_outline" color="grey" size="xs">
+              <q-tooltip>{{ tc('只有组长和管理员可以创建项目组云主机') }}</q-tooltip>
+            </q-icon>
+          </div>
+          <q-select v-if="groups.length !== 0" class="col-4" outlined v-model="radioGroup" dense
+                    :options="groups" map-options emit-value option-label="name" option-value="id">
+
+            <!--当前选项的内容插槽-->
+            <template v-slot:selected-item="scope">
+                <span :class="radioGroup===scope.opt.id ? 'text-primary' : 'text-black'">
+                {{ scope.opt.name }}
+                </span>
+            </template>
+
+          </q-select>
+          <div v-else>
+            <div class="row items-center">
+              {{ tc('暂无项目组，请') }}
+              <q-btn v-if="isGroup" flat padding="none" color="primary"
+                     :to="'/my/group/create'">
+                {{ tc('创建项目组') }}
+              </q-btn>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col section">
         <div class="text-h7 text-primary section-title">
           {{ tc('计费方式') }}
@@ -318,40 +352,6 @@ const deployServer = async () => {
               </template>
 
             </q-input>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="isGroup" class="section">
-        <div class="text-h7 text-primary section-title">
-          {{ tc('项目组') }}
-        </div>
-        <div class="row items-center q-gutter-md q-pb-lg">
-          <div class="col-auto text-bold row items-center ">
-            {{ tc('使用该云主机的项目组') }}
-            <q-icon name="help_outline" color="grey" size="xs">
-              <q-tooltip>{{ tc('只有组长和管理员可以创建项目组云主机') }}</q-tooltip>
-            </q-icon>
-          </div>
-          <q-select v-if="groups.length !== 0" class="col-4" outlined v-model="radioGroup" dense
-                    :options="groups" map-options emit-value option-label="name" option-value="id">
-
-            <!--当前选项的内容插槽-->
-            <template v-slot:selected-item="scope">
-                <span :class="radioGroup===scope.opt.id ? 'text-primary' : 'text-black'">
-                {{ scope.opt.name }}
-                </span>
-            </template>
-
-          </q-select>
-          <div v-else>
-            <div class="row items-center">
-              {{ tc('暂无项目组，请') }}
-              <q-btn v-if="isGroup" flat padding="none" color="primary"
-                     :to="'/my/group/create'">
-                {{ tc('创建项目组') }}
-              </q-btn>
-            </div>
           </div>
         </div>
       </div>

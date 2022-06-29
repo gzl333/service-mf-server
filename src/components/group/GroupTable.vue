@@ -152,7 +152,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="name" :props="props">
             <q-btn
-              class="q-ma-none" :label="props.row.name" color="primary" padding="xs" flat dense unelevated
+              class="q-ma-none" :label="props.row.name" color="primary" padding="xs" flat dense unelevated no-caps
               @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
               <q-tooltip>
                 {{ tc('详情') }}

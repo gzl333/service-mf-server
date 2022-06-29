@@ -244,8 +244,9 @@ export interface ServerInterface {
   image_desc: string
   default_user: string
   default_password: string
+  pay_type: 'prepaid' | 'postpaid'
   endpoint_url: string
-  service: string
+  service: string // 简化成serviceId
   user_quota: string
   center_quota: number
   vo_id: string | null

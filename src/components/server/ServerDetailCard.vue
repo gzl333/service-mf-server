@@ -410,47 +410,15 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">创建时间</div>
-                  <div class="col">
-                    {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">到期时间</div>
-                  <div class="col">
-                    <div>
-                      {{
-                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
-                      }}
-                    </div>
-                    <!--                    <q-icon-->
-                    <!--                      v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
-                    <!--                      name="help_outline" color="red" size="xs">-->
-                    <!--                      <q-tooltip>{{ tc('云主机已到期') }}</q-tooltip>-->
-                    <!--                    </q-icon>-->
-                  </div>
-                </div>
-
-                <!--                <div class="row q-pb-md items-center" v-if="server.expiration_time">-->
-                <!--                  <div class="col-3 text-grey">可用天数</div>-->
-                <!--                  <div class="col">-->
-                <!--                    {{-->
-                <!--                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))-->
-                <!--                    }}天-->
-                <!--                  </div>-->
-                <!--                </div>-->
-
-                <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">云主机ID</div>
                   <div class="col">
                     {{ server.id }}
-<!--                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"-->
-<!--                           @click="clickToCopy(server.id)">-->
-<!--                      <q-tooltip>-->
-<!--                        复制-->
-<!--                      </q-tooltip>-->
-<!--                    </q-btn>-->
+                    <!--                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"-->
+                    <!--                           @click="clickToCopy(server.id)">-->
+                    <!--                      <q-tooltip>-->
+                    <!--                        复制-->
+                    <!--                      </q-tooltip>-->
+                    <!--                    </q-btn>-->
                   </div>
                 </div>
 
@@ -480,6 +448,48 @@ const gotoManualVpn = () => {
               </div>
 
               <div class="col-4">
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-2 text-grey">计费类型</div>
+                  <div v-if="server.pay_type === 'prepaid'" class="col">
+                    包月预付
+                  </div>
+                  <div v-if="server.pay_type === 'postpaid'" class="col">
+                    按量计费
+                  </div>
+                </div>
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-2 text-grey">创建时间</div>
+                  <div class="col">
+                    {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
+                  </div>
+                </div>
+
+                <div class="row q-pb-md items-center">
+                  <div class="col-2 text-grey">到期时间</div>
+                  <div class="col">
+                    <div>
+                      {{
+                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
+                      }}
+                    </div>
+                    <!--                    <q-icon-->
+                    <!--                      v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
+                    <!--                      name="help_outline" color="red" size="xs">-->
+                    <!--                      <q-tooltip>{{ tc('云主机已到期') }}</q-tooltip>-->
+                    <!--                    </q-icon>-->
+                  </div>
+                </div>
+
+                <!--                <div class="row q-pb-md items-center" v-if="server.expiration_time">-->
+                <!--                  <div class="col-3 text-grey">可用天数</div>-->
+                <!--                  <div class="col">-->
+                <!--                    {{-->
+                <!--                      Math.ceil((new Date(server.expiration_time) - new Date(server.creation_time)) / (1000 * 60 * 60 * 24))-->
+                <!--                    }}天-->
+                <!--                  </div>-->
+                <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-2 text-grey">所属机构</div>

@@ -29,10 +29,9 @@ const coupon = ref('')
 
 const redeemCoupon = async () => {
   // 分割出id和coupon_code
-  const positionSplit = coupon.value.indexOf('#')
+  const positionSplit = coupon.value.trim().indexOf('#')
   const couponId = coupon.value.slice(0, positionSplit)
   const couponCode = coupon.value.slice(positionSplit + 1)
-  console.log(couponId, couponCode)
   // 校验coupon格式
   if (positionSplit === -1 || couponId.length <= 0 || couponCode.length <= 0) {
     // notify

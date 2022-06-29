@@ -44,7 +44,7 @@ const coupons = computed(() => (props.isGroup ? Object.values(store.tables.group
   }))
 )
 
-const methodSelect = ref('balance')
+const methodSelect = ref('cashcoupon')
 const couponSelect = ref([])
 
 const onOKClick = () => {
@@ -111,22 +111,22 @@ const onOKClick = () => {
           <div class="col-3 text-grey-7">
             {{ tc('支付方式') }}
           </div>
-          <div class="col-8 q-gutter-sm">
+          <div class="col-9 q-gutter-x-sm">
 
-            <q-btn style="width: 150px;"
-                   :outline="methodSelect==='balance'?false:true"
-                   :ripple="false" dense unelevated
-                   :color="methodSelect==='balance'?'primary':'grey'"
-                   @click="methodSelect = 'balance'">
-              {{ tc('余额') }}
-            </q-btn>
-
-            <q-btn style="width: 150px;"
+            <q-btn style="width: 180px;"
                    :outline="methodSelect==='cashcoupon'?false:true"
                    :ripple="false" dense unelevated
                    :color="methodSelect==='cashcoupon'?'primary':'grey'"
                    @click="methodSelect = 'cashcoupon'">
               {{ tc('代金券') }}
+            </q-btn>
+
+            <q-btn style="width: 180px;"
+                   :outline="methodSelect==='balance'?false:true"
+                   :ripple="false" dense unelevated
+                   :color="methodSelect==='balance'?'primary':'grey'"
+                   @click="methodSelect = 'balance'">
+              {{ tc('余额') }}
             </q-btn>
 
           </div>
@@ -146,21 +146,39 @@ const onOKClick = () => {
 
           <div class="col-3 text-grey-7">
             {{ isGroup ? tc('项目组代金券') : tc('个人代金券') }}
+
+            <div class="row text-black">
+              <div>已选</div>
+              <div>{{ couponSelect.length }}个</div>
+            </div>
+
           </div>
 
           <div class="col">
 
-            <div class="row">
-              <div>已选</div>
-              <div class="text-black">{{ couponSelect.length }}个</div>
-            </div>
-
-            <div v-if="coupons.length === 0" class="col">{{ tc('暂无可用代金券') }}</div>
-
-            <q-scroll-area v-else class="col bg-grey-2"
-                           style="height: 170px;"
+            <q-scroll-area class="col bg-grey-2"
+                           :style="isGroup ? 'height: 200px;' : 'height: 250px;'"
                            visible>
+
+              <div v-if="coupons.length === 0" class="col">
+
+                <div v-if="isGroup">
+                  {{ tc('项目组账户内暂无该服务节点可用代金券') }}
+                </div>
+
+                <div v-else>
+                  {{ tc('个人账户内暂无该服务节点可用代金券') }}
+                </div>
+
+<!--                <div>-->
+<!--                  {{ tc('已有代金券需要兑换？')}}-->
+<!--                  <q-btn flat dense color="primary">{{tc('兑换代金券')}}</q-btn>-->
+<!--                </div>-->
+
+              </div>
+
               <q-option-group
+                v-else
                 v-model="couponSelect"
                 type="checkbox"
                 :options="coupons"
@@ -169,6 +187,7 @@ const onOKClick = () => {
                   <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
                 </template>
               </q-option-group>
+
             </q-scroll-area>
 
           </div>

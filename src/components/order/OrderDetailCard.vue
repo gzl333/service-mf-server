@@ -60,7 +60,8 @@ const getOsIconName = useGetOsIconName()
               <div class="col-auto">
                 订单信息
               </div>
-              <div class="col-auto text-right row justify-end q-gutter-x-md">
+              <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
+
                 <div v-if="isGroup" class="col-auto">
                   所属项目组
                   <q-btn
@@ -73,8 +74,20 @@ const getOsIconName = useGetOsIconName()
                     </q-tooltip>
                   </q-btn>
                 </div>
+
                 <div class="col-auto">下单用户 {{ order.username }}</div>
+
                 <div class="col-auto">订单ID {{ order.id }}</div>
+
+                <q-btn v-if="order.status === 'unpaid'"
+                       class="col-auto"
+                       color="primary"
+                       flat
+                       dense
+                       @click="store.cancelOrderDialog(order.id, isGroup)">
+                  {{ tc('取消订单') }}
+                </q-btn>
+
               </div>
             </div>
 
@@ -106,7 +119,7 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <div class="col-8 q-lr-md">
+              <div class="col-7 q-lr-md">
                 <q-stepper
                   flat
                   done-color="light-green"
@@ -194,26 +207,17 @@ const getOsIconName = useGetOsIconName()
 
               <!--              <q-separator vertical/>-->
 
-              <div class="col-3 q-pl-md column items-center justify-center full-height">
+              <div class="col-4 q-pl-md column items-center justify-center full-height">
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 
                 <q-btn v-if="order.status === 'unpaid'"
                        class="col-auto"
                        color="primary"
+                       size="md"
                        unelevated
-                       dense
                        @click="store.payOrderDialog(order.id, isGroup)">
                   {{ tc('支付') }}
-                </q-btn>
-
-                <q-btn v-if="order.status === 'unpaid'"
-                       class="col-auto"
-                       color="primary"
-                       flat
-                       dense
-                       @click="store.cancelOrderDialog(order.id, isGroup)">
-                  {{ tc('取消') }}
                 </q-btn>
 
                 <q-btn
