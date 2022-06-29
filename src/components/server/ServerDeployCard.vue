@@ -357,28 +357,31 @@ const deployServer = async () => {
       </div>
 
       <div class="col section">
+
         <div class="text-h7 text-primary section-title">
           {{ tc('服务节点') }}
         </div>
-        <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="row  item-row">
 
-          <div class="col-auto item-title text-bold">
-            {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
-          </div>
+        <div v-for="(dataCenter, index) in dataCenters" :key="dataCenter.id" class="item-row">
 
-          <div class="col">
-            <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">本机构暂无可用服务</div>
+          <div class="row">
+            <div class="col-auto item-title text-bold">
+              {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
+            </div>
 
-            <div v-else class="row items-center q-pb-sm"
-                 v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
-                 :key="service.id">
+            <div class="col">
+              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">本机构暂无可用服务</div>
 
-              <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id"
-                       :key="service.id">
-                <div class="column">
+              <div v-else class="row items-center q-pb-sm"
+                   v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
+                   :key="service.id">
 
-                </div>
-                <span>
+                <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id"
+                         :key="service.id">
+                  <div class="column">
+
+                  </div>
+                  <span>
                   <q-icon
                     class="q-px-sm"
                     v-if="service.service_type.toLowerCase().includes('ev')"
@@ -387,7 +390,7 @@ const deployServer = async () => {
                   </q-icon>
                 </span>
 
-                <span>
+                  <span>
                   <q-icon
                     class="q-px-sm"
                     v-if="service.service_type.toLowerCase().includes('open')"
@@ -396,15 +399,19 @@ const deployServer = async () => {
                   </q-icon>
                 </span>
 
-                <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
+                  <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
                   {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                 </span>
 
-              </q-radio>
+                </q-radio>
+
+              </div>
 
             </div>
 
           </div>
+
+          <q-separator class="q-my-md" v-if="index !== (dataCenters.length - 1)"/>
 
         </div>
       </div>

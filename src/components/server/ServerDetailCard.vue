@@ -291,7 +291,7 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn" class="row q-pb-md items-center ">
                   <div class="col-3 text-grey ">VPN 账户状态</div>
                   <div class="col">
-                    <div v-if="vpn.active" class="col-shrink row items-center">
+                    <div v-if="vpn?.active" class="col-shrink row items-center">
                       <q-icon name="check_circle" color="light-green" size="sm"/>
                       {{ tc('已开启') }}
                     </div>
@@ -303,7 +303,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center ">
+                <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center ">
                   <div class="col-3 text-grey ">VPN 用户名</div>
                   <div class="col">
                     {{ vpn?.username }}
@@ -316,7 +316,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn && vpn.active && vpn" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn?.active && vpn" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN 密码</div>
 
                   <div class="col-shrink">
@@ -336,7 +336,7 @@ const gotoManualVpn = () => {
 
                 </div>
 
-                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN 配置文件</div>
                   <div class="col">
                     <q-btn label="下载" class=" " color="primary" padding="none" dense flat
@@ -344,7 +344,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN CA证书</div>
                   <div class="col">
                     <q-btn label="下载" class="" color="primary" padding="none" dense flat
@@ -352,7 +352,7 @@ const gotoManualVpn = () => {
                   </div>
                 </div>
 
-                <div v-if="service.need_vpn && vpn.active" class="row q-pb-md items-center">
+                <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <!--                  <div class="col-3 text-grey">VPN 使用方法</div>-->
                   <!--                  <div class="col">-->
                   <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
@@ -468,12 +468,16 @@ const gotoManualVpn = () => {
 
                 <div class="row q-pb-md items-center">
                   <div class="col-2 text-grey">到期时间</div>
-                  <div class="col">
-                    <div>
+                  <div class="col row items-center">
+                    <div class="col-auto">
                       {{
                         server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
                       }}
                     </div>
+                    <q-btn class="col-auto" color="primary" padding="none" icon="autorenew" :ripple="false" dense flat
+                           @click="store.renewOrderDialog(server.id, isGroup)">
+                      {{ tc('续期') }}
+                    </q-btn>
                     <!--                    <q-icon-->
                     <!--                      v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
                     <!--                      name="help_outline" color="red" size="xs">-->

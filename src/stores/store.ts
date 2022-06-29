@@ -10,10 +10,11 @@ import { navigateToUrl } from 'single-spa'
 
 import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
-import GroupEditCard from 'components/group/GroupEditCard.vue'
-import GroupAddMemberCard from 'components/group/GroupAddMemberCard.vue'
-import OrderPayCard from 'components/order/OrderPayCard.vue'
-import OrderCancelCard from 'components/order/OrderCancelCard.vue'
+import GroupEditDialog from 'components/group/GroupEditDialog.vue'
+import GroupAddMemberDialog from 'components/group/GroupAddMemberDialog.vue'
+import OrderPayDialog from 'components/order/OrderPayDialog.vue'
+import OrderCancelDialog from 'components/order/OrderCancelDialog.vue'
+import OrderRenewDialog from 'components/order/OrderRenewDialog.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -237,7 +238,7 @@ export interface ServerInterface {
   public_ip: boolean
   image: string
   creation_time: string
-  expiration_time: string | null
+  expiration_time: string
   remarks: string
   classification: string
   image_id: string
@@ -2499,7 +2500,7 @@ export const useStore = defineStore('server', {
       // return new Promise((resolve, reject) => {
       // 操作的确认提示
       Dialog.create({
-        component: GroupEditCard,
+        component: GroupEditDialog,
         componentProps: {
           groupId
         }
@@ -2553,7 +2554,7 @@ export const useStore = defineStore('server', {
     /* 增加group成员 */
     addGroupMemberDialog (groupId: string) {
       Dialog.create({
-        component: GroupAddMemberCard,
+        component: GroupAddMemberDialog,
         componentProps: {
           groupId
         }
@@ -2832,7 +2833,7 @@ export const useStore = defineStore('server', {
     /* 支付订单 */
     payOrderDialog (orderId: string, isGroup: boolean) {
       Dialog.create({
-        component: OrderPayCard,
+        component: OrderPayDialog,
         componentProps: {
           orderId,
           isGroup
@@ -2922,7 +2923,7 @@ export const useStore = defineStore('server', {
     /* 取消订单 */
     cancelOrderDialog (orderId: string, isGroup: boolean) {
       Dialog.create({
-        component: OrderCancelCard,
+        component: OrderCancelDialog,
         componentProps: {
           orderId,
           isGroup
@@ -2955,8 +2956,49 @@ export const useStore = defineStore('server', {
           }
         }
       })
-    }
+    },
     /* 取消订单 */
+
+    /* 续费下订单 */
+    renewOrderDialog (serverId: string, isGroup: boolean) {
+      Dialog.create({
+        component: OrderRenewDialog,
+        componentProps: {
+          serverId,
+          isGroup
+        }
+      }).onOk(async (val: { period?: number, renew_to_time?: string }) => {
+        console.log({ query: val })
+        // if (val) {
+        //   const respPostOrderCancel = await api.server.order.postOrderIdCancel({
+        //     path: {
+        //       id: orderId
+        //     }
+        //   })
+        //   if (respPostOrderCancel.status === 200) {
+        //     Notify.create({
+        //       classes: 'notification-positive shadow-15',
+        //       icon: 'mdi-check-circle',
+        //       textColor: 'positive',
+        //       message: '已经成功取消订单',
+        //       position: 'bottom',
+        //       closeBtn: true,
+        //       timeout: 5000,
+        //       multiLine: false
+        //     })
+        //     // 更新orderId对应order
+        //     void await this.loadSingleOrder({
+        //       isGroup,
+        //       orderId
+        //     })
+        //     // 跳转到该order详情页面
+        //     navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+        //   }
+        // }
+      }
+      )
+    }
+    /* 续费下订单 */
     /* order */
 
     /* dialogs */

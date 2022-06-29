@@ -16,7 +16,8 @@ const props = defineProps({
   },
   isGroup: {
     type: Boolean,
-    required: false
+    required: false,
+    default: false
   }
 })
 // const emits = defineEmits(['change', 'delete'])
@@ -56,10 +57,10 @@ const getOsIconName = useGetOsIconName()
 
           <div v-else class="col content-area">
 
-            <div class="row justify-between q-mt-lg text-grey">
-              <div class="col-auto">
-                订单信息
-              </div>
+            <div class="row justify-between items-end q-mt-lg text-grey">
+
+              <div class="col-auto">订单号 {{ order.id }}</div>
+
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
                 <div v-if="isGroup" class="col-auto">
@@ -77,11 +78,10 @@ const getOsIconName = useGetOsIconName()
 
                 <div class="col-auto">下单用户 {{ order.username }}</div>
 
-                <div class="col-auto">订单ID {{ order.id }}</div>
-
                 <q-btn v-if="order.status === 'unpaid'"
                        class="col-auto"
                        color="primary"
+                       :padding="none"
                        flat
                        dense
                        @click="store.cancelOrderDialog(order.id, isGroup)">

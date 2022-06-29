@@ -584,6 +584,15 @@ export default {
       }
       return axiosServer.patch('/server/' + payload.path.id + '/remark', null, config)
     },
+    postServerRenew (payload: {
+      path: { id: string },
+      query?: { period?: number, renew_to_time?: string }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/server/' + payload.path.id + '/renew', null, config)
+    },
     getServerStatus (payload: {
       path: { id: string },
       query?: { 'as-admin'?: string }

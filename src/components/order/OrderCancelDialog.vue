@@ -31,6 +31,7 @@ const {
   onDialogOK,
   onDialogCancel
 } = useDialogPluginComponent()
+
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 
 </script>
@@ -134,5 +135,4 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 </template>
 
 <style lang="scss" scoped>
-
 </style>
