@@ -2512,14 +2512,18 @@ export const useStore = defineStore('server', {
           body: val
         })
         if (respPatchGroup.status === 200) {
-          // 加入myRole字段
-          Object.assign(respPatchGroup.data, { myRole: this.tables.groupTable.byId[groupId].myRole })
-          // 保存响应内最新信息
-          const newGroup = { [respPatchGroup.data.id]: respPatchGroup.data }
-          // 保存最新group
-          Object.assign(this.tables.groupTable.byId, newGroup)
-          this.tables.groupTable.allIds.unshift(Object.keys(newGroup as Record<string, unknown>)[0])
-          this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
+          // // 加入myRole字段
+          // Object.assign(respPatchGroup.data, { myRole: this.tables.groupTable.byId[groupId].myRole })
+          // // 保存响应内最新信息
+          // const newGroup = { [respPatchGroup.data.id]: respPatchGroup.data }
+          // // 保存最新group
+          // Object.assign(this.tables.groupTable.byId, newGroup)
+          // this.tables.groupTable.allIds.unshift(Object.keys(newGroup as Record<string, unknown>)[0])
+          // this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
+
+          // 以上更新方式丢失了balance字段。所有group相关都强制更新组的表。在产品稳定后可以更细化。
+          this.forceLoadGroupModuleTable()
+
           // 弹出通知
           Notify.create({
             classes: 'notification-positive shadow-15',
