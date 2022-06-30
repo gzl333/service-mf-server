@@ -471,7 +471,7 @@ const gotoManualVpn = () => {
                   <div class="col row items-center">
                     <div class="col-auto">
                       {{
-                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
+                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '长期'
                       }}
                     </div>
                     <q-btn class="col-auto" color="primary" padding="none" icon="autorenew" :ripple="false" dense flat

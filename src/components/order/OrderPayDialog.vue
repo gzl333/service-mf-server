@@ -170,10 +170,10 @@ const onOKClick = () => {
                   {{ tc('个人账户内暂无该服务节点可用代金券') }}
                 </div>
 
-<!--                <div>-->
-<!--                  {{ tc('已有代金券需要兑换？')}}-->
-<!--                  <q-btn flat dense color="primary">{{tc('兑换代金券')}}</q-btn>-->
-<!--                </div>-->
+                <!--                <div>-->
+                <!--                  {{ tc('已有代金券需要兑换？')}}-->
+                <!--                  <q-btn flat dense color="primary">{{tc('兑换代金券')}}</q-btn>-->
+                <!--                </div>-->
 
               </div>
 
@@ -211,6 +211,8 @@ const onOKClick = () => {
         </div>
 
       </q-card-section>
+
+<!--      <q-separator/>-->
 
       <q-card-actions align="between" class="absolute-bottom">
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('确认支付')" @click="onOKClick"/>

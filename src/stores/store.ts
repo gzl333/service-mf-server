@@ -2968,33 +2968,42 @@ export const useStore = defineStore('server', {
           isGroup
         }
       }).onOk(async (val: { period?: number, renew_to_time?: string }) => {
-        console.log({ query: val })
-        // if (val) {
-        //   const respPostOrderCancel = await api.server.order.postOrderIdCancel({
-        //     path: {
-        //       id: orderId
-        //     }
-        //   })
-        //   if (respPostOrderCancel.status === 200) {
-        //     Notify.create({
-        //       classes: 'notification-positive shadow-15',
-        //       icon: 'mdi-check-circle',
-        //       textColor: 'positive',
-        //       message: '已经成功取消订单',
-        //       position: 'bottom',
-        //       closeBtn: true,
-        //       timeout: 5000,
-        //       multiLine: false
-        //     })
-        //     // 更新orderId对应order
-        //     void await this.loadSingleOrder({
-        //       isGroup,
-        //       orderId
-        //     })
-        //     // 跳转到该order详情页面
-        //     navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
-        //   }
-        // }
+        const respPostServerRenew = await api.server.server.postServerRenew({
+          path: { id: serverId },
+          query: val
+        })
+        if (respPostServerRenew.status === 200) {
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'positive',
+            message: '已经成功创建续期订单',
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+          // 更新orderId对应order
+          const orderId = respPostServerRenew.data.order_id
+          void await this.loadSingleOrder({
+            isGroup,
+            orderId
+          })
+          // 跳转到该order详情页面
+          navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+        } else {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: respPostServerRenew.data.message,
+            caption: respPostServerRenew.data.code,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
       }
       )
     }

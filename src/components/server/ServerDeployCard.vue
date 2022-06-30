@@ -343,12 +343,15 @@ const deployServer = async () => {
                      :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
 
               <template v-slot:prepend>
-                <q-icon name="remove" color="primary" @click="radioPeriod = (radioPeriod === 1 ? 1 : radioPeriod - 1)"
+                <q-icon name="remove" color="primary"
+                        @click="radioPeriod = (radioPeriod < 1 ? 1 : radioPeriod - 1)"
                         class="cursor-pointer"/>
               </template>
 
               <template v-slot:append>
-                <q-icon name="add" color="primary" @click="radioPeriod = radioPeriod + 1" class="cursor-pointer"/>
+                <q-icon name="add" color="primary"
+                        @click="radioPeriod =(radioPeriod > MAX_MONTHS ? MAX_MONTHS : radioPeriod + 1)"
+                        class="cursor-pointer"/>
               </template>
 
             </q-input>

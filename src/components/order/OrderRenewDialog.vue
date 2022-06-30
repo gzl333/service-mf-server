@@ -5,6 +5,7 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import { Notify, QInput, useDialogPluginComponent } from 'quasar'
+import moment from 'moment'
 
 const props = defineProps({
   serverId: {
@@ -39,7 +40,11 @@ const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId
 
 const renewType = ref<'month' | 'date'>('month')
 const monthCount = ref(1)
-const dateSelect = ref(new Date(server.value.expiration_time).toISOString().split('T')[0])
+
+// expiration_time -> 转换为local time -> 分别取到date和time
+const dateSelect = ref(moment.utc(server.value.expiration_time).local().format('YYYY-MM-DD'))
+const timeSelect = ref(moment.utc(server.value.expiration_time).local().format('HH:mm'))
+
 // 预付最大月份
 const MAX_MONTHS = 60
 
@@ -63,14 +68,17 @@ const onOKClick = () => {
     // 发送请求
     onDialogOK({ period: monthCount.value })
   } else {
-    const objectTime = dateSelect.value + 'T23:59:59-08:00'
+    // 根据日期和时间的选择，生成本地时间对象
+    const localDateTime = moment(dateSelect.value + ',' + timeSelect.value, 'YYYY-MM-DD,HH:mm')
+    // 转换成UTC时间并转换成ISO格式string
+    const utcDateTimeStr = localDateTime.utc().format()
     // 校验输入
-    if (Date.parse(server.value.expiration_time) >= Date.parse(objectTime)) {
+    if (Date.parse(server.value.expiration_time) >= Date.parse(utcDateTimeStr)) {
       Notify.create({
         classes: 'notification-negative shadow-15',
         icon: 'mdi-alert',
         textColor: 'negative',
-        message: `${tc('目标日期应晚于过期日期')}`,
+        message: `${tc('目标时间应晚于过期时间')}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -80,7 +88,7 @@ const onOKClick = () => {
       return
     }
     // 发送请求
-    onDialogOK({ renew_to_time: objectTime })
+    onDialogOK({ renew_to_time: utcDateTimeStr })
   }
 }
 </script>
@@ -106,6 +114,15 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{ server.ipv4 }}
+          </div>
+        </div>
+
+        <div class="row q-pb-lg items-center">
+          <div class="col-2 text-grey-7">
+            网络类型
+          </div>
+          <div class="col">
+            {{ server.public_ip ? '公网' : '私网' }}
           </div>
         </div>
 
@@ -178,20 +195,23 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            IP类型
+            计费方式
           </div>
-          <div class="col">
-            {{ server.public_ip ? '公网' : '私网' }}
+          <div v-if="server.pay_type === 'prepaid'" class="col">
+            包月预付
+          </div>
+          <div v-if="server.pay_type === 'postpaid'" class="col">
+            按量计费
           </div>
         </div>
 
         <div class="row items-center">
           <div class="col-2 text-grey-7">
-            可用期
+            过期时间
           </div>
           <div class="col">
-            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效' }}
+            <!--            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} - -->
+            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '长期' }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -204,68 +224,91 @@ const onOKClick = () => {
 
       <q-separator/>
 
-      <q-card-section>
+      <q-card-section style="height: 150px;">
 
-        <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            续期方式
-          </div>
-
-          <div class="col-8 q-gutter-x-sm">
-
-            <q-btn style="width: 160px;"
-                   :outline="renewType==='month'?false:true"
-                   :ripple="false" dense unelevated
-                   :color="renewType==='month'?'primary':'grey'"
-                   @click="renewType = 'month'">
-              {{ tc('按月续期') }}
-            </q-btn>
-
-            <q-btn style="width: 160px;"
-                   :outline="renewType==='date'?false:true"
-                   :ripple="false" dense unelevated
-                   :color="renewType==='date'?'primary':'grey'"
-                   @click="renewType = 'date'">
-              {{ tc('指定日期') }}
-            </q-btn>
-
-          </div>
+        <div v-if="server.pay_type === 'postpaid'">
+          按量计费的云主机无需续期
         </div>
 
-        <div v-if="renewType === 'month'" class="row items-center">
-          <div class="col-2 text-grey-7">
-            续期时长
+        <div v-if="server.pay_type === 'prepaid'">
+
+          <div class="row q-pb-lg items-center ">
+            <div class="col-2 text-grey-7">
+              续期方式
+            </div>
+
+            <div class="col-10 q-gutter-x-sm">
+
+              <q-btn style="width: 170px;"
+                     :outline="renewType==='month'?false:true"
+                     :ripple="false" dense unelevated
+                     :color="renewType==='month'?'primary':'grey'"
+                     @click="renewType = 'month'">
+                {{ tc('指定续期时长') }}
+              </q-btn>
+
+              <q-btn style="width: 170px;"
+                     :outline="renewType==='date'?false:true"
+                     :ripple="false" dense unelevated
+                     :color="renewType==='date'?'primary':'grey'"
+                     @click="renewType = 'date'">
+                {{ tc('指定过期时间') }}
+              </q-btn>
+
+            </div>
           </div>
 
-          <div class="col-8 row items-start q-gutter-x-sm">
+          <div v-if="renewType === 'month'" class="row items-center">
+            <div class="col-2 text-grey-7">
+              续期时长
+            </div>
 
-            <q-input ref="monthInput"
-                     style="width: 160px;"
-                     outlined v-model.number="monthCount" input-class="text-center text-primary"
-                     :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
-                     :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
+            <div class="col-10 row items-start q-gutter-x-sm q-pt-md">
 
-              <template v-slot:prepend>
-                <q-icon name="remove" color="primary" @click="monthCount = (monthCount === 1 ? 1 : monthCount - 1)"
-                        class="cursor-pointer"/>
-              </template>
+              <q-input ref="monthInput"
+                       style="width: 347px;"
+                       outlined v-model.number="monthCount" input-class="text-center text-primary"
+                       :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
+                       :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
 
-              <template v-slot:append>
-                <q-icon name="add" color="primary" @click="monthCount = monthCount + 1" class="cursor-pointer"/>
-              </template>
+                <template v-slot:prepend>
+                  <q-icon name="remove" color="primary"
+                          @click="monthCount = (monthCount < 1 ? 1 : monthCount - 1)"
+                          class="cursor-pointer"/>
+                </template>
 
-            </q-input>
+                <template v-slot:append>
+                  <q-icon name="add" color="primary"
+                          @click="monthCount = (monthCount > MAX_MONTHS ? MAX_MONTHS : monthCount + 1)"
+                          class="cursor-pointer"/>
+                </template>
 
+              </q-input>
+
+            </div>
           </div>
-        </div>
 
-        <div v-if="renewType === 'date'" class="row items-center">
-          <div class="col-2 text-grey-7">
-            目标日期
-          </div>
+          <div v-if="renewType === 'date'" class="row items-center">
 
-          <div class="col-8 row items-start q-gutter-x-sm">
-            <q-input ref="dateInput" style="width: 160px;" v-model="dateSelect" type="date" outlined dense/>
+            <div class="col-2 text-grey-7 q-pt-md">
+              目标时间
+            </div>
+
+            <div class="col-10 row items-center q-gutter-x-sm q-pt-md">
+
+              <q-input ref="dateInput"
+                       style="width: 170px;"
+                       v-model="dateSelect"
+                       type="date"
+                       outlined
+                       dense/>
+
+              <q-input v-model="timeSelect"
+                       style="width: 170px;"
+                       type="time"
+                       outlined
+                       dense/>
+            </div>
           </div>
         </div>
 
@@ -274,8 +317,20 @@ const onOKClick = () => {
       <q-separator/>
 
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('创建订单')" @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               unelevated
+               :label="tc('创建订单')"
+               :disable="server.pay_type === 'postpaid'"
+               @click="onOKClick"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               unelevated
+               :label="tc('取消')"
+               @click="onDialogCancel"/>
+
       </q-card-actions>
     </q-card>
   </q-dialog>

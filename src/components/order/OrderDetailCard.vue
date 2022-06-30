@@ -29,6 +29,9 @@ const router = useRouter()
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 
+// 判断订单中涉及的云主机是否已经存在personal/group server table中。在的话可以展示相关信息。
+const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerTable.allIds.includes(order.value.resources[0].instance_id) : store.tables.personalServerTable.allIds.includes(order.value.resources[0].instance_id))
+
 // 复制信息到剪切板
 // const clickToCopy = useCopyToClipboard()
 // 获取os的icon名称
@@ -59,7 +62,7 @@ const getOsIconName = useGetOsIconName()
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto">订单号 {{ order.id }}</div>
+              <div class="col-auto">订单 {{ order.id }}</div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
@@ -89,6 +92,7 @@ const getOsIconName = useGetOsIconName()
                 </q-btn>
 
               </div>
+
             </div>
 
             <div class="row no-wrap justify-center items-center section" style="height: 160px;">
@@ -100,7 +104,7 @@ const getOsIconName = useGetOsIconName()
                 </div>
 
                 <div v-if="order.order_type === 'renewal'" class="col-auto text-bold text-h6">
-                  {{ tc('续费') }}
+                  {{ tc('续期') }}
                 </div>
 
                 <div v-if="order.order_type === 'upgrade'" class="col-auto text-bold text-h6">
@@ -172,41 +176,6 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <!--              <div class="col-3 q-pl-md column justify-center full-height">-->
-
-              <!--                <div class="row items-center">-->
-              <!--                  <div class="col-3 text-grey">订单ID</div>-->
-              <!--                  <div class="col-shrink">-->
-              <!--                    {{ order.id }}-->
-              <!--                  </div>-->
-              <!--                </div>-->
-
-              <!--                <div class="row items-center">-->
-              <!--                  <div class="col-3 text-grey">下单用户</div>-->
-              <!--                  <div class="col-shrink">-->
-              <!--                    {{ order.username }}-->
-              <!--                  </div>-->
-              <!--                </div>-->
-
-              <!--                <div v-if="isGroup" class="row items-center">-->
-              <!--                  <div class="col-3 text-grey">项目组</div>-->
-              <!--                  <div class="col-shrink">-->
-              <!--                    <q-btn-->
-              <!--                      color="primary"-->
-              <!--                      padding="none" flat dense unelevated-->
-              <!--                      :label="order.vo_name"-->
-              <!--                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">-->
-              <!--                      <q-tooltip>-->
-              <!--                        {{ tc('项目组详情') }}-->
-              <!--                      </q-tooltip>-->
-              <!--                    </q-btn>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-
-              <!--              </div>-->
-
-              <!--              <q-separator vertical/>-->
-
               <div class="col-4 q-pl-md column items-center justify-center full-height">
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
@@ -220,75 +189,30 @@ const getOsIconName = useGetOsIconName()
                   {{ tc('支付') }}
                 </q-btn>
 
-                <q-btn
-                  v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
-                  class="col-auto"
-                  color="primary"
-                  unelevated
-                  dense
-                  @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
-                  查看资源
-                </q-btn>
               </div>
 
             </div>
 
-            <!--            <div class="q-mt-lg text-grey">订单信息</div>-->
-            <!--            <div class="row justify-start section">-->
-            <!--              <div class="col-4">-->
+            <div class="row justify-between items-end q-mt-lg text-grey">
 
-            <!--                <div class="row items-center">-->
-            <!--                  <div class="col-3 text-grey">订单类型</div>-->
-            <!--                  <div class="col-shrink">-->
-            <!--                    {{-->
-            <!--                      order.order_type === 'new' ? '新购' : order.order_type === 'renewal' ? '续费' : order.order_type === 'upgrade' ? '升级' : '降级'-->
-            <!--                    }}-->
-            <!--                  </div>-->
-            <!--                </div>-->
+              <div class="col-auto">资源信息</div>
 
-            <!--                &lt;!&ndash;                <div class="row items-center">&ndash;&gt;-->
-            <!--                &lt;!&ndash;                  <div class="col-3 text-grey">计费方式</div>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                  <div class="col-shrink">&ndash;&gt;-->
-            <!--                &lt;!&ndash;                    {{ order.pay_type === 'prepaid' ? '包月预付' : '按量计费' }}&ndash;&gt;-->
-            <!--                &lt;!&ndash;                  </div>&ndash;&gt;-->
-            <!--                &lt;!&ndash;                </div>&ndash;&gt;-->
+              <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
-            <!--              </div>-->
+                <q-btn
+                  v-if="isServerExisted"
+                  class="col-auto"
+                  color="primary"
+                  flat
+                  dense
+                  @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
+                  查看资源
+                </q-btn>
 
-            <!--              <div class="col-4">-->
+              </div>
 
-            <!--                <div class="row items-center">-->
-            <!--                  <div class="col-3 text-grey">下单用户</div>-->
-            <!--                  <div class="col-shrink">-->
-            <!--                    {{ order.username }}-->
-            <!--                  </div>-->
-            <!--                </div>-->
+            </div>
 
-            <!--              </div>-->
-
-            <!--              <div class="col-4">-->
-
-            <!--                <div v-if="isGroup" class="row items-center">-->
-            <!--                  <div class="col-3 text-grey">所属项目组</div>-->
-            <!--                  <div class="col-shrink">-->
-            <!--                    <q-btn-->
-            <!--                      class="q-ma-none"-->
-            <!--                      color="primary"-->
-            <!--                      padding="none" flat dense unelevated-->
-            <!--                      :label="order.vo_name"-->
-            <!--                      @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">-->
-            <!--                      <q-tooltip>-->
-            <!--                        {{ tc('项目组详情') }}-->
-            <!--                      </q-tooltip>-->
-            <!--                    </q-btn>-->
-            <!--                  </div>-->
-            <!--                </div>-->
-
-            <!--              </div>-->
-
-            <!--            </div>-->
-
-            <div class="q-mt-lg text-grey">资源信息</div>
             <div class="justify-center section">
 
               <div class="row">
@@ -315,7 +239,7 @@ const getOsIconName = useGetOsIconName()
                     </div>
                   </div>
 
-                  <div v-if="order.status === 'paid'" class="row  items-center">
+                  <div v-if="isServerExisted" class="row  items-center">
                     <div class="col-3 text-grey">云主机ID</div>
                     <div class="col-shrink">
                       <div v-for="server in order.resources" :key="server.id">
@@ -328,18 +252,15 @@ const getOsIconName = useGetOsIconName()
 
                 <div class="col-4">
 
-                  <div
-                    v-if="(order.status === 'paid') && ( isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4)"
-                    class="row q-pb-md items-center">
+                  <div v-if="isServerExisted" class="row q-pb-md items-center">
 
-                    <div class="col-3 text-grey">IP地址
-                    </div>
+                    <div class="col-3 text-grey">IP地址</div>
                     <div class="col-shrink">
                       <q-btn flat color="primary" no-caps
                              padding="none"
-                             @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].id}`:`/my/server/personal/detail/${order.resources[0].id}`)">
+                             @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
                         {{
-                          isGroup ? store.tables.groupServerTable.byId[order.resources[0].id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].id]?.ipv4
+                          isGroup ? store.tables.groupServerTable.byId[order.resources[0].instance_id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].instance_id]?.ipv4
                         }}
                       </q-btn>
                     </div>
@@ -476,7 +397,7 @@ const getOsIconName = useGetOsIconName()
 
             </div>
 
-            <!--            <pre> {{ order }} </pre>-->
+            <!--                        <pre> {{ order }} </pre>-->
 
           </div>
         </div>

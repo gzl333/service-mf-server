@@ -98,13 +98,14 @@ module.exports = configure(function (ctx) {
           path: resolve(__dirname, 'dist/server') // @mimas: where to put all files but index.html (which goes with the distDir setting)
         }
 
-        // @mimas: dependencies that will be provided by root-config
+        // @mimas: dependencies that will be provided by root-config. These external libs will not be compiled into the js file.
         cfg.externals = [
           /^@cnic\/.+/, // @mimas: treat other micro frontends as in-browser modules
           'single-spa',
           'single-spa-vue',
           'axios',
-          'core-js'
+          'core-js',
+          'moment'
           // 'quasar'
           // '@quasar/extras',
           // 'pinia',

@@ -99,9 +99,18 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'type',
+    name: 'order_type',
+    label: i18n.global.locale === 'zh' ? '订单类型' : 'Order Type',
+    field: 'order_type',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'pay_type',
     label: i18n.global.locale === 'zh' ? '计费方式' : 'Payment Type',
-    field: 'type',
+    field: 'pay_type',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -267,8 +276,32 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             </div>
           </q-td>
 
-          <q-td key="type" :props="props">
-            {{ props.row.pay_type === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
+          <q-td key="order_type" :props="props">
+            <div v-if="props.row.order_type === 'new'">
+              {{ tc('新购') }}
+            </div>
+
+            <div v-if="props.row.order_type === 'renewal'">
+              {{ tc('续期') }}
+            </div>
+
+            <div v-if="props.row.order_type === 'upgrade'">
+              {{ tc('升级') }}
+            </div>
+
+            <div v-if="props.row.order_type === 'downgrade'">
+              {{ tc('降级') }}
+            </div>
+          </q-td>
+
+          <q-td key="pay_type" :props="props">
+            <div v-if="props.row.pay_type === 'prepaid'">
+              {{ tc('包月预付') }}
+            </div>
+
+            <div v-if="props.row.pay_type === 'postpaid'">
+              {{ tc('按量计费') }}
+            </div>
           </q-td>
 
           <q-td key="pay" :props="props">
