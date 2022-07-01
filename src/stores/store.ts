@@ -321,7 +321,7 @@ export interface CouponInterface {
   app_service?: {
     id: string
     name: string
-  },
+  }
   user?: {
     id: string
     username: string
@@ -1267,12 +1267,12 @@ export const useStore = defineStore('server', {
         void this.loadGroupMemberTable().then(() => {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
           // void this.loadGroupQuotaApplicationTable()
+          void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+          void this.loadGroupBalanceTable()
+          void this.loadGroupCouponTable()
+          // serverTable涉及到很多server status请求，应放在最后
+          void this.loadGroupServerTable()
         })
-        void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-        void this.loadGroupBalanceTable()
-        void this.loadGroupCouponTable()
-        // serverTable涉及到很多server status请求，应放在最后
-        void this.loadGroupServerTable()
       })
     },
     loadAllTables () {
@@ -1332,20 +1332,23 @@ export const useStore = defineStore('server', {
               // if (this.tables.groupQuotaApplicationTable.status === 'init') {
               //   void this.loadGroupQuotaApplicationTable()
               // }
+
+              if (this.tables.groupCouponTable.status === 'init') {
+                void this.loadGroupCouponTable()
+              }
+
+              if (this.tables.groupOrderTable.status === 'init') {
+                void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+              }
+              if (this.tables.groupBalanceTable.status === 'init') {
+                void this.loadGroupBalanceTable()
+              }
+
+              // serverTable涉及到很多server status请求，应放在最后
+              if (this.tables.groupServerTable.status === 'init') {
+                void this.loadGroupServerTable()
+              }
             })
-          }
-          if (this.tables.groupOrderTable.status === 'init') {
-            void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-          }
-          if (this.tables.groupBalanceTable.status === 'init') {
-            void this.loadGroupBalanceTable()
-          }
-          if (this.tables.groupCouponTable.status === 'init') {
-            void this.loadGroupCouponTable()
-          }
-          // serverTable涉及到很多server status请求，应放在最后
-          if (this.tables.groupServerTable.status === 'init') {
-            void this.loadGroupServerTable()
           }
         })
       }
@@ -1995,22 +1998,24 @@ export const useStore = defineStore('server', {
       }
       this.tables.groupCouponTable.status = 'loading'
       for (const groupId of this.tables.groupTable.allIds) {
-        if (this.tables.groupTable.byId[groupId].myRole !== 'member') { // 只有owner和leader才能拿到coupon list
-          const respCoupon = await api.server.cashcoupon.getCashCoupon({
-            query: {
-              page_size: 999,
-              vo_id: groupId
-            }
-          })
-          const coupon = new schema.Entity('coupon')
-          for (const data of respCoupon.data.results) {
-            const normalizedData = normalize(data, coupon)
-            Object.assign(this.tables.groupCouponTable.byId, normalizedData.entities.coupon)
-            this.tables.groupCouponTable.allIds.unshift(Object.keys(normalizedData.entities.coupon as Record<string, unknown>)[0])
-            this.tables.groupCouponTable.allIds = [...new Set(this.tables.groupCouponTable.allIds)]
-            // 把couponId补充到groupTable里
-            this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
+        // 校验用户角色，依赖role字段，因此必须在groupMemberTable之后加载
+        if (this.tables.groupTable.byId[groupId].myRole === 'member') { // 只有owner和leader才能拿到coupon list
+          continue
+        }
+        const respCoupon = await api.server.cashcoupon.getCashCoupon({
+          query: {
+            page_size: 999,
+            vo_id: groupId
           }
+        })
+        const coupon = new schema.Entity('coupon')
+        for (const data of respCoupon.data.results) {
+          const normalizedData = normalize(data, coupon)
+          Object.assign(this.tables.groupCouponTable.byId, normalizedData.entities.coupon)
+          this.tables.groupCouponTable.allIds.unshift(Object.keys(normalizedData.entities.coupon as Record<string, unknown>)[0])
+          this.tables.groupCouponTable.allIds = [...new Set(this.tables.groupCouponTable.allIds)]
+          // 把couponId补充到groupTable里
+          this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
         }
       }
       this.tables.groupCouponTable.status = 'total'

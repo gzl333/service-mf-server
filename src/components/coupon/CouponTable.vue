@@ -194,6 +194,14 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
           <q-td key="serviceNode" :props="props">
 
+<!--            <div v-if="props.row.app_service === null">-->
+
+<!--            </div>-->
+
+<!--            <div v-else>-->
+
+<!--            </div>-->
+
             <div>
               {{
                 i18n.global.locale === 'zh' ?
