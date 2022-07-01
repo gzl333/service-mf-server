@@ -6,7 +6,7 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 
 // import ButtonAdd from 'components/personal/ButtonAdd.vue'
-import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
+// import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -49,10 +49,10 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
 
               <div class="col-auto row justify-end items-center q-gutter-x-lg">
 
-                <div class="col-auto column items-end">
-                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>
-                  <CouponRedeemInput style="width: 185px;"/>
-                </div>
+<!--                <div class="col-auto column items-end">-->
+<!--                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
+<!--                  <CouponRedeemInput style="width: 185px;"/>-->
+<!--                </div>-->
 
                 <div class="col-auto column items-end">
                   <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('个人账户余额') }}</div>

@@ -1,0 +1,174 @@
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+// import { navigateToUrl } from 'single-spa'
+import { useStore } from 'stores/store'
+// import { useRoute, useRouter } from 'vue-router'
+import { i18n } from 'boot/i18n'
+import { Notify, useDialogPluginComponent } from 'quasar'
+// import moment from 'moment'
+
+// const props = defineProps({
+//   foo: {
+//     type: String,
+//     required: false,
+//     default: ''
+//   }
+// })
+// const emits = defineEmits(['change', 'delete'])
+defineEmits([...useDialogPluginComponent.emits])
+
+// const { tc } = i18n.global
+// const store = useStore()
+// const route = useRoute()
+// const router = useRouter()
+
+const { tc } = i18n.global
+const store = useStore()
+// const route = useRoute()
+// const router = useRouter()
+const {
+  dialogRef,
+  onDialogHide,
+  onDialogOK,
+  onDialogCancel
+} = useDialogPluginComponent()
+
+const redeemType = ref<'personal' | 'group'>('personal')
+const coupon = ref('')
+
+const groupOptions = computed(() => store.getGroupOptionsWithoutAll)
+const groupSelection = ref('0')
+
+const selectDefaultGroup = () => {
+  groupSelection.value = groupOptions.value[0].value
+}
+selectDefaultGroup()
+watch(groupOptions, selectDefaultGroup)
+
+const onOKClick = () => {
+  // 分割出id和coupon_code
+  const positionSplit = coupon.value.trim().indexOf('#')
+  const couponId = coupon.value.slice(0, positionSplit)
+  const couponCode = coupon.value.slice(positionSplit + 1)
+  // 校验coupon格式
+  if (positionSplit === -1 || couponId.length <= 0 || couponCode.length <= 0) {
+    // notify
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'mdi-alert',
+      textColor: 'negative',
+      message: `${tc('代金券输入有误，请检查输入')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return
+  }
+  // 发送请求
+  onDialogOK({
+    couponId,
+    couponCode,
+    ...(redeemType.value === 'group' && { groupId: groupSelection.value })
+  })
+}
+</script>
+
+<template>
+  <!-- notice dialogRef here -->
+  <q-dialog ref="dialogRef" @hide="onDialogHide">
+    <q-card class="q-dialog-plugin dialog-primary">
+
+      <q-card-section class="row items-center justify-center q-pb-md">
+        <div class="text-primary">{{ tc('兑换代金券') }}</div>
+        <q-space/>
+        <q-btn icon="close" flat dense size="sm" v-close-popup/>
+      </q-card-section>
+
+      <q-separator/>
+
+      <q-card-section>
+
+        <div class="row q-pb-lg items-center ">
+          <div class="col-2 text-grey-7">
+            兑换到
+          </div>
+
+          <div class="col-10 row justify-center ">
+
+            <q-btn class="col q-mr-sm"
+                   :outline="redeemType==='personal'?false:true"
+                   :ripple="false" dense unelevated
+                   :color="redeemType==='personal'?'primary':'grey'"
+                   @click="redeemType = 'personal'">
+              {{ tc('个人账户') }}
+            </q-btn>
+
+            <q-btn class="col"
+                   :outline="redeemType==='group'?false:true"
+                   :ripple="false" dense unelevated
+                   :color="redeemType==='group'?'primary':'grey'"
+                   @click="redeemType = 'group'">
+              {{ tc('项目组账户') }}
+            </q-btn>
+
+          </div>
+        </div>
+
+        <div v-if="redeemType === 'group'"
+             class="row q-pb-lg items-center">
+          <div class="col-2 text-grey-7">
+            项目组
+          </div>
+          <div class="col">
+            <q-select outlined dense stack-label v-model="groupSelection"
+                      :options="groupOptions" emit-value map-options option-value="value"
+                      :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
+              <!--当前选项的内容插槽-->
+              <template v-slot:selected-item="scope">
+                <span :class="groupSelection===scope.opt.value ? 'text-primary' : 'text-black'">
+                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}
+                </span>
+              </template>
+            </q-select>
+          </div>
+        </div>
+
+        <div class="row items-center">
+          <div class="col-2 text-grey-7">
+            兑换码
+          </div>
+          <div class="col">
+            <q-input outlined v-model="coupon" dense :label="tc('请输入兑换码')" >
+              <template v-slot:append>
+                <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
+              </template>
+            </q-input>
+          </div>
+        </div>
+
+      </q-card-section>
+
+<!--      <q-separator/>-->
+
+      <q-card-actions align="between">
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               unelevated
+               :label="tc('兑换')"
+               @click="onOKClick"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               unelevated
+               :label="tc('取消')"
+               @click="onDialogCancel"/>
+
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
+
+<style lang="scss" scoped>
+</style>

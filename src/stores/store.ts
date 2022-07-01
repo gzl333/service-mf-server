@@ -15,6 +15,7 @@ import GroupAddMemberDialog from 'components/group/GroupAddMemberDialog.vue'
 import OrderPayDialog from 'components/order/OrderPayDialog.vue'
 import OrderCancelDialog from 'components/order/OrderCancelDialog.vue'
 import OrderRenewDialog from 'components/order/OrderRenewDialog.vue'
+import RedeemCouponDialog from 'components/coupon/RedeemCouponDialog.vue'
 
 // @ts-expect-error
 import { useStoreMain } from '@cnic/main'
@@ -696,6 +697,21 @@ export const useStore = defineStore('server', {
         label: '全部项目组',
         labelEn: 'All Groups'
       })
+      return groupOptions
+    },
+    getGroupOptionsWithoutAll (state): { value: string; label: string; }[] {
+      let groupOptions = []
+      for (const group of Object.values(state.tables.groupTable.byId)) {
+        groupOptions.push(
+          {
+            value: group.id,
+            label: group.name,
+            labelEn: group.name
+          }
+        )
+      }
+      // 排序
+      groupOptions = groupOptions.sort((a, b) => -a.label.localeCompare(b.label, 'zh-CN'))
       return groupOptions
     },
     getGroupOptionsByMyRole: (state) => (roles: string[]): { value: string; label: string; }[] => {
@@ -3015,9 +3031,64 @@ export const useStore = defineStore('server', {
         }
       }
       )
-    }
+    },
     /* 续费下订单 */
     /* order */
+
+    /* coupon */
+    redeemCouponDialog () {
+      Dialog.create({
+        component: RedeemCouponDialog
+      }).onOk(async (val: {
+        couponId: string,
+        couponCode: string,
+        groupId?: string
+      }) => {
+        // 兑换代金券
+        try {
+          console.log(val)
+          const respPostCashCoupon = await api.server.cashcoupon.postCashCoupon({
+            query: {
+              id: val.couponId,
+              coupon_code: val.couponCode,
+              ...(val.groupId && { vo_id: val.groupId })
+            }
+          })
+          if (respPostCashCoupon.status.toString().startsWith('2')) {
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              textColor: 'positive',
+              icon: 'check_circle',
+              message: `${tc('成功兑换代金券')}: ${respPostCashCoupon.data.id}`,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+            // 更新对应表
+            val.groupId ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+            // 跳转
+            val.groupId ? navigateToUrl(`/my/server/group/detail/${val.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+          } else {
+            throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: error.message,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
+        }
+      })
+    }
+    /* coupon */
 
     /* dialogs */
   }

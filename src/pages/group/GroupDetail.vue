@@ -10,7 +10,7 @@ import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
 import OrderTable from 'components/order/OrderTable.vue'
 import CouponTable from 'components/coupon/CouponTable.vue'
-import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
+// import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -65,12 +65,12 @@ const tab = ref(show ?? 'server')
 
           <div v-else class="col">
 
-            <div class="row items-center justify-between q-pt-lg">
+            <div class="row items-center justify-end q-pt-lg">
 
-              <div class="col-auto column items-start">
-                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>
-                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>
-              </div>
+<!--              <div class="col-auto column items-start">-->
+<!--                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
+<!--                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>-->
+<!--              </div>-->
 
               <div class="col-auto column items-end">
                 <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('项目组账户余额') }}</div>
