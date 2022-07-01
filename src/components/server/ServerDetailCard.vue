@@ -367,7 +367,7 @@ const gotoManualVpn = () => {
                   <div class="col-3 text-grey">所属组</div>
                   <div class="col-shrink">
                     <q-btn flat dense color="primary" padding="none"
-                           :to="{path:  `/my/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
+                           :to="{path:  `/my/server/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
                       {{ store.tables.groupTable.byId[server.vo_id].name }}
                       <q-tooltip>
                         项目组详情
