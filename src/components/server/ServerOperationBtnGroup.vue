@@ -71,6 +71,23 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
             </div>
           </q-item>
 
+          <div v-if="server.pay_type === 'prepaid'">
+            <q-item v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
+                    clickable v-close-popup class="bg-white text-primary"
+                    @click="store.renewOrderDialog(server.id, isGroup)">
+              <div class="row">
+                <q-item-section class="col-auto">
+                  <q-icon name="autorenew" size="sm"/>
+                </q-item-section>
+                <q-item-section class="col-auto">
+                  <q-item-label>
+                    {{ tc('云主机续期') }}
+                  </q-item-label>
+                </q-item-section>
+              </div>
+            </q-item>
+          </div>
+
           <q-separator/>
 
           <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-primary"

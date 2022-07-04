@@ -39,7 +39,7 @@ const { tc } = i18n.global
 const columns = computed(() => [
   {
     name: 'ip',
-    label: i18n.global.locale === 'zh' ? 'IP地址' : 'IP Address',
+    label: (() => tc('IP地址'))(),
     field: 'ip',
     align: 'center',
     classes: 'ellipsis',
@@ -48,7 +48,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: i18n.global.locale === 'zh' ? '所属组' : 'Group',
+    label: (() => tc('所属组'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -57,7 +57,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'serviceNode',
-    label: i18n.global.locale === 'zh' ? '服务节点' : 'Service Node',
+    label: (() => tc('服务节点'))(),
     field: 'serviceNode',
     align: 'center',
     classes: 'ellipsis',
@@ -66,7 +66,7 @@ const columns = computed(() => [
   },
   {
     name: 'image',
-    label: i18n.global.locale === 'zh' ? '操作系统' : 'OS',
+    label: (() => tc('操作系统'))(),
     field: 'image',
     align: 'center',
     classes: 'ellipsis',
@@ -75,7 +75,7 @@ const columns = computed(() => [
   },
   {
     name: 'configuration',
-    label: i18n.global.locale === 'zh' ? '配置' : 'Configuration',
+    label: (() => tc('配置'))(),
     field: 'configuration',
     align: 'center',
     classes: 'ellipsis',
@@ -83,9 +83,9 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'expiration',
-    label: i18n.global.locale === 'zh' ? '到期时间' : 'Expiration Time',
-    field: 'expiration',
+    name: 'billing',
+    label: (() => tc('计费方式'))(),
+    field: 'billing',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -93,7 +93,7 @@ const columns = computed(() => [
   },
   {
     name: 'note',
-    label: i18n.global.locale === 'zh' ? '备注' : 'Note',
+    label: (() => tc('备注'))(),
     field: 'note',
     align: 'center',
     classes: 'ellipsis',
@@ -102,7 +102,7 @@ const columns = computed(() => [
   },
   {
     name: 'vnc',
-    label: i18n.global.locale === 'zh' ? '远程控制' : 'Console',
+    label: (() => tc('远程控制'))(),
     field: 'vnc',
     align: 'center',
     classes: 'ellipsis',
@@ -111,7 +111,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: i18n.global.locale === 'zh' ? '状态' : 'Status',
+    label: (() => tc('状态'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -119,7 +119,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: i18n.global.locale === 'zh' ? '操作' : 'Operations',
+    label: (() => tc('操作'))(),
     field: 'operation',
     align: 'center',
     classes: 'ellipsis',
@@ -162,13 +162,13 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
       row-key="name"
       :loading="isGroup ? store.tables.groupServerTable.status === 'loading' : store.tables.personalServerTable.status === 'loading' "
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="暂无云主机"
+      :loading-label="tc('网络请求中，请稍候...')"
+      :no-data-label="tc('暂无云主机')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      no-results-label="无搜索结果"
+      :no-results-label="tc('无搜索结果')"
     >
 
       <template v-slot:body="props">
@@ -284,27 +284,61 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             <div>{{ props.row.ram / 1024 }}GB</div>
           </q-td>
 
-          <q-td key="expiration" :props="props">
-            <div v-if="!props.row.expiration_time">
-              {{ tc('长期') }}
+          <q-td key="billing" :props="props">
+
+            <div v-if="props.row.pay_type === 'postpaid'">
+              {{ tc('按量计费') }}
             </div>
-            <div v-else>
-              <!--              日期时间格式根据locale值变化-->
-              <div v-if="i18n.global.locale==='zh'">
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+
+            <div v-if="props.row.pay_type === 'prepaid'">
+              <div class="column items-center">
+                <div class="col-auto">
+                  {{ tc('包月预付') }}
+
+                  <q-tooltip class="text-center">
+
+                    {{ tc('到期时间') }}
+                    <!--              日期时间格式根据locale值变化-->
+                    <div v-if="i18n.global.locale==='zh'">
+                      <div>{{
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0]
+                        }}
+                      </div>
+                      <div>{{
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1]
+                        }}
+                      </div>
+                    </div>
+
+                    <div v-else>
+                      <div>{{
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0]
+                        }}
+                      </div>
+                      <div>{{
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1]
+                        }}
+                      </div>
+                    </div>
+
+                  </q-tooltip>
+                </div>
+
+                <div class="col-auto" v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0">
+                  <q-icon name="help_outline" color="red" size="xs">
+                    <q-tooltip>{{ tc('云主机已到期，请及时续期') }}</q-tooltip>
+                  </q-icon>
+                </div>
+
               </div>
 
-              <div v-else>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
-              </div>
+              <!--              <q-btn class="col-auto" color="primary" padding="none" icon="autorenew" :ripple="false" dense flat-->
+              <!--                     @click="store.renewOrderDialog(props.row.id, isGroup)">-->
+              <!--                <q-tooltip> {{ tc('续期') }}</q-tooltip>-->
+              <!--              </q-btn>-->
 
-              <!--              <q-icon v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0"-->
-              <!--                      name="help_outline" color="red" size="xs">-->
-              <!--                <q-tooltip>{{ tc('云主机已到期') }}</q-tooltip>-->
-              <!--              </q-icon>-->
             </div>
+
           </q-td>
 
           <q-td key="creator" :props="props">
@@ -365,11 +399,11 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
     </q-table>
 
-<!--    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">-->
-<!--      <q-btn fab icon="keyboard_arrow_up" color="primary"/>-->
-<!--    </q-page-scroller>-->
+    <!--    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">-->
+    <!--      <q-btn fab icon="keyboard_arrow_up" color="primary"/>-->
+    <!--    </q-page-scroller>-->
 
-<!--    <q-separator/>-->
+    <!--    <q-separator/>-->
   </div>
 </template>
 

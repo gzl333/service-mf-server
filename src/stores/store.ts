@@ -3046,7 +3046,6 @@ export const useStore = defineStore('server', {
       }) => {
         // 兑换代金券
         try {
-          console.log(val)
           const respPostCashCoupon = await api.server.cashcoupon.postCashCoupon({
             query: {
               id: val.couponId,

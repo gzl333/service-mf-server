@@ -474,10 +474,14 @@ const gotoManualVpn = () => {
                         server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '长期'
                       }}
                     </div>
-                    <q-btn class="col-auto" color="primary" padding="none" icon="autorenew" :ripple="false" dense flat
-                           @click="store.renewOrderDialog(server.id, isGroup)">
-                      {{ tc('续期') }}
-                    </q-btn>
+                    <div v-if="server.pay_type === 'prepaid'" class="col-auto">
+                      <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
+                             color="primary" padding="none" icon="autorenew" :ripple="false" dense flat
+                             @click="store.renewOrderDialog(server.id, isGroup)">
+                        {{ tc('续期') }}
+                      </q-btn>
+                    </div>
+
                     <!--                    <q-icon-->
                     <!--                      v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
                     <!--                      name="help_outline" color="red" size="xs">-->

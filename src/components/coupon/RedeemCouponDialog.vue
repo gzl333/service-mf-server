@@ -4,7 +4,7 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import { Notify, useDialogPluginComponent } from 'quasar'
+import { Notify, QInput, useDialogPluginComponent } from 'quasar'
 // import moment from 'moment'
 
 // const props = defineProps({
@@ -33,11 +33,14 @@ const {
   onDialogCancel
 } = useDialogPluginComponent()
 
+// dom ref
+const inputDom = ref<QInput>()
+
 const redeemType = ref<'personal' | 'group'>('personal')
 const coupon = ref('')
 
 const groupOptions = computed(() => store.getGroupOptionsWithoutAll)
-const groupSelection = ref('0')
+const groupSelection = ref('')
 
 const selectDefaultGroup = () => {
   groupSelection.value = groupOptions.value[0].value
@@ -57,7 +60,22 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('代金券输入有误，请检查输入')}`,
+      message: `${tc('兑换码输入有误，请检查输入')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    inputDom.value?.focus()
+    return
+  }
+  // 校验项目组选择
+  if (redeemType.value === 'group' && groupOptions.value.length === 0) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'mdi-alert',
+      textColor: 'negative',
+      message: `${tc('暂无可用项目组，请先创建或加入项目组')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -87,7 +105,7 @@ const onOKClick = () => {
 
       <q-separator/>
 
-      <q-card-section>
+      <q-card-section style="height: 180px;">
 
         <div class="row q-pb-lg items-center ">
           <div class="col-2 text-grey-7">
@@ -139,7 +157,7 @@ const onOKClick = () => {
             兑换码
           </div>
           <div class="col">
-            <q-input outlined v-model="coupon" dense :label="tc('请输入兑换码')" >
+            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('请输入兑换码')" @keydown.enter="onOKClick">
               <template v-slot:append>
                 <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
               </template>
@@ -149,7 +167,7 @@ const onOKClick = () => {
 
       </q-card-section>
 
-<!--      <q-separator/>-->
+      <!--      <q-separator/>-->
 
       <q-card-actions align="between">
 
@@ -157,7 +175,8 @@ const onOKClick = () => {
                color="primary"
                unelevated
                :label="tc('兑换')"
-               @click="onOKClick"/>
+               @click="onOKClick"
+        />
 
         <q-btn class="q-ma-sm"
                color="primary"
