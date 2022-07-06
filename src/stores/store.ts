@@ -924,7 +924,7 @@ export const useStore = defineStore('server', {
         }
       })
       services.unshift({
-        value: '',
+        value: '0',
         label: '全部服务节点',
         labelEn: 'All Service Nodes'
       })
