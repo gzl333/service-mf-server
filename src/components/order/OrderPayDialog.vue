@@ -35,29 +35,17 @@ const {
 
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 const coupons = computed(() => {
-  if (props.isGroup) {
-    return Object.values(store.tables.groupCouponTable.byId)
-    // 筛选本组的coupon
-      .filter(coupon => coupon?.vo?.id === order.value.vo_id)
-    // 筛选能适用当前server -> serviceId -> app_service_id的coupon
-      .filter(coupon => coupon?.app_service?.id === store.tables.serviceTable.byId[order.value.service_id].pay_app_service_id)
-    // todo 筛选过期
-    // 映射为couponId，供option group使用
-      .map(coupon => ({
-        label: coupon.id,
-        value: coupon.id
-      }))
-  } else {
-    return Object.values(store.tables.personalCouponTable.byId)
-    // 筛选能适用当前server -> serviceId -> app_service_id的coupon
-      .filter(coupon => coupon?.app_service?.id === store.tables.serviceTable.byId[order.value.service_id].pay_app_service_id)
-    // todo 筛选过期
-    // 映射为couponId，供option group使用
-      .map(coupon => ({
-        label: coupon.id,
-        value: coupon.id
-      }))
-  }
+  const coupons = props.isGroup ? Object.values(store.tables.groupCouponTable.byId).filter(coupon => coupon?.vo?.id === order.value.vo_id) : Object.values(store.tables.personalCouponTable.byId)
+  return coupons
+  // 筛选能适用当前server -> serviceId -> app_service_id的coupon
+    .filter(coupon => coupon?.app_service?.service_id === order.value.service_id)
+  // 筛选有效期
+    .filter(coupon => (Date.now() - new Date(coupon.expiration_time).getTime()) < 0)
+  // 映射为couponId，供option group使用
+    .map(coupon => ({
+      label: coupon.id,
+      value: coupon.id
+    }))
 }
 )
 
@@ -236,7 +224,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
       </q-card-actions>
 
-      <pre> {{ coupons }}</pre>
+      <!--      <pre> {{ coupons }}</pre>-->
     </q-card>
   </q-dialog>
 </template>

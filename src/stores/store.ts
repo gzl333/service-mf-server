@@ -322,6 +322,7 @@ export interface CouponInterface {
   app_service?: {
     id: string
     name: string
+    service_id?: string
   }
   user?: {
     id: string
