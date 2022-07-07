@@ -312,14 +312,14 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               </q-btn>
 
               <q-btn
-                v-if="(!isGroup || store.tables.groupTable.byId[props.groupId]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
                 icon="currency_yen" flat dense padding="none" color="primary"
                 @click="store.payOrderDialog(props.row.id, isGroup)">
                 {{ tc('支付订单') }}
               </q-btn>
 
               <q-btn
-                v-if="(!isGroup || store.tables.groupTable.byId[props.groupId]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
                 icon="close" flat dense padding="none" color="primary"
                 @click="store.cancelOrderDialog(props.row.id, isGroup)">
                 {{ tc('取消订单') }}

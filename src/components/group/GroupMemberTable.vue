@@ -121,13 +121,13 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
 
           <q-td key="operation" :props="props">
             <div class="column justify-center items-center q-gutter-xs">
-              <q-btn v-if="store.tables.groupTable.byId[props.groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat dense padding="none"
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat dense padding="none"
                      color="primary"
                      @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row.id, role:'leader', role_name: '管理员'})">
                 {{ tc('设为管理员') }}
               </q-btn>
 
-              <q-btn v-if="store.tables.groupTable.byId[props.groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat dense padding="none" color="primary"
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat dense padding="none" color="primary"
                      @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row.id, role:'member', role_name: '组员'})">
                 {{ tc('取消管理员') }}
               </q-btn>
