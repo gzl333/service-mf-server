@@ -211,6 +211,11 @@ const tab = ref(show ?? 'server')
                         <q-tooltip>编辑项目组信息</q-tooltip>
                       </q-btn>
 
+                      <q-btn icon="add" flat padding="none" color="primary" size="md"
+                             @click="store.addGroupMemberDialog(groupId)">
+                        <q-tooltip>增加成员</q-tooltip>
+                      </q-btn>
+
                       <q-btn v-if="group.myRole ==='owner'" icon="group_off" flat padding="none"
                              color="primary" size="md"
                              @click="store.deleteGroupDialog(groupId)">

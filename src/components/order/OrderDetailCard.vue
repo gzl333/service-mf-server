@@ -81,10 +81,10 @@ const getOsIconName = useGetOsIconName()
 
                 <div class="col-auto">下单用户 {{ order.username }}</div>
 
-                <q-btn v-if="order.status === 'unpaid'"
+                <q-btn v-if="(!isGroup || store.tables.groupTable.byId[props.groupId]?.myRole !== 'member') && order.status === 'unpaid'"
                        class="col-auto"
                        color="primary"
-                       :padding="none"
+                       padding="none"
                        flat
                        dense
                        @click="store.cancelOrderDialog(order.id, isGroup)">
@@ -180,7 +180,7 @@ const getOsIconName = useGetOsIconName()
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 
-                <q-btn v-if="order.status === 'unpaid'"
+                <q-btn v-if="(!isGroup || store.tables.groupTable.byId[props.groupId]?.myRole !== 'member') && order.status === 'unpaid'"
                        class="col-auto"
                        color="primary"
                        size="md"

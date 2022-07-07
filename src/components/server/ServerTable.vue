@@ -355,8 +355,8 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               </div>
 
               <q-btn
-                :disable="props.row.lock === 'lock-operation'"
                 v-if="hoverRow === props.row.name && (!isGroup || (isGroup && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
+                :disable="props.row.lock === 'lock-operation'"
                 class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
                 @click="store.editServerNoteDialog({serverId:props.row.id, isGroup})">
                 <q-tooltip>

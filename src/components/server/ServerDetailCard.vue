@@ -96,7 +96,7 @@ const gotoManualVpn = () => {
                     </q-tooltip>
                     <!--创建时间距离当下小于1小时则打上new标记-->
                     <q-badge style="top:-10px;"
-                             v-if="(new Date() - new Date(server.creation_time)) < 1000 * 60 * 60 * 1 "
+                             v-if="(new Date() - new Date(server.creation_time).getTime()) < 1000 * 60 * 60 * 1 "
                              color="light-green" floating transparent rounded align="middle">
                       new
                     </q-badge>

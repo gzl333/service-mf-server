@@ -414,7 +414,7 @@ const deployServer = async () => {
 
           </div>
 
-          <q-separator class="q-my-md" v-if="index !== (dataCenters.length - 1)"/>
+          <q-separator class="q-my-md" style="margin-left: 250px;" v-if="index !== (dataCenters.length - 1)"/>
 
         </div>
       </div>
