@@ -37,7 +37,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'id',
-    label: i18n.global.locale === 'zh' ? '订单ID' : 'Order ID',
+    label: (() => tc('订单ID'))(),
     field: 'id',
     align: 'center',
     classes: 'ellipsis',
@@ -46,7 +46,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: i18n.global.locale === 'zh' ? '所属组' : 'Group',
+    label: (() => tc('所属组'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'service',
-    label: i18n.global.locale === 'zh' ? '服务节点' : 'Service Node',
+    label: (() => tc('服务节点'))(),
     field: 'service',
     align: 'center',
     classes: 'ellipsis',
@@ -64,7 +64,7 @@ const columns = computed(() => [
   },
   {
     name: 'config',
-    label: i18n.global.locale === 'zh' ? '资源配置' : 'Configuration',
+    label: (() => tc('硬件配置'))(),
     field: 'config',
     align: 'center',
     classes: 'ellipsis',
@@ -73,25 +73,16 @@ const columns = computed(() => [
   },
   {
     name: 'network',
-    label: i18n.global.locale === 'zh' ? '网络类型' : 'Network',
+    label: (() => tc('网络类型'))(),
     field: 'network',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 2px'
   },
-  // {
-  //   name: 'total',
-  //   label: i18n.global.locale === 'zh' ? '订单金额' : 'Order Due',
-  //   field: 'total',
-  //   align: 'center',
-  //   classes: 'ellipsis',
-  //   headerStyle: 'padding: 0 0 0 1px',
-  //   style: 'max-width: 100px;padding: 15px 0px'
-  // },
   {
     name: 'time',
-    label: i18n.global.locale === 'zh' ? '下单时间' : 'Time',
+    label: (() => tc('下单时间'))(),
     field: 'time',
     align: 'center',
     classes: 'ellipsis',
@@ -100,7 +91,7 @@ const columns = computed(() => [
   },
   {
     name: 'order_type',
-    label: i18n.global.locale === 'zh' ? '订单类型' : 'Order Type',
+    label: (() => tc('订单类型'))(),
     field: 'order_type',
     align: 'center',
     classes: 'ellipsis',
@@ -109,7 +100,7 @@ const columns = computed(() => [
   },
   {
     name: 'pay_type',
-    label: i18n.global.locale === 'zh' ? '计费方式' : 'Payment Type',
+    label: (() => tc('计费方式'))(),
     field: 'pay_type',
     align: 'center',
     classes: 'ellipsis',
@@ -118,7 +109,7 @@ const columns = computed(() => [
   },
   {
     name: 'pay',
-    label: i18n.global.locale === 'zh' ? '订单金额' : 'Payment',
+    label: (() => tc('订单金额'))(),
     field: 'pay',
     align: 'center',
     classes: 'ellipsis',
@@ -127,7 +118,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: i18n.global.locale === 'zh' ? '状态' : 'Status',
+    label: (() => tc('状态'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -135,7 +126,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: i18n.global.locale === 'zh' ? '操作' : 'Operations',
+    label: (() => tc('操作'))(),
     field: 'operation',
     align: 'center',
     classes: 'ellipsis',

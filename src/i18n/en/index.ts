@@ -10,7 +10,7 @@ export default {
   返回: 'Go Back',
 
   // menu
-  云主机: 'Cloud Server',
+  云主机: 'Servers',
   个人: 'Personal',
   项目组: 'Group',
   订单: 'Orders',
@@ -28,6 +28,7 @@ export default {
   筛选服务节点: 'Service Node Filter',
   个人云主机: 'Personal Servers',
 
+  // server table
   包月预付: 'Pre-Paid',
   按量计费: 'Post-Paid',
   IP地址: 'IP Address',
@@ -41,7 +42,45 @@ export default {
   状态: 'Status',
   操作: 'Operations',
 
-  // 通用翻译点，全局统一的翻译
+  // coupon table
+  代金券ID: 'Coupon ID',
+  // 所属组: 'Group',
+  // 服务节点: 'Service Node',
+  兑换日期: 'Redeem Time',
+  失效日期: 'Expiration Time',
+  原始面额: 'Original Value',
+  可用余额: 'Balance',
+  // 状态: 'Status',
+
+  // group table
+  我的角色: 'My Role',
+  // 所属组: 'Group',
+  所属单位: 'Organization',
+  // 备注: 'Note',
+  创建时间: 'Creation Time',
+  成员: 'Members',
+  // 云主机: 'Servers',
+  // 订单: 'Orders',
+  代金券: 'Coupons',
+  余额: 'Balance',
+  // 操作: 'Operations',
+
+  // group member table
+  用户名: 'Username',
+  角色: 'Role',
+  加入时间: 'Join Time',
+  邀请人: 'Inviter',
+  // 操作: 'Operations',
+
+  // order table
+  订单ID: 'Order ID',
+  // 所属组: 'Group',
+  硬件配置: 'Configuration',
+  网络类型: 'Network',
+  下单时间: 'Placed Time',
+  订单类型: 'Order Type',
+  // 计费方式: 'Payment Type',
+  订单金额: 'Order Amount',
 
   // 独立翻译点,按照工程文件结构组织
   components: {

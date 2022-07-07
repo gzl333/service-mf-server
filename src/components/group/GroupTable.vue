@@ -29,7 +29,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'role',
-    label: i18n.global.locale === 'zh' ? '我的角色' : 'My Role',
+    label: (() => tc('我的角色'))(),
     field: 'role',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -37,7 +37,7 @@ const columns = computed(() => [
   },
   {
     name: 'name',
-    label: i18n.global.locale === 'zh' ? '项目组名称' : 'Group',
+    label: (() => tc('所属组'))(),
     field: 'name',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 200px;white-space: normal;',
@@ -45,7 +45,7 @@ const columns = computed(() => [
   },
   {
     name: 'company',
-    label: i18n.global.locale === 'zh' ? '所属单位' : 'Organization',
+    label: (() => tc('所属单位'))(),
     field: 'company',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
@@ -53,7 +53,7 @@ const columns = computed(() => [
   },
   {
     name: 'desc',
-    label: i18n.global.locale === 'zh' ? '备注' : 'Note',
+    label: (() => tc('备注'))(),
     field: 'desc',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
@@ -61,7 +61,7 @@ const columns = computed(() => [
   },
   {
     name: 'creation_time',
-    label: i18n.global.locale === 'zh' ? '创建时间' : 'Creation Time',
+    label: (() => tc('创建时间'))(),
     field: 'creation_time',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -69,7 +69,7 @@ const columns = computed(() => [
   },
   {
     name: 'member',
-    label: i18n.global.locale === 'zh' ? '成员' : 'Members',
+    label: (() => tc('成员'))(),
     field: 'member',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -77,7 +77,7 @@ const columns = computed(() => [
   },
   {
     name: 'server',
-    label: i18n.global.locale === 'zh' ? '云主机' : 'Servers',
+    label: (() => tc('云主机'))(),
     field: 'server',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -85,7 +85,7 @@ const columns = computed(() => [
   },
   {
     name: 'order',
-    label: i18n.global.locale === 'zh' ? '订单' : 'Orders',
+    label: (() => tc('订单'))(),
     field: 'order',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -93,7 +93,7 @@ const columns = computed(() => [
   },
   {
     name: 'coupon',
-    label: i18n.global.locale === 'zh' ? '代金券' : 'Coupon',
+    label: (() => tc('代金券'))(),
     field: 'coupon',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -101,7 +101,7 @@ const columns = computed(() => [
   },
   {
     name: 'balance',
-    label: i18n.global.locale === 'zh' ? '余额' : 'Balance',
+    label: (() => tc('余额'))(),
     field: 'balance',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -109,7 +109,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: i18n.global.locale === 'zh' ? '操作' : 'Operations',
+    label: (() => tc('操作'))(),
     field: 'operation',
     align: 'center',
     style: 'padding: 15px 0px; height: 105px;', // 每一行被此处撑开，决定行高

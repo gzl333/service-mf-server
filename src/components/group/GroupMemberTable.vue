@@ -23,7 +23,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'username',
-    label: i18n.global.locale === 'zh' ? '用户名' : 'Username',
+    label: (() => tc('用户名'))(),
     field: 'username',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -31,7 +31,7 @@ const columns = computed(() => [
   },
   {
     name: 'role',
-    label: i18n.global.locale === 'zh' ? '角色' : 'Role',
+    label: (() => tc('角色'))(),
     field: 'role',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -39,7 +39,7 @@ const columns = computed(() => [
   },
   {
     name: 'time',
-    label: i18n.global.locale === 'zh' ? '加入时间' : 'Join Time',
+    label: (() => tc('加入时间'))(),
     field: 'time',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -47,7 +47,7 @@ const columns = computed(() => [
   },
   {
     name: 'inviter',
-    label: i18n.global.locale === 'zh' ? '邀请人' : 'Inviter',
+    label: (() => tc('邀请人'))(),
     field: 'inviter',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   },
   ...(store.tables.groupTable.byId[props.groupId].myRole === 'owner' ? [{
     name: 'operation',
-    label: i18n.global.locale === 'zh' ? '操作' : 'Operations',
+    label: (() => tc('操作'))(),
     field: 'operation',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -149,7 +149,7 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
     </q-table>
 
     <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-      <q-btn fab icon="keyboard_arrow_up" color="primary" />
+      <q-btn fab icon="keyboard_arrow_up" color="primary"/>
     </q-page-scroller>
 
     <q-separator/>

@@ -37,7 +37,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'id',
-    label: i18n.global.locale === 'zh' ? '代金券ID' : 'Coupon ID',
+    label: (() => tc('代金券ID'))(),
     field: 'id',
     align: 'center',
     classes: 'ellipsis',
@@ -46,7 +46,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: i18n.global.locale === 'zh' ? '所属组' : 'Group',
+    label: (() => tc('所属组'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'serviceNode',
-    label: i18n.global.locale === 'zh' ? '服务节点' : 'Service Node',
+    label: (() => tc('服务节点'))(),
     field: 'serviceNode',
     align: 'center',
     classes: 'ellipsis',
@@ -64,7 +64,7 @@ const columns = computed(() => [
   },
   {
     name: 'redeemTime',
-    label: i18n.global.locale === 'zh' ? '兑换日期' : 'Redeem Time',
+    label: (() => tc('兑换日期'))(),
     field: 'redeemTime',
     align: 'center',
     classes: 'ellipsis',
@@ -73,7 +73,7 @@ const columns = computed(() => [
   },
   {
     name: 'expirationTime',
-    label: i18n.global.locale === 'zh' ? '失效日期' : 'Expiration Time',
+    label: (() => tc('失效日期'))(),
     field: 'expirationTime',
     align: 'center',
     classes: 'ellipsis',
@@ -82,7 +82,7 @@ const columns = computed(() => [
   },
   {
     name: 'face',
-    label: i18n.global.locale === 'zh' ? '原始面额' : 'Original Value',
+    label: (() => tc('原始面额'))(),
     field: 'face',
     align: 'center',
     classes: 'ellipsis',
@@ -91,7 +91,7 @@ const columns = computed(() => [
   },
   {
     name: 'balance',
-    label: i18n.global.locale === 'zh' ? '可用余额' : 'Balance',
+    label: (() => tc('可用余额'))(),
     field: 'balance',
     align: 'center',
     classes: 'ellipsis',
@@ -100,7 +100,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: i18n.global.locale === 'zh' ? '状态' : 'Status',
+    label: (() => tc('状态'))(),
     field: 'status',
     align: 'center',
     classes: 'ellipsis',
