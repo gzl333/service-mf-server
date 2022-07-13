@@ -1685,9 +1685,10 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.serviceNetworkTable.status = 'loading'
-      try {
-        for (const serviceId of this.tables.serviceTable.allIds) {
-          const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+      // try {
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+        if (respNetwork.status === 200) {
           for (const network of respNetwork.data) {
             // 将service 和 localId补充进network对象
             Object.assign(network, {
@@ -1699,11 +1700,14 @@ export const useStore = defineStore('server', {
             this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
             this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
           }
+        } else {
+          continue
         }
-        this.tables.serviceNetworkTable.status = 'total'
-      } catch (e) {
-        this.tables.serviceNetworkTable.status = 'error'
       }
+      this.tables.serviceNetworkTable.status = 'total'
+      // } catch (e) {
+      //   this.tables.serviceNetworkTable.status = 'error'
+      // }
     },
     async loadServiceImageTable () {
       this.tables.serviceImageTable = {
@@ -1712,9 +1716,10 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.serviceImageTable.status = 'loading'
-      try {
-        for (const serviceId of this.tables.serviceTable.allIds) {
-          const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+      // try {
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+        if (respImage.status === 200) {
           for (const image of respImage.data) {
             // 将service 和 localId补充进image对象
             Object.assign(image, {
@@ -1725,11 +1730,14 @@ export const useStore = defineStore('server', {
             this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
             this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
           }
+        } else {
+          continue
         }
-        this.tables.serviceImageTable.status = 'total'
-      } catch (e) {
-        this.tables.serviceImageTable.status = 'error'
       }
+      this.tables.serviceImageTable.status = 'total'
+      // } catch (e) {
+      //   this.tables.serviceImageTable.status = 'error'
+      // }
     },
     async loadUserVpnTable () {
       this.tables.userVpnTable = {
@@ -1738,20 +1746,24 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.userVpnTable.status = 'loading'
-      try {
-        for (const serviceId of this.tables.serviceTable.allIds) {
-          if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
-            const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
+      // try {
+      for (const serviceId of this.tables.serviceTable.allIds) {
+        if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
+          const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
+          if (respVpn.status === 200) {
             Object.assign(respVpn.data.vpn, { id: serviceId })
             Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
             this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
             this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+          } else {
+            continue
           }
         }
-        this.tables.userVpnTable.status = 'total'
-      } catch (e) {
-        this.tables.userVpnTable.status = 'error'
       }
+      this.tables.userVpnTable.status = 'total'
+      // } catch (e) {
+      //   this.tables.userVpnTable.status = 'error'
+      // }
     },
     // async loadPersonalQuotaTable () {
     //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
