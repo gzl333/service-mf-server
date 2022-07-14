@@ -72,18 +72,52 @@ const inputRemarks = ref('')
 * 选择动作在ts部分，radio真正选择了哪些值 */
 
 // radio默认选择 (2)
-const chooseRadioDefaults = () => {
+// const chooseRadioDefaults = () => {
+//   radioGroup.value = props.groupId || groups.value[0]?.id || ''
+//   radioService.value = props.serviceId || services.value[0]?.id || ''
+//   radioNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+//   radioImage.value = images.value[0]?.id || ''
+//   radioFlavor.value = flavors.value[0]?.id || ''
+// }
+const chooseGroup = () => {
   radioGroup.value = props.groupId || groups.value[0]?.id || ''
+}
+const chooseService = () => {
   radioService.value = props.serviceId || services.value[0]?.id || ''
+}
+const chooseNetwork = () => {
   radioNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+}
+const chooseImage = () => {
   radioImage.value = images.value[0]?.id || ''
+}
+const chooseFlavor = () => {
   radioFlavor.value = flavors.value[0]?.id || ''
 }
-// setup时调用一次 (3) table已加载时进入页面要选一次默认值
-chooseRadioDefaults()
-// 根据table的变化情况再调用 (4) table未加载时进入页面，每变化一次都要选一次默认值
-watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseRadioDefaults)
+
+// setup时调用一次 (3) table已加载时，从别的页面进入本页面要选一次默认值
+// chooseRadioDefaults()
+chooseGroup()
+chooseService()
+chooseNetwork()
+chooseImage()
+chooseFlavor()
 /* table 进入页面过程中选择默认项 */
+
+// (4)刷新页面，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table。
+// watch关注的应该是响应式对象，而非某个table。
+// 若关注table写法应为watch(()=> store.tables.xxxTable, action) https://github.com/vuejs/pinia/discussions/1218
+// watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseRadioDefaults)
+// 选择groupId
+watch(groups, chooseGroup)
+// 选择serviceId
+watch(services, chooseService)
+// 根据当前选中的serviceId，选择networkId
+watch([privateNetworks, publicNetworks], chooseNetwork)
+// 根据当前选中的serviceId，选择imageId
+watch(images, chooseImage)
+// 选择flavorId
+watch(flavors, chooseFlavor)
 
 /* (5) 在table都加载后，3个radio，随着service变化选择默认项 */
 watch(radioService, () => {
