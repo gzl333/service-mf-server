@@ -12,6 +12,10 @@ export default {
       group_org: '所属单位',
       create: '创建',
       cancel: '放弃'
+    },
+    GroupDetail: {
+      group_detail: '项目组详情',
+      loading: '正在加载，请稍候' // 注释
     }
   },
   management: {},
