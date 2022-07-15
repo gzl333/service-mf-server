@@ -16,7 +16,7 @@ export default {
       redeem_personal: '兑换到个人账户'
     },
     CouponTable:{
-      Voucher_id:'代金券ID',
+      vouchers_id:'代金券ID',
       group:'所属组',
       service_node:'服务节点',
       redeem_date:'兑换日期',
@@ -25,23 +25,38 @@ export default {
       available_balance:'可用余额',
       status:'状态',
       network_wait:'网络请求中，请稍候...',
-      novoucher:'暂无可用代金券',
-      noresult:'无搜索结果',
+      novouchers:'暂无可用代金券',
+      noresults:'无搜索结果',
       copy_clipboard:'复制到剪切板',
-      group_detail:'项目组详情',
+      project_detail:'项目组详情',
       available:'可用',
       invalid:'失效',
 
     },
 
   RedeemCouponDialog:{
-
-
+    redemption_error:'兑换码输入有误，请检查输入',
+    noavailable_project:'暂无可用项目组，请先创建或加入项目组',
+    redeem_vouchers:'兑换代金券',
+    redeem_to:'兑换到',
+    personal_account:'个人账户',
+    project_account:'项目组账户',
+    project_team:'项目组',
+    Content_slot_option :'当前选项的内容插槽',
+    redemption_code:'兑换码',
+    input_redemption_code:'请输入兑换码',
+    redeem:'兑换',
+    cancel:'取消',
   }
+  },
+  group: {
+
+
+
+
 
 
   },
-  group: {},
   order: {},
   personal: {},
   server: {},
