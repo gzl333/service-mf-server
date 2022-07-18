@@ -42,7 +42,7 @@ const releaseTime = process.env.releaseTime
 
             <q-item>
               <q-item-section class="column items-center q-py-sm text-center text-weight-bold text-grey-8">
-                {{ tc('云主机') }}
+                {{ tc('layouts.server') }}
               </q-item-section>
             </q-item>
 
@@ -54,7 +54,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="person" size="lg"/>
-                <div class="active-text text-center">{{ tc('个人') }}</div>
+                <div class="active-text text-center">{{ tc('layouts.personal') }}</div>
               </q-item-section>
             </q-item>
 
@@ -66,7 +66,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="group" size="lg"/>
-                <div class="active-text text-center">{{ tc('项目组') }}</div>
+                <div class="active-text text-center">{{ tc('layouts.group') }}</div>
               </q-item-section>
             </q-item>
 
@@ -103,7 +103,7 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="cloud_upload" size="lg"/>
-                <div class="active-text text-center">{{ tc('提供者') }}</div>
+                <div class="active-text text-center">{{ tc('layouts.provider') }}</div>
               </q-item-section>
             </q-item>
 
@@ -115,20 +115,20 @@ const releaseTime = process.env.releaseTime
             >
               <q-item-section class="column items-center">
                 <q-icon name="construction" size="lg"/>
-                <div class="active-text text-center">{{ tc('资源管理') }}</div>
+                <div class="active-text text-center">{{ tc('layouts.management') }}</div>
               </q-item-section>
             </q-item>
 
           </q-list>
 
           <div class="row justify-center q-pt-lg">
-            <q-btn flat color="primary" :ripple="false" dense @click="store.redeemCouponDialog()"> {{ tc('兑换代金券') }}</q-btn>
+            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="store.redeemCouponDialog()"> {{ tc('layouts.redeem') }}</q-btn>
           </div>
 
           <div class="row justify-center q-pt-lg">
             <q-icon class="text-center" name="info" color="grey-5" size="xs">
               <q-tooltip class="bg-grey-3">
-                <div class="text-grey text-caption text-center">{{ tc('发布时间') }}</div>
+                <div class="text-grey text-caption text-center">{{ tc('layouts.release_time') }}</div>
                 <div class="text-grey text-caption text-center">
                   {{ new Date(releaseTime).toLocaleString(i18n.global.locale) }}
                 </div>
