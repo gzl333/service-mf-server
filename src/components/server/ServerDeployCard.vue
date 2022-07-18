@@ -402,7 +402,7 @@ const deployServer = async () => {
         <div v-for="(dataCenter, index) in dataCenters" :key="dataCenter.id" class="item-row">
 
           <div class="row">
-            <div class="col-auto item-title text-bold">
+            <div class="col-2 item-title text-bold">
               {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
             </div>
 
