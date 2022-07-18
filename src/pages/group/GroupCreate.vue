@@ -43,7 +43,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
           <div class="col">
             <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                    @click="goBack"/>
-            新建项目组
+            {{ tc('pages.GroupCreate.create_group') }}
           </div>
         </div>
 
@@ -53,7 +53,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                项目组名称
+                {{ tc('pages.GroupCreate.group_name') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupName" maxlength="15" counter>
@@ -66,7 +66,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                项目组描述
+                {{ tc('pages.GroupCreate.group_desc') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupDesc" maxlength="15" counter>
@@ -79,7 +79,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                所属单位
+                 {{ tc('pages.GroupCreate.group_org') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupCompany" maxlength="15" counter>
@@ -94,12 +94,12 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
               <div class="col-1">
                 <q-btn outline color="primary"
                        @click="store.createGroupDialog({name: groupName, company: groupCompany, description: groupDesc})">
-                  {{ tc('创建') }}
+                  {{ tc('pages.GroupCreate.create') }}
                 </q-btn>
               </div>
               <div class="col-3">
                 <q-btn unelevated color="primary" @click="goBack">
-                  {{ tc('放弃') }}
+                  {{ tc('pages.GroupCreate.cancel') }}
                 </q-btn>
               </div>
             </div>
