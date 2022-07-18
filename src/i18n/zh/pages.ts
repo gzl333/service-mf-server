@@ -17,7 +17,7 @@ export default {
       group_detail: '项目组详情',
       loading: '正在加载，请稍候',
       group_account_balance: '项目组账户余额',
-      point: '点',
+      points: '点',
       group_name: '项目组名称',
       remark: '备注',
       group_org: '所属单位',
@@ -32,7 +32,6 @@ export default {
       member: '成员',
       order: '订单',
       coupon: '代金券',
-      add_group_member: '新增成员', // 是否与增加成员表意一致？
       create_server: '新建云主机'
     },
     GroupIndex: {
@@ -68,29 +67,29 @@ export default {
       resource_stat: '资源统计'
     },
     TotalResource: {
-      huairou_district: '怀柔区', // 地名翻译
-      miyun_district: '密云区',
-      changping_district: '昌平区',
-      shunyi_district: '顺义区',
-      pinggu_district: '平谷区',
-      mentougou_district: '门头沟区',
-      haidian_district: '海淀区',
-      shijingshan_district: '石景山区',
-      xicheng_district: '西城区',
-      dongcheng_district: '东城区',
-      chaoyang_district: '朝阳区',
-      daxing_district: '大兴区',
-      fangshan_district: '房山区',
-      fengtai_district: '丰台区',
-      tongzhou_district: '通州区',
-      yanqing_district: '延庆区',
-      agency: '机构',
-      agency_num: '机构数',
-      current_agency_num: '当前机构数量：',
+      district_huairou: '怀柔区',
+      district_miyun: '密云区',
+      district_changping: '昌平区',
+      district_shunyi: '顺义区',
+      district_pinggu: '平谷区',
+      district_mentougou: '门头沟区',
+      district_haidian: '海淀区',
+      district_shijingshan: '石景山区',
+      district_xicheng: '西城区',
+      district_dongcheng: '东城区',
+      district_chaoyang: '朝阳区',
+      district_daxing: '大兴区',
+      district_fangshan: '房山区',
+      district_fengtai: '丰台区',
+      district_tongzhou: '通州区',
+      district_yanqing: '延庆区',
+      org: '机构',
+      org_num: '机构数',
+      current_org_num: '当前机构数量：',
       current_service_num: '当前服务数量：',
       service_auto_resource_configuration: '服务自主资源配置',
       total_cpu: '总计CPU',
-      core: '核',
+      cores: '核',
       total_ram: '总计内存',
       total_disk: '总计硬盘',
       ram: '内存',
@@ -113,7 +112,7 @@ export default {
     PersonalIndex: {
       personal_resource: '个人资源',
       personal_account_balance: '个人账户余额',
-      point: '点',
+      points: '点',
       server_list: '云主机列表',
       order_list: '订单列表',
       coupon_list: '代金券列表',
@@ -141,7 +140,7 @@ export default {
       user: '用户',
       remark: '备注',
       operating_system: '操作系统',
-      cpu_or_ram: 'CPU/内存',
+      cpu_and_ram: 'CPU/内存',
       network_type: '网络类型',
       creation_time: '创建时间',
       expiration_time: '到期时间',
@@ -155,11 +154,11 @@ export default {
       search: '搜索',
       requesting: '网络请求中，请稍候...',
       no_server: '暂无云主机',
-      core: '核',
+      cores: '核',
       public_net: '公网',
       private_net: '私网',
-      total_server: '共{{ paginationTable.count }}台云主机',
-      page: '/页'
+      total_server: '云主机总计：',
+      page: '页'
     },
     ServerDeployedNew: {
       search_condition: '搜索条件:',
@@ -173,7 +172,7 @@ export default {
   vpn: {
     VpnIndex: {
       no_results: '所输关键字无筛选结果',
-      agency_filter: '筛选机构',
+      org_filter: '筛选机构',
       no_vpn_service: '该机构暂无可用VPN服务。',
       no_need_vpn: '该服务无需VPN。如有疑问，请联系该服务管理员。', //
       no_vpn_detail: '暂时无法获取该服务的VPN信息。如有疑问，请联系该服务管理员。', //
