@@ -85,15 +85,15 @@ export default {
       district_yanqing: '延庆区',
       org: '机构',
       org_num: '机构数',
-      current_org_num: '当前机构数量：',
-      current_service_num: '当前服务数量：',
+      current_org_num: '当前机构数量',
+      current_service_num: '当前服务数量',
       service_auto_resource_configuration: '服务自主资源配置',
-      total_cpu: '总计CPU',
+      total_cpu: '总计CPU:',
       cores: '核',
-      total_ram: '总计内存',
-      total_disk: '总计硬盘',
-      ram: '内存',
-      disk: '硬盘',
+      total_ram: '总计内存:',
+      total_disk: '总计硬盘:',
+      ram: '内存', //
+      disk: '硬盘', //
       federal_resource_allocation: '联邦资源配置'
     }
   },
@@ -145,9 +145,9 @@ export default {
       creation_time: '创建时间',
       expiration_time: '到期时间',
       total_service: '全部服务',
-      user_id: '用户ID',
-      user_account: '用户账号',
-      search_condition: '搜索条件:',
+      user_id: '用户ID', // 不确定修改方式是否正确
+      user_account: '用户账号', // 不确定修改方式是否正确
+      search_condition: '搜索条件',
       select: '请选择',
       enter: '请输入',
       service_select: '请选择服务',
@@ -157,7 +157,7 @@ export default {
       cores: '核',
       public_net: '公网',
       private_net: '私网',
-      total_server: '云主机总计：',
+      total_server: '云主机总计',
       page: '页'
     },
     ServerDeployedNew: {
@@ -174,13 +174,13 @@ export default {
       no_results: '所输关键字无筛选结果',
       org_filter: '筛选机构',
       no_vpn_service: '该机构暂无可用VPN服务。',
-      no_need_vpn: '该服务无需VPN。如有疑问，请联系该服务管理员。', //
-      no_vpn_detail: '暂时无法获取该服务的VPN信息。如有疑问，请联系该服务管理员。', //
+      no_need_vpn: '该服务无需VPN。如有疑问，请联系该服务管理员。',
+      no_vpn_detail: '暂时无法获取该服务的VPN信息。如有疑问，请联系该服务管理员。',
       account_status: '账户状态',
       activated: '已开启',
       deactivated: '已关闭',
       user_name: '用户名',
-      copy: '复制', //
+      copy: '复制',
       password: '密码',
       configuration_file: '配置文件',
       download: '下载',

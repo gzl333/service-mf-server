@@ -40,7 +40,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
           <div class="content-fixed-width">
             <div class="row">
               <div class="text-h6 q-pt-lg q-px-none">
-                {{ tc('资源管理') }}
+                {{ tc('pages.ManagementIndex.resource_management') }}
               </div>
             </div>
 
@@ -59,7 +59,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md"
                     name="resource"
                     icon="format_list_bulleted"
-                    :label="tc('资源统计')"
+                    :label="tc('pages.ManagementIndex.resource_stat')"
                     :ripple="false"
                     @click="activeTab = 'resource'; navigateToUrl('/my/server/management/resource')"
                   />
