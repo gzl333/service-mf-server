@@ -27,22 +27,22 @@ const roleSelection = ref('all')
 const roleOptions = [
   {
     value: 'all',
-    label: '全部项目组',
+    label: (() => tc('pages.GroupList.all_groups'))(),
     labelEn: 'All Groups'
   },
   {
     value: 'owner',
-    label: '作为组长',
+    label: (() => tc('pages.GroupList.as_group_owner'))(),
     labelEn: 'As Group Owner'
   },
   {
     value: 'leader',
-    label: '作为管理员',
+    label: (() => tc('pages.GroupList.as_group_manager'))(),
     labelEn: 'AS Group Manager'
   },
   {
     value: 'member',
-    label: '作为组员',
+    label: (() => tc('pages.GroupList.as_group_member'))(),
     labelEn: 'As Group Member'
   }
 ]
@@ -78,7 +78,7 @@ const search = ref('')
       <div class="col-2">
         <div class="row justify-end">
           <div class="col">
-            <q-select outlined dense stack-label :label="tc('筛选我的角色')" v-model="roleSelection"
+            <q-select outlined dense stack-label :label="tc('pages.GroupList.my_role_filter')" v-model="roleSelection"
                       :options="roleOptions" emit-value map-options option-value="value"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->

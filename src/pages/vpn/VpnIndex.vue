@@ -92,7 +92,7 @@ const gotoManualVpn = () => {
               <div class="col">
 
                 <div v-if="datacentersFiltered.length === 0" class="row full-height items-center">
-                  <div class="col">所输关键字无筛选结果</div>
+                  <div class="col">{{ tc('pages.VpnIndex.no_results') }}</div>
                 </div>
 
                 <q-tabs
@@ -118,7 +118,7 @@ const gotoManualVpn = () => {
 
               <div class="col-2">
                 <div class="row full-height items-center">
-                  <q-input class="col" dense outlined v-model="filter" :label="tc('筛选机构')" stack-label>
+                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.VpnIndex.org_filter')" stack-label>
                     <template v-slot:prepend>
                       <q-icon name="search"/>
                     </template>
@@ -167,7 +167,7 @@ const gotoManualVpn = () => {
               </div>
 
               <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
-                {{ tc('该机构暂无可用VPN服务。') }}
+                {{ tc('pages.VpnIndex.no_vpn_service') }}
               </div>
 
               <div class="col">
@@ -191,11 +191,11 @@ const gotoManualVpn = () => {
                       !store.tables.serviceTable.byId[tabService].need_vpn"
                     >
                       <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
-                        {{ tc('该服务无需VPN。如有疑问，请联系该服务管理员。') }}
+                        {{ tc('pages.VpnIndex.no_need_vpn') }}
                       </div>
 
                       <div v-else>
-                        {{ tc('暂时无法获取该服务的VPN信息。如有疑问，请联系该服务管理员。') }}
+                        {{ tc('pages.VpnIndex.no_vpn_detail') }}
                       </div>
 
                     </div>
@@ -204,24 +204,24 @@ const gotoManualVpn = () => {
 
                       <div class="row items-center" style="height: 48px">
                         <div class="col-2 text-grey">
-                          VPN 账户状态
+                          VPN {{ tc('pages.VpnIndex.account_status') }}
                         </div>
 
                         <div v-if="vpn.active" class="col-shrink row items-center">
                           <q-icon name="check_circle" color="light-green" size="sm"/>
-                          {{ tc('已开启') }}
+                          {{ tc('pages.VpnIndex.activated') }}
                         </div>
 
                         <div v-else class="col-shrink row items-center">
                           <q-icon name="cancel" color="red" size="sm"/>
-                          {{ tc('已关闭') }}
+                          {{ tc('pages.VpnIndex.deactivated') }}
                         </div>
                       </div>
 
                       <div v-if="vpn.active">
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN 用户名
+                            VPN {{ tc('pages.VpnIndex.user_name') }}
                           </div>
                           <div class="col">
                             {{ vpn?.username }}
@@ -229,7 +229,7 @@ const gotoManualVpn = () => {
                               class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
                               @click="clickToCopy(vpn?.username)">
                               <q-tooltip>
-                                复制
+                                {{ tc('pages.VpnIndex.copy') }}
                               </q-tooltip>
                             </q-btn>
                           </div>
@@ -237,7 +237,7 @@ const gotoManualVpn = () => {
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN 密码
+                            VPN {{ tc('pages.VpnIndex.password') }}
                           </div>
 
                           <div class="col-shrink">
@@ -248,7 +248,7 @@ const gotoManualVpn = () => {
                               <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
                                      @click="clickToCopy(vpn?.password, true)">
                                 <q-tooltip>
-                                  {{ tc(' 复制') }}
+                                  {{ tc('pages.VpnIndex.copy') }}
                                 </q-tooltip>
                               </q-btn>
                             </div>
@@ -258,34 +258,34 @@ const gotoManualVpn = () => {
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN 配置文件
+                            VPN {{ tc('pages.VpnIndex.configuration_file') }}
                           </div>
                           <div class="col">
-                            <q-btn label="下载" class=" " color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.VpnIndex.download')" class=" " color="primary" padding="none" dense flat
                                    @click="store.fetchConfig(tabService)"/>
                           </div>
                         </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN CA证书
+                            VPN {{ tc('pages.VpnIndex.ca_certificate') }}
                           </div>
                           <div class="col">
-                            <q-btn label="下载" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.VpnIndex.download')" class="" color="primary" padding="none" dense flat
                                    @click="store.fetchCa(tabService)"/>
                           </div>
                         </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col">
-                            <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.VpnIndex.vpn_instruction')" class="" color="primary" padding="none" dense flat
                                    @click="gotoManualVpn"/>
                           </div>
                         </div>
                       </div>
 
                       <div v-else>
-                        {{ tc('如需开启VPN账户，请联系该服务管理员。') }}
+                        {{ tc('pages.VpnIndex.create_vpn_account') }}
                       </div>
 
                     </div>
