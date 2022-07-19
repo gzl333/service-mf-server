@@ -139,9 +139,9 @@ const onOKClick = () => {
             项目组
           </div>
           <div class="col">
-            <q-select outlined dense stack-label v-model="groupSelection"
+
+            <q-select v-if="groupOptions.length !== 0" outlined dense stack-label v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
-                      :label="groupOptions.length === 0 ? tc('暂无可用项目组') : '请选择项目组'"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
@@ -150,6 +150,16 @@ const onOKClick = () => {
                 </span>
               </template>
             </q-select>
+
+            <div v-else>
+              <div class="row items-center">
+                {{ tc('暂无项目组，请') }}
+                <q-btn flat padding="none" color="primary"
+                       :to="'/my/server/group/create'">
+                  {{ tc('创建项目组') }}
+                </q-btn>
+              </div>
+            </div>
           </div>
         </div>
 

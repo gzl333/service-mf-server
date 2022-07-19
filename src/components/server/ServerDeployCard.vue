@@ -328,7 +328,7 @@ const deployServer = async () => {
             <div class="row items-center">
               {{ tc('暂无项目组，请') }}
               <q-btn v-if="isGroup" flat padding="none" color="primary"
-                     :to="'/my/group/create'">
+                     :to="'/my/server/group/create'">
                 {{ tc('创建项目组') }}
               </q-btn>
             </div>
