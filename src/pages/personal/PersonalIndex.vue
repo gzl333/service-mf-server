@@ -112,6 +112,8 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                               border-radius: 28px;
                               min-height: 56px;
                               min-width: 56px;"
+                       no-caps
+                       no-wrap
                        rounded
                        color="primary"
                        icon="add"
