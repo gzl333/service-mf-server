@@ -43,7 +43,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
           <div class="col">
             <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                    @click="goBack"/>
-            {{ tc('pages.GroupCreate.create_group') }}
+            {{ tc('pages.group.GroupCreate.create_group') }}
           </div>
         </div>
 
@@ -53,7 +53,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                {{ tc('pages.GroupCreate.group_name') }}
+                {{ tc('pages.group.GroupCreate.group_name') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupName" maxlength="15" counter>
@@ -66,7 +66,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                {{ tc('pages.GroupCreate.group_desc') }}
+                {{ tc('pages.group.GroupCreate.group_desc') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupDesc" maxlength="15" counter>
@@ -79,7 +79,7 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
 
             <div class="row items-center q-pb-md">
               <div class="col-1 text-grey q-pb-md">
-                 {{ tc('pages.GroupCreate.group_org') }}
+                 {{ tc('pages.group.GroupCreate.group_org') }}
               </div>
               <div class="col-3">
                 <q-input outlined dense v-model="groupCompany" maxlength="15" counter>
@@ -94,12 +94,12 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
               <div class="col-1">
                 <q-btn outline color="primary"
                        @click="store.createGroupDialog({name: groupName, company: groupCompany, description: groupDesc})">
-                  {{ tc('pages.GroupCreate.create') }}
+                  {{ tc('pages.group.GroupCreate.create') }}
                 </q-btn>
               </div>
               <div class="col-3">
                 <q-btn unelevated color="primary" @click="goBack">
-                  {{ tc('pages.GroupCreate.cancel') }}
+                  {{ tc('pages.group.GroupCreate.cancel') }}
                 </q-btn>
               </div>
             </div>

@@ -92,7 +92,7 @@ const gotoManualVpn = () => {
               <div class="col">
 
                 <div v-if="datacentersFiltered.length === 0" class="row full-height items-center">
-                  <div class="col">{{ tc('pages.VpnIndex.no_results') }}</div>
+                  <div class="col">{{ tc('pages.vpn.VpnIndex.no_results') }}</div>
                 </div>
 
                 <q-tabs
@@ -118,7 +118,7 @@ const gotoManualVpn = () => {
 
               <div class="col-2">
                 <div class="row full-height items-center">
-                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.VpnIndex.org_filter')" stack-label>
+                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')" stack-label>
                     <template v-slot:prepend>
                       <q-icon name="search"/>
                     </template>
@@ -167,7 +167,7 @@ const gotoManualVpn = () => {
               </div>
 
               <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
-                {{ tc('pages.VpnIndex.no_vpn_service') }}
+                {{ tc('pages.vpn.VpnIndex.no_vpn_service') }}
               </div>
 
               <div class="col">
@@ -191,11 +191,11 @@ const gotoManualVpn = () => {
                       !store.tables.serviceTable.byId[tabService].need_vpn"
                     >
                       <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
-                        {{ tc('pages.VpnIndex.no_need_vpn') }}
+                        {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}
                       </div>
 
                       <div v-else>
-                        {{ tc('pages.VpnIndex.no_vpn_detail') }}
+                        {{ tc('pages.vpn.VpnIndex.no_vpn_detail') }}
                       </div>
 
                     </div>
@@ -204,24 +204,24 @@ const gotoManualVpn = () => {
 
                       <div class="row items-center" style="height: 48px">
                         <div class="col-2 text-grey">
-                          VPN {{ tc('pages.VpnIndex.account_status') }}
+                          VPN {{ tc('pages.vpn.VpnIndex.account_status') }}
                         </div>
 
                         <div v-if="vpn.active" class="col-shrink row items-center">
                           <q-icon name="check_circle" color="light-green" size="sm"/>
-                          {{ tc('pages.VpnIndex.activated') }}
+                          {{ tc('pages.vpn.VpnIndex.activated') }}
                         </div>
 
                         <div v-else class="col-shrink row items-center">
                           <q-icon name="cancel" color="red" size="sm"/>
-                          {{ tc('pages.VpnIndex.deactivated') }}
+                          {{ tc('pages.vpn.VpnIndex.deactivated') }}
                         </div>
                       </div>
 
                       <div v-if="vpn.active">
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN {{ tc('pages.VpnIndex.user_name') }}
+                            VPN {{ tc('pages.vpn.VpnIndex.user_name') }}
                           </div>
                           <div class="col">
                             {{ vpn?.username }}
@@ -229,7 +229,7 @@ const gotoManualVpn = () => {
                               class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
                               @click="clickToCopy(vpn?.username)">
                               <q-tooltip>
-                                {{ tc('pages.VpnIndex.copy') }}
+                                {{ tc('pages.vpn.VpnIndex.copy') }}
                               </q-tooltip>
                             </q-btn>
                           </div>
@@ -237,7 +237,7 @@ const gotoManualVpn = () => {
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN {{ tc('pages.VpnIndex.password') }}
+                            VPN {{ tc('pages.vpn.VpnIndex.password') }}
                           </div>
 
                           <div class="col-shrink">
@@ -248,7 +248,7 @@ const gotoManualVpn = () => {
                               <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
                                      @click="clickToCopy(vpn?.password, true)">
                                 <q-tooltip>
-                                  {{ tc('pages.VpnIndex.copy') }}
+                                  {{ tc('pages.vpn.VpnIndex.copy') }}
                                 </q-tooltip>
                               </q-btn>
                             </div>
@@ -258,34 +258,34 @@ const gotoManualVpn = () => {
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN {{ tc('pages.VpnIndex.configuration_file') }}
+                            VPN {{ tc('pages.vpn.VpnIndex.configuration_file') }}
                           </div>
                           <div class="col">
-                            <q-btn :label="tc('pages.VpnIndex.download')" class=" " color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class=" " color="primary" padding="none" dense flat
                                    @click="store.fetchConfig(tabService)"/>
                           </div>
                         </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN {{ tc('pages.VpnIndex.ca_certificate') }}
+                            VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}
                           </div>
                           <div class="col">
-                            <q-btn :label="tc('pages.VpnIndex.download')" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none" dense flat
                                    @click="store.fetchCa(tabService)"/>
                           </div>
                         </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col">
-                            <q-btn :label="tc('pages.VpnIndex.vpn_instruction')" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.vpn_instruction')" class="" color="primary" padding="none" dense flat
                                    @click="gotoManualVpn"/>
                           </div>
                         </div>
                       </div>
 
                       <div v-else>
-                        {{ tc('pages.VpnIndex.create_vpn_account') }}
+                        {{ tc('pages.vpn.VpnIndex.create_vpn_account') }}
                       </div>
 
                     </div>
