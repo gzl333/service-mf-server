@@ -24,7 +24,7 @@ const rows = computed(() => store.getAdminServers)
 const filterOptions = computed(() => store.getServices)
 
 // 列表分栏定义
-const columns = [
+const columns = computed(() => [
   {
     name: 'ipv4',
     label: (() => tc('pages.provider.ServerDeployed.ip_address'))(),
@@ -106,7 +106,7 @@ const columns = [
   //   style: 'padding: 15px 0px',
   //   headerStyle: 'padding: 0 5px'
   // }
-]
+])
 
 // todo WTF are these any???!!!
 /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
@@ -125,7 +125,7 @@ const paginationTable = ref({
   rowsPerPage: 15
 })
 const disable = ref(true)
-const options = ref([(() => tc('pages.provider.ServerDeployed.user_id'))(), (() => tc('pages.provider.ServerDeployed.user_account'))(), 'VOID'])
+const options = ref(['用户ID', '用户账号', 'VOID'])
 
 const model = ref(null)
 const text = ref('')
@@ -160,9 +160,9 @@ const search = () => {
       paginationTable.value.count = 0
     })
   } else {
-    if (model.value === (() => tc('pages.provider.ServerDeployed.user_id'))()) {
+    if (model.value === '用户ID') {
       searchQuery.value['user-id'] = text.value
-    } else if (model.value === (() => tc('pages.provider.ServerDeployed.user_account'))()) {
+    } else if (model.value === '用户账号') {
       searchQuery.value.username = text.value
     } else {
       searchQuery.value['vo-id'] = text.value
@@ -196,14 +196,18 @@ onMounted(() => {
     <div class="row q-col-gutter-md q-pb-md">
       <div class="row col-6 items-center q-col-gutter-xs">
         <div class="col-2 text-subtitle1">{{ tc('pages.provider.ServerDeployed.search_condition') }}:</div>
-        <q-select outlined dense clearable v-model="model" :options="options" :label="tc('pages.provider.ServerDeployed.select')" class="col-5"
+        <q-select outlined dense clearable v-model="model" :options="options"
+                  :label="tc('pages.provider.ServerDeployed.select')" class="col-5"
                   @update:model-value="change"/>
-        <q-input outlined dense v-model="text" :label="tc('pages.provider.ServerDeployed.enter')" :disable="disable" class="col-5"/>
+        <q-input outlined dense v-model="text" :label="tc('pages.provider.ServerDeployed.enter')" :disable="disable"
+                 class="col-5"/>
       </div>
       <div class="col-5 row items-center">
-        <q-select map-options emit-value outlined dense stack-label :label="tc('pages.provider.ServerDeployed.service_select')" :options="filterOptions"
+        <q-select map-options emit-value outlined dense stack-label
+                  :label="tc('pages.provider.ServerDeployed.service_select')" :options="filterOptions"
                   v-model="searchQuery.service_id" class="col-7" color="primary"/>
-        <q-btn outline color="primary" text-color="black" :label="tc('pages.provider.ServerDeployed.search')" class="col-3 q-ml-md" @click="search"/>
+        <q-btn outline color="primary" text-color="black" :label="tc('pages.provider.ServerDeployed.search')"
+               class="col-3 q-ml-md" @click="search"/>
       </div>
     </div>
     <q-table
@@ -244,10 +248,12 @@ onMounted(() => {
             {{ props.row.image }}
           </q-td>
           <q-td key="configuration" :props="props">
-            {{ `${props.row.vcpus}tc('pages.provider.ServerDeployed.cores')/${props.row.ram / 1024}GB` }} //
+            {{ `${props.row.vcpus}${tc('pages.provider.ServerDeployed.cores')}/${props.row.ram / 1024}GB` }}
           </q-td>
           <q-td key="public_ip" :props="props">
-            {{ props.row.public_ip === true ? tc('pages.provider.ServerDeployed.public_net') : tc('pages.provider.ServerDeployed.private_net') }} //
+            {{
+              props.row.public_ip === true ? tc('pages.provider.ServerDeployed.public_net') : tc('pages.provider.ServerDeployed.private_net')
+            }}
           </q-td>
           <q-td key="creation_time" :props="props">
             {{ new Date(props.row.creation_time).toLocaleString() }}
@@ -255,7 +261,7 @@ onMounted(() => {
           <q-td key="expiration_time" :props="props">
             {{ new Date(props.row.expiration_time).toLocaleString() }}
           </q-td>
-<!--          <q-td key="center_quota" :props="props">-->
+          <!--          <q-td key="center_quota" :props="props">-->
           <!--            {{ props.row.center_quota === 1 ? '私有配额' : '共享配额' }}-->
           <!--          </q-td>-->
         </q-tr>

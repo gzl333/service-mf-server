@@ -116,7 +116,7 @@ export default {
       server_list: 'Server List',
       order_list: 'Order List',
       coupon_list: 'Coupon List',
-      create: 'Create'
+      create: 'New'
     },
     PersonalOrder: {
       service_node_filter: 'Service Node Filter'
@@ -140,7 +140,7 @@ export default {
       user: 'User',
       remark: 'Remark',
       operating_system: 'Operating System',
-      cpu_and_ram: 'CPU and RAM',
+      cpu_and_ram: 'CPU/MEM',
       network_type: 'Network Type',
       creation_time: 'Creation Time',
       expiration_time: 'Expiration Time',
@@ -155,8 +155,8 @@ export default {
       requesting: 'The network is requesting, please wait...',
       no_server: 'No Server',
       cores: 'Cores',
-      public_net: 'Public Net',
-      private_net: 'Private Net',
+      public_net: 'Public',
+      private_net: 'Private',
       total_server: 'Total Server',
       page: 'page'
     },
