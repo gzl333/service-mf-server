@@ -43,7 +43,7 @@ const groupOptions = computed(() => store.getGroupOptionsWithoutAll)
 const groupSelection = ref('')
 
 const selectDefaultGroup = () => {
-  groupSelection.value = groupOptions.value[0].value
+  groupSelection.value = groupOptions.value[0]?.value
 }
 selectDefaultGroup()
 watch(groupOptions, selectDefaultGroup)
@@ -141,6 +141,7 @@ const onOKClick = () => {
           <div class="col">
             <q-select outlined dense stack-label v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
+                      :label="groupOptions.length === 0 ? tc('暂无可用项目组') : '请选择项目组'"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
