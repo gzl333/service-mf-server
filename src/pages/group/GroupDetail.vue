@@ -54,13 +54,13 @@ const tab = ref(show ?? 'server')
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span>{{ tc('pages.GroupDetail.group_detail') }}</span>
+          <span>{{ tc('pages.group.GroupDetail.group_detail') }}</span>
         </div>
 
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row content-area">
           <div v-if="!groupMember || !group" class="col">
-            {{ tc('pages.GroupDetail.loading') }}
+            {{ tc('pages.group.GroupDetail.loading') }}
           </div>
 
           <div v-else class="col">
@@ -73,10 +73,10 @@ const tab = ref(show ?? 'server')
 <!--              </div>-->
 
               <div class="col-auto column items-end">
-                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.GroupDetail.group_account_balance') }}</div>
+                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.group.GroupDetail.group_account_balance') }}</div>
                 <div class="row items-end">
                   <div class="text-h4">{{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}</div>
-                  <div class="text-h6">{{ tc('pages.GroupDetail.points') }}
+                  <div class="text-h6">{{ tc('pages.group.GroupDetail.points') }}
                   </div>
                 </div>
               </div>
@@ -89,7 +89,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.group_name') }}
+                    {{ tc('pages.group.GroupDetail.group_name') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center text-bold" style="height: 70px">
@@ -103,7 +103,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.remark') }}
+                    {{ tc('pages.group.GroupDetail.remark') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -116,7 +116,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.group_org') }}
+                    {{ tc('pages.group.GroupDetail.group_org') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -129,7 +129,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.group_leader') }}
+                    {{ tc('pages.group.GroupDetail.group_leader') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -142,7 +142,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.creation_time') }}
+                    {{ tc('pages.group.GroupDetail.creation_time') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -173,7 +173,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.my_role') }}
+                    {{ tc('pages.group.GroupDetail.my_role') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -201,25 +201,25 @@ const tab = ref(show ?? 'server')
               <div v-if="group.myRole !== 'member'" class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.GroupDetail.operation') }}
+                    {{ tc('pages.group.GroupDetail.operation') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center q-gutter-sm" style="height: 70px">
 
                       <q-btn icon="edit" flat padding="none" color="primary" size="md"
                              @click="store.editGroupDialog(groupId)">
-                        <q-tooltip>{{ tc('pages.GroupDetail.edit_group_info') }}</q-tooltip>
+                        <q-tooltip>{{ tc('pages.group.GroupDetail.edit_group_info') }}</q-tooltip>
                       </q-btn>
 
                       <q-btn icon="add" flat padding="none" color="primary" size="md"
                              @click="store.addGroupMemberDialog(groupId)">
-                        <q-tooltip>{{ tc('pages.GroupDetail.add_member') }}</q-tooltip>
+                        <q-tooltip>{{ tc('pages.group.GroupDetail.add_member') }}</q-tooltip>
                       </q-btn>
 
                       <q-btn v-if="group.myRole ==='owner'" icon="group_off" flat padding="none"
                              color="primary" size="md"
                              @click="store.deleteGroupDialog(groupId)">
-                        <q-tooltip>{{ tc('pages.GroupDetail.delete_group') }}</q-tooltip>
+                        <q-tooltip>{{ tc('pages.group.GroupDetail.delete_group') }}</q-tooltip>
                       </q-btn>
 
                     </div>
@@ -247,38 +247,38 @@ const tab = ref(show ?? 'server')
                            :ripple="false"
                            name="server"
                            icon="computer"
-                           :label="tc('pages.GroupDetail.server')"/>
+                           :label="tc('pages.group.GroupDetail.server')"/>
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="member"
                            icon="group"
-                           :label="tc('pages.GroupDetail.member')"/>
+                           :label="tc('pages.group.GroupDetail.member')"/>
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="order"
                            icon="list_alt"
-                           :label="tc('pages.GroupDetail.order')"/>
+                           :label="tc('pages.group.GroupDetail.order')"/>
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="coupon"
                            icon="currency_yuan"
-                           :label="tc('pages.GroupDetail.coupon')"/>
+                           :label="tc('pages.group.GroupDetail.coupon')"/>
                   </q-tabs>
 
                   <q-btn v-show="tab==='member' && group.myRole !== 'member' " class="col-shrink" icon="add" size="md"
                          unelevated dense padding="xs"
                          color="primary" @click="store.addGroupMemberDialog(groupId)">
-                    {{ tc('pages.GroupDetail.add_member') }}
+                    {{ tc('pages.group.GroupDetail.add_member') }}
                   </q-btn>
 
                   <q-btn v-show="tab==='server' && group.myRole !== 'member'" class="col-shrink" icon="add" size="md"
                          unelevated dense padding="xs"
                          color="primary"
                          @click="navigateToUrl(`/my/server/group/server/deploy?group=${groupId}`)">
-                    {{ tc('pages.GroupDetail.create_server') }}
+                    {{ tc('pages.group.GroupDetail.create_server') }}
                   </q-btn>
 
                 </div>

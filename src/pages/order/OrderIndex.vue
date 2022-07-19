@@ -41,7 +41,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
             <div class="content-fixed-width">
               <div class="row">
                 <div class="text-h6 q-pt-lg q-px-none">
-                  {{ tc('pages.OrderIndex.order') }}
+                  {{ tc('pages.order.OrderIndex.order') }}
                 </div>
               </div>
 
@@ -59,7 +59,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       class="q-px-none q-py-md q-mr-md text-bold"
                       name="personal"
                       icon="person"
-                      :label="tc('pages.OrderIndex.personal_order')"
+                      :label="tc('pages.order.OrderIndex.personal_order')"
                       :ripple="false"
                       @click="activeTab = 'personal'; navigateToUrl('/my/server/personal/order')"
                     />
@@ -68,7 +68,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                       class="q-px-none q-py-md q-mr-md text-bold"
                       name="group"
                       icon="group"
-                      :label="tc('pages.OrderIndex.group_order')"
+                      :label="tc('pages.order.OrderIndex.group_order')"
                       :ripple="false"
                       @click="activeTab = 'group'; navigateToUrl('/my/server/group/order')"
                     />
