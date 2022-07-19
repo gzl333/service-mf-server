@@ -27,22 +27,22 @@ const roleSelection = ref('all')
 const roleOptions = [
   {
     value: 'all',
-    label: (() => tc('pages.GroupList.all_groups'))(),
+    label: '全部项目组',
     labelEn: 'All Groups'
   },
   {
     value: 'owner',
-    label: (() => tc('pages.GroupList.as_group_owner'))(),
+    label: '作为组长',
     labelEn: 'As Group Owner'
   },
   {
     value: 'leader',
-    label: (() => tc('pages.GroupList.as_group_manager'))(),
+    label: '作为管理员',
     labelEn: 'AS Group Manager'
   },
   {
     value: 'member',
-    label: (() => tc('pages.GroupList.as_group_member'))(),
+    label: '作为组员',
     labelEn: 'As Group Member'
   }
 ]
