@@ -41,7 +41,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
           <div class="content-fixed-width">
             <div class="row">
               <div class="text-h6 q-pt-lg q-px-none">
-                {{ tc('pages.GroupIndex.group_resource') }}
+                {{ tc('pages.group.GroupIndex.group_resource') }}
               </div>
             </div>
 
@@ -60,7 +60,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md"
                     name="list"
                     icon="format_list_bulleted"
-                    :label="tc('pages.GroupIndex.group_list')"
+                    :label="tc('pages.group.GroupIndex.group_list')"
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/group/list')"
                   />
@@ -69,7 +69,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mx-sm"
                     name="server"
                     icon="computer"
-                    :label="tc('pages.GroupIndex.server_list')"
+                    :label="tc('pages.group.GroupIndex.server_list')"
                     :ripple="false"
                     @click="activeTab = 'server'; navigateToUrl('/my/server/group/server/list')"
                   />
@@ -78,7 +78,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mx-sm"
                     name="order"
                     icon="list_alt"
-                    :label="tc('pages.GroupIndex.order_list')"
+                    :label="tc('pages.group.GroupIndex.order_list')"
                     :ripple="false"
                     @click="activeTab = 'order'; navigateToUrl('/my/server/group/order')"
                   />
@@ -87,7 +87,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mx-sm"
                     name="coupon"
                     icon="currency_yuan"
-                    :label="tc('pages.GroupIndex.coupon_list')"
+                    :label="tc('pages.group.GroupIndex.coupon_list')"
                     :ripple="false"
                     @click="activeTab = 'coupon'; navigateToUrl('/my/server/group/coupon')"
                   />

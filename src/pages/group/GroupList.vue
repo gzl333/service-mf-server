@@ -78,7 +78,7 @@ const search = ref('')
       <div class="col-2">
         <div class="row justify-end">
           <div class="col">
-            <q-select outlined dense stack-label :label="tc('pages.GroupList.my_role_filter')" v-model="roleSelection"
+            <q-select outlined dense stack-label :label="tc('pages.group.GroupList.my_role_filter')" v-model="roleSelection"
                       :options="roleOptions" emit-value map-options option-value="value"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
