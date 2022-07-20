@@ -36,10 +36,10 @@ export default {
     },
     GroupIndex: {
       group_resource: 'Group Resource',
-      group_list: 'Group List',
-      server_list: 'Server List',
-      order_list: 'Order List',
-      coupon_list: 'Coupon List'
+      group_list: 'Groups',
+      server_list: 'Servers',
+      order_list: 'Orders',
+      coupon_list: 'Coupons'
     },
     GroupList: {
       all_groups: 'All Groups',
@@ -113,9 +113,9 @@ export default {
       personal_resource: 'Personal Resource',
       personal_account_balance: 'Personal Account Balance',
       points: 'Points',
-      server_list: 'Server List',
-      order_list: 'Order List',
-      coupon_list: 'Coupon List',
+      server_list: 'Servers',
+      order_list: 'Orders',
+      coupon_list: 'Coupons',
       create: 'New'
     },
     PersonalOrder: {
@@ -173,20 +173,20 @@ export default {
     VpnIndex: {
       no_results: 'The entered keyword has no filter results.',
       org_filter: 'Organisation Filter',
-      no_vpn_service: 'The organisation has no VPN service available.',
-      no_need_vpn: 'The service does not require a VPN. If in doubt, please contact the service administrator.',
-      no_vpn_detail: 'The VPN detail for this service is temporarily unavailable. If in doubt, please contact the service administrator.',
+      no_vpn_service: 'The organisation has no available VPN services. Please contact the service administrator for more information.',
+      no_need_vpn: 'The service does not require a VPN. Please contact the service administrator for more information.',
+      no_vpn_detail: 'The VPN of this service is temporarily unavailable. Please contact the service administrator for more information.',
       account_status: 'Account Status',
       activated: 'Activated',
       deactivated: 'Deactivated',
-      user_name: 'User Name',
+      user_name: 'Username',
       copy: 'Copy',
       password: 'Password',
-      configuration_file: 'Configuration File',
+      configuration_file: 'Config File',
       download: 'Download',
-      ca_certificate: 'CA Certificate',
-      vpn_instruction: 'Look over the instruction of VPN.',
-      create_vpn_account: 'To open a VPN account, please contact the service administrator.'
+      ca_certificate: 'CA File',
+      vpn_instruction: 'Instructions on setting up a VPN.',
+      create_vpn_account: 'To activate a VPN account, please contact the service administrator.'
     }
   }
 }
