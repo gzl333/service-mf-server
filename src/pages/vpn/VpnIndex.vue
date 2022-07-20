@@ -88,7 +88,7 @@ const gotoManualVpn = () => {
               </div>
             </div>
 
-            <div class="row" style="height: 64px">
+            <div class="row">
               <div class="col">
 
                 <div v-if="datacentersFiltered.length === 0" class="row full-height items-center">
@@ -106,19 +106,28 @@ const gotoManualVpn = () => {
                   <q-tab
                     v-for="id in datacentersFiltered"
                     :key="id"
-                    class="q-px-none q-py-md q-mr-md"
+                    class="q-px-none q-py-md q-mr-md wrap"
                     :name="id"
                     icon="vpn_lock"
-                    :label="i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[id].name : store.tables.dataCenterTable.byId[id].name_en"
                     :ripple="false"
                     no-caps
-                  />
+                  >
+                    <div v-if="i18n.global.locale === 'zh'">
+                      {{ store.tables.dataCenterTable.byId[id].name }}
+                    </div>
+                    <div v-else>
+                      <div v-for="line in store.tables.dataCenterTable.byId[id].name_en.split(',')" :key="line">
+                        {{ line }}
+                      </div>
+                    </div>
+                  </q-tab>
                 </q-tabs>
               </div>
 
               <div class="col-2">
                 <div class="row full-height items-center">
-                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')" stack-label>
+                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')"
+                           stack-label>
                     <template v-slot:prepend>
                       <q-icon name="search"/>
                     </template>
@@ -261,7 +270,8 @@ const gotoManualVpn = () => {
                             VPN {{ tc('pages.vpn.VpnIndex.configuration_file') }}
                           </div>
                           <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class=" " color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class=" " color="primary" padding="none"
+                                   dense flat no-caps
                                    @click="store.fetchConfig(tabService)"/>
                           </div>
                         </div>
@@ -271,14 +281,16 @@ const gotoManualVpn = () => {
                             VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}
                           </div>
                           <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none"
+                                   dense flat no-caps
                                    @click="store.fetchCa(tabService)"/>
                           </div>
                         </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.vpn_instruction')" class="" color="primary" padding="none" dense flat
+                            <q-btn :label="tc('pages.vpn.VpnIndex.vpn_instruction')" class="" color="primary"
+                                   padding="none" dense flat no-caps
                                    @click="gotoManualVpn"/>
                           </div>
                         </div>

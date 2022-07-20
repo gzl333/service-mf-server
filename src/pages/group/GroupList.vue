@@ -38,7 +38,7 @@ const roleOptions = [
   {
     value: 'leader',
     label: '作为管理员',
-    labelEn: 'AS Group Manager'
+    labelEn: 'As Group Manager'
   },
   {
     value: 'member',
