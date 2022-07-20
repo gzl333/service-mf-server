@@ -35,7 +35,7 @@ const quotaId = route.query.quota as string
         <div class="row items-center title-area q-pb-md">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span>{{ tc('新建项目组云主机') }}</span>
+          <span>{{ tc('pages.group.ServerDeploy.create_group_server') }}</span>
         </div>
       </div>
 

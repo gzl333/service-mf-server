@@ -54,7 +54,7 @@ const search = ref('')
       <div class="col-3">
         <div class="row justify-end">
           <div class="col">
-            <q-select outlined dense stack-label :label="tc('筛选组')" v-model="groupSelection"
+            <q-select outlined dense stack-label :label="tc('pages.group.ServerList.group_filter')" v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->

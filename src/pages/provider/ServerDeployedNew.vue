@@ -33,37 +33,37 @@ const serviceSelection = ref('0')
     <!--    <div class="row content-area">-->
 
     <div class="row">
-      搜索条件
+      {{ tc('pages.provider.ServerDeployedNew.search_condition') }}:
     </div>
     <!--项目组详情开始-->
     <div class="row items-center justify-evenly detail-area">
 
       <div class="col-auto row items-center">
         <q-checkbox v-model="searchFactors" val="ip" color="primary">
-          {{ tc('IP地址') }}
+          {{ tc('pages.provider.ServerDeployedNew.ip_address') }}
         </q-checkbox>
         <q-input outlined dense/>
       </div>
 
       <div class="col-auto row items-center">
         <q-checkbox v-model="searchFactors" val="username" color="primary">
-          {{ tc('用户账号') }}
+          {{ tc('pages.provider.ServerDeployedNew.user_account') }}
         </q-checkbox>
         <q-input outlined dense/>
       </div>
 
       <div class="col-auto row items-center">
         <q-checkbox v-model="searchFactors" val="vo" color="primary">
-          {{ tc('项目组ID') }}
+          {{ tc('pages.provider.ServerDeployedNew.group_id') }}
         </q-checkbox>
         <q-input outlined dense/>
       </div>
 
       <div class="col-auto row items-center">
         <q-checkbox v-model="searchFactors" val="service" color="primary">
-          {{ tc('服务节点') }}
+          {{ tc('pages.provider.ServerDeployedNew.service_node') }}
         </q-checkbox>
-        <q-select outlined dense stack-label :label="tc('筛选服务节点')" v-model="serviceSelection"
+        <q-select outlined dense stack-label :label="tc('pages.provider.ServerDeployedNew.service_node_filter')" v-model="serviceSelection"
                   :options="serviceOptions" emit-value map-options option-value="value"
                   :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
           <!--当前选项的内容插槽-->

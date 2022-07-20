@@ -40,7 +40,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
           <div class="content-fixed-width">
             <div class="row">
               <div class="text-h6 q-pt-lg q-px-none">
-                {{ tc('资源提供者') }}
+                {{ tc('pages.provider.ProviderIndex.resource_provider') }}
               </div>
             </div>
 
@@ -59,7 +59,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md"
                     name="server"
                     icon="format_list_bulleted"
-                    :label="tc('在用云主机统计')"
+                    :label="tc('pages.provider.ProviderIndex.active_server_stat')"
                     :ripple="false"
                     @click="activeTab = 'server'; navigateToUrl('/my/server/provider/server')"
                   />

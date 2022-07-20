@@ -44,7 +44,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
             <div class="row justify-between q-pt-lg q-pb-sm">
 
               <div class="col-auto row items-end text-h6 q-px-none">
-                {{ tc('个人资源') }}
+                {{ tc('pages.personal.PersonalIndex.personal_resource') }}
               </div>
 
               <div class="col-auto row justify-end items-center q-gutter-x-lg">
@@ -55,10 +55,10 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
 <!--                </div>-->
 
                 <div class="col-auto column items-end">
-                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('个人账户余额') }}</div>
+                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.personal.PersonalIndex.personal_account_balance') }}</div>
                   <div class="row items-end">
                     <div class="text-h4">{{ store.items.personalBalance.balance }}</div>
-                    <div class="text-h6">{{ tc('点') }}
+                    <div class="text-h6">{{ tc('pages.personal.PersonalIndex.points') }}
                     </div>
                   </div>
                 </div>
@@ -81,7 +81,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md text-bold"
                     name="list"
                     icon="computer"
-                    :label="tc('云主机列表')"
+                    :label="tc('pages.personal.PersonalIndex.server_list')"
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/personal/list')"
                   />
@@ -90,7 +90,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md text-bold"
                     name="order"
                     icon="list_alt"
-                    :label="tc('订单列表')"
+                    :label="tc('pages.personal.PersonalIndex.order_list')"
                     :ripple="false"
                     @click="activeTab = 'order'; navigateToUrl('/my/server/personal/order')"
                   />
@@ -99,7 +99,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     class="q-px-none q-py-md q-mr-md text-bold"
                     name="coupon"
                     icon="currency_yuan"
-                    :label="tc('代金券列表')"
+                    :label="tc('pages.personal.PersonalIndex.coupon_list')"
                     :ripple="false"
                     @click="activeTab = 'coupon'; navigateToUrl('/my/server/personal/coupon')"
                   />
@@ -112,12 +112,14 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                               border-radius: 28px;
                               min-height: 56px;
                               min-width: 56px;"
+                       no-caps
+                       no-wrap
                        rounded
                        color="primary"
                        icon="add"
                        @click="navigateToUrl('/my/server/personal/deploy')"
                 >
-                  {{ tc('新建') }}
+                  {{ tc('pages.personal.PersonalIndex.create') }}
                 </q-btn>
                 <!--                <ButtonAdd/>-->
               </div>

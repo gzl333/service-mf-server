@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
-// import { i18n } from 'boot/i18n'
+import { i18n } from 'boot/i18n'
 
 // const props = defineProps({
 //   foo: {
@@ -14,7 +14,7 @@ import { useStore } from 'stores/store'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const { tc } = i18n.global
+const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
@@ -24,10 +24,10 @@ const rows = computed(() => store.getAdminServers)
 const filterOptions = computed(() => store.getServices)
 
 // 列表分栏定义
-const columns = [
+const columns = computed(() => [
   {
     name: 'ipv4',
-    label: 'IP地址',
+    label: (() => tc('pages.provider.ServerDeployed.ip_address'))(),
     field: 'ipv4',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -35,7 +35,7 @@ const columns = [
   },
   {
     name: 'service',
-    label: '服务节点',
+    label: (() => tc('pages.provider.ServerDeployed.service_node'))(),
     field: 'service',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -43,7 +43,7 @@ const columns = [
   },
   {
     name: 'user',
-    label: '用户',
+    label: (() => tc('pages.provider.ServerDeployed.user'))(),
     field: 'user',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -51,7 +51,7 @@ const columns = [
   },
   {
     name: 'remark',
-    label: '备注',
+    label: (() => tc('pages.provider.ServerDeployed.remark'))(),
     field: 'remark',
     align: 'center',
     classes: 'ellipsis',
@@ -60,7 +60,7 @@ const columns = [
   },
   {
     name: 'image',
-    label: '操作系统',
+    label: (() => tc('pages.provider.ServerDeployed.operating_system'))(),
     field: 'image',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -68,7 +68,7 @@ const columns = [
   },
   {
     name: 'configuration',
-    label: 'CPU/内存',
+    label: (() => tc('pages.provider.ServerDeployed.cpu_and_ram'))(),
     field: 'configuration',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -76,7 +76,7 @@ const columns = [
   },
   {
     name: 'public_ip',
-    label: '网络类型',
+    label: (() => tc('pages.provider.ServerDeployed.network_type'))(),
     field: 'public_ip',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -84,7 +84,7 @@ const columns = [
   },
   {
     name: 'creation_time',
-    label: '创建时间',
+    label: (() => tc('pages.provider.ServerDeployed.creation_time'))(),
     field: 'creation_time',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -92,7 +92,7 @@ const columns = [
   },
   {
     name: 'expiration_time',
-    label: '到期时间',
+    label: (() => tc('pages.provider.ServerDeployed.expiration_time'))(),
     field: 'expiration_time',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -106,7 +106,7 @@ const columns = [
   //   style: 'padding: 15px 0px',
   //   headerStyle: 'padding: 0 5px'
   // }
-]
+])
 
 // todo WTF are these any???!!!
 /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
@@ -114,7 +114,7 @@ const searchQuery: any = ref({
   page: 1,
   page_size: 15,
   service_id: {
-    label: '全部服务',
+    label: (() => tc('pages.provider.ServerDeployed.total_service'))(),
     value: ''
   },
   'as-admin': true
@@ -195,15 +195,19 @@ onMounted(() => {
   <div class="ServerDeployed">
     <div class="row q-col-gutter-md q-pb-md">
       <div class="row col-6 items-center q-col-gutter-xs">
-        <div class="col-2 text-subtitle1">搜索条件:</div>
-        <q-select outlined dense clearable v-model="model" :options="options" label="请选择" class="col-5"
+        <div class="col-2 text-subtitle1">{{ tc('pages.provider.ServerDeployed.search_condition') }}:</div>
+        <q-select outlined dense clearable v-model="model" :options="options"
+                  :label="tc('pages.provider.ServerDeployed.select')" class="col-5"
                   @update:model-value="change"/>
-        <q-input outlined dense v-model="text" label="请输入" :disable="disable" class="col-5"/>
+        <q-input outlined dense v-model="text" :label="tc('pages.provider.ServerDeployed.enter')" :disable="disable"
+                 class="col-5"/>
       </div>
       <div class="col-5 row items-center">
-        <q-select map-options emit-value outlined dense stack-label label="请选择服务" :options="filterOptions"
+        <q-select map-options emit-value outlined dense stack-label
+                  :label="tc('pages.provider.ServerDeployed.service_select')" :options="filterOptions"
                   v-model="searchQuery.service_id" class="col-7" color="primary"/>
-        <q-btn outline color="primary" text-color="black" label="搜索" class="col-3 q-ml-md" @click="search"/>
+        <q-btn outline color="primary" text-color="black" :label="tc('pages.provider.ServerDeployed.search')"
+               class="col-3 q-ml-md" @click="search"/>
       </div>
     </div>
     <q-table
@@ -214,8 +218,8 @@ onMounted(() => {
       row-key="name"
       :loading="store.tables.adminServerTable.status === 'loading'"
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="暂无云主机"
+      :loading-label="tc('pages.provider.ServerDeployed.requesting')"
+      :no-data-label="tc('pages.provider.ServerDeployed.no_server')"
       hide-pagination
       :pagination="{ rowsPerPage: 0 }"
     >
@@ -244,10 +248,12 @@ onMounted(() => {
             {{ props.row.image }}
           </q-td>
           <q-td key="configuration" :props="props">
-            {{ `${props.row.vcpus}核/${props.row.ram / 1024}GB` }}
+            {{ `${props.row.vcpus}${tc('pages.provider.ServerDeployed.cores')}/${props.row.ram / 1024}GB` }}
           </q-td>
           <q-td key="public_ip" :props="props">
-            {{ props.row.public_ip === true ? '公网' : '私网' }}
+            {{
+              props.row.public_ip === true ? tc('pages.provider.ServerDeployed.public_net') : tc('pages.provider.ServerDeployed.private_net')
+            }}
           </q-td>
           <q-td key="creation_time" :props="props">
             {{ new Date(props.row.creation_time).toLocaleString() }}
@@ -255,7 +261,7 @@ onMounted(() => {
           <q-td key="expiration_time" :props="props">
             {{ new Date(props.row.expiration_time).toLocaleString() }}
           </q-td>
-<!--          <q-td key="center_quota" :props="props">-->
+          <!--          <q-td key="center_quota" :props="props">-->
           <!--            {{ props.row.center_quota === 1 ? '私有配额' : '共享配额' }}-->
           <!--          </q-td>-->
         </q-tr>
@@ -264,11 +270,11 @@ onMounted(() => {
     <q-separator/>
     <div class="row q-pa-sm text-grey justify-between items-center">
       <div class="row items-center">
-        <span class="q-pr-md">共{{ paginationTable.count }}台云主机</span>
+        <span class="q-pr-md">{{ tc('pages.provider.ServerDeployed.total_server') }}：{{ paginationTable.count }}</span>
         <q-select color="grey" v-model="paginationTable.rowsPerPage" :options="[5,10,15,20,25,30]" dense options-dense
                   borderless @update:model-value="changePageSize">
         </q-select>
-        <span>/页</span>
+        <span>/{{ tc('pages.provider.ServerDeployed.page') }}</span>
       </div>
       <q-pagination
         v-model="paginationTable.page"
