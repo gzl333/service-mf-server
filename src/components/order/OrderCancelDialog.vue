@@ -53,7 +53,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ tc('components.order.OrderCancelDialog.order.id') }}
+            {{ tc('components.order.OrderCancelDialog.order_id') }}
           </div>
           <div class="col">
             {{ order.id }}

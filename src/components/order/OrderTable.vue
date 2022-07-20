@@ -296,7 +296,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="pay" :props="props">
-            {{ props.row.payable_amount }} {{ tc('components.order.OrderTable.point') }}
+            {{ props.row.payable_amount }} {{ tc('components.order.OrderTable.points') }}
           </q-td>
 
           <q-td key="status" :props="props" class="non-selectable">

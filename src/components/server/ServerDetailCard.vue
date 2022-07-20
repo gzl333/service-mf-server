@@ -424,7 +424,7 @@ const gotoManualVpn = () => {
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.hardware_configuration') }}</div>
-                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.hardware_nuclear') }}CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.hardware_memory') }}</div>
+                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.core') }}CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
