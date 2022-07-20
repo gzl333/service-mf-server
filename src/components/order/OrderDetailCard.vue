@@ -47,39 +47,39 @@ const getOsIconName = useGetOsIconName()
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span v-if="isGroup">项目组订单详情</span>
-          <span v-else>个人订单详情</span>
+          <span v-if="isGroup">{{tc('components.order.OrderDetailCard.project_order_details')}}</span>
+          <span v-else>{{tc('components.order.OrderDetailCard.personal_order_details')}}</span>
         </div>
 
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row">
           <!--todo 区分读取中和读取错误          -->
           <div v-if="!order" class="col">
-            正在加载，请稍候
+            {{tc('components.order.OrderDetailCard.loading_wait')}}
           </div>
 
           <div v-else class="col content-area">
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto">订单 {{ order.id }}</div>
+              <div class="col-auto">{{tc('components.order.OrderDetailCard.order_id')}}  {{ order.id }}</div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
                 <div v-if="isGroup" class="col-auto">
-                  所属项目组
+                  {{tc('components.order.OrderDetailCard.project_group')}}
                   <q-btn
                     color="primary"
                     padding="none" flat dense unelevated
                     :label="order.vo_name"
                     @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
                     <q-tooltip>
-                      {{ tc('项目组详情') }}
+                      {{ tc('components.order.OrderDetailCard.project_detail') }}
                     </q-tooltip>
                   </q-btn>
                 </div>
 
-                <div class="col-auto">下单用户 {{ order.username }}</div>
+                <div class="col-auto">{{ tc('components.order.OrderDetailCard.oder_user') }}   {{ order.username }}</div>
 
                 <q-btn v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
                        class="col-auto"
@@ -88,7 +88,7 @@ const getOsIconName = useGetOsIconName()
                        flat
                        dense
                        @click="store.cancelOrderDialog(order.id, isGroup)">
-                  {{ tc('取消订单') }}
+                  {{ tc('components.order.OrderDetailCard.cancel_order') }}
                 </q-btn>
 
               </div>
@@ -100,23 +100,23 @@ const getOsIconName = useGetOsIconName()
               <div class="col-1 q-mr-sm column justify-center items-center">
 
                 <div v-if="order.order_type === 'new'" class="col-auto text-bold text-h6">
-                  {{ tc('新购') }}
+                  {{ tc('components.order.OrderDetailCard.new_purchase') }}
                 </div>
 
                 <div v-if="order.order_type === 'renewal'" class="col-auto text-bold text-h6">
-                  {{ tc('续期') }}
+                  {{ tc('components.order.OrderDetailCard.renewal') }}
                 </div>
 
                 <div v-if="order.order_type === 'upgrade'" class="col-auto text-bold text-h6">
-                  {{ tc('升级') }}
+                  {{ tc('components.order.OrderDetailCard.upgrade') }}
                 </div>
 
                 <div v-if="order.order_type === 'downgrade'" class="col-auto text-bold text-h6">
-                  {{ tc('降级') }}
+                  {{ tc('components.order.OrderDetailCard.downgrade') }}
                 </div>
 
                 <div class="col-auto text-bold text-h6">
-                  {{ order.pay_type === 'prepaid' ? tc('包月预付') : tc('按量计费') }}
+                  {{ order.pay_type === 'prepaid' ? tc('components.order.OrderDetailCard.monthly_prepaid') : tc('components.order.OrderDetailCard.pay_as_go') }}
                 </div>
 
               </div>
@@ -130,7 +130,7 @@ const getOsIconName = useGetOsIconName()
                 >
                   <q-step
                     name="placed"
-                    :title="tc('提交订单')"
+                    :title="tc('components.order.OrderDetailCard.submit_order')"
                     :caption="new Date(order.creation_time).toLocaleString(i18n.global.locale)"
                     icon="list_alt"
                     :done="true"
@@ -140,7 +140,7 @@ const getOsIconName = useGetOsIconName()
                   <q-step
                     v-if="order.status === 'cancelled'"
                     name="cancelled"
-                    :title="tc('取消订单')"
+                    :title="tc('components.order.OrderDetailCard.cancel_order')"
                     :caption="new Date(order.cancelled_time).toLocaleString(i18n.global.locale)"
                     icon="close"
                     :done="order.status === 'cancelled'"
@@ -153,8 +153,8 @@ const getOsIconName = useGetOsIconName()
                     v-else
                     :disable="order.pay_type === 'postpaid'"
                     name="paid"
-                    :title="tc('支付订单')"
-                    :caption="order.pay_type === 'postpaid' ? tc('按量计费无需预付'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('待支付')"
+                    :title="tc('components.order.OrderDetailCard.pay_order')"
+                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.pay_without_prepayment'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_paid')"
                     icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
@@ -163,8 +163,8 @@ const getOsIconName = useGetOsIconName()
                   <q-step
                     v-if="order.status === 'unpaid' || order.status === 'paid'"
                     name="delivered"
-                    :title="tc('资源交付')"
-                    :caption="order.status === 'paid' ? new Date(order.resources[0]?.delivered_time).toLocaleString(i18n.global.locale): tc('待交付')"
+                    :title="tc('components.order.OrderDetailCard.resource_delivery')"
+                    :caption="order.status === 'paid' ? new Date(order.resources[0]?.delivered_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_delivered')"
                     icon="task_alt"
                     :done="order.status === 'paid'"
                   >
@@ -186,7 +186,7 @@ const getOsIconName = useGetOsIconName()
                        size="md"
                        unelevated
                        @click="store.payOrderDialog(order.id, isGroup)">
-                  {{ tc('支付') }}
+                  {{ tc('components.order.OrderDetailCard.to_be_delivered') }}
                 </q-btn>
 
               </div>
@@ -195,7 +195,7 @@ const getOsIconName = useGetOsIconName()
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto">资源信息</div>
+              <div class="col-auto"> {{ tc('components.order.OrderDetailCard.resource_information') }}</div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
@@ -206,7 +206,7 @@ const getOsIconName = useGetOsIconName()
                   flat
                   dense
                   @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
-                  查看资源
+                  {{ tc('components.order.OrderDetailCard.view_resources') }}
                 </q-btn>
 
               </div>
@@ -221,26 +221,26 @@ const getOsIconName = useGetOsIconName()
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">CPU</div>
                     <div class="col-shrink">
-                      {{ order.instance_config.vm_cpu }}核
+                      {{ order.instance_config.vm_cpu }} {{ tc('components.order.OrderDetailCard.nuclear') }}
                     </div>
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">内存</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.memory') }}</div>
                     <div class="col-shrink">
                       {{ order.instance_config.vm_ram / 1024 }}GB
                     </div>
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">系统磁盘</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.system_disk') }}</div>
                     <div class="col-shrink">
                       {{ order.instance_config.vm_systemdisk_size }}GB
                     </div>
                   </div>
 
                   <div v-if="isServerExisted" class="row  items-center">
-                    <div class="col-3 text-grey">云主机ID</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.cloud_host_id') }}</div>
                     <div class="col-shrink">
                       <div v-for="server in order.resources" :key="server.id">
                         {{ server.id }}
@@ -254,7 +254,7 @@ const getOsIconName = useGetOsIconName()
 
                   <div v-if="isServerExisted" class="row q-pb-md items-center">
 
-                    <div class="col-3 text-grey">IP地址</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address') }}</div>
                     <div class="col-shrink">
                       <q-btn flat color="primary" no-caps
                              padding="none"
@@ -268,14 +268,14 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">IP地址类型</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address_type') }}</div>
                     <div class="col-shrink">
-                      {{ order.instance_config.vm_public_ip ? '公网' : '私网' }}
+                      {{ order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network') }}
                     </div>
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">网段</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_segment') }}</div>
                     <div class="col-shrink">
                       {{
                         store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
@@ -284,7 +284,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div class="row items-center">
-                    <div class="col-3 text-grey">操作系统</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
                     <div class="col-shrink">
                       <q-icon
                         v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
@@ -301,7 +301,7 @@ const getOsIconName = useGetOsIconName()
                 <div class="col-4">
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">所属机构</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.affiliation') }}</div>
                     <div class="col-shrink">
                       {{
                         i18n.global.locale === 'zh' ?
@@ -312,7 +312,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">服务节点</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.service_node') }}</div>
                     <div class="col-shrink">
                       {{
                         i18n.global.locale === 'zh' ?
@@ -323,7 +323,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div class="row items-center">
-                    <div class="col-3 text-grey">服务类型</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.service_type') }}</div>
                     <div class="col-shrink">
                       <q-icon
                         v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"
@@ -348,9 +348,9 @@ const getOsIconName = useGetOsIconName()
                 <div class="col-4">
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">计费总额</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.total_billing') }}</div>
                     <div class="col-shrink">
-                      {{ order.total_amount }}点
+                      {{ order.total_amount }} {{ tc('components.order.OrderDetailCard.point') }}
                     </div>
                   </div>
 
@@ -358,16 +358,16 @@ const getOsIconName = useGetOsIconName()
 
                     <div v-if="(Number(order.payable_amount) - Number(order.total_amount)) < 0"
                          class="row q-pb-md items-center">
-                      <div class="col-3 text-grey">优惠</div>
+                      <div class="col-3 text-grey"> {{tc('components.order.OrderDetailCard.discount')}}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }}点
+                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.point') }}
                       </div>
                     </div>
 
                     <div class="row items-center text-primary">
-                      <div class="col-3">应付</div>
+                      <div class="col-3">{{tc('components.order.OrderDetailCard.payable')}}</div>
                       <div class="col-shrink text-bold text-h5">
-                        {{ order.payable_amount }}点
+                        {{ order.payable_amount }} {{ tc('components.order.OrderDetailCard.point') }}
                       </div>
                     </div>
 
@@ -377,16 +377,16 @@ const getOsIconName = useGetOsIconName()
 
                     <div v-if="(order.pay_amount - order.total_amount) < 0"
                          class="row q-pb-md items-center">
-                      <div class="col-3 text-grey">优惠</div>
+                      <div class="col-3 text-grey">{{tc('components.order.OrderDetailCard.discount')}}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }}点
+                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.point') }}
                       </div>
                     </div>
 
                     <div class="row items-center text-primary">
-                      <div class="col-3 ">实付</div>
+                      <div class="col-3 ">{{ tc('components.order.OrderDetailCard.actually_paid') }}</div>
                       <div class="col-shrink text-bold text-h5 ">
-                        {{ order.pay_amount }}点
+                        {{ order.pay_amount }} {{ tc('components.order.OrderDetailCard.point') }}
                       </div>
                     </div>
 

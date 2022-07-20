@@ -39,7 +39,7 @@ const { tc } = i18n.global
 const columns = computed(() => [
   {
     name: 'ip',
-    label: (() => tc('IP地址'))(),
+    label: (() => tc('components.server.ServeTable.ip_address'))(),
     field: 'ip',
     align: 'center',
     classes: 'ellipsis',
@@ -48,7 +48,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: (() => tc('所属组'))(),
+    label: (() => tc('components.server.ServeTable.project_group'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -57,7 +57,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'serviceNode',
-    label: (() => tc('服务节点'))(),
+    label: (() => tc('components.server.ServeTable.service_node'))(),
     field: 'serviceNode',
     align: 'center',
     classes: 'ellipsis',
@@ -66,7 +66,7 @@ const columns = computed(() => [
   },
   {
     name: 'image',
-    label: (() => tc('操作系统'))(),
+    label: (() => tc('components.server.ServeTable.operating_system'))(),
     field: 'image',
     align: 'center',
     classes: 'ellipsis',
@@ -75,7 +75,7 @@ const columns = computed(() => [
   },
   {
     name: 'configuration',
-    label: (() => tc('配置'))(),
+    label: (() => tc('components.server.ServeTable.configuration'))(),
     field: 'configuration',
     align: 'center',
     classes: 'ellipsis',
@@ -84,7 +84,7 @@ const columns = computed(() => [
   },
   {
     name: 'billing',
-    label: (() => tc('计费方式'))(),
+    label: (() => tc('components.server.ServeTable.billing_method'))(),
     field: 'billing',
     align: 'center',
     classes: 'ellipsis',
@@ -93,7 +93,7 @@ const columns = computed(() => [
   },
   {
     name: 'note',
-    label: (() => tc('备注'))(),
+    label: (() => tc('components.server.ServeTable.remarks'))(),
     field: 'note',
     align: 'center',
     classes: 'ellipsis',
@@ -102,7 +102,7 @@ const columns = computed(() => [
   },
   {
     name: 'vnc',
-    label: (() => tc('远程控制'))(),
+    label: (() => tc('components.server.ServeTable.remote_control'))(),
     field: 'vnc',
     align: 'center',
     classes: 'ellipsis',
@@ -111,7 +111,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('状态'))(),
+    label: (() => tc('components.server.ServeTable.state'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -119,7 +119,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: (() => tc('操作'))(),
+    label: (() => tc('components.server.ServeTable.operation'))(),
     field: 'operation',
     align: 'center',
     classes: 'ellipsis',
@@ -162,13 +162,13 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
       row-key="name"
       :loading="isGroup ? store.tables.groupServerTable.status === 'loading' : store.tables.personalServerTable.status === 'loading' "
       color="primary"
-      :loading-label="tc('网络请求中，请稍候...')"
-      :no-data-label="tc('暂无云主机')"
+      :loading-label="tc('components.server.ServeTable.loading_wait')"
+      :no-data-label="tc('components.server.ServeTable.no_cloud_host')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      :no-results-label="tc('无搜索结果')"
+      :no-results-label="tc('components.server.ServeTable.no_search_results')"
     >
 
       <template v-slot:body="props">
@@ -182,7 +182,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
               @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`)">
               <q-tooltip>
-                {{ tc('云主机详情') }}
+                {{ tc('components.server.ServeTable.cloud_host_details') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge style="top:-10px;"
@@ -196,7 +196,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.ipv4)">
               <q-tooltip>
-                {{ tc('复制到剪切板') }}
+                {{ tc('components.server.ServeTable.copy_clipboard') }}
               </q-tooltip>
             </q-btn>
             <q-btn v-else
@@ -213,7 +213,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
-                {{ tc('项目组详情') }}
+                {{ tc('components.server.ServeTable.project_group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -278,7 +278,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
           <q-td key="configuration" :props="props">
             <div> {{ props.row.vcpus }} {{
-                i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
+                i18n.global.locale === 'zh' ? tc('components.server.ServeTable.nuclear') : props.row.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
             <div>{{ props.row.ram / 1024 }}GB</div>
@@ -287,17 +287,17 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           <q-td key="billing" :props="props">
 
             <div v-if="props.row.pay_type === 'postpaid'">
-              {{ tc('按量计费') }}
+              {{ tc('components.server.ServeTable.pay_as_go') }}
             </div>
 
             <div v-if="props.row.pay_type === 'prepaid'">
               <div class="column items-center">
                 <div class="col-auto">
-                  {{ tc('包月预付') }}
+                  {{ tc('components.server.ServeTable.monthly_prepaid') }}
 
                   <q-tooltip class="text-center">
 
-                    {{ tc('到期时间') }}
+                    {{ tc('components.server.ServeTable.expiration_time') }}
                     <!--              日期时间格式根据locale值变化-->
                     <div v-if="i18n.global.locale==='zh'">
                       <div>{{
@@ -326,7 +326,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
                 <div class="col-auto" v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0">
                   <q-icon name="help_outline" color="red" size="xs">
-                    <q-tooltip>{{ tc('云主机已到期，请及时续期') }}</q-tooltip>
+                    <q-tooltip>{{ tc('components.server.ServeTable.expired_renew_host') }}</q-tooltip>
                   </q-icon>
                 </div>
 
@@ -360,7 +360,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                 class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
                 @click="store.editServerNoteDialog({serverId:props.row.id, isGroup})">
                 <q-tooltip>
-                  {{ tc('编辑备注') }}
+                  {{ tc('components.server.ServeTable.edit_remarks') }}
                 </q-tooltip>
               </q-btn>
 
@@ -373,11 +373,11 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             <q-btn v-if="props.row.status === 1" unelevated flat padding="none" size="lg" color="primary"
                    icon="computer"
                    @click="store.gotoVNC(props.row.id)">
-              <q-tooltip>{{ tc('进入远程控制') }}</q-tooltip>
+              <q-tooltip>{{ tc('components.server.ServeTable.into_remote_control') }}</q-tooltip>
             </q-btn>
             <q-btn v-else unelevated flat padding="none" size="lg" color="grey-5" icon="computer">
               <q-tooltip>
-                {{ tc('请开机以使用远程控制') }}
+                {{ tc('components.server.ServeTable.open_remote_control') }}
               </q-tooltip>
             </q-btn>
           </q-td>

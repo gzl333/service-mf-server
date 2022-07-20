@@ -30,12 +30,12 @@ const fabButton = ref(false)
       vertical-actions-align="right"
       color="primary"
       icon="add"
-      :label="tc('新建')"
+      :label="tc('components.group.ButtonAdd.new_build')"
       direction="down"
     >
-      <q-fab-action :label="tc('新建项目组')" unelevated color="primary" icon="group"
+      <q-fab-action :label="tc('components.group.ButtonAdd.new_project_group')" unelevated color="primary" icon="group"
                     @click="navigateToUrl('/my/server/group/create')"/>
-      <q-fab-action :label="tc('新建组云主机')" unelevated color="primary" icon="computer"
+      <q-fab-action :label="tc('components.group.ButtonAdd.new_cloud_host')" unelevated color="primary" icon="computer"
                     @click="navigateToUrl('/my/server/group/server/deploy')"/>
     </q-fab>
   </div>

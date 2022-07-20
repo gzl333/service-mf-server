@@ -54,26 +54,26 @@ const onOKClick = () => {
         ... use q-card-section for it?
       -->
       <q-card-section>
-        <div class="text-h6 q-pb-lg">{{ tc('编辑项目组信息') }}</div>
+        <div class="text-h6 q-pb-lg">{{ tc('components.group.GroupEditDialog.edit_group_information') }}</div>
       </q-card-section>
 
       <q-card-section>
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">项目组名称</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.project_group_name') }}</div>
           <div class="col">
             <q-input outlined dense v-model="groupName" maxlength="15" counter/>
           </div>
         </div>
 
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">所属单位</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.affiliated_unit') }}</div>
           <div class="col">
             <q-input outlined dense v-model="groupCompany" maxlength="15" counter/>
           </div>
         </div>
 
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">备注</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.remarks') }}</div>
           <div class="col">
             <q-input outlined dense v-model="groupDescription" maxlength="15" counter/>
           </div>
@@ -83,10 +83,10 @@ const onOKClick = () => {
       <!-- buttons example -->
       <q-card-actions align="right">
         <q-btn color="primary" unelevated @click="onDialogCancel">
-          {{ tc('取消') }}
+          {{ tc('components.group.GroupEditDialog.cancel') }}
         </q-btn>
         <q-btn color="primary" outline @click="onOKClick">
-          {{ tc('确定') }}
+          {{ tc('components.group.GroupEditDialog.confirm') }}
         </q-btn>
       </q-card-actions>
 

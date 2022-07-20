@@ -71,8 +71,8 @@ const gotoManualVpn = () => {
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span v-if="isGroup">项目组云主机详情</span>
-          <span v-else>个人云主机详情</span>
+          <span v-if="isGroup">{{tc('components.server.ServeDetailCard.project_host_details')}}</span>
+          <span v-else>{{tc('components.server.ServeDetailCard.personal_host_details')}}</span>
         </div>
 
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
@@ -81,7 +81,7 @@ const gotoManualVpn = () => {
           <!--todo 区分读取中和读取错误          -->
           <!--          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">-->
           <div v-if="!server || !service " class="col">
-            正在加载，请稍候
+            {{tc('components.server.ServeDetailCard.loading_wait')}}
           </div>
 
           <div v-else class="col content-area">
@@ -92,7 +92,7 @@ const gotoManualVpn = () => {
                     class="col-shrink text-h4 text-bold" flat no-caps padding="none" color="primary"
                     @click="clickToCopy(server.ipv4)">{{ server.ipv4 }}
                     <q-tooltip>
-                      复制
+                      {{tc('components.server.ServeDetailCard.copy')}}
                     </q-tooltip>
                     <!--创建时间距离当下小于1小时则打上new标记-->
                     <q-badge style="top:-10px;"
@@ -110,7 +110,7 @@ const gotoManualVpn = () => {
                   <div class="col-auto">
                     <span>
                       {{ server.remarks }}
-                      <q-tooltip>备注</q-tooltip>
+                      <q-tooltip>{{tc('components.server.ServeDetailCard.remarks')}}</q-tooltip>
                     </span>
 
                     <q-btn v-if="!isGroup || isGroup && myRole!=='member'"
@@ -118,7 +118,7 @@ const gotoManualVpn = () => {
                            class="col-shrink q-px-xs" flat dense icon="edit" size="sm" color="primary"
                            @click="store.editServerNoteDialog({serverId:server.id, isGroup})">
                       <q-tooltip>
-                        编辑备注
+                        {{tc('components.server.ServeDetailCard.edit_remarks')}}
                       </q-tooltip>
                     </q-btn>
                   </div>
@@ -137,10 +137,10 @@ const gotoManualVpn = () => {
                   @click="store.toggleOperationLock( {isGroup:isGroup, serverId: serverId })"
                 >
                   <q-tooltip v-if="server.lock === 'lock-operation'">
-                    {{ tc('已锁定云主机操作') }}
+                    {{ tc('components.server.ServeDetailCard.locked_host_operation') }}
                   </q-tooltip>
                   <q-tooltip v-else>
-                    {{ tc('未锁定云主机操作') }}
+                    {{ tc('components.server.ServeDetailCard.unlocked_host_operation') }}
                   </q-tooltip>
                 </q-toggle>
 
@@ -149,17 +149,17 @@ const gotoManualVpn = () => {
                        icon="computer"
                        @click="server.status==1?store.gotoVNC(server.id):''">
                   <q-tooltip v-if="server.status==1">
-                    远程控制
+                    {{ tc('components.server.ServeDetailCard.remote_control') }}
                   </q-tooltip>
                   <q-tooltip v-else>
-                    请开机以使用远程控制
+                    {{ tc('components.server.ServeDetailCard.power_remote_control') }}
                   </q-tooltip>
                 </q-btn>
 
                 <!--loading button-->
                 <q-btn v-if="!server.status" :loading="server.status===-1" color="primary" flat>
                   <q-tooltip>
-                    {{ tc('获取中') }}
+                    {{ tc('components.server.ServeDetailCard.acquiring') }}
                   </q-tooltip>
                 </q-btn>
 
@@ -169,7 +169,7 @@ const gotoManualVpn = () => {
                        unelevated flat padding="none" size="lg"
                        @click="store.serverOperationDialog({serverId: server.id, action: 'start', isGroup})">
                   <q-tooltip>
-                    开机
+                    {{ tc('components.server.ServeDetailCard.power_on') }}
                   </q-tooltip>
                 </q-btn>
 
@@ -179,7 +179,7 @@ const gotoManualVpn = () => {
                        unelevated flat padding="none" size="lg"
                        @click="store.serverOperationDialog({ serverId: server.id, action: 'shutdown', isGroup})">
                   <q-tooltip>
-                    关机
+                    {{ tc('components.server.ServeDetailCard.shut_down') }}
                   </q-tooltip>
                 </q-btn>
 
@@ -189,7 +189,7 @@ const gotoManualVpn = () => {
                        unelevated flat padding="none" size="lg"
                        @click="store.serverOperationDialog({ serverId: server.id, action: 'reboot', isGroup})">
                   <q-tooltip>
-                    重启
+                    {{ tc('components.server.ServeDetailCard.restart') }}
                   </q-tooltip>
                 </q-btn>
 
@@ -199,7 +199,7 @@ const gotoManualVpn = () => {
                        unelevated flat padding="none" size="lg"
                        @click="store.serverOperationDialog({serverId: server.id, action: 'poweroff', isGroup})">
                   <q-tooltip>
-                    强制断电
+                    {{ tc('components.server.ServeDetailCard.forced_power_off') }}
                   </q-tooltip>
                 </q-btn>
 
@@ -213,7 +213,7 @@ const gotoManualVpn = () => {
                          unelevated flat padding="none" size="lg"
                          @click="store.triggerServerRebuildDialog({ serverId: server.id,  isGroup})">
                     <q-tooltip>
-                      重建云主机
+                      {{ tc('components.server.ServeDetailCard.rebuild_cloud_host') }}
                     </q-tooltip>
                   </q-btn>
 
@@ -223,7 +223,7 @@ const gotoManualVpn = () => {
                          unelevated flat padding="none" size="lg"
                          @click="store.serverOperationDialog({ serverId: server.id, action: 'delete', isGroup, isJump: true})">
                     <q-tooltip>
-                      删除
+                     {{ tc('components.server.ServeDetailCard.cancel') }}
                     </q-tooltip>
                   </q-btn>
 
@@ -233,7 +233,7 @@ const gotoManualVpn = () => {
                          unelevated flat padding="none" size="lg"
                          @click="store.serverOperationDialog({ serverId: server.id, action: 'delete_force', isGroup, isJump: true})">
                     <q-tooltip>
-                      强制删除
+                      {{ tc('components.server.ServeDetailCard.force_deletion') }}
                     </q-tooltip>
                   </q-btn>
 
@@ -245,10 +245,10 @@ const gotoManualVpn = () => {
               <div class="col-4">
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">系统初始用户名</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.initial_user_name') }}</div>
                   <div class="col-shrink">
                     <div v-if="server?.default_user === null || server?.default_user===''">
-                      {{ tc('服务节点未提供') }}
+                      {{ tc('components.server.ServeDetailCard.no_service_node') }}
                     </div>
                     <div v-else>
                       {{ server.default_user }}
@@ -256,7 +256,7 @@ const gotoManualVpn = () => {
                         class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
                         @click="clickToCopy(server.default_user)">
                         <q-tooltip>
-                          复制
+                          {{ tc('components.server.ServeDetailCard.copy') }}
                         </q-tooltip>
                       </q-btn>
                     </div>
@@ -264,10 +264,10 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">系统初始密码</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.system_initial_password') }}</div>
                   <div class="col-shrink">
                     <div v-if="server?.default_password === null || server?.default_password===''">
-                      {{ tc('服务节点未提供') }}
+                      {{ tc('components.server.ServeDetailCard.no_service_node') }}
                     </div>
 
                     <div class="row">
@@ -276,7 +276,7 @@ const gotoManualVpn = () => {
                       <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
                              @click="clickToCopy(server?.default_password, true)">
                         <q-tooltip>
-                          {{ tc(' 复制') }}
+                          {{ tc('components.server.ServeDetailCard.copy') }}
                         </q-tooltip>
                       </q-btn>
                     </div>
@@ -285,39 +285,39 @@ const gotoManualVpn = () => {
 
                 <div v-if="!service.need_vpn && vpn" class="row q-pb-md items-center">
                   <div class="col-3 text-grey">VPN</div>
-                  <div class="col-auto">无需VPN连接</div>
+                  <div class="col-auto">{{ tc('components.server.ServeDetailCard.no_vpn_connect') }}</div>
                 </div>
 
                 <div v-if="service.need_vpn" class="row q-pb-md items-center ">
-                  <div class="col-3 text-grey ">VPN 账户状态</div>
+                  <div class="col-3 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_account_state') }}</div>
                   <div class="col">
                     <div v-if="vpn?.active" class="col-shrink row items-center">
                       <q-icon name="check_circle" color="light-green" size="sm"/>
-                      {{ tc('已开启') }}
+                      {{ tc('components.server.ServeDetailCard.opened') }}
                     </div>
 
                     <div v-else class="col-shrink row items-center">
                       <q-icon name="cancel" color="red" size="sm"/>
-                      {{ tc('已关闭') }}
+                      {{ tc('components.server.ServeDetailCard.closed') }}
                     </div>
                   </div>
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center ">
-                  <div class="col-3 text-grey ">VPN 用户名</div>
+                  <div class="col-3 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_user_name') }}</div>
                   <div class="col">
                     {{ vpn?.username }}
                     <q-btn class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
                            @click="clickToCopy(vpn?.username)">
                       <q-tooltip>
-                        复制
+                        {{ tc('components.server.ServeDetailCard.copy') }}
                       </q-tooltip>
                     </q-btn>
                   </div>
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active && vpn" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">VPN 密码</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_password') }}</div>
 
                   <div class="col-shrink">
 
@@ -327,7 +327,7 @@ const gotoManualVpn = () => {
                       <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
                              @click="clickToCopy(vpn?.password, true)">
                         <q-tooltip>
-                          {{ tc(' 复制') }}
+                          {{ tc('components.server.ServeDetailCard.copy') }}
                         </q-tooltip>
                       </q-btn>
                     </div>
@@ -337,17 +337,17 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">VPN 配置文件</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_profile') }}</div>
                   <div class="col">
-                    <q-btn label="下载" class=" " color="primary" padding="none" dense flat
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class=" " color="primary" padding="none" dense flat
                            @click="store.fetchConfig(server.service)"/>
                   </div>
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">VPN CA证书</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_ca_certificate') }}</div>
                   <div class="col">
-                    <q-btn label="下载" class="" color="primary" padding="none" dense flat
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class="" color="primary" padding="none" dense flat
                            @click="store.fetchCa(server.service)"/>
                   </div>
                 </div>
@@ -355,7 +355,7 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <!--                  <div class="col-3 text-grey">VPN 使用方法</div>-->
                   <!--                  <div class="col">-->
-                  <q-btn label="查看VPN使用方法" class="" color="primary" padding="none" dense flat
+                  <q-btn :label="tc('components.server.ServeDetailCard.view_vpn_usage')" class="" color="primary" padding="none" dense flat
                          @click="gotoManualVpn"/>
                   <!--                  </div>-->
                 </div>
@@ -364,20 +364,20 @@ const gotoManualVpn = () => {
 
               <div class="col-4">
                 <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">所属组</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.project_group') }}</div>
                   <div class="col-shrink">
                     <q-btn flat dense color="primary" padding="none"
                            :to="{path:  `/my/server/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
                       {{ store.tables.groupTable.byId[server.vo_id].name }}
                       <q-tooltip>
-                        项目组详情
+                        {{ tc('components.server.ServeDetailCard.project_detail') }}
                       </q-tooltip>
                     </q-btn>
                   </div>
                 </div>
 
                 <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">我的角色</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.my_role') }}</div>
                   <div class="col-shrink">
                     <group-role-chip :role="myRole"/>
                   </div>
@@ -403,14 +403,14 @@ const gotoManualVpn = () => {
                 <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">创建者</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.creator') }}</div>
                   <div class="col-shrink">
                     {{ server.user.username }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">云主机ID</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.cloud_host_id') }}</div>
                   <div class="col">
                     {{ server.id }}
                     <!--                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"-->
@@ -423,17 +423,17 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">硬件配置</div>
-                  <div class="col"> {{ server.vcpus }}核CPU / {{ server.ram / 1024 }}GB内存</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.hardware_configuration') }}</div>
+                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.hardware_nuclear') }}CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.hardware_memory') }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">IP地址类型</div>
-                  <div class="col"> {{ server.public_ip ? '公网' : '私网' }}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.ip_address_type') }}</div>
+                  <div class="col"> {{ server.public_ip ? tc('components.server.ServeDetailCard.public_network') : tc('components.server.ServeDetailCard.private_network') }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">操作系统</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.operating_system')}}</div>
                   <div class="col">
                     <q-icon v-if="getOsIconName(server.image)" :name="getOsIconName(server.image)" flat size="md"/>
                     {{ server.image }}
@@ -441,7 +441,7 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="server.image_desc" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">系统描述</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.system_specification')}}</div>
                   <div class="col"> {{ server.image_desc }}</div>
                 </div>
 
@@ -450,35 +450,35 @@ const gotoManualVpn = () => {
               <div class="col-4">
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">计费类型</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.billing_type')}}</div>
                   <div v-if="server.pay_type === 'prepaid'" class="col">
-                    包月预付
+                    {{tc('components.server.ServeDetailCard.monthly_prepaid')}}
                   </div>
                   <div v-if="server.pay_type === 'postpaid'" class="col">
-                    按量计费
+                    {{tc('components.server.ServeDetailCard.pay_as_go')}}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">创建时间</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.create_time')}}</div>
                   <div class="col">
                     {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">到期时间</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.expiration_time')}}</div>
                   <div class="col row items-center">
                     <div class="col-auto">
                       {{
-                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '长期'
+                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.server.ServeDetailCard.long_term')
                       }}
                     </div>
                     <div v-if="server.pay_type === 'prepaid'" class="col-auto">
                       <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
                              color="primary" padding="none" icon="autorenew" :ripple="false" dense flat
                              @click="store.renewOrderDialog(server.id, isGroup)">
-                        {{ tc('续期') }}
+                        {{tc('components.server.ServeDetailCard.renewal')}}
                       </q-btn>
                     </div>
 
@@ -500,19 +500,19 @@ const gotoManualVpn = () => {
                 <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">所属机构</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.affiliation')}}</div>
                   <div class="col">
                     {{ store.tables.dataCenterTable.byId[service.data_center]?.name }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">服务节点</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.service_node')}}</div>
                   <div class="col"> {{ service.name }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">服务类型</div>
+                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.service_type')}}</div>
                   <div class="col">
 
                     <!--                    <q-icon-->

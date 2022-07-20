@@ -36,7 +36,7 @@ const service = computed(() => Object.values(store.tables.serviceTable.byId).fil
 
           <div class="row items-center justify-center">
             <span class="text-h6">{{ coupon.balance }}</span>
-            <span class="text-caption">{{ tc('点') }}</span>
+            <span class="text-caption">{{ tc('components.coupon.CouponCard.points') }}</span>
           </div>
 
         </q-card-section>
@@ -46,7 +46,7 @@ const service = computed(() => Object.values(store.tables.serviceTable.byId).fil
         <q-card-section style="width: 210px;" class="q-pa-sm text-caption items-center full-height">
 
           <div class="row justify-start">
-            <span class="col-4 text-grey"> {{ tc('所属服务') }}</span>
+            <span class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.service') }}</span>
             <span class="col-auto">{{
                 i18n.global.locale === 'zh' ? service.name : service.name_en
               }}
@@ -54,7 +54,7 @@ const service = computed(() => Object.values(store.tables.serviceTable.byId).fil
           </div>
 
           <div class="row">
-            <span class="col-4 text-grey"> {{ tc('到期时间') }}</span>
+            <span class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.expiration_time') }}</span>
             <span class="col-auto">{{ new Date(coupon.expiration_time).toLocaleString(i18n.global.locale) }}</span>
           </div>
 

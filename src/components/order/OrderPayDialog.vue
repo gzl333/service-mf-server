@@ -58,7 +58,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('请选择要使用的代金券')}`,
+      message: `${tc('components.order.OrderPayDialog.choose_voucher')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -79,7 +79,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary" style="height: 550px;">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ isGroup ? tc('支付项目组订单') : tc('支付个人订单') }}</div>
+        <div class="text-primary">{{ isGroup ? tc('components.order.OrderPayDialog.pay_project_order') : tc('components.order.OrderPayDialog.pay_personal_orders') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -90,7 +90,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            订单ID
+            {{tc('components.order.OrderPayDialog.order_id')}}
           </div>
           <div class="col">
             {{ order.id }}
@@ -99,10 +99,10 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
-            应付金额
+            {{tc('components.order.OrderPayDialog.amount_payable')}}
           </div>
           <div class="col">
-            {{ order.payable_amount }}点
+            {{ order.payable_amount }} {{tc('components.order.OrderPayDialog.point')}}
           </div>
         </div>
 
@@ -114,7 +114,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ tc('支付方式') }}
+            {{ tc('components.order.OrderPayDialog.payment_method') }}
           </div>
           <div class="col-9 q-gutter-x-sm">
 
@@ -123,7 +123,7 @@ const onOKClick = () => {
                    :ripple="false" dense unelevated
                    :color="methodSelect==='cashcoupon'?'primary':'grey'"
                    @click="methodSelect = 'cashcoupon'">
-              {{ tc('代金券') }}
+              {{ tc('components.order.OrderPayDialog.vouchers') }}
             </q-btn>
 
             <q-btn style="width: 180px;"
@@ -131,7 +131,7 @@ const onOKClick = () => {
                    :ripple="false" dense unelevated
                    :color="methodSelect==='balance'?'primary':'grey'"
                    @click="methodSelect = 'balance'">
-              {{ tc('余额') }}
+              {{ tc('components.order.OrderPayDialog.available_balance') }}
             </q-btn>
 
           </div>
@@ -139,7 +139,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            所属项目组
+            {{ tc('components.order.OrderPayDialog.project_group') }}
           </div>
           <div class="col">
             {{ order.vo_name }}
@@ -150,10 +150,10 @@ const onOKClick = () => {
              class="row q-pb-lg items-start">
 
           <div class="col-3 text-grey-7">
-            {{ isGroup ? tc('项目组代金券') : tc('个人代金券') }}
+            {{ isGroup ? tc('components.order.OrderPayDialog.project_group_voucher') : tc('components.order.OrderPayDialog.personal_voucher') }}
 
             <div class="row text-black">
-              <div>已选</div>
+              <div>{{ tc('components.order.OrderPayDialog.selected') }}</div>
               <div>{{ couponSelect.length }}个</div>
             </div>
 
@@ -168,11 +168,11 @@ const onOKClick = () => {
               <div v-if="coupons.length === 0" class="col">
 
                 <div v-if="isGroup">
-                  {{ tc('项目组账户内暂无该服务节点可用代金券') }}
+                  {{ tc('components.order.OrderPayDialog.project_no_voucher') }}
                 </div>
 
                 <div v-else>
-                  {{ tc('个人账户内暂无该服务节点可用代金券') }}
+                  {{ tc('components.order.OrderPayDialog.personal_no_voucher') }}
                 </div>
 
                 <!--                <div>-->
@@ -201,7 +201,7 @@ const onOKClick = () => {
 
         <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ isGroup ? tc('项目组账户余额') : tc('个人账户余额') }}
+            {{ isGroup ? tc('components.order.OrderPayDialog.project_account_balance') : tc('components.order.OrderPayDialog.personal_account_balance') }}
           </div>
 
           <div v-if="isGroup" class="col"
@@ -210,7 +210,7 @@ const onOKClick = () => {
           </div>
 
           <div v-else class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
-            {{ store.items.personalBalance.balance }}点
+            {{ store.items.personalBalance.balance }} {{tc('components.order.OrderPayDialog.point') }}
           </div>
 
         </div>
@@ -220,8 +220,8 @@ const onOKClick = () => {
       <!--      <q-separator/>-->
 
       <q-card-actions align="between" class="absolute-bottom">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('确认支付')" @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderPayDialog.cancel')" @click="onDialogCancel"/>
       </q-card-actions>
 
       <!--      <pre> {{ coupons }}</pre>-->

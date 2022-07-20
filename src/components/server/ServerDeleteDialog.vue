@@ -77,7 +77,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: '请取消云主机的删除锁定',
+      message: `${tc('components.server.ServerDeleteDialog.cancel_delete_host')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -98,7 +98,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-negative ">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-negative">{{ action === 'delete' ? tc('删除云主机') : tc('强制删除云主机') }}</div>
+        <div class="text-negative">{{ action === 'delete' ? tc('components.server.ServerDeleteDialog.delete_host') : tc('components.server.ServerDeleteDialog.forcibly_delete_host') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -109,7 +109,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            IP地址
+            {{tc('components.server.ServerDeleteDialog.ip_address')}}
           </div>
           <div class="col">
             {{ server.ipv4 }}
@@ -118,7 +118,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            备注
+            {{tc('components.server.ServerDeleteDialog.remarks')}}
           </div>
           <div class="col">
             {{ server.remarks }}
@@ -127,7 +127,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            项目组
+            {{tc('components.server.ServerDeleteDialog.project_group')}}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -136,7 +136,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            所属机构
+            {{tc('components.server.ServerDeleteDialog.affiliation')}}
           </div>
           <div class="col">
             {{
@@ -149,7 +149,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            服务节点
+            {{tc('components.server.ServerDeleteDialog.service_node')}}
           </div>
           <div class="col">
             {{
@@ -179,16 +179,16 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            配置
+            {{tc('components.server.ServerDeleteDialog.configuration')}}
           </div>
           <div class="col">
-            {{ server.vcpus }}{{ tc('核') }} / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }}{{ tc('components.server.ServerDeleteDialog.nuclear') }} / {{ server.ram / 1024 }}GB
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            操作系统
+            {{tc('components.server.ServerDeleteDialog.operating_system')}}
           </div>
           <div class="col">
             {{ server.image }}
@@ -197,20 +197,20 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            IP类型
+            {{tc('components.server.ServerDeleteDialog.ip_type')}}
           </div>
           <div class="col">
-            {{ server.public_ip ? tc('公网') : tc('私网') }}
+            {{ server.public_ip ? tc('components.server.ServerDeleteDialog.public_network') : tc('components.server.ServerDeleteDialog.private_network') }}
           </div>
         </div>
 
         <div class="row  items-center">
           <div class="col-2 text-grey-7">
-            可用期
+            {{tc('components.server.ServerDeleteDialog.available_period')}}
           </div>
           <div class="col">
             {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效' }}
+            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.server.ServerDeleteDialog.permanently_valid') }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -227,25 +227,25 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col text-grey-7">
-            请仔细阅读以下事项，并在确认后勾选：
+            {{tc('components.server.ServerDeleteDialog.read_carefully_check')}}
           </div>
         </div>
 
         <q-checkbox style="margin-left: -10px;" v-model="check1" color="primary">
           <div :class="check1?'text-primary':'text-black'">
-            {{ tc('我了解删除云主机会丢失全部数据，且无法自行恢复') }}
+            {{ tc('components.server.ServerDeleteDialog.understand_delete') }}
           </div>
         </q-checkbox>
 
         <q-checkbox style="margin-left: -10px;" v-model="check2" color="primary">
           <div :class="check2?'text-primary':'text-black'">
-            {{ tc('我了解已经支付的费用无法退款') }}
+            {{ tc('components.server.ServerDeleteDialog.understand_pay_rule') }}
           </div>
         </q-checkbox>
 
         <div class="row items-center q-pt-sm">
           <div class="col text-grey-7">
-            请解除锁定，并确认删除：
+            {{ tc('components.server.ServerDeleteDialog.unlock_confirm_deletion') }}
           </div>
         </div>
 
@@ -260,12 +260,12 @@ const onOKClick = () => {
           size="lg"
           @update:model-value="store.toggleDeleteLock({isGroup, serverId})"
         >
-          <span :class="toggle?'text-black':'text-primary'">{{ toggle ? tc('已锁定') : tc('已解除锁定') }}</span>
+          <span :class="toggle?'text-black':'text-primary'">{{ toggle ? tc('components.server.ServerDeleteDialog.locked') : tc('components.server.ServerDeleteDialog.unlocked') }}</span>
           <q-tooltip v-if="server.lock === 'free'">
-            {{ tc('未锁定云主机删除操作') }}
+            {{ tc('components.server.ServerDeleteDialog.locked.unlock_delete_host') }}
           </q-tooltip>
           <q-tooltip v-else>
-            {{ tc('已锁定云主机删除操作') }}
+            {{ tc('components.server.ServerDeleteDialog.locked.lock_delete_host') }}
           </q-tooltip>
         </q-toggle>
 
@@ -277,16 +277,16 @@ const onOKClick = () => {
           <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'red'"
                  unelevated
                  :disable="toggle || !check1 || !check2"
-                 :label="tc('确认')"
+                 :label="tc('components.server.ServerDeleteDialog.confirm')"
                  @click="onOKClick"/>
           <div class="col">
-            {{ tc('不想再次支付费用？请尝试') }}
-            <q-btn type="a" color="primary" flat padding="none" label="重建云主机"
+            {{ tc('components.server.ServerDeleteDialog.try_no_pay') }}
+            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.locked.rebuild_cloud_host')"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
         </div>
 
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onCancelClick"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.server.ServerDeleteDialog.cancel')" @click="onCancelClick"/>
 
       </q-card-actions>
     </q-card>

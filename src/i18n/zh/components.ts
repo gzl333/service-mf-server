@@ -43,6 +43,8 @@ export default {
       personal_account: '个人账户',
       project_account: '项目组账户',
       project_group: '项目组',
+      no_project_group: '暂无项目组',
+      build_project_group: '创建项目组',
       redemption_code: '兑换码',
       input_redemption_code: '请输入兑换码',
       redeem: '兑换',
@@ -105,7 +107,14 @@ export default {
       vouchers: '代金券',
       available_balance: '余额',
       operation: '操作',
+      network_wait: '网络请求中，请稍候...',
+      no_project_group: '暂无项目组',
+      no_search_results: '无搜索结果',
       details: '详情',
+      person: '人',
+      table: '台',
+      indivual: '个',
+      point: '点',
       check_details: '查看详情',
       edit_project_group: '编辑项目组',
       disband_project_group: '解散项目组'
@@ -121,6 +130,7 @@ export default {
       affiliation: '所属机构',
       service_node: '服务节点',
       amount_payable: '应付金额',
+      point: '点',
       holder_order: '保留订单'
     },
     OrderDetailCard: {
@@ -130,6 +140,7 @@ export default {
       order_id: '订单',
       project_group: '所属项目组',
       project_detail: '项目组详情',
+      oder_user: '下单用户',
       cancel_order: '取消订单',
       new_purchase: '新购',
       renewal: '续期',
@@ -152,6 +163,8 @@ export default {
       cloud_host_id: '云主机ID',
       ip_address: 'IP地址',
       ip_address_type: 'IP地址类型',
+      public_network: '公网',
+      private_network: '私网',
       network_segment: '网段',
       operating_system: '操作系统',
       affiliation: '所属机构',
@@ -180,7 +193,9 @@ export default {
       personal_no_voucher: '个人账户内暂无该服务节点可用代金券',
       project_account_balance: '项目组账户余额',
       personal_account_balance: '个人账户余额',
-      point: '点'
+      point: '点',
+      confirm_pay: '确认支付',
+      cancel: '取消'
     },
 
     OrderRenewDialog: {
@@ -207,6 +222,7 @@ export default {
       specify_renewal_period: '指定续期时长',
       specify_expiration_time: '指定过期时间',
       renewal_period: '续期时长',
+      number_interval: '应为介于1-{MAX_MONTHS}之间的整数',
       target_time: '目标时间',
       create_order: '创建订单',
       cancel: '取消'
@@ -235,6 +251,7 @@ export default {
       order_details: '订单详情',
       copy_clipboard: '复制到剪切板',
       project_detail: '项目组详情',
+      nuclear: '核',
       public_network: '公网',
       private_network: '私网',
       new_purchase: '新购',
@@ -250,8 +267,10 @@ export default {
   },
 
   personal: {
-    new_build: '新建',
-    new_personal_host: '新建个人云主机'
+    ButtonAdd: {
+      new_build: '新建',
+      new_personal_host: '新建个人云主机'
+    }
   },
   server: {
     ServerDeleteDialog: {
@@ -264,13 +283,16 @@ export default {
       affiliation: '所属机构',
       service_node: '服务节点',
       configuration: '配置',
+      nuclear: '核',
       operating_system: '操作系统',
       ip_type: 'IP类型',
+      public_network: '公网',
+      private_network: '私网',
       available_period: '可用期',
       permanently_valid: '永久有效',
       read_carefully_check: '请仔细阅读以下事项，并在确认后勾选:',
       understand_delete: '我了解删除云主机会丢失全部数据，且无法自行恢复',
-      understand_delete_rule: '我了解已经支付的费用无法退款',
+      understand_pay_rule: '我了解已经支付的费用无法退款',
       unlock_confirm_deletion: '请解除锁定，并确认删除：',
       locked: '已锁定',
       unlocked: '已解除锁定',
@@ -295,9 +317,15 @@ export default {
       create_group: '创建项目组',
       billing_method: '计费方式',
       monthly_prepaid: '包月预付',
+      delivery_after_pay: '云主机将在付费后交付',
       pay_as_go: '按量计费',
+      delivery_now_pay: '云主机将立即交付，并开始计费',
+      use_host_time: '云主机使用时长',
+      prepaid_time: '预付时长',
       service_node: '服务节点',
+      no_available_service: '本机构暂无可用服务',
       network_type: '网络类型',
+      private_ip_segment: '私网IP段',
       public_ip_segment: '公网IP段',
       node_no_network: '该服务节点无可用网络类型，请选择其它服务节点',
       operating_system: '操作系统',
@@ -310,11 +338,11 @@ export default {
       months: '个月',
       select_project_group: '请选择项目组',
       select_service_node: '请选择服务节点',
-      private_ip_segment: '私网IP段',
       select_operating_system: '请选择操作系统',
       please_select_configuration: '请选择配置',
       remarks: '备注',
-      created_host: '新建云主机'
+      created_host: '新建云主机',
+      created_host_order: '新建云主机订单'
     },
 
     ServeDetailCard: {
@@ -325,7 +353,7 @@ export default {
       remarks: '备注',
       edit_remarks: '编辑备注',
       locked_host_operation: '已锁定云主机操作',
-      Unlocked_host_operation: '未锁定云主机操作',
+      unlocked_host_operation: '未锁定云主机操作',
       remote_control: '远程控制',
       power_remote_control: '请开机以使用远程控制',
       acquiring: '获取中',
@@ -355,6 +383,10 @@ export default {
       creator: '创建者',
       cloud_host_id: '云主机ID',
       hardware_configuration: '硬件配置',
+      nuclear: '核',
+      memory: '内存',
+      public_network: '公网',
+      private_network: '私网',
       ip_address_type: 'IP地址类型',
       operating_system: '操作系统',
       system_specification: '系统描述',
@@ -369,7 +401,7 @@ export default {
       service_node: '服务节点',
       service_type: '服务类型'
     },
-    ServeOperationBtnGroup:
+    ServerOperationBtnGroup:
       {
         locked_host_operation: '已锁定云主机操作',
         unlocked_host_operation: '未锁定云主机操作',
@@ -415,7 +447,7 @@ export default {
       shut_down: '已关机',
       crashed: '已崩溃',
       suspended: '被挂起',
-      Communication_fail: '通讯失败',
+      communication_fail: '通讯失败',
       lost: '已丢失',
       creating: '创建中',
       create_fail: '创建失败'

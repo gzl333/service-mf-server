@@ -40,10 +40,10 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
           @click="store.toggleOperationLock({isGroup, serverId: server.id })"
         >
           <q-tooltip v-if="server.lock === 'lock-operation'">
-            {{ tc('已锁定云主机操作') }}
+            {{ tc('components.server.ServerOperationBtnGroup.locked_host_operation') }}
           </q-tooltip>
           <q-tooltip v-else>
-            {{ tc('未锁定云主机操作') }}
+            {{ tc('components.server.ServerOperationBtnGroup.unlocked_host_operation') }}
           </q-tooltip>
         </q-toggle>
       </q-btn>
@@ -65,7 +65,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-label>
-                  {{ tc('云主机详情') }}
+                  {{ tc('components.server.ServerOperationBtnGroup.cloud_host_details') }}
                 </q-item-label>
               </q-item-section>
             </div>
@@ -81,7 +81,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-label>
-                    {{ tc('云主机续期') }}
+                    {{ tc('components.server.ServerOperationBtnGroup.cloud_host_renewal') }}
                   </q-item-label>
                 </q-item-section>
               </div>
@@ -99,7 +99,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('开机') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.starting_up') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -114,7 +114,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('重启') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.restart') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -129,7 +129,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('关机') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.shut_down') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -144,7 +144,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('强制断电') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.forced_power_off') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -164,7 +164,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('重建云主机') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.rebuild_cloud_host') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>
@@ -181,7 +181,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('删除') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>
@@ -196,7 +196,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('强制删除') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_deletion') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>

@@ -23,7 +23,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'username',
-    label: (() => tc('用户名'))(),
+    label: (() => tc('components.group.GroupMemberTable.user_name'))(),
     field: 'username',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -31,7 +31,7 @@ const columns = computed(() => [
   },
   {
     name: 'role',
-    label: (() => tc('角色'))(),
+    label: (() => tc('components.group.GroupMemberTable.role'))(),
     field: 'role',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -39,7 +39,7 @@ const columns = computed(() => [
   },
   {
     name: 'time',
-    label: (() => tc('加入时间'))(),
+    label: (() => tc('components.group.GroupMemberTable.join_time'))(),
     field: 'time',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -47,7 +47,7 @@ const columns = computed(() => [
   },
   {
     name: 'inviter',
-    label: (() => tc('邀请人'))(),
+    label: (() => tc('components.group.GroupMemberTable.inviter'))(),
     field: 'inviter',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   },
   ...(store.tables.groupTable.byId[props.groupId]?.myRole !== 'member' ? [{
     name: 'operation',
-    label: (() => tc('操作'))(),
+    label: (() => tc('components.group.GroupMemberTable.operation'))(),
     field: 'operation',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -79,8 +79,8 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
       row-key="name"
       :loading="store.tables.groupMemberTable.status === 'loading'"
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="项目组暂无成员"
+      :loading-label="tc('components.group.GroupMemberTable.network_wait')"
+      :no-data-label="tc('components.group.GroupMemberTable.no_members')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
     >
@@ -123,18 +123,18 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
             <div class="column justify-center items-center q-gutter-xs">
               <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat dense padding="none"
                      color="primary"
-                     @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row.id, role:'leader', role_name: '管理员'})">
-                {{ tc('设为管理员') }}
+                     @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row.id, role:'leader', role_name: tc('components.group.GroupMemberTable.admin')})">
+                {{ tc('components.group.GroupMemberTable.set_admin') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat dense padding="none" color="primary"
-                     @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row.id, role:'member', role_name: '组员'})">
-                {{ tc('取消管理员') }}
+                     @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row.id, role:'member', role_name: tc('components.group.GroupMemberTable.group_members')})">
+                {{ tc('components.group.GroupMemberTable.cancel_admin') }}
               </q-btn>
 
               <q-btn icon="remove_circle" flat dense padding="none" color="primary"
                      @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row.user.username})">
-                {{ tc('移出项目组') }}
+                {{ tc('components.group.GroupMemberTable.remove_project_group') }}
               </q-btn>
             </div>
           </q-td>

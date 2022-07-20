@@ -30,19 +30,19 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
   <span class="OrderStatus">
 
     <div v-if="order.status === 'unpaid'" class="text-bold text-red" >
-       {{ tc('待支付') }}
+       {{ tc('components.order.OrderStatus.to_be_paid') }}
     </div>
 
      <div v-if="order.status === 'paid'" class="text-bold text-light-green" >
-       {{ tc('已支付') }}
+       {{ tc('components.order.OrderStatus.paid') }}
     </div>
 
     <div v-if="order.status === 'cancelled'" class="text-bold text-black">
-       {{ tc('已取消') }}
+       {{ tc('components.order.OrderStatus.cancelled') }}
     </div>
 
     <div v-if="order.status === 'refund'" class="text-bold text-black">
-       {{ tc('已退款') }}
+       {{ tc('components.order.OrderStatus.refunded') }}
     </div>
   </span>
 </template>

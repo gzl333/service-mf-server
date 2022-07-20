@@ -42,7 +42,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
     <q-card class="q-dialog-plugin dialog-primary">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('取消订单') }}</div>
+        <div class="text-primary">{{ tc('components.order.OrderCancelDialog.cancel_order') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -53,7 +53,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            订单ID
+            {{ tc('components.order.OrderCancelDialog.order.id') }}
           </div>
           <div class="col">
             {{ order.id }}
@@ -62,7 +62,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            订单状态
+            {{ tc('components.order.OrderCancelDialog.order_status') }}
           </div>
           <div class="col">
             <OrderStatus :is-group="isGroup" :order-id="order.id"/>
@@ -71,7 +71,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            下单时间
+            {{ tc('components.order.OrderCancelDialog.order_creation_time') }}
           </div>
           <div class="col">
             {{ new Date(order.creation_time).toLocaleString(i18n.global.locale) }}
@@ -80,7 +80,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            所属机构
+            {{ tc('components.order.OrderCancelDialog.affiliation') }}
           </div>
           <div class="col">
             {{
@@ -93,7 +93,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            服务节点
+            {{ tc('components.order.OrderCancelDialog.service_node') }}
           </div>
           <div class="col">
             {{
@@ -115,10 +115,10 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
-            应付金额
+            {{ tc('components.order.OrderCancelDialog.amount_payable') }}
           </div>
           <div class="col">
-            {{ order.payable_amount }}点
+            {{ order.payable_amount }} {{ tc('components.order.OrderCancelDialog.point') }}
           </div>
         </div>
 
@@ -127,8 +127,8 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
       <q-separator/>
 
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消订单')" @click="onDialogOK(true)"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('保留订单')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.cancel_order')" @click="onDialogOK(true)"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.holder_order')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
