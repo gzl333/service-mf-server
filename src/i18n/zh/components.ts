@@ -33,7 +33,6 @@ export default {
       available: '可用',
       invalid: '失效'
     },
-
     RedeemCouponDialog: {
       notify_wrong_code: '兑换码输入有误，请检查输入',
       notify_no_group: '暂无可用项目组，请先创建或加入项目组',
@@ -59,7 +58,7 @@ export default {
       notify_max_members: '最多同时新增10个成员, 如有更多成员请分别添加。',
       notify_account: '请输入正确的用户账户',
       add_members: '增加成员',
-      project_group_name: '项目组名称',
+      group_name: '项目组名称',
       user_account: '用户账户',
       more_accounts: '更多账户',
       cancel: '取消',
@@ -69,11 +68,12 @@ export default {
       edit_group_information: '编辑项目组信息',
       group_name: '项目组名称',
       affiliation: '所属单位',
+      remarks: '备注',
       cancel: '取消',
       confirm: '确定'
     },
     GroupMemberTable: {
-      usernamee: '用户名',
+      username: '用户名',
       my_role: '角色',
       join_time: '加入时间',
       inviter: '邀请人',
@@ -86,7 +86,6 @@ export default {
       cancel_admin: '取消管理员',
       out_group: '移出项目组'
     },
-
     GroupRoleChip: {
       owner: '组长',
       admin: '管理员',
@@ -111,13 +110,13 @@ export default {
       member: '人',
       servers: '台',
       orders: '个',
+      coupons: '个',
       points: '点',
       check_details: '查看详情',
       edit_group_info: '编辑项目组',
       dismiss_group: '解散项目组'
     }
   },
-
   order: {
     OrderCancelDialog: {
       cancel_order: '取消订单',
@@ -169,14 +168,14 @@ export default {
       service_type: '服务类型',
       total_billing: '计费总额',
       discount: '优惠',
-      point: '点',
-      payable: '应付',
-      actually_paid: '实付'
+      points: '点',
+      due_amount: '应付',
+      actual_payment: '实付'
     },
     OrderPayDialog: {
       choose_coupon: '请选择要使用的代金券',
-      pay_project_order: '支付项目组订单',
-      pay_personal_orders: '支付个人订单',
+      pay_group_order: '支付项目组订单',
+      pay_personal_order: '支付个人订单',
       order_id: '订单ID',
       amount_payable: '应付金额',
       payment_method: '支付方式',
@@ -190,13 +189,13 @@ export default {
       notify_personal_no_coupon: '个人账户内暂无该服务节点可用代金券',
       group_account_balance: '项目组账户余额',
       personal_account_balance: '个人账户余额',
-      point: '点', // points
+      points: '点',
       confirm_pay: '确认支付',
       cancel: '取消'
     },
-
     OrderRenewDialog: {
-      prepaid_time_interval: '预付时长应介于1-{MAX_MONTHS}个月之间',
+      prepaid_time_warning: '预付时长应为',
+      prepaid_time_months: '个月',
       target_time_requirement: '目标时间应晚于过期时间',
       renew_server: '续期云主机',
       ip_address: 'IP地址',
@@ -215,11 +214,10 @@ export default {
       expiration_time: '过期时间',
       long_term: '长期',
       paid_no_renew: '按量计费的云主机无需续期',
-      renewal_way: '续期方式',
+      renew_type: '续期方式',
       specify_renewal_period: '指定续期时长',
       specify_expiration_time: '指定过期时间',
       renewal_period: '续期时长',
-      number_interval: '应为介于1-{MAX_MONTHS}之间的整数',
       target_time: '目标时间',
       place_order: '创建订单',
       cancel: '取消'
@@ -280,7 +278,7 @@ export default {
       affiliation: '所属机构',
       service_node: '服务节点',
       configuration: '配置',
-      cores: '核', // cores
+      cores: '核',
       operating_system: '操作系统',
       network_type: 'IP类型',
       public_network: '公网',
@@ -300,8 +298,9 @@ export default {
       rebuild_server: '重建云主机',
       cancel: '取消'
     },
-    ServeDeployCard: {
-      prepaid_time_interval: '预付时长应介于1-{MAX_MONTHS}个月之间',
+    ServerDeployCard: {
+      prepaid_time_warning: '预付时长应为',
+      prepaid_time_months: '个月',
       select_network: '请选择可用网络类型',
       select_os: '请选择可用操作系统',
       select_configuration: '请选择可用硬件配置',
@@ -358,13 +357,13 @@ export default {
       restart: '重启',
       force_power_off: '强制断电',
       rebuild_server: '重建云主机',
-      cancel: '删除', // delete
+      delete: '删除',
       force_delete: '强制删除',
       initial_os_username: '系统初始用户名',
       unavailable_from_service: '服务节点未提供',
       initial_os_password: '系统初始密码',
       no_vpn_connect: '无需VPN连接',
-      vpn_account_state: 'VPN 账户状态',
+      vpn_account_status: 'VPN 账户状态',
       activated: '已开启',
       deactivated: '已关闭',
       vpn_username: 'VPN 用户名',

@@ -136,7 +136,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.prepaid_time_interval')}`,
+      message: `${tc('components.server.ServerDeployCard.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.server.ServerDeployCard.prepaid_time_months')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -149,7 +149,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_network')}`,
+      message: `${tc('components.server.ServerDeployCard.select_network')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -162,7 +162,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_os')}`,
+      message: `${tc('components.server.ServerDeployCard.select_os')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -175,7 +175,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_configuration')}`,
+      message: `${tc('components.server.ServerDeployCard.select_configuration')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -187,7 +187,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.fill_remarks')}`,
+      message: `${tc('components.server.ServerDeployCard.fill_remarks')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -261,7 +261,7 @@ const deployServer = async () => {
           classes: 'notification-positive shadow-15',
           icon: 'check_circle',
           textColor: 'positive',
-          message: `${tc('components.server.ServeDeployCard.server_create_success')}: ${props.isGroup ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
+          message: `${tc('components.server.ServerDeployCard.server_create_success')}: ${props.isGroup ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 15000,
@@ -304,13 +304,13 @@ const deployServer = async () => {
 
       <div v-if="isGroup" class="section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.group') }}
+          {{ tc('components.server.ServerDeployCard.group') }}
         </div>
         <div class="row items-center q-gutter-md q-pb-lg">
           <div class="col-auto text-bold row items-center ">
-            {{ tc('components.server.ServeDeployCard.server_group') }}
+            {{ tc('components.server.ServerDeployCard.server_group') }}
             <q-icon name="help_outline" color="grey" size="xs">
-              <q-tooltip>{{ tc('components.server.ServeDeployCard.create_server_permission') }}</q-tooltip>
+              <q-tooltip>{{ tc('components.server.ServerDeployCard.create_server_permission') }}</q-tooltip>
             </q-icon>
           </div>
           <q-select v-if="groups.length !== 0" class="col-4" outlined v-model="radioGroup" dense
@@ -326,10 +326,10 @@ const deployServer = async () => {
           </q-select>
           <div v-else>
             <div class="row items-center">
-              {{ tc('components.server.ServeDeployCard.no_group') }}
+              {{ tc('components.server.ServerDeployCard.no_group') }}
               <q-btn v-if="isGroup" flat padding="none" color="primary"
                      :to="'/my/server/group/create'">
-                {{ tc('components.server.ServeDeployCard.create_group') }}
+                {{ tc('components.server.ServerDeployCard.create_group') }}
               </q-btn>
             </div>
           </div>
@@ -338,36 +338,36 @@ const deployServer = async () => {
 
       <div class="col section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.billing_method') }}
+          {{ tc('components.server.ServerDeployCard.billing_method') }}
         </div>
 
         <div class="row item-row">
           <q-radio class="radio non-selectable" v-model="radioPayment" val="prepaid" dense>
             <span class="text-bold q-pr-lg" :class="radioPayment==='prepaid' ? 'text-primary' : 'text-black'">
-              {{ tc('components.server.ServeDeployCard.monthly_prepaid') }}
+              {{ tc('components.server.ServerDeployCard.monthly_prepaid') }}
             </span>
-            <span>{{ tc('components.server.ServeDeployCard.delivery_after_pay') }}</span>
+            <span>{{ tc('components.server.ServerDeployCard.delivery_after_pay') }}</span>
           </q-radio>
         </div>
 
         <div class="row item-row">
           <q-radio class="radio non-selectable" v-model="radioPayment" val="postpaid" dense>
             <span class="text-bold q-pr-lg" :class="radioPayment==='postpaid' ? 'text-primary' : 'text-black'">
-              {{ tc('components.server.ServeDeployCard.pay_as_go') }}
+              {{ tc('components.server.ServerDeployCard.pay_as_go') }}
             </span>
-            <span>{{ tc('components.server.ServeDeployCard.delivery_now') }}</span>
+            <span>{{ tc('components.server.ServerDeployCard.delivery_now') }}</span>
           </q-radio>
         </div>
       </div>
 
       <div v-if="radioPayment === 'prepaid'" class="col section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.prepaid_time') }}
+          {{ tc('components.server.ServerDeployCard.prepaid_period') }}
         </div>
 
         <div class="row items-center q-gutter-md q-pb-lg">
           <div class="col-auto text-bold row items-center ">
-            {{ tc('components.server.ServeDeployCard.server_usage_period') }}
+            {{ tc('components.server.ServerDeployCard.server_usage_period') }}
           </div>
 
           <div class="row items-center q-pt-md">
@@ -396,7 +396,7 @@ const deployServer = async () => {
       <div class="col section">
 
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.service_node') }}
+          {{ tc('components.server.ServerDeployCard.service_node') }}
         </div>
 
         <div v-for="(dataCenter, index) in dataCenters" :key="dataCenter.id" class="item-row">
@@ -407,7 +407,7 @@ const deployServer = async () => {
             </div>
 
             <div class="col">
-              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">{{ tc('components.server.ServeDeployCard.no_available_service') }}</div>
+              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">{{ tc('components.server.ServerDeployCard.no_available_service') }}</div>
 
               <div v-else class="row items-center q-pb-sm"
                    v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
@@ -525,13 +525,13 @@ const deployServer = async () => {
       <div class="col section">
 
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.network_type') }}
+          {{ tc('components.server.ServerDeployCard.network_type') }}
         </div>
         <div
           v-if="privateNetworks.length > 0"
           class="row item-row">
           <div class="col-1 text-bold">
-            {{ tc('components.server.ServeDeployCard.private_ip_segment') }}
+            {{ tc('components.server.ServerDeployCard.private_ip_segment') }}
           </div>
           <div class="col">
             <q-radio v-for="network in privateNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
@@ -547,7 +547,7 @@ const deployServer = async () => {
           v-if="publicNetworks.length > 0"
           class="row item-row">
           <div class="col-1 text-bold">
-            {{ tc('components.server.ServeDeployCard.public_ip_segment') }}
+            {{ tc('components.server.ServerDeployCard.public_ip_segment') }}
           </div>
           <div class="col">
             <q-radio v-for="network in publicNetworks" :val="network.id" :key="network.id" v-model="radioNetwork"
@@ -562,7 +562,7 @@ const deployServer = async () => {
         <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0"
              class="row item-row">
           <div class="col-shrink item-title">
-            {{ tc('components.server.ServeDeployCard.node_no_network') }}
+            {{ tc('components.server.ServerDeployCard.node_no_network') }}
           </div>
         </div>
 
@@ -570,7 +570,7 @@ const deployServer = async () => {
 
       <div class="col section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.operating_system') }}
+          {{ tc('components.server.ServerDeployCard.operating_system') }}
         </div>
 
         <div v-if="images.length > 0" class="row item-row">
@@ -589,7 +589,7 @@ const deployServer = async () => {
 
         <div v-else class="row item-row">
           <div class="col-shrink item-title">
-            {{ tc('components.server.ServeDeployCard.node_no_os') }}
+            {{ tc('components.server.ServerDeployCard.node_no_os') }}
           </div>
         </div>
 
@@ -597,7 +597,7 @@ const deployServer = async () => {
 
       <div class="col section">
         <div class="text-h7 text-primary section-title">
-          CPU/{{ tc('components.server.ServeDeployCard.memory') }}
+          CPU/{{ tc('components.server.ServerDeployCard.memory') }}
         </div>
 
         <div v-if="flavors.length > 0" class="row item-row">
@@ -605,7 +605,7 @@ const deployServer = async () => {
             <q-radio v-for="flavor in flavors" :val="flavor.id" :key="flavor.id"
                      class="radio non-selectable" dense v-model="radioFlavor">
               <div :class="radioFlavor===flavor.id ? 'text-primary' : 'text-black'">
-                {{ `${flavor.vcpus}${tc('components.server.ServeDeployCard.cores')}/${flavor.ram / 1024}GB` }}
+                {{ `${flavor.vcpus}${tc('components.server.ServerDeployCard.cores')}/${flavor.ram / 1024}GB` }}
               </div>
             </q-radio>
           </div>
@@ -613,7 +613,7 @@ const deployServer = async () => {
 
         <div v-else class="row item-row">
           <div class="col-shrink item-title">
-            {{ tc('components.server.ServeDeployCard.node_no_configure') }}
+            {{ tc('components.server.ServerDeployCard.node_no_configure') }}
           </div>
         </div>
 
@@ -621,7 +621,7 @@ const deployServer = async () => {
 
       <div class="col section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.remarks') }}
+          {{ tc('components.server.ServerDeployCard.remarks') }}
         </div>
         <div class="row item-row">
           <div class="col-6">
@@ -632,43 +632,43 @@ const deployServer = async () => {
 
       <div class="col summarize-section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.selected_configuration') }}
+          {{ tc('components.server.ServerDeployCard.selected_configuration') }}
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.billing_method') }}
+            {{ tc('components.server.ServerDeployCard.billing_method') }}
           </div>
           <div class="col">
-            {{ radioPayment === 'prepaid' ? tc('components.server.ServeDeployCard.monthly_prepaid') : tc('components.server.ServeDeployCard.pay_as_go') }}
+            {{ radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go') }}
           </div>
         </div>
 
         <div v-if="radioPayment === 'prepaid'" class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.prepaid_period') }}
+            {{ tc('components.server.ServerDeployCard.prepaid_period') }}
           </div>
           <div class="col"
                :class="(radioPeriod <= 0 || radioPeriod > MAX_MONTHS || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
-            {{ radioPeriod }} {{ tc('components.server.ServeDeployCard.months') }}
+            {{ radioPeriod }} {{ tc('components.server.ServerDeployCard.months') }}
           </div>
         </div>
 
         <div v-if="isGroup" class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.project_group') }}
+            {{ tc('components.server.ServerDeployCard.group') }}
           </div>
           <div class="col">
             <div v-if="radioGroup !== ''">
               {{ store.tables.groupTable.byId[radioGroup]?.name }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_group') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_group') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.service_node') }}
+            {{ tc('components.server.ServerDeployCard.service_node') }}
           </div>
           <div class="col">
             <div
@@ -701,13 +701,13 @@ const deployServer = async () => {
               </span>
 
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_service_node') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_service_node') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.network_type') }}
+            {{ tc('components.server.ServerDeployCard.network_type') }}
           </div>
           <div class="col">
             <div
@@ -716,13 +716,13 @@ const deployServer = async () => {
                 store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.public ? tc('公网IP段') : tc('私网IP段')
               }} {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_network') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_network') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.operating_system') }}
+            {{ tc('components.server.ServerDeployCard.operating_system') }}
           </div>
           <div class="col">
             <div
@@ -733,38 +733,38 @@ const deployServer = async () => {
                 flat size="md"/>
               {{ store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_operating_system') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_operating_system') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            CPU/{{ tc('components.server.ServeDeployCard.memory') }}
+            CPU/{{ tc('components.server.ServerDeployCard.memory') }}
           </div>
           <div class="col ">
             <div v-if="store.tables.fedFlavorTable.byId[radioFlavor]">
               {{
-                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${ tc('components.server.ServeDeployCard.memory') }/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
+                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${ tc('components.server.ServerDeployCard.memory') }/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
               }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.please_select_configuration') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.please_select_configuration') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.remarks') }}
+            {{ tc('components.server.ServerDeployCard.remarks') }}
           </div>
           <div v-if="inputRemarks" class="col">
             {{ inputRemarks }}
           </div>
-          <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.fill_remarks') }}</div>
+          <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.fill_remarks') }}</div>
         </div>
 
       </div>
 
       <q-btn color="primary q-mb-xl" @click="deployServer" unelevated :loading="isDeploying">
-        {{ radioPayment === 'prepaid' ? tc('components.server.ServeDeployCard.place_order') : tc('components.server.ServeDeployCard.create_server') }}
+        {{ radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.place_order') : tc('components.server.ServerDeployCard.create_server') }}
       </q-btn>
 
     </div>

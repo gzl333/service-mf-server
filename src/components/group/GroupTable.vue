@@ -187,35 +187,40 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }} {{ tc('components.group.GroupTable.member') }}
+              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }}
+              {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
 
           <q-td key="server" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
-              {{ store.getGroupServersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.servers') }}
+              {{ store.getGroupServersByGroupId(props.row.id).length }}
+              {{ tc('components.group.GroupTable.servers') }}
             </q-btn>
           </q-td>
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
-              {{ store.getGroupOrdersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.orders') }}
+              {{ store.getGroupOrdersByGroupId(props.row.id).length }}
+              {{ tc('components.group.GroupTable.orders') }}
             </q-btn>
           </q-td>
 
           <q-td key="coupon" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
-              {{ store.tables.groupTable.byId[props.row.id].coupons.length }} {{ tc('components.group.GroupTable.indivual') }}
+              {{ store.tables.groupTable.byId[props.row.id].coupons.length }}
+              {{ tc('components.group.GroupTable.coupons') }}
             </q-btn>
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
                  :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-black':'text-red'">
-              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }} {{ tc('components.group.GroupTable.points') }}
+              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}
+              {{ tc('components.group.GroupTable.points') }}
             </div>
           </q-td>
 
@@ -231,7 +236,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
                      icon="edit" flat padding="none" color="primary" size="md" dense
                      @click="store.editGroupDialog(props.row.id)">
-                {{ tc('components.group.GroupTable.edit_project_info') }}
+                {{ tc('components.group.GroupTable.edit_group_info') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"

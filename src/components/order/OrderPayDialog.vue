@@ -79,7 +79,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary" style="height: 550px;">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ isGroup ? tc('components.order.OrderPayDialog.pay_group_order') : tc('components.order.OrderPayDialog.pay_personal_orders') }}</div>
+        <div class="text-primary">{{ isGroup ? tc('components.order.OrderPayDialog.pay_group_order') : tc('components.order.OrderPayDialog.pay_personal_order') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -102,7 +102,7 @@ const onOKClick = () => {
             {{tc('components.order.OrderPayDialog.amount_payable')}}
           </div>
           <div class="col">
-            {{ order.payable_amount }} {{tc('components.order.OrderPayDialog.point')}}
+            {{ order.payable_amount }} {{tc('components.order.OrderPayDialog.points')}}
           </div>
         </div>
 
@@ -210,7 +210,7 @@ const onOKClick = () => {
           </div>
 
           <div v-else class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
-            {{ store.items.personalBalance.balance }} {{tc('components.order.OrderPayDialog.point') }}
+            {{ store.items.personalBalance.balance }} {{tc('components.order.OrderPayDialog.points') }}
           </div>
 
         </div>

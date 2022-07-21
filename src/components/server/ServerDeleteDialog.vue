@@ -281,7 +281,7 @@ const onOKClick = () => {
                  @click="onOKClick"/>
           <div class="col">
             {{ tc('components.server.ServerDeleteDialog.if_no_pay') }}
-            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.locked.rebuild_server')"
+            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.rebuild_server')"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
         </div>

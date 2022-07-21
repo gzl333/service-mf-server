@@ -56,7 +56,7 @@ const onOKClick = () => {
         classes: 'notification-negative shadow-15',
         icon: 'error',
         textColor: 'negative',
-        message: `${tc('components.order.OrderRenewDialog.prepaid_time_interval')}`,
+        message: `${tc('components.order.OrderRenewDialog.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.order.OrderRenewDialog.prepaid_time_months')}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -269,7 +269,7 @@ const onOKClick = () => {
                        style="width: 347px;"
                        outlined v-model.number="monthCount" input-class="text-center text-primary"
                        :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
-                       :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `${tc('components.order.OrderRenewDialog.number_interval')}` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
+                       :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS}`)]">
 
                 <template v-slot:prepend>
                   <q-icon name="remove" color="primary"

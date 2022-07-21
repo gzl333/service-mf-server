@@ -81,7 +81,7 @@ const gotoManualVpn = () => {
           <!--todo 区分读取中和读取错误          -->
           <!--          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">-->
           <div v-if="!server || !service " class="col">
-            {{tc('components.server.ServeDetailCard.loading_wait')}}
+            {{tc('components.server.ServeDetailCard.notify_loading')}}
           </div>
 
           <div v-else class="col content-area">
@@ -223,7 +223,7 @@ const gotoManualVpn = () => {
                          unelevated flat padding="none" size="lg"
                          @click="store.serverOperationDialog({ serverId: server.id, action: 'delete', isGroup, isJump: true})">
                     <q-tooltip>
-                     {{ tc('components.server.ServeDetailCard.cancel') }}
+                     {{ tc('components.server.ServeDetailCard.delete') }}
                     </q-tooltip>
                   </q-btn>
 
