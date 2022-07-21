@@ -16,51 +16,50 @@ export default {
       redeem_personal: '兑换到个人账户'
     },
     CouponTable: {
-      vouchers_id: '代金券ID', // coupon_id
+      coupon_id: '代金券ID',
       group: '所属组',
       service_node: '服务节点',
       redeem_date: '兑换日期',
       expiration_date: '失效日期',
-      original_denomination: '原始面额', // original_value
+      original_value: '原始面额',
       available_balance: '可用余额',
       status: '状态',
-      network_wait: '网络请求中，请稍候...', // network_loading
-      no_vouchers: '暂无可用代金券', // no_coupon
+      network_loading: '网络请求中，请稍候...',
+      no_coupon: '暂无可用代金券',
       no_search_results: '无搜索结果',
-      copy_clipboard: '复制到剪切板', // copy_to_clipboard
-      project_detail: '项目组详情', // group_detail
-      point: '点', // points
+      copy_to_clipboard: '复制到剪切板',
+      group_detail: '项目组详情',
+      points: '点',
       available: '可用',
       invalid: '失效'
     },
 
     RedeemCouponDialog: {
-      redemption_error: '兑换码输入有误，请检查输入', // notify_wrong_code
-      no_available_project: '暂无可用项目组，请先创建或加入项目组', // notify_no_group
-      redeem_vouchers: '兑换代金券', // redeem_coupon
+      notify_wrong_code: '兑换码输入有误，请检查输入',
+      notify_no_group: '暂无可用项目组，请先创建或加入项目组',
+      redeem_coupon: '兑换代金券',
       redeem_to: '兑换到',
       personal_account: '个人账户',
-      project_account: '项目组账户', // group_account
-      project_group: '项目组', // group
-      no_project_group: '暂无项目组', // notify_no_group
-      build_project_group: '创建项目组', // create_group
-      redemption_code: '兑换码', // redeem_code
-      input_redemption_code: '请输入兑换码', // notify_input_code
+      group_account: '项目组账户',
+      group: '项目组',
+      create_group: '创建项目组',
+      redeem_code: '兑换码',
+      notify_input_code: '请输入兑换码',
       redeem: '兑换',
       cancel: '取消'
     }
   },
   group: {
     ButtonAdd: {
-      new_build: '新建', // create
-      new_project_group: '新建项目组', // create_group
-      new_cloud_host: '新建组云主机' // create_server
+      create: '新建',
+      create_group: '新建项目组',
+      create_server: '新建组云主机'
     },
     GroupAddMemberDialog: {
-      new_max_members: '最多同时新增10个成员, 如有更多成员请分别添加。', // notify_max_members
-      correct_account: '请输入正确的用户账户', // notify_account
+      notify_max_members: '最多同时新增10个成员, 如有更多成员请分别添加。',
+      notify_account: '请输入正确的用户账户',
       add_members: '增加成员',
-      project_group_name: '项目组名称', // group_name
+      project_group_name: '项目组名称',
       user_account: '用户账户',
       more_accounts: '更多账户',
       cancel: '取消',
@@ -68,55 +67,54 @@ export default {
     },
     GroupEditDialog: {
       edit_group_information: '编辑项目组信息',
-      project_group_name: '项目组名称', // group_name
-      affiliated_unit: '所属单位', // affiliation
-      remarks: '备注',
+      group_name: '项目组名称',
+      affiliation: '所属单位',
       cancel: '取消',
       confirm: '确定'
     },
     GroupMemberTable: {
-      user_name: '用户名', // username
-      role: '角色', // my_role
+      usernamee: '用户名',
+      my_role: '角色',
       join_time: '加入时间',
       inviter: '邀请人',
       operation: '操作',
-      network_wait: '网络请求中，请稍候...', // notify_loading
-      no_members: '项目组暂无成员', // notify_no_members
+      notify_loading: '网络请求中，请稍候...',
+      notify_no_members: '项目组暂无成员',
       admin: '管理员',
       set_admin: '设为管理员',
       group_members: '组员',
       cancel_admin: '取消管理员',
-      remove_project_group: '移出项目组' // out_group
+      out_group: '移出项目组'
     },
 
     GroupRoleChip: {
-      group_leader: '组长', // owner
+      owner: '组长',
       admin: '管理员',
-      group_members: '组员' // member
+      member: '组员'
     },
     GroupTable: {
       my_role: '我的角色',
       group: '所属组',
-      affiliated_unit: '所属单位', // affiliation
+      affiliation: '所属单位',
       remarks: '备注',
       creation_time: '创建时间',
       members: '成员',
-      cloud_host: '云主机', // server
+      server: '云主机',
       order: '订单',
-      vouchers: '代金券', // coupon
-      available_balance: '余额', // balance
+      coupon: '代金券',
+      balance: '余额',
       operation: '操作',
-      network_wait: '网络请求中，请稍候...', // notify_loading
-      no_project_group: '暂无项目组', // notify_no_group
-      no_search_results: '无搜索结果', // notify_no_result
+      notify_loading: '网络请求中，请稍候...',
+      notify_no_group: '暂无项目组',
+      notify_no_result: '无搜索结果',
       details: '详情',
-      person: '人', // members
-      table: '台', // servers
-      indivual: '个', // orders
-      point: '点', // points
+      member: '人',
+      servers: '台',
+      orders: '个',
+      points: '点',
       check_details: '查看详情',
-      edit_project_group: '编辑项目组', // edit_group_info
-      disband_project_group: '解散项目组' // dismiss_group
+      edit_group_info: '编辑项目组',
+      dismiss_group: '解散项目组'
     }
   },
 
@@ -129,17 +127,17 @@ export default {
       affiliation: '所属机构',
       service_node: '服务节点',
       amount_payable: '应付金额',
-      point: '点', // points
-      holder_order: '保留订单' // keep_order
+      points: '点',
+      keep_order: '保留订单'
     },
     OrderDetailCard: {
-      project_order_details: '项目组订单详情', // group_order_detail
+      group_order_detail: '项目组订单详情',
       personal_order_details: '个人订单详情',
-      loading_wait: '正在加载，请稍候', // notify_loading
+      notify_loading: '正在加载，请稍候',
       order_id: '订单',
-      project_group: '所属项目组', // group
-      project_detail: '项目组详情', // group_detail
-      oder_user: '下单用户', // order_place_user
+      group: '所属项目组',
+      group_detail: '项目组详情',
+      order_place_user: '下单用户',
       cancel_order: '取消订单',
       new_purchase: '新购',
       renewal: '续期',
@@ -149,19 +147,19 @@ export default {
       pay_as_go: '按量计费',
       submit_order: '提交订单',
       pay_order: '支付订单',
-      pay_without_prepayment: '按量计费无需预付', // no_prepayment_required
+      no_prepayment_required: '按量计费无需预付',
       to_be_paid: '待支付',
       resource_delivery: '资源交付',
       to_be_delivered: '待交付',
       payment: '支付',
       resource_information: '资源信息',
       view_resources: '查看资源',
-      nuclear: '核', // cores
+      cores: '核',
       memory: '内存',
       system_disk: '系统磁盘',
-      cloud_host_id: '云主机ID', // server_id
+      server_id: '云主机ID',
       ip_address: 'IP地址',
-      ip_address_type: 'IP地址类型', // network_type
+      network_type: 'IP地址类型',
       public_network: '公网',
       private_network: '私网',
       network_segment: '网段',
@@ -171,26 +169,26 @@ export default {
       service_type: '服务类型',
       total_billing: '计费总额',
       discount: '优惠',
-      point: '点', // points
-      payable: '应付', // due_amount
-      actually_paid: '实付' // actual_payment
+      point: '点',
+      payable: '应付',
+      actually_paid: '实付'
     },
     OrderPayDialog: {
-      choose_voucher: '请选择要使用的代金券', // choose_coupon
-      pay_project_order: '支付项目组订单', // pay_group_order
+      choose_coupon: '请选择要使用的代金券',
+      pay_project_order: '支付项目组订单',
       pay_personal_orders: '支付个人订单',
       order_id: '订单ID',
       amount_payable: '应付金额',
       payment_method: '支付方式',
-      vouchers: '代金券', // coupons
+      coupons: '代金券',
       available_balance: '余额',
-      project_group: '所属项目组', // group
-      project_group_voucher: '项目组代金券', // group_coupon
-      personal_voucher: '个人代金券', // personal_coupon
+      group: '所属项目组',
+      group_coupon: '项目组代金券',
+      personal_voucher: '个人代金券',
       selected: '已选',
-      project_no_voucher: '项目组账户内暂无该服务节点可用代金券', // notify_group_no_coupon
-      personal_no_voucher: '个人账户内暂无该服务节点可用代金券', // notify_personal_no_coupon
-      project_account_balance: '项目组账户余额', // group_account_balance
+      notify_group_no_coupon: '项目组账户内暂无该服务节点可用代金券',
+      notify_personal_no_coupon: '个人账户内暂无该服务节点可用代金券',
+      group_account_balance: '项目组账户余额',
       personal_account_balance: '个人账户余额',
       point: '点', // points
       confirm_pay: '确认支付',
@@ -200,30 +198,30 @@ export default {
     OrderRenewDialog: {
       prepaid_time_interval: '预付时长应介于1-{MAX_MONTHS}个月之间',
       target_time_requirement: '目标时间应晚于过期时间',
-      renew_cloud_host: '续期云主机', // renew_server
+      renew_server: '续期云主机',
       ip_address: 'IP地址',
       network_type: '网络类型',
       remarks: '备注',
-      project_group: '项目组', // group
+      group: '项目组',
       affiliation: '所属机构',
       service_node: '服务节点',
       public_network: '公网',
       private_network: '私网',
       configuration: '配置',
-      nuclear: '核', // cores
+      cores: '核',
       billing_method: '计费方式',
       monthly_prepaid: '包月预付',
       pay_as_go: '按量计费',
       expiration_time: '过期时间',
       long_term: '长期',
-      paid_no_renew: '按量计费的云主机无需续期', // no_prepayment_required
-      renewal_way: '续期方式', // renew_type
+      paid_no_renew: '按量计费的云主机无需续期',
+      renewal_way: '续期方式',
       specify_renewal_period: '指定续期时长',
       specify_expiration_time: '指定过期时间',
       renewal_period: '续期时长',
       number_interval: '应为介于1-{MAX_MONTHS}之间的整数',
       target_time: '目标时间',
-      create_order: '创建订单', // place_order
+      place_order: '创建订单',
       cancel: '取消'
     },
     OrderStatus: {
@@ -234,23 +232,23 @@ export default {
     },
     OrderTable: {
       order_id: '订单ID',
-      project_group: '所属组', // group
+      group: '所属组',
       service_node: '服务节点',
       hardware_configuration: '硬件配置',
       network_type: '网络类型',
-      order_time: '下单时间', // place_time
+      place_time: '下单时间',
       order_type: '订单类型',
       billing_method: '计费方式',
       order_amount: '订单金额',
-      state: '状态', // status
+      status: '状态',
       operation: '操作',
-      network_wait: '网络请求中，请稍候...', // notify_loading
-      no_order: '暂无订单', // notify_no_order
-      no_search_results: '无搜索结果', // notify_no_results
+      notify_loading: '网络请求中，请稍候...',
+      notify_no_order: '暂无订单',
+      notify_no_results: '无搜索结果',
       order_details: '订单详情',
-      copy_clipboard: '复制到剪切板', // copy_to_clipboard
-      project_detail: '项目组详情', // group_detail
-      nuclear: '核', // cores
+      copy_to_clipboard: '复制到剪切板',
+      project_detail: '项目组详情',
+      cores: '核',
       public_network: '公网',
       private_network: '私网',
       new_purchase: '新购',
@@ -267,60 +265,60 @@ export default {
   },
   personal: {
     ButtonAdd: {
-      new_build: '新建', // create
-      new_personal_host: '新建个人云主机' // create_personal_server
+      create: '新建',
+      create_personal_server: '新建个人云主机'
     }
   },
   server: {
     ServerDeleteDialog: {
-      cancel_delete_host: '请取消云主机的删除锁定', // notify_cancel_delete_lock
+      notify_cancel_delete_lock: '请取消云主机的删除锁定',
       delete_host: '删除云主机',
-      forcibly_delete_host: '强制删除云主机', // force_delete_server
+      force_delete_server: '强制删除云主机',
       ip_address: 'IP地址',
       remarks: '备注',
-      project_group: '项目组', // group
+      group: '项目组',
       affiliation: '所属机构',
       service_node: '服务节点',
       configuration: '配置',
-      nuclear: '核', // cores
+      cores: '核', // cores
       operating_system: '操作系统',
-      ip_type: 'IP类型', // network_type
+      network_type: 'IP类型',
       public_network: '公网',
       private_network: '私网',
       available_period: '可用期',
       permanently_valid: '永久有效',
       read_carefully_check: '请仔细阅读以下事项，并在确认后勾选:',
       understand_delete: '我了解删除云主机会丢失全部数据，且无法自行恢复',
-      understand_pay_rule: '我了解已经支付的费用无法退款', // understand_no_refund
-      unlock_confirm_deletion: '请解除锁定，并确认删除：', // cancel_lock
+      understand_no_refund: '我了解已经支付的费用无法退款',
+      cancel_lock: '请解除锁定，并确认删除：',
       locked: '已锁定',
       unlocked: '已解除锁定',
-      unlock_delete_host: '未锁定云主机删除操作', // delete_server_unlock
-      lock_delete_host: '已锁定云主机删除操作', // delete_server_lock
+      delete_server_unlock: '未锁定云主机删除操作',
+      delete_server_lock: '已锁定云主机删除操作',
       confirm: '确认',
-      try_no_pay: '不想再次支付费用？请尝试', // if_no_pay
-      rebuild_cloud_host: '重建云主机', // rebuild_server
+      if_no_pay: '不想再次支付费用？请尝试',
+      rebuild_server: '重建云主机',
       cancel: '取消'
     },
     ServeDeployCard: {
       prepaid_time_interval: '预付时长应介于1-{MAX_MONTHS}个月之间',
-      select_network_type: '请选择可用网络类型', // select_network
-      select_available_os: '请选择可用操作系统', // select_os
-      select_available_configure: '请选择可用硬件配置', // select_configuration
+      select_network: '请选择可用网络类型',
+      select_os: '请选择可用操作系统',
+      select_configuration: '请选择可用硬件配置',
       fill_remarks: '请填写备注',
-      successfully_created_host: '成功新建云主机', // server_create_success
-      project_group: '项目组', // group
-      project_group_host: '使用该云主机的项目组', // server_group
-      create_host_permissions: '只有组长和管理员可以创建项目组云主机', // create_server_permission
-      no_available_project: '暂无项目组，请', // no_group
+      server_create_success: '成功新建云主机',
+      group: '项目组',
+      server_group: '使用该云主机的项目组',
+      create_server_permission: '只有组长和管理员可以创建项目组云主机',
+      no_group: '暂无项目组，请',
       create_group: '创建项目组',
       billing_method: '计费方式',
       monthly_prepaid: '包月预付',
       delivery_after_pay: '云主机将在付费后交付',
       pay_as_go: '按量计费',
-      delivery_now_pay: '云主机将立即交付，并开始计费', // delivery_now
-      use_host_time: '云主机使用时长', // server_usage_period
-      prepaid_time: '预付时长', // prepaid_period
+      delivery_now: '云主机将立即交付，并开始计费',
+      server_usage_period: '云主机使用时长',
+      prepaid_period: '预付时长',
       service_node: '服务节点',
       no_available_service: '本机构暂无可用服务',
       network_type: '网络类型',
@@ -330,62 +328,62 @@ export default {
       operating_system: '操作系统',
       node_no_os: '该服务节点无可用操作系统，请选择其它服务节点',
       memory: '内存',
-      nuclear: '核', // cores
+      cores: '核',
       node_no_configure: '该服务节点无可用配置，请选择其它服务节点',
       selected_configuration: '所选配置',
       prepayment_duration: '预付时长',
       months: '个月',
-      select_project_group: '请选择项目组', // select_group
+      select_group: '请选择项目组',
       select_service_node: '请选择服务节点',
       select_operating_system: '请选择操作系统',
       please_select_configuration: '请选择配置',
       remarks: '备注',
-      created_host: '新建云主机', // create_server
-      created_host_order: '新建云主机订单' // place_order
+      create_server: '新建云主机',
+      place_order: '新建云主机订单'
     },
     ServeDetailCard: {
-      project_host_details: '项目组云主机详情', // group_server_detail
-      personal_host_details: '个人云主机详情', // personal_server_detail
-      loading_wait: '正在加载，请稍候', // notify_loading
+      group_server_detail: '项目组云主机详情',
+      personal_server_detail: '个人云主机详情',
+      notify_loading: '正在加载，请稍候',
       copy: '复制',
       remarks: '备注',
       edit_remarks: '编辑备注',
-      locked_host_operation: '已锁定云主机操作', // server_operation_locked
-      unlocked_host_operation: '未锁定云主机操作', // server_operation_unlocked
+      server_operation_locked: '已锁定云主机操作',
+      server_operation_unlocked: '未锁定云主机操作',
       remote_control: '远程控制',
       power_remote_control: '请开机以使用远程控制',
-      acquiring: '获取中', // loading
+      loading: '获取中',
       power_on: '开机',
-      shut_down: '关机', // power_off
+      power_off: '关机',
       restart: '重启',
-      forced_power_off: '强制断电', // force_power_off
-      rebuild_cloud_host: '重建云主机', // rebuild_server
+      force_power_off: '强制断电',
+      rebuild_server: '重建云主机',
       cancel: '删除', // delete
-      force_deletion: '强制删除', // force_delete
-      initial_user_name: '系统初始用户名', // initial_os_username
-      no_service_node: '服务节点未提供', // unavailable_from_service
-      system_initial_password: '系统初始密码', // initial_os_password
-      no_vpn_connect: '无需VPN连接', // vpn_not_required
-      vpn_account_state: 'VPN 账户状态', // vpn_account_status
-      opened: '已开启', // activated
-      closed: '已关闭', // deactivated
-      vpn_user_name: 'VPN 用户名', // vpn_username
+      force_delete: '强制删除',
+      initial_os_username: '系统初始用户名',
+      unavailable_from_service: '服务节点未提供',
+      initial_os_password: '系统初始密码',
+      no_vpn_connect: '无需VPN连接',
+      vpn_account_state: 'VPN 账户状态',
+      activated: '已开启',
+      deactivated: '已关闭',
+      vpn_username: 'VPN 用户名',
       vpn_password: 'VPN 密码',
-      vpn_profile: 'VPN 配置文件', // vpn_config
+      vpn_config: 'VPN 配置文件',
       download: '下载',
-      vpn_ca_certificate: 'VPN CA证书', // vpn_ca
+      vpn_ca: 'VPN CA证书',
       view_vpn_usage: '查看VPN使用方法',
-      project_group: '所属组', // group
-      project_detail: '项目组详情', // group_detail
+      group: '所属组',
+      group_detail: '项目组详情',
       my_role: '我的角色',
       creator: '创建者',
-      cloud_host_id: '云主机ID', // server_id
+      server_id: '云主机ID',
       hardware_configuration: '硬件配置',
-      core: '核', // cores
+      core: '核',
       memory: '内存',
       public_network: '公网',
       private_network: '私网',
-      ip_address_type: 'IP地址类型', // network_type
+      network_type: 'IP地址类型',
       operating_system: '操作系统',
       system_specification: '系统描述',
       billing_type: '计费类型',
@@ -400,29 +398,29 @@ export default {
       service_type: '服务类型'
     },
     ServerOperationBtnGroup: {
-      locked_host_operation: '已锁定云主机操作', // server_operation_locked
-      unlocked_host_operation: '未锁定云主机操作', // server_operation_unlocked
-      cloud_host_details: '云主机详情', // server_detail
-      cloud_host_renewal: '云主机续期', // server_renewal
-      starting_up: '开机', // power_on
+      server_operation_locked: '已锁定云主机操作',
+      server_operation_unlocked: '未锁定云主机操作',
+      server_detail: '云主机详情',
+      server_renewal: '云主机续期',
+      power_on: '开机',
       restart: '重启',
-      shut_down: '关机', // power_off
-      forced_power_off: '强制断电', // force_power_off
-      rebuild_cloud_host: '重建云主机', // rebuild_server
+      power_off: '关机',
+      force_power_off: '强制断电',
+      rebuild_server: '重建云主机',
       delete: '删除',
-      force_deletion: '强制删除' // force_delete
+      force_delete: '强制删除'
     },
     ServerRebuildDialog: {
       select_target_os: '请选择目标操作系统',
-      rebuild_cloud_host: '重建云主机', // rebuild_server
+      rebuild_server: '重建云主机',
       ip_address: 'IP地址',
       remarks: '备注',
-      project_group: '项目组', // group
+      group: '项目组',
       affiliation: '所属机构',
       service_node: '服务节点',
-      configuration: '配置', // hardware_configuration
-      nuclear: '核 ', // cores
-      ip_type: 'IP类型', // network_type
+      hardware_configuration: '配置',
+      cores: '核 ',
+      network_type: 'IP类型',
       public_network: '公网',
       private_network: '私网',
       available_period: '可用期',
@@ -434,46 +432,46 @@ export default {
       cancel: '取消'
     },
     ServerStatus: {
-      acquiring: '获取中', // loading
-      refresh_host_status: '刷新云主机状态', // refresh_server_status
+      loading: '获取中',
+      refresh_server_status: '刷新云主机状态',
       no_acquire: '未获取',
       running: '运行中',
       blocked: '已屏蔽',
       paused: '已暂停',
       shutting_down: '关机中',
-      shut_down: '已关机', // stopped
+      stopped: '已关机',
       crashed: '已崩溃',
       suspended: '被挂起',
       communication_fail: '通讯失败',
       lost: '已丢失',
-      creating: '创建中', // deploying
-      create_fail: '创建失败' // deploy_fail
+      deploying: '创建中',
+      deploy_fail: '创建失败'
     },
     ServeTable: {
       ip_address: 'IP地址',
-      project_group: '所属组', // group
+      group: '所属组',
       service_node: '服务节点',
       operating_system: '操作系统',
-      configuration: '配置', // hardware_configuration
+      hardware_configuration: '配置',
       billing_method: '计费方式',
       remarks: '备注',
       remote_control: '远程控制',
-      state: '状态', // status
+      status: '状态',
       operation: '操作',
-      loading_wait: '网络请求中，请稍候...', // notify_loading
-      no_cloud_host: '暂无云主机', // no_server_available
+      notify_loading: '网络请求中，请稍候...',
+      no_server_available: '暂无云主机',
       no_search_results: '无搜索结果',
-      cloud_host_details: '云主机详情', // server_detail
-      copy_clipboard: '复制到剪切板', // copy_to_clipboard
-      project_group_detail: '项目组详情', // group_detail
-      nuclear: '核', // cores
+      server_detail: '云主机详情',
+      copy_to_clipboard: '复制到剪切板',
+      group_detail: '项目组详情',
+      cores: '核',
       monthly_prepaid: '包月预付',
       pay_as_go: '按量计费',
       expiration_time: '到期时间',
-      expired_renew_host: '云主机已到期，请及时续期', // notify_renew_server
+      notify_renew_server: '云主机已到期，请及时续期',
       edit_remarks: '编辑备注',
-      into_remote_control: '进入远程控制', // start_remote
-      open_remote_control: '请开机以使用远程控制' // notify_start_before_remote
+      start_remote: '进入远程控制',
+      notify_start_before_remote: '请开机以使用远程控制'
     }
   },
   ui: {}

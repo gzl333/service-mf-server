@@ -118,7 +118,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
             {{ tc('components.order.OrderCancelDialog.amount_payable') }}
           </div>
           <div class="col">
-            {{ order.payable_amount }} {{ tc('components.order.OrderCancelDialog.point') }}
+            {{ order.payable_amount }} {{ tc('components.order.OrderCancelDialog.points') }}
           </div>
         </div>
 
@@ -128,7 +128,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
       <q-card-actions align="between">
         <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.cancel_order')" @click="onDialogOK(true)"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.holder_order')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.keep_order')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>

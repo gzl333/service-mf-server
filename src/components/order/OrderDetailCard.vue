@@ -47,7 +47,7 @@ const getOsIconName = useGetOsIconName()
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span v-if="isGroup">{{tc('components.order.OrderDetailCard.project_order_details')}}</span>
+          <span v-if="isGroup">{{tc('components.order.OrderDetailCard.group_order_detail')}}</span>
           <span v-else>{{tc('components.order.OrderDetailCard.personal_order_details')}}</span>
         </div>
 
@@ -55,7 +55,7 @@ const getOsIconName = useGetOsIconName()
         <div class="row">
           <!--todo 区分读取中和读取错误          -->
           <div v-if="!order" class="col">
-            {{tc('components.order.OrderDetailCard.loading_wait')}}
+            {{tc('components.order.OrderDetailCard.notify_loading')}}
           </div>
 
           <div v-else class="col content-area">
@@ -67,19 +67,19 @@ const getOsIconName = useGetOsIconName()
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
                 <div v-if="isGroup" class="col-auto">
-                  {{tc('components.order.OrderDetailCard.project_group')}}
+                  {{tc('components.order.OrderDetailCard.group')}}
                   <q-btn
                     color="primary"
                     padding="none" flat dense unelevated
                     :label="order.vo_name"
                     @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
                     <q-tooltip>
-                      {{ tc('components.order.OrderDetailCard.project_detail') }}
+                      {{ tc('components.order.OrderDetailCard.group_detail') }}
                     </q-tooltip>
                   </q-btn>
                 </div>
 
-                <div class="col-auto">{{ tc('components.order.OrderDetailCard.oder_user') }}   {{ order.username }}</div>
+                <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_place_user') }}   {{ order.username }}</div>
 
                 <q-btn v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
                        class="col-auto"
@@ -154,7 +154,7 @@ const getOsIconName = useGetOsIconName()
                     :disable="order.pay_type === 'postpaid'"
                     name="paid"
                     :title="tc('components.order.OrderDetailCard.pay_order')"
-                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.pay_without_prepayment'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_paid')"
+                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.no_prepayment_required'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_paid')"
                     icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
@@ -221,7 +221,7 @@ const getOsIconName = useGetOsIconName()
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">CPU</div>
                     <div class="col-shrink">
-                      {{ order.instance_config.vm_cpu }} {{ tc('components.order.OrderDetailCard.nuclear') }}
+                      {{ order.instance_config.vm_cpu }} {{ tc('components.order.OrderDetailCard.cores') }}
                     </div>
                   </div>
 
@@ -240,7 +240,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div v-if="isServerExisted" class="row  items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.cloud_host_id') }}</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.server_id') }}</div>
                     <div class="col-shrink">
                       <div v-for="server in order.resources" :key="server.id">
                         {{ server.id }}
@@ -268,7 +268,7 @@ const getOsIconName = useGetOsIconName()
                   </div>
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address_type') }}</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_type') }}</div>
                     <div class="col-shrink">
                       {{ order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network') }}
                     </div>
@@ -350,7 +350,7 @@ const getOsIconName = useGetOsIconName()
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.total_billing') }}</div>
                     <div class="col-shrink">
-                      {{ order.total_amount }} {{ tc('components.order.OrderDetailCard.point') }}
+                      {{ order.total_amount }} {{ tc('components.order.OrderDetailCard.points') }}
                     </div>
                   </div>
 
@@ -360,14 +360,14 @@ const getOsIconName = useGetOsIconName()
                          class="row q-pb-md items-center">
                       <div class="col-3 text-grey"> {{tc('components.order.OrderDetailCard.discount')}}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.point') }}
+                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 
                     <div class="row items-center text-primary">
-                      <div class="col-3">{{tc('components.order.OrderDetailCard.payable')}}</div>
+                      <div class="col-3">{{tc('components.order.OrderDetailCard.due_amount')}}</div>
                       <div class="col-shrink text-bold text-h5">
-                        {{ order.payable_amount }} {{ tc('components.order.OrderDetailCard.point') }}
+                        {{ order.payable_amount }} {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 
@@ -379,14 +379,14 @@ const getOsIconName = useGetOsIconName()
                          class="row q-pb-md items-center">
                       <div class="col-3 text-grey">{{tc('components.order.OrderDetailCard.discount')}}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.point') }}
+                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 
                     <div class="row items-center text-primary">
-                      <div class="col-3 ">{{ tc('components.order.OrderDetailCard.actually_paid') }}</div>
+                      <div class="col-3 ">{{ tc('components.order.OrderDetailCard.actual_payment') }}</div>
                       <div class="col-shrink text-bold text-h5 ">
-                        {{ order.pay_amount }} {{ tc('components.order.OrderDetailCard.point') }}
+                        {{ order.pay_amount }} {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 

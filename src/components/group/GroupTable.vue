@@ -45,7 +45,7 @@ const columns = computed(() => [
   },
   {
     name: 'company',
-    label: (() => tc('components.group.GroupTable.affiliated_unit'))(),
+    label: (() => tc('components.group.GroupTable.affiliation'))(),
     field: 'company',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
@@ -77,7 +77,7 @@ const columns = computed(() => [
   },
   {
     name: 'server',
-    label: (() => tc('components.group.GroupTable.cloud_host'))(),
+    label: (() => tc('components.group.GroupTable.server'))(),
     field: 'server',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -93,7 +93,7 @@ const columns = computed(() => [
   },
   {
     name: 'coupon',
-    label: (() => tc('components.group.GroupTable.vouchers'))(),
+    label: (() => tc('components.group.GroupTable.coupon'))(),
     field: 'coupon',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -101,7 +101,7 @@ const columns = computed(() => [
   },
   {
     name: 'balance',
-    label: (() => tc('components.group.GroupTable.available_balance'))(),
+    label: (() => tc('components.group.GroupTable.balance'))(),
     field: 'balance',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -134,13 +134,13 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
       row-key="name"
       :loading="store.tables.groupTable.status === 'loading'"
       color="primary"
-      :loading-label="tc('components.group.GroupTable.network_wait')"
-      :no-data-label="tc('components.group.GroupTable.no_project_group')"
+      :loading-label="tc('components.group.GroupTable.notify_loading')"
+      :no-data-label="tc('components.group.GroupTable.notify_no_group')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      :no-results-label="tc('components.group.GroupTable.no_search_results')"
+      :no-results-label="tc('components.group.GroupTable.notify_no_result')"
     >
 
       <template v-slot:body="props">
@@ -187,21 +187,21 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }} {{ tc('components.group.GroupTable.person') }}
+              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }} {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
 
           <q-td key="server" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
-              {{ store.getGroupServersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.table') }}
+              {{ store.getGroupServersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.servers') }}
             </q-btn>
           </q-td>
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
-              {{ store.getGroupOrdersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.indivual') }}
+              {{ store.getGroupOrdersByGroupId(props.row.id).length }} {{ tc('components.group.GroupTable.orders') }}
             </q-btn>
           </q-td>
 
@@ -215,7 +215,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
                  :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-black':'text-red'">
-              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }} {{ tc('components.group.GroupTable.point') }}
+              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }} {{ tc('components.group.GroupTable.points') }}
             </div>
           </q-td>
 
@@ -231,14 +231,14 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
                      icon="edit" flat padding="none" color="primary" size="md" dense
                      @click="store.editGroupDialog(props.row.id)">
-                {{ tc('components.group.GroupTable.edit_project_group') }}
+                {{ tc('components.group.GroupTable.edit_project_info') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"
                      icon="group_off" flat padding="none" dense
                      color="primary" size="md"
                      @click="store.deleteGroupDialog(props.row.id)">
-                {{ tc('components.group.GroupTable.disband_project_group') }}
+                {{ tc('components.group.GroupTable.dismiss_group') }}
               </q-btn>
 
             </div>

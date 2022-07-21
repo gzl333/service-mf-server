@@ -59,14 +59,14 @@ const onOKClick = () => {
 
       <q-card-section>
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.project_group_name') }}</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.group_name') }}</div>
           <div class="col">
             <q-input outlined dense v-model="groupName" maxlength="15" counter/>
           </div>
         </div>
 
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.affiliated_unit') }}</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.affiliation') }}</div>
           <div class="col">
             <q-input outlined dense v-model="groupCompany" maxlength="15" counter/>
           </div>

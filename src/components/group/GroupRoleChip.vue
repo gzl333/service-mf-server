@@ -26,7 +26,7 @@ const { tc/* , locale  */ } = i18n.global
     <q-chip v-if="props.role === 'owner'"
             square color="light-green" text-color="white" icon="mdi-account-star">
       <div style=" width: 45px;text-align: center">
-        {{ tc('components.group.GroupRoleChip.group_leader') }}
+        {{ tc('components.group.GroupRoleChip.owner') }}
       </div>
     </q-chip>
 
@@ -40,7 +40,7 @@ const { tc/* , locale  */ } = i18n.global
     <q-chip v-if="props.role === 'member'"
             square color="blue-grey" text-color="white" icon="mdi-account">
       <div style=" width: 45px;text-align: center">
-        {{ tc('components.group.GroupRoleChip.group_members') }}
+        {{ tc('components.group.GroupRoleChip.member') }}
       </div>
     </q-chip>
 

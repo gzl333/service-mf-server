@@ -26,10 +26,10 @@ const fabButton = ref(false)
       vertical-actions-align="right"
       color="primary"
       icon="add"
-      :label="tc('components.personal.ButtonAdd.new_build')"
+      :label="tc('components.personal.ButtonAdd.create')"
       direction="down"
     >
-      <q-fab-action :label="tc('components.personal.ButtonAdd.new_personal_host')" unelevated color="primary" icon="computer"
+      <q-fab-action :label="tc('components.personal.ButtonAdd.create_personal_server')" unelevated color="primary" icon="computer"
                     @click="navigateToUrl('/my/server/personal/deploy')"/>
     </q-fab>
   </div>

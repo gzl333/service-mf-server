@@ -77,7 +77,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('components.server.ServerDeleteDialog.cancel_delete_host')}`,
+      message: `${tc('components.server.ServerDeleteDialog.notify_cancel_delete_lock')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -98,7 +98,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-negative ">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-negative">{{ action === 'delete' ? tc('components.server.ServerDeleteDialog.delete_host') : tc('components.server.ServerDeleteDialog.forcibly_delete_host') }}</div>
+        <div class="text-negative">{{ action === 'delete' ? tc('components.server.ServerDeleteDialog.delete_host') : tc('components.server.ServerDeleteDialog.force_delete_server') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -127,7 +127,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{tc('components.server.ServerDeleteDialog.project_group')}}
+            {{tc('components.server.ServerDeleteDialog.group')}}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -182,7 +182,7 @@ const onOKClick = () => {
             {{tc('components.server.ServerDeleteDialog.configuration')}}
           </div>
           <div class="col">
-            {{ server.vcpus }}{{ tc('components.server.ServerDeleteDialog.nuclear') }} / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }}{{ tc('components.server.ServerDeleteDialog.cores') }} / {{ server.ram / 1024 }}GB
           </div>
         </div>
 
@@ -197,7 +197,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{tc('components.server.ServerDeleteDialog.ip_type')}}
+            {{tc('components.server.ServerDeleteDialog.network_type')}}
           </div>
           <div class="col">
             {{ server.public_ip ? tc('components.server.ServerDeleteDialog.public_network') : tc('components.server.ServerDeleteDialog.private_network') }}
@@ -239,13 +239,13 @@ const onOKClick = () => {
 
         <q-checkbox style="margin-left: -10px;" v-model="check2" color="primary">
           <div :class="check2?'text-primary':'text-black'">
-            {{ tc('components.server.ServerDeleteDialog.understand_pay_rule') }}
+            {{ tc('components.server.ServerDeleteDialog.understand_no_refund') }}
           </div>
         </q-checkbox>
 
         <div class="row items-center q-pt-sm">
           <div class="col text-grey-7">
-            {{ tc('components.server.ServerDeleteDialog.unlock_confirm_deletion') }}
+            {{ tc('components.server.ServerDeleteDialog.cancel_lock') }}
           </div>
         </div>
 
@@ -262,10 +262,10 @@ const onOKClick = () => {
         >
           <span :class="toggle?'text-black':'text-primary'">{{ toggle ? tc('components.server.ServerDeleteDialog.locked') : tc('components.server.ServerDeleteDialog.unlocked') }}</span>
           <q-tooltip v-if="server.lock === 'free'">
-            {{ tc('components.server.ServerDeleteDialog.locked.unlock_delete_host') }}
+            {{ tc('components.server.ServerDeleteDialog.locked.delete_server_unlock') }}
           </q-tooltip>
           <q-tooltip v-else>
-            {{ tc('components.server.ServerDeleteDialog.locked.lock_delete_host') }}
+            {{ tc('components.server.ServerDeleteDialog.locked.delete_server_lock') }}
           </q-tooltip>
         </q-toggle>
 
@@ -280,8 +280,8 @@ const onOKClick = () => {
                  :label="tc('components.server.ServerDeleteDialog.confirm')"
                  @click="onOKClick"/>
           <div class="col">
-            {{ tc('components.server.ServerDeleteDialog.try_no_pay') }}
-            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.locked.rebuild_cloud_host')"
+            {{ tc('components.server.ServerDeleteDialog.if_no_pay') }}
+            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.locked.rebuild_server')"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
         </div>

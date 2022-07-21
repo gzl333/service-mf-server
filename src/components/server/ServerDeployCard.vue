@@ -149,7 +149,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_network_type')}`,
+      message: `${tc('components.server.ServeDeployCard.select_network')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -162,7 +162,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_available_os')}`,
+      message: `${tc('components.server.ServeDeployCard.select_os')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -175,7 +175,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('components.server.ServeDeployCard.select_available_configure')}`,
+      message: `${tc('components.server.ServeDeployCard.select_configuration')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -261,7 +261,7 @@ const deployServer = async () => {
           classes: 'notification-positive shadow-15',
           icon: 'check_circle',
           textColor: 'positive',
-          message: `${tc('components.server.ServeDeployCard.successfully_created_host')}: ${props.isGroup ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
+          message: `${tc('components.server.ServeDeployCard.server_create_success')}: ${props.isGroup ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 15000,
@@ -304,13 +304,13 @@ const deployServer = async () => {
 
       <div v-if="isGroup" class="section">
         <div class="text-h7 text-primary section-title">
-          {{ tc('components.server.ServeDeployCard.project_group') }}
+          {{ tc('components.server.ServeDeployCard.group') }}
         </div>
         <div class="row items-center q-gutter-md q-pb-lg">
           <div class="col-auto text-bold row items-center ">
-            {{ tc('components.server.ServeDeployCard.project_group_host') }}
+            {{ tc('components.server.ServeDeployCard.server_group') }}
             <q-icon name="help_outline" color="grey" size="xs">
-              <q-tooltip>{{ tc('components.server.ServeDeployCard.create_host_permissions') }}</q-tooltip>
+              <q-tooltip>{{ tc('components.server.ServeDeployCard.create_server_permission') }}</q-tooltip>
             </q-icon>
           </div>
           <q-select v-if="groups.length !== 0" class="col-4" outlined v-model="radioGroup" dense
@@ -326,7 +326,7 @@ const deployServer = async () => {
           </q-select>
           <div v-else>
             <div class="row items-center">
-              {{ tc('components.server.ServeDeployCard.no_available_project') }}
+              {{ tc('components.server.ServeDeployCard.no_group') }}
               <q-btn v-if="isGroup" flat padding="none" color="primary"
                      :to="'/my/server/group/create'">
                 {{ tc('components.server.ServeDeployCard.create_group') }}
@@ -355,7 +355,7 @@ const deployServer = async () => {
             <span class="text-bold q-pr-lg" :class="radioPayment==='postpaid' ? 'text-primary' : 'text-black'">
               {{ tc('components.server.ServeDeployCard.pay_as_go') }}
             </span>
-            <span>{{ tc('components.server.ServeDeployCard.delivery_now_pay') }}</span>
+            <span>{{ tc('components.server.ServeDeployCard.delivery_now') }}</span>
           </q-radio>
         </div>
       </div>
@@ -367,7 +367,7 @@ const deployServer = async () => {
 
         <div class="row items-center q-gutter-md q-pb-lg">
           <div class="col-auto text-bold row items-center ">
-            {{ tc('components.server.ServeDeployCard.use_host_time') }}
+            {{ tc('components.server.ServeDeployCard.server_usage_period') }}
           </div>
 
           <div class="row items-center q-pt-md">
@@ -605,7 +605,7 @@ const deployServer = async () => {
             <q-radio v-for="flavor in flavors" :val="flavor.id" :key="flavor.id"
                      class="radio non-selectable" dense v-model="radioFlavor">
               <div :class="radioFlavor===flavor.id ? 'text-primary' : 'text-black'">
-                {{ `${flavor.vcpus}${tc('components.server.ServeDeployCard.nuclear')}/${flavor.ram / 1024}GB` }}
+                {{ `${flavor.vcpus}${tc('components.server.ServeDeployCard.cores')}/${flavor.ram / 1024}GB` }}
               </div>
             </q-radio>
           </div>
@@ -646,7 +646,7 @@ const deployServer = async () => {
 
         <div v-if="radioPayment === 'prepaid'" class="row item-row items-center">
           <div class="col-shrink item-title-narrow text-grey">
-            {{ tc('components.server.ServeDeployCard.prepaid_time') }}
+            {{ tc('components.server.ServeDeployCard.prepaid_period') }}
           </div>
           <div class="col"
                :class="(radioPeriod <= 0 || radioPeriod > MAX_MONTHS || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
@@ -662,7 +662,7 @@ const deployServer = async () => {
             <div v-if="radioGroup !== ''">
               {{ store.tables.groupTable.byId[radioGroup]?.name }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_project_group') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_group') }}</div>
           </div>
         </div>
 
@@ -716,7 +716,7 @@ const deployServer = async () => {
                 store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.public ? tc('公网IP段') : tc('私网IP段')
               }} {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_network_type') }}</div>
+            <div v-else class="text-red">{{ tc('components.server.ServeDeployCard.select_network') }}</div>
           </div>
         </div>
 
@@ -764,7 +764,7 @@ const deployServer = async () => {
       </div>
 
       <q-btn color="primary q-mb-xl" @click="deployServer" unelevated :loading="isDeploying">
-        {{ radioPayment === 'prepaid' ? tc('components.server.ServeDeployCard.created_host_order') : tc('components.server.ServeDeployCard.created_host') }}
+        {{ radioPayment === 'prepaid' ? tc('components.server.ServeDeployCard.place_order') : tc('components.server.ServeDeployCard.create_server') }}
       </q-btn>
 
     </div>

@@ -60,7 +60,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('components.coupon.RedeemCouponDialog.redemption_error')}`,
+      message: `${tc('components.coupon.RedeemCouponDialog.notify_wrong_code')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -75,7 +75,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('components.coupon.RedeemCouponDialog.no_available_project')}`,
+      message: `${tc('components.coupon.RedeemCouponDialog.notify_no_group')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -98,7 +98,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('components.coupon.RedeemCouponDialog.redeem_vouchers') }}</div>
+        <div class="text-primary">{{ tc('components.coupon.RedeemCouponDialog.redeem_coupon') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -127,7 +127,7 @@ const onOKClick = () => {
                    :ripple="false" dense unelevated
                    :color="redeemType==='group'?'primary':'grey'"
                    @click="redeemType = 'group'">
-              {{ tc('components.coupon.RedeemCouponDialog.project_account') }}
+              {{ tc('components.coupon.RedeemCouponDialog.group_account') }}
             </q-btn>
 
           </div>
@@ -136,7 +136,7 @@ const onOKClick = () => {
         <div v-if="redeemType === 'group'"
              class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{ tc('components.coupon.RedeemCouponDialog.project_group') }}
+            {{ tc('components.coupon.RedeemCouponDialog.group') }}
           </div>
           <div class="col">
 
@@ -153,10 +153,10 @@ const onOKClick = () => {
 
             <div v-else>
               <div class="row items-center">
-                {{ tc('components.coupon.RedeemCouponDialog.no_project_group') }}
+                {{ tc('components.coupon.RedeemCouponDialog.notify_no_group') }}
                 <q-btn flat padding="none" color="primary"
                        :to="'/my/server/group/create'">
-                  {{ tc('components.coupon.RedeemCouponDialog.build_project_group') }}
+                  {{ tc('components.coupon.RedeemCouponDialog.create_group') }}
                 </q-btn>
               </div>
             </div>
@@ -165,10 +165,10 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col-2 text-grey-7">
-            {{ tc('components.coupon.RedeemCouponDialog.redemption_code') }}
+            {{ tc('components.coupon.RedeemCouponDialog.redeem_code') }}
           </div>
           <div class="col">
-            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('components.coupon.RedeemCouponDialog.input_redemption_code')" @keydown.enter="onOKClick">
+            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('components.coupon.RedeemCouponDialog.notify_input_code')" @keydown.enter="onOKClick">
               <template v-slot:append>
                 <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
               </template>

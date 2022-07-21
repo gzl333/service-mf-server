@@ -68,7 +68,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary ">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('components.server.ServerRebuildDialog.rebuild_cloud_host') }}</div>
+        <div class="text-primary">{{ tc('components.server.ServerRebuildDialog.rebuild_server') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -97,7 +97,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{ tc('components.server.ServerRebuildDialog.project_group') }}
+            {{ tc('components.server.ServerRebuildDialog.group') }}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -146,16 +146,16 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{ tc('components.server.ServerRebuildDialog.configuration') }}
+            {{ tc('components.server.ServerRebuildDialog.hardware_configuration') }}
           </div>
           <div class="col">
-            {{ server.vcpus }} {{ tc('components.server.ServerRebuildDialog.nuclear') }}/ {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{ tc('components.server.ServerRebuildDialog.cores') }}/ {{ server.ram / 1024 }}GB
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{ tc('components.server.ServerRebuildDialog.ip_type') }}
+            {{ tc('components.server.ServerRebuildDialog.network_type') }}
           </div>
           <div class="col">
             {{ server.public_ip ? tc('components.server.ServerRebuildDialog.public_network')  : tc('components.server.ServerRebuildDialog.private_network')  }}

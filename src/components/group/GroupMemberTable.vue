@@ -23,7 +23,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'username',
-    label: (() => tc('components.group.GroupMemberTable.user_name'))(),
+    label: (() => tc('components.group.GroupMemberTable.username'))(),
     field: 'username',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -31,7 +31,7 @@ const columns = computed(() => [
   },
   {
     name: 'role',
-    label: (() => tc('components.group.GroupMemberTable.role'))(),
+    label: (() => tc('components.group.GroupMemberTable.my_role'))(),
     field: 'role',
     align: 'center',
     style: 'padding: 15px 5px',
@@ -79,8 +79,8 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
       row-key="name"
       :loading="store.tables.groupMemberTable.status === 'loading'"
       color="primary"
-      :loading-label="tc('components.group.GroupMemberTable.network_wait')"
-      :no-data-label="tc('components.group.GroupMemberTable.no_members')"
+      :loading-label="tc('components.group.GroupMemberTable.notify_loading')"
+      :no-data-label="tc('components.group.GroupMemberTable.notify_no_members')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
     >
@@ -134,7 +134,7 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
 
               <q-btn icon="remove_circle" flat dense padding="none" color="primary"
                      @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row.user.username})">
-                {{ tc('components.group.GroupMemberTable.remove_project_group') }}
+                {{ tc('components.group.GroupMemberTable.out_group') }}
               </q-btn>
             </div>
           </q-td>

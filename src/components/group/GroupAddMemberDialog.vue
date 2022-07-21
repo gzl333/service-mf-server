@@ -36,7 +36,7 @@ const addCount = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('components.group.GroupAddMemberDialog.new_max_members')}`,
+      message: `${tc('components.group.GroupAddMemberDialog.notify_max_members')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -57,7 +57,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('components.group.GroupAddMemberDialog.correct_account')}`,
+      message: `${tc('components.group.GroupAddMemberDialog.notify_account')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -88,7 +88,7 @@ const onOKClick = () => {
 
       <q-card-section>
         <div class="row items-center q-pb-md">
-          <div class="col-3 text-grey">{{tc('components.group.GroupAddMemberDialog.project_group_name')}}</div>
+          <div class="col-3 text-grey">{{tc('components.group.GroupAddMemberDialog.group_name')}}</div>
           <div class="col">
             {{ store.tables.groupTable.byId[groupId]?.name }}
           </div>

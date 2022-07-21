@@ -46,7 +46,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: (() => tc('components.order.OrderTable.project_group'))(),
+    label: (() => tc('components.order.OrderTable.group'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -82,7 +82,7 @@ const columns = computed(() => [
   },
   {
     name: 'time',
-    label: (() => tc('components.order.OrderTable.order_time'))(),
+    label: (() => tc('components.order.OrderTable.place_time'))(),
     field: 'time',
     align: 'center',
     classes: 'ellipsis',
@@ -118,7 +118,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('components.order.OrderTable.state'))(),
+    label: (() => tc('components.order.OrderTable.status'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -163,13 +163,13 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
       row-key="name"
       :loading="isGroup ? store.tables.groupOrderTable.status === 'loading' : store.tables.personalOrderTable.status === 'loading' "
       color="primary"
-      :loading-label="tc('components.order.OrderTable.network_wait')"
-      :no-data-label="tc('components.order.OrderTable.no_order')"
+      :loading-label="tc('components.order.OrderTable.notify_loading')"
+      :no-data-label="tc('components.order.OrderTable.notify_no_order')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      :no-results-label="tc('components.order.OrderTable.no_search_results')"
+      :no-results-label="tc('components.order.OrderTable.notify_no_results')"
     >
 
       <template v-slot:body="props">
@@ -197,7 +197,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.id)">
               <q-tooltip>
-                {{ tc('components.order.OrderTable.copy_clipboard') }}
+                {{ tc('components.order.OrderTable.copy_to_clipboard') }}
               </q-tooltip>
             </q-btn>
             <q-btn v-else
@@ -214,7 +214,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
-                {{ tc('components.order.OrderTable.project_detail') }}
+                {{ tc('components.order.OrderTable.group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -248,7 +248,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="config" :props="props">
-            {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.nuclear') }}/{{ props.row.instance_config.vm_ram / 1024 }}GB
+            {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}/{{ props.row.instance_config.vm_ram / 1024 }}GB
           </q-td>
 
           <q-td key="network" :props="props">

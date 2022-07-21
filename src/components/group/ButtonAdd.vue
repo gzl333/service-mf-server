@@ -30,12 +30,12 @@ const fabButton = ref(false)
       vertical-actions-align="right"
       color="primary"
       icon="add"
-      :label="tc('components.group.ButtonAdd.new_build')"
+      :label="tc('components.group.ButtonAdd.create')"
       direction="down"
     >
-      <q-fab-action :label="tc('components.group.ButtonAdd.new_project_group')" unelevated color="primary" icon="group"
+      <q-fab-action :label="tc('components.group.ButtonAdd.create_group')" unelevated color="primary" icon="group"
                     @click="navigateToUrl('/my/server/group/create')"/>
-      <q-fab-action :label="tc('components.group.ButtonAdd.new_cloud_host')" unelevated color="primary" icon="computer"
+      <q-fab-action :label="tc('components.group.ButtonAdd.create_server')" unelevated color="primary" icon="computer"
                     @click="navigateToUrl('/my/server/group/server/deploy')"/>
     </q-fab>
   </div>

@@ -99,7 +99,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('components.order.OrderRenewDialog.renew_cloud_host') }}</div>
+        <div class="text-primary">{{ tc('components.order.OrderRenewDialog.renew_server') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -137,7 +137,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{tc('components.order.OrderRenewDialog.project_group')}}
+            {{tc('components.order.OrderRenewDialog.group')}}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -189,7 +189,7 @@ const onOKClick = () => {
             {{tc('components.order.OrderRenewDialog.configuration')}}
           </div>
           <div class="col">
-            {{ server.vcpus }} {{tc('components.order.OrderRenewDialog.nuclear')}} / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{tc('components.order.OrderRenewDialog.cores')}} / {{ server.ram / 1024 }}GB
           </div>
         </div>
 
@@ -227,14 +227,14 @@ const onOKClick = () => {
       <q-card-section style="height: 150px;">
 
         <div v-if="server.pay_type === 'postpaid'">
-          {{tc('components.order.OrderRenewDialog.paid_no_renew')}}
+          {{tc('components.order.OrderRenewDialog.no_prepayment_required')}}
         </div>
 
         <div v-if="server.pay_type === 'prepaid'">
 
           <div class="row q-pb-lg items-center ">
             <div class="col-2 text-grey-7">
-              {{tc('components.order.OrderRenewDialog.renewal_way')}}
+              {{tc('components.order.OrderRenewDialog.renew_type')}}
             </div>
 
             <div class="col-10 q-gutter-x-sm">
@@ -321,7 +321,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
-               :label="tc('components.order.OrderRenewDialog.create_order')"
+               :label="tc('components.order.OrderRenewDialog.place_order')"
                :disable="server.pay_type === 'postpaid'"
                @click="onOKClick"/>
 

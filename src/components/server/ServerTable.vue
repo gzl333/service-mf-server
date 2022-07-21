@@ -48,7 +48,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: (() => tc('components.server.ServeTable.project_group'))(),
+    label: (() => tc('components.server.ServeTable.group'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -75,7 +75,7 @@ const columns = computed(() => [
   },
   {
     name: 'configuration',
-    label: (() => tc('components.server.ServeTable.configuration'))(),
+    label: (() => tc('components.server.ServeTable.hardware_configuration'))(),
     field: 'configuration',
     align: 'center',
     classes: 'ellipsis',
@@ -111,7 +111,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('components.server.ServeTable.state'))(),
+    label: (() => tc('components.server.ServeTable.status'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -162,8 +162,8 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
       row-key="name"
       :loading="isGroup ? store.tables.groupServerTable.status === 'loading' : store.tables.personalServerTable.status === 'loading' "
       color="primary"
-      :loading-label="tc('components.server.ServeTable.loading_wait')"
-      :no-data-label="tc('components.server.ServeTable.no_cloud_host')"
+      :loading-label="tc('components.server.ServeTable.notify_loading')"
+      :no-data-label="tc('components.server.ServeTable.no_server_available')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
@@ -182,7 +182,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
               @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`)">
               <q-tooltip>
-                {{ tc('components.server.ServeTable.cloud_host_details') }}
+                {{ tc('components.server.ServeTable.server_detail') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge style="top:-10px;"
@@ -196,7 +196,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.ipv4)">
               <q-tooltip>
-                {{ tc('components.server.ServeTable.copy_clipboard') }}
+                {{ tc('components.server.ServeTable.copy_to_clipboard') }}
               </q-tooltip>
             </q-btn>
             <q-btn v-else
@@ -213,7 +213,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
-                {{ tc('components.server.ServeTable.project_group_detail') }}
+                {{ tc('components.server.ServeTable.group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -278,7 +278,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
           <q-td key="configuration" :props="props">
             <div> {{ props.row.vcpus }} {{
-                i18n.global.locale === 'zh' ? tc('components.server.ServeTable.nuclear') : props.row.vcpus > 1 ? 'cores' : 'core'
+                i18n.global.locale === 'zh' ? tc('components.server.ServeTable.cores') : props.row.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
             <div>{{ props.row.ram / 1024 }}GB</div>
@@ -326,7 +326,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
                 <div class="col-auto" v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0">
                   <q-icon name="help_outline" color="red" size="xs">
-                    <q-tooltip>{{ tc('components.server.ServeTable.expired_renew_host') }}</q-tooltip>
+                    <q-tooltip>{{ tc('components.server.ServeTable.notify_renew_server') }}</q-tooltip>
                   </q-icon>
                 </div>
 
@@ -373,11 +373,11 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             <q-btn v-if="props.row.status === 1" unelevated flat padding="none" size="lg" color="primary"
                    icon="computer"
                    @click="store.gotoVNC(props.row.id)">
-              <q-tooltip>{{ tc('components.server.ServeTable.into_remote_control') }}</q-tooltip>
+              <q-tooltip>{{ tc('components.server.ServeTable.start_remote') }}</q-tooltip>
             </q-btn>
             <q-btn v-else unelevated flat padding="none" size="lg" color="grey-5" icon="computer">
               <q-tooltip>
-                {{ tc('components.server.ServeTable.open_remote_control') }}
+                {{ tc('components.server.ServeTable.notify_start_before_remote') }}
               </q-tooltip>
             </q-btn>
           </q-td>

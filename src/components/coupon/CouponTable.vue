@@ -37,7 +37,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'id',
-    label: (() => tc('components.coupon.CouponTable.vouchers_id'))(),
+    label: (() => tc('components.coupon.CouponTable.coupon_id'))(),
     field: 'id',
     align: 'center',
     classes: 'ellipsis',
@@ -82,7 +82,7 @@ const columns = computed(() => [
   },
   {
     name: 'face',
-    label: (() => tc('components.coupon.CouponTable.original_denomination'))(),
+    label: (() => tc('components.coupon.CouponTable.original_value'))(),
     field: 'face',
     align: 'center',
     classes: 'ellipsis',
@@ -137,8 +137,8 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
       row-key="name"
       :loading="isGroup ? store.tables.groupCouponTable.status === 'loading' : store.tables.personalCouponTable.status === 'loading' "
       color="primary"
-      :loading-label="tc('components.coupon.CouponTable.network_wait')"
-      :no-data-label="tc('components.coupon.CouponTable.no_vouchers')"
+      :loading-label="tc('components.coupon.CouponTable.network_loading')"
+      :no-data-label="tc('components.coupon.CouponTable.no_coupon')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
@@ -167,7 +167,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
                        class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                        @click="clickToCopy(props.row.id)">
                   <q-tooltip>
-                    {{ tc('components.coupon.CouponTable.copy_clipboard') }}
+                    {{ tc('components.coupon.CouponTable.copy_to_clipboard') }}
                   </q-tooltip>
                 </q-btn>
                 <q-btn v-else
@@ -187,7 +187,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
               :label="store.tables.groupTable.byId[props.row.vo?.id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo?.id}`)">
               <q-tooltip>
-                {{ tc('components.coupon.CouponTable.project_detail') }}
+                {{ tc('components.coupon.CouponTable.group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -260,12 +260,12 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
           </q-td>
 
           <q-td key="face" :props="props">
-            {{ props.row.face_value }} {{tc('components.coupon.CouponTable.point')}}
+            {{ props.row.face_value }} {{tc('components.coupon.CouponTable.points')}}
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="text-light-green">
-              {{ props.row.balance }} {{tc('components.coupon.CouponTable.point')}}
+              {{ props.row.balance }} {{tc('components.coupon.CouponTable.points')}}
             </div>
           </q-td>
 

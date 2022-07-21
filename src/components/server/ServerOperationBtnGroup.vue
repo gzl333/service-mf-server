@@ -40,10 +40,10 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
           @click="store.toggleOperationLock({isGroup, serverId: server.id })"
         >
           <q-tooltip v-if="server.lock === 'lock-operation'">
-            {{ tc('components.server.ServerOperationBtnGroup.locked_host_operation') }}
+            {{ tc('components.server.ServerOperationBtnGroup.server_operation_locked') }}
           </q-tooltip>
           <q-tooltip v-else>
-            {{ tc('components.server.ServerOperationBtnGroup.unlocked_host_operation') }}
+            {{ tc('components.server.ServerOperationBtnGroup.server_operation_unlocked') }}
           </q-tooltip>
         </q-toggle>
       </q-btn>
@@ -65,7 +65,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-label>
-                  {{ tc('components.server.ServerOperationBtnGroup.cloud_host_details') }}
+                  {{ tc('components.server.ServerOperationBtnGroup.server_detail') }}
                 </q-item-label>
               </q-item-section>
             </div>
@@ -81,7 +81,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-label>
-                    {{ tc('components.server.ServerOperationBtnGroup.cloud_host_renewal') }}
+                    {{ tc('components.server.ServerOperationBtnGroup.server_renewal') }}
                   </q-item-label>
                 </q-item-section>
               </div>
@@ -99,7 +99,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.starting_up') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.power_on') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -129,7 +129,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.shut_down') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.power_off') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -144,7 +144,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
-                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.forced_power_off') }}</q-item-label>
+                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_power_off') }}</q-item-label>
                 </q-item-section>
               </q-item-section>
             </div>
@@ -164,7 +164,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.rebuild_cloud_host') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.rebuild_server') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>
@@ -196,7 +196,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_deletion') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_delete') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>
