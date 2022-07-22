@@ -530,7 +530,7 @@ const deployServer = async () => {
         <div
           v-if="privateNetworks.length > 0"
           class="row item-row">
-          <div class="col-1 text-bold">
+          <div class="col-auto q-pr-md text-bold">
             {{ tc('components.server.ServerDeployCard.private_ip_segment') }}
           </div>
           <div class="col">
@@ -546,7 +546,7 @@ const deployServer = async () => {
         <div
           v-if="publicNetworks.length > 0"
           class="row item-row">
-          <div class="col-1 text-bold">
+          <div class="col-auto q-pr-md text-bold">
             {{ tc('components.server.ServerDeployCard.public_ip_segment') }}
           </div>
           <div class="col">
@@ -636,7 +636,7 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.billing_method') }}
           </div>
           <div class="col">
@@ -645,7 +645,7 @@ const deployServer = async () => {
         </div>
 
         <div v-if="radioPayment === 'prepaid'" class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.prepaid_period') }}
           </div>
           <div class="col"
@@ -655,7 +655,7 @@ const deployServer = async () => {
         </div>
 
         <div v-if="isGroup" class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.group') }}
           </div>
           <div class="col">
@@ -667,7 +667,7 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.service_node') }}
           </div>
           <div class="col">
@@ -706,22 +706,22 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.network_type') }}
           </div>
           <div class="col">
             <div
               v-if="store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name">
               {{
-                store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.public ? tc('公网IP段') : tc('私网IP段')
-              }} {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
+                store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.public ? tc('components.server.ServerDeployCard.public_ip_segment') : tc('components.server.ServerDeployCard.private_ip_segment')
+              }}: {{ store.tables.serviceNetworkTable.byLocalId[`${radioService}-${radioNetwork}`]?.name }}
             </div>
             <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_network') }}</div>
           </div>
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.operating_system') }}
           </div>
           <div class="col">
@@ -738,13 +738,13 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             CPU/{{ tc('components.server.ServerDeployCard.memory') }}
           </div>
           <div class="col ">
             <div v-if="store.tables.fedFlavorTable.byId[radioFlavor]">
               {{
-                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${ tc('components.server.ServerDeployCard.memory') }/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
+                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${ tc('components.server.ServerDeployCard.cores') }/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
               }}
             </div>
             <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.please_select_configuration') }}</div>
@@ -752,7 +752,7 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row items-center">
-          <div class="col-shrink item-title-narrow text-grey">
+          <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.remarks') }}
           </div>
           <div v-if="inputRemarks" class="col">

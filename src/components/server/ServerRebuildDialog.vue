@@ -78,7 +78,7 @@ const onOKClick = () => {
       <q-card-section>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.ip_address') }}
           </div>
           <div class="col">
@@ -87,7 +87,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.remarks') }}
           </div>
           <div class="col">
@@ -96,7 +96,7 @@ const onOKClick = () => {
         </div>
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.group') }}
           </div>
           <div class="col">
@@ -105,7 +105,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.affiliation') }}
           </div>
           <div class="col">
@@ -117,7 +117,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.service_node') }}
           </div>
           <div class="col">
@@ -145,7 +145,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.hardware_configuration') }}
           </div>
           <div class="col">
@@ -154,7 +154,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.network_type') }}
           </div>
           <div class="col">
@@ -163,7 +163,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.available_period') }}
           </div>
           <div class="col">
@@ -178,7 +178,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
              {{ tc('components.server.ServerRebuildDialog.operating_system') }}
           </div>
           <div class="col">
@@ -194,7 +194,7 @@ const onOKClick = () => {
       <q-card-section>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.server.ServerRebuildDialog.target_operating_system') }}
           </div>
           <div class="col-8">
@@ -243,9 +243,9 @@ const onOKClick = () => {
 
       <!-- buttons example -->
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
+        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
                @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>

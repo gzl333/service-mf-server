@@ -245,7 +245,7 @@ const gotoManualVpn = () => {
               <div class="col-4">
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_username') }}</div>
+                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_username') }}</div>
                   <div class="col-shrink">
                     <div v-if="server?.default_user === null || server?.default_user===''">
                       {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
@@ -264,13 +264,13 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_password') }}</div>
+                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_password') }}</div>
                   <div class="col-shrink">
                     <div v-if="server?.default_password === null || server?.default_password===''">
                       {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
                     </div>
 
-                    <div class="row">
+                    <div v-else class="row">
                       <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="server?.default_password"/>
 
                       <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
@@ -284,12 +284,12 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="!service.need_vpn && vpn" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">VPN</div>
+                  <div class="col-4 text-grey">VPN</div>
                   <div class="col-auto">{{ tc('components.server.ServeDetailCard.vpn_not_required') }}</div>
                 </div>
 
                 <div v-if="service.need_vpn" class="row q-pb-md items-center ">
-                  <div class="col-3 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_account_status') }}</div>
+                  <div class="col-4 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_account_status') }}</div>
                   <div class="col">
                     <div v-if="vpn?.active" class="col-shrink row items-center">
                       <q-icon name="check_circle" color="light-green" size="sm"/>
@@ -304,7 +304,7 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center ">
-                  <div class="col-3 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_username') }}</div>
+                  <div class="col-4 text-grey ">{{ tc('components.server.ServeDetailCard.vpn_username') }}</div>
                   <div class="col">
                     {{ vpn?.username }}
                     <q-btn class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
@@ -317,7 +317,7 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active && vpn" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_password') }}</div>
+                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.vpn_password') }}</div>
 
                   <div class="col-shrink">
 
@@ -337,17 +337,17 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_config') }}</div>
+                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.vpn_config') }}</div>
                   <div class="col">
-                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class=" " color="primary" padding="none" dense flat
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class=" " color="primary" padding="none" dense flat no-caps
                            @click="store.fetchConfig(server.service)"/>
                   </div>
                 </div>
 
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.vpn_ca') }}</div>
+                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.vpn_ca') }}</div>
                   <div class="col">
-                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class="" color="primary" padding="none" dense flat
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class="" color="primary" padding="none" dense flat no-caps
                            @click="store.fetchCa(server.service)"/>
                   </div>
                 </div>
@@ -355,7 +355,7 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <!--                  <div class="col-3 text-grey">VPN 使用方法</div>-->
                   <!--                  <div class="col">-->
-                  <q-btn :label="tc('components.server.ServeDetailCard.view_vpn_usage')" class="" color="primary" padding="none" dense flat
+                  <q-btn :label="tc('components.server.ServeDetailCard.view_vpn_usage')" class="" color="primary" padding="none" dense flat no-caps
                          @click="gotoManualVpn"/>
                   <!--                  </div>-->
                 </div>
@@ -424,7 +424,7 @@ const gotoManualVpn = () => {
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.hardware_configuration') }}</div>
-                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.core') }}CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}</div>
+                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.cores') }} CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
@@ -450,7 +450,7 @@ const gotoManualVpn = () => {
               <div class="col-4">
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.billing_type')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.billing_type')}}</div>
                   <div v-if="server.pay_type === 'prepaid'" class="col">
                     {{tc('components.server.ServeDetailCard.monthly_prepaid')}}
                   </div>
@@ -460,14 +460,14 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.create_time')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.create_time')}}</div>
                   <div class="col">
                     {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.expiration_time')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.expiration_time')}}</div>
                   <div class="col row items-center">
                     <div class="col-auto">
                       {{
@@ -476,7 +476,7 @@ const gotoManualVpn = () => {
                     </div>
                     <div v-if="server.pay_type === 'prepaid'" class="col-auto">
                       <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
-                             color="primary" padding="none" icon="autorenew" :ripple="false" dense flat
+                             color="primary" padding="none" icon="autorenew" :ripple="false" dense flat no-caps
                              @click="store.renewOrderDialog(server.id, isGroup)">
                         {{tc('components.server.ServeDetailCard.renewal')}}
                       </q-btn>
@@ -500,19 +500,19 @@ const gotoManualVpn = () => {
                 <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.affiliation')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.org')}}</div>
                   <div class="col">
                     {{ store.tables.dataCenterTable.byId[service.data_center]?.name }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.service_node')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.service_node')}}</div>
                   <div class="col"> {{ service.name }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-2 text-grey">{{tc('components.server.ServeDetailCard.service_type')}}</div>
+                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.service_type')}}</div>
                   <div class="col">
 
                     <!--                    <q-icon-->
