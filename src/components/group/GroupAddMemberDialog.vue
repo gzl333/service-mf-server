@@ -103,7 +103,7 @@ const onOKClick = () => {
 
         <div class="row justify-center items-center">
           <div class="col-auto">
-            <q-btn class="text-center" flat padding="none" icon="add" color="primary"
+            <q-btn class="text-center" flat no-caps padding="none" icon="add" color="primary"
                    @click="addCount">
               {{tc('components.group.GroupAddMemberDialog.more_accounts')}}
             </q-btn>
@@ -114,10 +114,10 @@ const onOKClick = () => {
 
       <!-- buttons example -->
       <q-card-actions align="right">
-        <q-btn color="primary" unelevated @click="onDialogCancel">
+        <q-btn color="primary" unelevated no-caps @click="onDialogCancel">
           {{ tc('components.group.GroupAddMemberDialog.cancel') }}
         </q-btn>
-        <q-btn color="primary" outline @click="onOKClick">
+        <q-btn color="primary" outline no-caps @click="onOKClick">
           {{ tc('components.group.GroupAddMemberDialog.confirm') }}
         </q-btn>
       </q-card-actions>

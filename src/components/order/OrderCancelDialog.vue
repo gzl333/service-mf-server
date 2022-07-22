@@ -80,7 +80,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ tc('components.order.OrderCancelDialog.affiliation') }}
+            {{ tc('components.order.OrderCancelDialog.org') }}
           </div>
           <div class="col">
             {{
@@ -127,8 +127,8 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
       <q-separator/>
 
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.cancel_order')" @click="onDialogOK(true)"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderCancelDialog.keep_order')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" no-caps unelevated :label="tc('components.order.OrderCancelDialog.cancel_order')" @click="onDialogOK(true)"/>
+        <q-btn class="q-ma-sm" color="primary" no-caps unelevated :label="tc('components.order.OrderCancelDialog.keep_order')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>

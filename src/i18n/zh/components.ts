@@ -4,7 +4,9 @@ export default {
   chart: {}, // void
   coupon: {
     CouponCard: {
+      balance: '余额',
       points: '点',
+      group: '所属项目组',
       service: '所属服务',
       expiration_time: '到期时间'
     },
@@ -12,7 +14,7 @@ export default {
       notification_input: '代金券输入有误，请检查输入',
       notification_success: '成功兑换代金券',
       redeem: '兑换',
-      redeem_group: '兑换到项目组',
+      redeem_group: '兑换到项目组账户',
       redeem_personal: '兑换到个人账户'
     },
     CouponTable: {
@@ -30,7 +32,7 @@ export default {
       copy_to_clipboard: '复制到剪切板',
       group_detail: '项目组详情',
       points: '点',
-      available: '可用',
+      valid: '可用',
       invalid: '失效'
     },
     RedeemCouponDialog: {
@@ -67,7 +69,7 @@ export default {
     GroupEditDialog: {
       edit_group_information: '编辑项目组信息',
       group_name: '项目组名称',
-      affiliation: '所属单位',
+      org: '所属单位',
       remarks: '备注',
       cancel: '取消',
       confirm: '确定'
@@ -94,7 +96,7 @@ export default {
     GroupTable: {
       my_role: '我的角色',
       group: '所属组',
-      affiliation: '所属单位',
+      org: '所属单位',
       remarks: '备注',
       creation_time: '创建时间',
       members: '成员',
@@ -123,7 +125,7 @@ export default {
       order_id: '订单ID',
       order_status: '订单状态',
       order_creation_time: '下单时间',
-      affiliation: '所属机构',
+      org: '所属机构',
       service_node: '服务节点',
       amount_payable: '应付金额',
       points: '点',
@@ -150,7 +152,7 @@ export default {
       to_be_paid: '待支付',
       resource_delivery: '资源交付',
       to_be_delivered: '待交付',
-      payment: '支付',
+      pay: '支付',
       resource_information: '资源信息',
       view_resources: '查看资源',
       cores: '核',
@@ -163,7 +165,7 @@ export default {
       private_network: '私网',
       network_segment: '网段',
       operating_system: '操作系统',
-      affiliation: '所属机构',
+      org: '所属机构',
       service_node: '服务节点',
       service_type: '服务类型',
       total_billing: '计费总额',
@@ -183,7 +185,7 @@ export default {
       available_balance: '余额',
       group: '所属项目组',
       group_coupon: '项目组代金券',
-      personal_voucher: '个人代金券',
+      personal_coupon: '个人代金券',
       selected: '已选',
       notify_group_no_coupon: '项目组账户内暂无该服务节点可用代金券',
       notify_personal_no_coupon: '个人账户内暂无该服务节点可用代金券',
@@ -202,7 +204,7 @@ export default {
       network_type: '网络类型',
       remarks: '备注',
       group: '项目组',
-      affiliation: '所属机构',
+      org: '所属机构',
       service_node: '服务节点',
       public_network: '公网',
       private_network: '私网',
@@ -245,7 +247,7 @@ export default {
       notify_no_results: '无搜索结果',
       order_details: '订单详情',
       copy_to_clipboard: '复制到剪切板',
-      project_detail: '项目组详情',
+      group_detail: '项目组详情',
       cores: '核',
       public_network: '公网',
       private_network: '私网',
@@ -275,7 +277,7 @@ export default {
       ip_address: 'IP地址',
       remarks: '备注',
       group: '项目组',
-      affiliation: '所属机构',
+      org: '所属机构',
       service_node: '服务节点',
       configuration: '配置',
       cores: '核',
@@ -415,7 +417,7 @@ export default {
       ip_address: 'IP地址',
       remarks: '备注',
       group: '项目组',
-      affiliation: '所属机构',
+      org: '所属机构',
       service_node: '服务节点',
       hardware_configuration: '配置',
       cores: '核 ',

@@ -61,31 +61,31 @@ const onOKClick = () => {
         <div class="row items-center q-pb-md">
           <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.group_name') }}</div>
           <div class="col">
-            <q-input outlined dense v-model="groupName" maxlength="15" counter/>
+            <q-input outlined dense v-model="groupName" maxlength="30" counter/>
           </div>
         </div>
 
         <div class="row items-center q-pb-md">
-          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.affiliation') }}</div>
+          <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.org') }}</div>
           <div class="col">
-            <q-input outlined dense v-model="groupCompany" maxlength="15" counter/>
+            <q-input outlined dense v-model="groupCompany" maxlength="30" counter/>
           </div>
         </div>
 
         <div class="row items-center q-pb-md">
           <div class="col-2 text-grey q-pb-md">{{ tc('components.group.GroupEditDialog.remarks') }}</div>
           <div class="col">
-            <q-input outlined dense v-model="groupDescription" maxlength="15" counter/>
+            <q-input outlined dense v-model="groupDescription" maxlength="100" counter/>
           </div>
         </div>
       </q-card-section>
 
       <!-- buttons example -->
       <q-card-actions align="right">
-        <q-btn color="primary" unelevated @click="onDialogCancel">
+        <q-btn color="primary" no-caps unelevated @click="onDialogCancel">
           {{ tc('components.group.GroupEditDialog.cancel') }}
         </q-btn>
-        <q-btn color="primary" outline @click="onOKClick">
+        <q-btn color="primary" no-caps outline @click="onOKClick">
           {{ tc('components.group.GroupEditDialog.confirm') }}
         </q-btn>
       </q-card-actions>

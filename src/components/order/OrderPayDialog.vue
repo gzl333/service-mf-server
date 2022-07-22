@@ -120,7 +120,7 @@ const onOKClick = () => {
 
             <q-btn style="width: 180px;"
                    :outline="methodSelect==='cashcoupon'?false:true"
-                   :ripple="false" dense unelevated
+                   :ripple="false" dense unelevated no-caps
                    :color="methodSelect==='cashcoupon'?'primary':'grey'"
                    @click="methodSelect = 'cashcoupon'">
               {{ tc('components.order.OrderPayDialog.coupons') }}
@@ -128,7 +128,7 @@ const onOKClick = () => {
 
             <q-btn style="width: 180px;"
                    :outline="methodSelect==='balance'?false:true"
-                   :ripple="false" dense unelevated
+                   :ripple="false" dense unelevated no-caps
                    :color="methodSelect==='balance'?'primary':'grey'"
                    @click="methodSelect = 'balance'">
               {{ tc('components.order.OrderPayDialog.available_balance') }}
@@ -150,11 +150,11 @@ const onOKClick = () => {
              class="row q-pb-lg items-start">
 
           <div class="col-3 text-grey-7">
-            {{ isGroup ? tc('components.order.OrderPayDialog.group_coupon') : tc('components.order.OrderPayDialog.personal_voucher') }}
+            {{ isGroup ? tc('components.order.OrderPayDialog.group_coupon') : tc('components.order.OrderPayDialog.personal_coupon') }}
 
             <div class="row text-black">
-              <div>{{ tc('components.order.OrderPayDialog.selected') }}</div>
-              <div>{{ couponSelect.length }}个</div>
+              <div>{{ tc('components.order.OrderPayDialog.selected') }}: </div>
+              <div>{{ couponSelect.length }}</div>
             </div>
 
           </div>
@@ -220,8 +220,8 @@ const onOKClick = () => {
       <!--      <q-separator/>-->
 
       <q-card-actions align="between" class="absolute-bottom">
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.order.OrderPayDialog.cancel')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.cancel')" @click="onDialogCancel"/>
       </q-card-actions>
 
       <!--      <pre> {{ coupons }}</pre>-->

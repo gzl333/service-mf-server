@@ -15,24 +15,24 @@ export default {
     },
     GroupDetail: {
       group_detail: 'Group Detail',
-      loading: 'Loading, please hold on a moment.',
+      loading: 'Loading, please wait...',
       group_account_balance: 'Group Account Balance',
       points: 'Points',
-      group_name: 'Group Name',
-      remark: 'Remark',
-      group_org: 'Group Organisation',
-      group_leader: 'Group Leader',
+      name: 'Name',
+      remark: 'Remarks',
+      org: 'Organisation',
+      owner: 'Owner',
       creation_time: 'Creation Time',
       my_role: 'My Role',
       operation: 'Operation',
       edit_group_info: 'Edit Group Information',
-      add_member: 'Add Member',
-      delete_group: 'Delete Group',
-      server: 'Server',
-      member: 'Member',
-      order: 'Order',
-      coupon: 'Coupon',
-      create_server: 'Create Server'
+      add_member: 'Add Members',
+      delete_group: 'Dismiss Group',
+      server: 'Servers',
+      member: 'Members',
+      order: 'Orders',
+      coupon: 'Coupons',
+      create_server: 'Deploy Server'
     },
     GroupIndex: {
       group_resource: 'Group Resource',
@@ -54,7 +54,7 @@ export default {
     },
     GroupOrderDetail: {},
     ServerDeploy: {
-      create_group_server: 'Create Group Server'
+      create_group_server: 'Deploy Group Server'
     },
     ServerDetail: {},
     ServerList: {
@@ -122,7 +122,7 @@ export default {
       service_node_filter: 'Service Node Filter'
     },
     ServerDeploy: {
-      create_personal_server: 'Create Personal Server'
+      create_personal_server: 'Deploy Personal Server'
     },
     ServerDetail: {},
     ServerList: {
