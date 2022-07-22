@@ -29,7 +29,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'role',
-    label: (() => tc('我的角色'))(),
+    label: (() => tc('components.group.GroupTable.my_role'))(),
     field: 'role',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -37,7 +37,7 @@ const columns = computed(() => [
   },
   {
     name: 'name',
-    label: (() => tc('所属组'))(),
+    label: (() => tc('components.group.GroupTable.group'))(),
     field: 'name',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 200px;white-space: normal;',
@@ -45,7 +45,7 @@ const columns = computed(() => [
   },
   {
     name: 'company',
-    label: (() => tc('所属单位'))(),
+    label: (() => tc('components.group.GroupTable.affiliation'))(),
     field: 'company',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
@@ -53,7 +53,7 @@ const columns = computed(() => [
   },
   {
     name: 'desc',
-    label: (() => tc('备注'))(),
+    label: (() => tc('components.group.GroupTable.remarks'))(),
     field: 'desc',
     align: 'center',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
@@ -61,7 +61,7 @@ const columns = computed(() => [
   },
   {
     name: 'creation_time',
-    label: (() => tc('创建时间'))(),
+    label: (() => tc('components.group.GroupTable.creation_time'))(),
     field: 'creation_time',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -69,7 +69,7 @@ const columns = computed(() => [
   },
   {
     name: 'member',
-    label: (() => tc('成员'))(),
+    label: (() => tc('components.group.GroupTable.members'))(),
     field: 'member',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -77,7 +77,7 @@ const columns = computed(() => [
   },
   {
     name: 'server',
-    label: (() => tc('云主机'))(),
+    label: (() => tc('components.group.GroupTable.server'))(),
     field: 'server',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -85,7 +85,7 @@ const columns = computed(() => [
   },
   {
     name: 'order',
-    label: (() => tc('订单'))(),
+    label: (() => tc('components.group.GroupTable.order'))(),
     field: 'order',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -93,7 +93,7 @@ const columns = computed(() => [
   },
   {
     name: 'coupon',
-    label: (() => tc('代金券'))(),
+    label: (() => tc('components.group.GroupTable.coupon'))(),
     field: 'coupon',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -101,7 +101,7 @@ const columns = computed(() => [
   },
   {
     name: 'balance',
-    label: (() => tc('余额'))(),
+    label: (() => tc('components.group.GroupTable.balance'))(),
     field: 'balance',
     align: 'center',
     style: 'padding: 15px 0px',
@@ -109,7 +109,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: (() => tc('操作'))(),
+    label: (() => tc('components.group.GroupTable.operation'))(),
     field: 'operation',
     align: 'center',
     style: 'padding: 15px 0px; height: 105px;', // 每一行被此处撑开，决定行高
@@ -134,13 +134,13 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
       row-key="name"
       :loading="store.tables.groupTable.status === 'loading'"
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="暂无项目组"
+      :loading-label="tc('components.group.GroupTable.notify_loading')"
+      :no-data-label="tc('components.group.GroupTable.notify_no_group')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      no-results-label="无搜索结果"
+      :no-results-label="tc('components.group.GroupTable.notify_no_result')"
     >
 
       <template v-slot:body="props">
@@ -155,7 +155,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
               class="q-ma-none" :label="props.row.name" color="primary" padding="xs" flat dense unelevated no-caps
               @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
               <q-tooltip>
-                {{ tc('详情') }}
+                {{ tc('components.group.GroupTable.details') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
@@ -187,35 +187,40 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }}人
+              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }}
+              {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
 
           <q-td key="server" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
-              {{ store.getGroupServersByGroupId(props.row.id).length }}台
+              {{ store.getGroupServersByGroupId(props.row.id).length }}
+              {{ tc('components.group.GroupTable.servers') }}
             </q-btn>
           </q-td>
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
-              {{ store.getGroupOrdersByGroupId(props.row.id).length }}个
+              {{ store.getGroupOrdersByGroupId(props.row.id).length }}
+              {{ tc('components.group.GroupTable.orders') }}
             </q-btn>
           </q-td>
 
           <q-td key="coupon" :props="props">
             <q-btn color="primary" flat padding="none" dense
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
-              {{ store.tables.groupTable.byId[props.row.id].coupons.length }}个
+              {{ store.tables.groupTable.byId[props.row.id].coupons.length }}
+              {{ tc('components.group.GroupTable.coupons') }}
             </q-btn>
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
                  :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-black':'text-red'">
-              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}点
+              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}
+              {{ tc('components.group.GroupTable.points') }}
             </div>
           </q-td>
 
@@ -225,20 +230,20 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
               <q-btn icon="info" flat dense padding="none" color="primary"
                      @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
-                {{ tc('查看详情') }}
+                {{ tc('components.group.GroupTable.check_details') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
                      icon="edit" flat padding="none" color="primary" size="md" dense
                      @click="store.editGroupDialog(props.row.id)">
-                {{ tc('编辑项目组') }}
+                {{ tc('components.group.GroupTable.edit_group_info') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"
                      icon="group_off" flat padding="none" dense
                      color="primary" size="md"
                      @click="store.deleteGroupDialog(props.row.id)">
-                {{ tc('解散项目组') }}
+                {{ tc('components.group.GroupTable.dismiss_group') }}
               </q-btn>
 
             </div>

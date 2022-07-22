@@ -37,7 +37,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'id',
-    label: (() => tc('代金券ID'))(),
+    label: (() => tc('components.coupon.CouponTable.coupon_id'))(),
     field: 'id',
     align: 'center',
     classes: 'ellipsis',
@@ -46,7 +46,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: (() => tc('所属组'))(),
+    label: (() => tc('components.coupon.CouponTable.group'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'serviceNode',
-    label: (() => tc('服务节点'))(),
+    label: (() => tc('components.coupon.CouponTable.service_node'))(),
     field: 'serviceNode',
     align: 'center',
     classes: 'ellipsis',
@@ -64,7 +64,7 @@ const columns = computed(() => [
   },
   {
     name: 'redeemTime',
-    label: (() => tc('兑换日期'))(),
+    label: (() => tc('components.coupon.CouponTable.redeem_date'))(),
     field: 'redeemTime',
     align: 'center',
     classes: 'ellipsis',
@@ -73,7 +73,7 @@ const columns = computed(() => [
   },
   {
     name: 'expirationTime',
-    label: (() => tc('失效日期'))(),
+    label: (() => tc('components.coupon.CouponTable.expiration_date'))(),
     field: 'expirationTime',
     align: 'center',
     classes: 'ellipsis',
@@ -82,7 +82,7 @@ const columns = computed(() => [
   },
   {
     name: 'face',
-    label: (() => tc('原始面额'))(),
+    label: (() => tc('components.coupon.CouponTable.original_value'))(),
     field: 'face',
     align: 'center',
     classes: 'ellipsis',
@@ -91,7 +91,7 @@ const columns = computed(() => [
   },
   {
     name: 'balance',
-    label: (() => tc('可用余额'))(),
+    label: (() => tc('components.coupon.CouponTable.available_balance'))(),
     field: 'balance',
     align: 'center',
     classes: 'ellipsis',
@@ -100,7 +100,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('状态'))(),
+    label: (() => tc('components.coupon.CouponTable.status'))(),
     field: 'status',
     align: 'center',
     classes: 'ellipsis',
@@ -137,13 +137,13 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
       row-key="name"
       :loading="isGroup ? store.tables.groupCouponTable.status === 'loading' : store.tables.personalCouponTable.status === 'loading' "
       color="primary"
-      :loading-label="tc('网络请求中，请稍候...')"
-      :no-data-label="tc('暂无可用代金券')"
+      :loading-label="tc('components.coupon.CouponTable.network_loading')"
+      :no-data-label="tc('components.coupon.CouponTable.no_coupon')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      :no-results-label="tc('无搜索结果')"
+      :no-results-label="tc('components.coupon.CouponTable.no_search_results')"
     >
 
       <template v-slot:body="props">
@@ -167,7 +167,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
                        class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                        @click="clickToCopy(props.row.id)">
                   <q-tooltip>
-                    {{ tc('复制到剪切板') }}
+                    {{ tc('components.coupon.CouponTable.copy_to_clipboard') }}
                   </q-tooltip>
                 </q-btn>
                 <q-btn v-else
@@ -187,7 +187,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
               :label="store.tables.groupTable.byId[props.row.vo?.id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo?.id}`)">
               <q-tooltip>
-                {{ tc('项目组详情') }}
+                {{ tc('components.coupon.CouponTable.group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -260,12 +260,12 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
           </q-td>
 
           <q-td key="face" :props="props">
-            {{ props.row.face_value }}点
+            {{ props.row.face_value }} {{tc('components.coupon.CouponTable.points')}}
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="text-light-green">
-              {{ props.row.balance }}点
+              {{ props.row.balance }} {{tc('components.coupon.CouponTable.points')}}
             </div>
           </q-td>
 
@@ -273,12 +273,12 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
             <div v-if="(new Date() - new Date(props.row.expiration_time)) < 0" class="text-light-green">
               <q-icon name="check_circle" color="light-green" size="sm"/>
-              {{ tc('可用') }}
+              {{ tc('components.coupon.CouponTable.available') }}
             </div>
 
             <div v-else class="text-red">
               <q-icon name="cancel" color="red" size="sm"/>
-              {{ tc('失效') }}
+              {{ tc('components.coupon.CouponTable.invalid') }}
             </div>
 
           </q-td>

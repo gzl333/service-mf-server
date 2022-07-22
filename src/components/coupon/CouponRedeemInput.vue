@@ -39,7 +39,7 @@ const redeemCoupon = async () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('代金券输入有误，请检查输入')}`,
+      message: `${tc('components.coupon.CouponRedeemInput.notification_input')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -61,7 +61,7 @@ const redeemCoupon = async () => {
         classes: 'notification-positive shadow-15',
         textColor: 'positive',
         icon: 'check_circle',
-        message: `${tc('成功兑换代金券')}: ${respPostCashCoupon.data.id}}`,
+        message: `${tc('components.coupon.CouponRedeemInput.notification_success')}: ${respPostCashCoupon.data.id}}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -94,10 +94,10 @@ const redeemCoupon = async () => {
 <template>
   <q-input class="col-auto" v-model="coupon" outlined dense>
     <template v-slot:append>
-      <q-btn color="primary" flat dense @click="redeemCoupon">{{ tc('兑换') }}</q-btn>
+      <q-btn color="primary" flat dense @click="redeemCoupon">{{ tc('components.coupon.CouponRedeemInput.redeem') }}</q-btn>
     </template>
     <q-tooltip>
-      {{ isGroup ? tc('兑换到项目组') + ': ' + store.tables.groupTable.byId[groupId]?.name : tc('兑换到个人账户') }}
+      {{ isGroup ? tc('components.coupon.CouponRedeemInput.redeem_group') + ': ' + store.tables.groupTable.byId[groupId]?.name : tc('components.coupon.CouponRedeemInput.redeem_personal') }}
     </q-tooltip>
   </q-input>
 </template>

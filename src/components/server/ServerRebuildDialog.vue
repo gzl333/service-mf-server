@@ -49,7 +49,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: '请选择目标操作系统',
+      message: `${tc('components.server.ServeDeployCard.select_target_os')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -68,7 +68,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary ">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('重建云主机') }}</div>
+        <div class="text-primary">{{ tc('components.server.ServerRebuildDialog.rebuild_server') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -78,8 +78,8 @@ const onOKClick = () => {
       <q-card-section>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            IP地址
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.ip_address') }}
           </div>
           <div class="col">
             {{ server.ipv4 }}
@@ -87,8 +87,8 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            备注
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.remarks') }}
           </div>
           <div class="col">
             {{ server.remarks }}
@@ -96,8 +96,8 @@ const onOKClick = () => {
         </div>
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            项目组
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.group') }}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -105,8 +105,8 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            所属机构
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.affiliation') }}
           </div>
           <div class="col">
             {{
@@ -117,8 +117,8 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            服务节点
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.service_node') }}
           </div>
           <div class="col">
             {{
@@ -145,26 +145,26 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            配置
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.hardware_configuration') }}
           </div>
           <div class="col">
-            {{ server.vcpus }}核 / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{ tc('components.server.ServerRebuildDialog.cores') }}/ {{ server.ram / 1024 }}GB
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            IP类型
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.network_type') }}
           </div>
           <div class="col">
-            {{ server.public_ip ? '公网' : '私网' }}
+            {{ server.public_ip ? tc('components.server.ServerRebuildDialog.public_network')  : tc('components.server.ServerRebuildDialog.private_network')  }}
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            可用期
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.available_period') }}
           </div>
           <div class="col">
             {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
@@ -178,8 +178,8 @@ const onOKClick = () => {
         </div>
 
         <div class="row items-center">
-          <div class="col-2 text-grey-7">
-            操作系统
+          <div class="col-3 text-grey-7">
+             {{ tc('components.server.ServerRebuildDialog.operating_system') }}
           </div>
           <div class="col">
             <q-icon v-if="getOsIconName(server.image)" :name="getOsIconName(server.image)" flat size="md"/>
@@ -194,8 +194,8 @@ const onOKClick = () => {
       <q-card-section>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            目标操作系统
+          <div class="col-3 text-grey-7">
+            {{ tc('components.server.ServerRebuildDialog.target_operating_system') }}
           </div>
           <div class="col-8">
             <q-select ref="selectDom" v-if="images.length !== 0" outlined v-model="select" dense
@@ -229,13 +229,13 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col text-grey-7">
-            请仔细阅读以下事项，并在确认后勾选：
+            {{ tc('components.server.ServerRebuildDialog.read_carefully_check') }}
           </div>
         </div>
 
         <q-checkbox style="margin-left: -10px;" v-model="check" color="primary">
           <div :class="check?'text-primary':'text-black'">
-            {{ tc('我了解重建云主机会抹去全部数据，且无法恢复') }}
+            {{ tc('components.server.ServerRebuildDialog.understand_delete') }}
           </div>
         </q-checkbox>
 
@@ -243,9 +243,9 @@ const onOKClick = () => {
 
       <!-- buttons example -->
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated :label="tc('确认')" :disable="!check"
+        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
                @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('取消')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>

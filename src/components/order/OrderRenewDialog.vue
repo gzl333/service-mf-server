@@ -56,7 +56,7 @@ const onOKClick = () => {
         classes: 'notification-negative shadow-15',
         icon: 'error',
         textColor: 'negative',
-        message: `预付时长应介于1-${MAX_MONTHS}个月之间`,
+        message: `${tc('components.order.OrderRenewDialog.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.order.OrderRenewDialog.prepaid_time_months')}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -78,7 +78,7 @@ const onOKClick = () => {
         classes: 'notification-negative shadow-15',
         icon: 'mdi-alert',
         textColor: 'negative',
-        message: `${tc('目标时间应晚于过期时间')}`,
+        message: `${tc('components.order.OrderRenewDialog.target_time_requirement')}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -99,7 +99,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('续期云主机') }}</div>
+        <div class="text-primary">{{ tc('components.order.OrderRenewDialog.renew_server') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -110,7 +110,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            IP地址
+            {{ tc('components.order.OrderRenewDialog.ip_address') }}
           </div>
           <div class="col">
             {{ server.ipv4 }}
@@ -119,16 +119,16 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            网络类型
+            {{ tc('components.order.OrderRenewDialog.network_type') }}
           </div>
           <div class="col">
-            {{ server.public_ip ? '公网' : '私网' }}
+            {{ server.public_ip ? tc('components.order.OrderRenewDialog.public_network') : tc('components.order.OrderRenewDialog.private_network') }}
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            备注
+            {{tc('components.order.OrderRenewDialog.remarks')}}
           </div>
           <div class="col">
             {{ server.remarks }}
@@ -137,7 +137,7 @@ const onOKClick = () => {
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            项目组
+            {{tc('components.order.OrderRenewDialog.group')}}
           </div>
           <div class="col">
             {{ store.tables.groupTable.byId[server.vo_id].name }}
@@ -146,7 +146,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            所属机构
+            {{tc('components.order.OrderRenewDialog.affiliation')}}
           </div>
           <div class="col">
             {{
@@ -158,7 +158,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            服务节点
+            {{tc('components.order.OrderRenewDialog.service_node')}}
           </div>
           <div class="col">
             {{
@@ -186,32 +186,32 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            配置
+            {{tc('components.order.OrderRenewDialog.configuration')}}
           </div>
           <div class="col">
-            {{ server.vcpus }}核 / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{tc('components.order.OrderRenewDialog.cores')}} / {{ server.ram / 1024 }}GB
           </div>
         </div>
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            计费方式
+            {{tc('components.order.OrderRenewDialog.billing_method')}}
           </div>
           <div v-if="server.pay_type === 'prepaid'" class="col">
-            包月预付
+            {{tc('components.order.OrderRenewDialog.monthly_prepaid')}}
           </div>
           <div v-if="server.pay_type === 'postpaid'" class="col">
-            按量计费
+            {{tc('components.order.OrderRenewDialog.pay_as_go')}}
           </div>
         </div>
 
         <div class="row items-center">
           <div class="col-2 text-grey-7">
-            过期时间
+            {{tc('components.order.OrderRenewDialog.expiration_time')}}
           </div>
           <div class="col">
             <!--            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} - -->
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '长期' }}
+            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.order.OrderRenewDialog.long_term') }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -227,14 +227,14 @@ const onOKClick = () => {
       <q-card-section style="height: 150px;">
 
         <div v-if="server.pay_type === 'postpaid'">
-          按量计费的云主机无需续期
+          {{tc('components.order.OrderRenewDialog.no_prepayment_required')}}
         </div>
 
         <div v-if="server.pay_type === 'prepaid'">
 
           <div class="row q-pb-lg items-center ">
             <div class="col-2 text-grey-7">
-              续期方式
+              {{tc('components.order.OrderRenewDialog.renew_type')}}
             </div>
 
             <div class="col-10 q-gutter-x-sm">
@@ -244,7 +244,7 @@ const onOKClick = () => {
                      :ripple="false" dense unelevated
                      :color="renewType==='month'?'primary':'grey'"
                      @click="renewType = 'month'">
-                {{ tc('指定续期时长') }}
+                {{ tc('components.order.OrderRenewDialog.specify_renewal_period') }}
               </q-btn>
 
               <q-btn style="width: 170px;"
@@ -252,7 +252,7 @@ const onOKClick = () => {
                      :ripple="false" dense unelevated
                      :color="renewType==='date'?'primary':'grey'"
                      @click="renewType = 'date'">
-                {{ tc('指定过期时间') }}
+                {{ tc('components.order.OrderRenewDialog.specify_expiration_time') }}
               </q-btn>
 
             </div>
@@ -260,7 +260,7 @@ const onOKClick = () => {
 
           <div v-if="renewType === 'month'" class="row items-center">
             <div class="col-2 text-grey-7">
-              续期时长
+              {{ tc('components.order.OrderRenewDialog.renewal_period') }}
             </div>
 
             <div class="col-10 row items-start q-gutter-x-sm q-pt-md">
@@ -291,7 +291,7 @@ const onOKClick = () => {
           <div v-if="renewType === 'date'" class="row items-center">
 
             <div class="col-2 text-grey-7 q-pt-md">
-              目标时间
+              {{ tc('components.order.OrderRenewDialog.target_time') }}
             </div>
 
             <div class="col-10 row items-center q-gutter-x-sm q-pt-md">
@@ -321,14 +321,14 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
-               :label="tc('创建订单')"
+               :label="tc('components.order.OrderRenewDialog.place_order')"
                :disable="server.pay_type === 'postpaid'"
                @click="onOKClick"/>
 
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
-               :label="tc('取消')"
+               :label="tc('components.order.OrderRenewDialog.cancel')"
                @click="onDialogCancel"/>
 
       </q-card-actions>

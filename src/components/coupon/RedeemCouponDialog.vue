@@ -60,7 +60,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('兑换码输入有误，请检查输入')}`,
+      message: `${tc('components.coupon.RedeemCouponDialog.notify_wrong_code')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -75,7 +75,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: `${tc('暂无可用项目组，请先创建或加入项目组')}`,
+      message: `${tc('components.coupon.RedeemCouponDialog.notify_no_group')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -98,7 +98,7 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('兑换代金券') }}</div>
+        <div class="text-primary">{{ tc('components.coupon.RedeemCouponDialog.redeem_coupon') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -109,7 +109,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center ">
           <div class="col-2 text-grey-7">
-            兑换到
+           {{tc('components.coupon.RedeemCouponDialog.redeem_to')}}
           </div>
 
           <div class="col-10 row justify-center ">
@@ -119,7 +119,7 @@ const onOKClick = () => {
                    :ripple="false" dense unelevated
                    :color="redeemType==='personal'?'primary':'grey'"
                    @click="redeemType = 'personal'">
-              {{ tc('个人账户') }}
+              {{ tc('components.coupon.RedeemCouponDialog.personal_account') }}
             </q-btn>
 
             <q-btn class="col"
@@ -127,7 +127,7 @@ const onOKClick = () => {
                    :ripple="false" dense unelevated
                    :color="redeemType==='group'?'primary':'grey'"
                    @click="redeemType = 'group'">
-              {{ tc('项目组账户') }}
+              {{ tc('components.coupon.RedeemCouponDialog.group_account') }}
             </q-btn>
 
           </div>
@@ -136,12 +136,13 @@ const onOKClick = () => {
         <div v-if="redeemType === 'group'"
              class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            项目组
+            {{ tc('components.coupon.RedeemCouponDialog.group') }}
           </div>
           <div class="col">
 
             <q-select v-if="groupOptions.length !== 0" outlined dense stack-label v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
+                      :label="groupOptions.length === 0 ? tc('暂无可用项目组') : '请选择项目组'"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
@@ -153,10 +154,10 @@ const onOKClick = () => {
 
             <div v-else>
               <div class="row items-center">
-                {{ tc('暂无项目组，请') }}
+                {{ tc('components.coupon.RedeemCouponDialog.notify_no_group') }}
                 <q-btn flat padding="none" color="primary"
                        :to="'/my/server/group/create'">
-                  {{ tc('创建项目组') }}
+                  {{ tc('components.coupon.RedeemCouponDialog.create_group') }}
                 </q-btn>
               </div>
             </div>
@@ -165,10 +166,10 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col-2 text-grey-7">
-            兑换码
+            {{ tc('components.coupon.RedeemCouponDialog.redeem_code') }}
           </div>
           <div class="col">
-            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('请输入兑换码')" @keydown.enter="onOKClick">
+            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('components.coupon.RedeemCouponDialog.notify_input_code')" @keydown.enter="onOKClick">
               <template v-slot:append>
                 <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
               </template>
@@ -185,14 +186,14 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
-               :label="tc('兑换')"
+               :label="tc('components.coupon.RedeemCouponDialog.redeem')"
                @click="onOKClick"
         />
 
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
-               :label="tc('取消')"
+               :label="tc('components.coupon.RedeemCouponDialog.cancel')"
                @click="onDialogCancel"/>
 
       </q-card-actions>

@@ -37,7 +37,7 @@ const store = useStore()
 const columns = computed(() => [
   {
     name: 'id',
-    label: (() => tc('订单ID'))(),
+    label: (() => tc('components.order.OrderTable.order_id'))(),
     field: 'id',
     align: 'center',
     classes: 'ellipsis',
@@ -46,7 +46,7 @@ const columns = computed(() => [
   },
   ...((props.isGroup && !props.isHideGroup) ? [{ // 是group且不hide时加入这个配置
     name: 'group',
-    label: (() => tc('所属组'))(),
+    label: (() => tc('components.order.OrderTable.group'))(),
     field: 'group',
     align: 'center',
     classes: 'ellipsis',
@@ -55,7 +55,7 @@ const columns = computed(() => [
   }] : []),
   {
     name: 'service',
-    label: (() => tc('服务节点'))(),
+    label: (() => tc('components.order.OrderTable.service_node'))(),
     field: 'service',
     align: 'center',
     classes: 'ellipsis',
@@ -64,7 +64,7 @@ const columns = computed(() => [
   },
   {
     name: 'config',
-    label: (() => tc('硬件配置'))(),
+    label: (() => tc('components.order.OrderTable.hardware_configuration'))(),
     field: 'config',
     align: 'center',
     classes: 'ellipsis',
@@ -73,7 +73,7 @@ const columns = computed(() => [
   },
   {
     name: 'network',
-    label: (() => tc('网络类型'))(),
+    label: (() => tc('components.order.OrderTable.network_type'))(),
     field: 'network',
     align: 'center',
     classes: 'ellipsis',
@@ -82,7 +82,7 @@ const columns = computed(() => [
   },
   {
     name: 'time',
-    label: (() => tc('下单时间'))(),
+    label: (() => tc('components.order.OrderTable.place_time'))(),
     field: 'time',
     align: 'center',
     classes: 'ellipsis',
@@ -91,7 +91,7 @@ const columns = computed(() => [
   },
   {
     name: 'order_type',
-    label: (() => tc('订单类型'))(),
+    label: (() => tc('components.order.OrderTable.order_type'))(),
     field: 'order_type',
     align: 'center',
     classes: 'ellipsis',
@@ -100,7 +100,7 @@ const columns = computed(() => [
   },
   {
     name: 'pay_type',
-    label: (() => tc('计费方式'))(),
+    label: (() => tc('components.order.OrderTable.billing_method'))(),
     field: 'pay_type',
     align: 'center',
     classes: 'ellipsis',
@@ -109,7 +109,7 @@ const columns = computed(() => [
   },
   {
     name: 'pay',
-    label: (() => tc('订单金额'))(),
+    label: (() => tc('components.order.OrderTable.order_amount'))(),
     field: 'pay',
     align: 'center',
     classes: 'ellipsis',
@@ -118,7 +118,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('状态'))(),
+    label: (() => tc('components.order.OrderTable.status'))(),
     field: 'status',
     align: 'center',
     style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
@@ -126,7 +126,7 @@ const columns = computed(() => [
   },
   {
     name: 'operation',
-    label: (() => tc('操作'))(),
+    label: (() => tc('components.order.OrderTable.operation'))(),
     field: 'operation',
     align: 'center',
     classes: 'ellipsis',
@@ -163,13 +163,13 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
       row-key="name"
       :loading="isGroup ? store.tables.groupOrderTable.status === 'loading' : store.tables.personalOrderTable.status === 'loading' "
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="暂无订单"
+      :loading-label="tc('components.order.OrderTable.notify_loading')"
+      :no-data-label="tc('components.order.OrderTable.notify_no_order')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       :filter="search"
       :filter-method="searchMethod"
-      no-results-label="无搜索结果"
+      :no-results-label="tc('components.order.OrderTable.notify_no_results')"
     >
 
       <template v-slot:body="props">
@@ -183,7 +183,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               class="q-ma-none" :label="props.row.id" color="primary" padding="none" flat dense unelevated no-caps
               @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
               <q-tooltip>
-                {{ tc('订单详情') }}
+                {{ tc('components.order.OrderTable.order_details') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge style="top:-10px;"
@@ -197,7 +197,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
                    class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.id)">
               <q-tooltip>
-                {{ tc('复制到剪切板') }}
+                {{ tc('components.order.OrderTable.copy_to_clipboard') }}
               </q-tooltip>
             </q-btn>
             <q-btn v-else
@@ -214,7 +214,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
-                {{ tc('项目组详情') }}
+                {{ tc('components.order.OrderTable.group_detail') }}
               </q-tooltip>
             </q-btn>
           </q-td>
@@ -248,11 +248,11 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="config" :props="props">
-            {{ props.row.instance_config.vm_cpu }}核/{{ props.row.instance_config.vm_ram / 1024 }}GB
+            {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}/{{ props.row.instance_config.vm_ram / 1024 }}GB
           </q-td>
 
           <q-td key="network" :props="props">
-            {{ props.row.instance_config.public_ip ? tc('公网') : tc('私网') }}
+            {{ props.row.instance_config.public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network') }}
           </q-td>
 
           <q-td key="time" :props="props">
@@ -269,34 +269,34 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
           <q-td key="order_type" :props="props">
             <div v-if="props.row.order_type === 'new'">
-              {{ tc('新购') }}
+              {{ tc('components.order.OrderTable.new_purchase') }}
             </div>
 
             <div v-if="props.row.order_type === 'renewal'">
-              {{ tc('续期') }}
+              {{ tc('components.order.OrderTable.renewal') }}
             </div>
 
             <div v-if="props.row.order_type === 'upgrade'">
-              {{ tc('升级') }}
+              {{ tc('components.order.OrderTable.upgrade') }}
             </div>
 
             <div v-if="props.row.order_type === 'downgrade'">
-              {{ tc('降级') }}
+              {{ tc('components.order.OrderTable.downgrade') }}
             </div>
           </q-td>
 
           <q-td key="pay_type" :props="props">
             <div v-if="props.row.pay_type === 'prepaid'">
-              {{ tc('包月预付') }}
+              {{ tc('components.order.OrderTable.monthly_prepaid') }}
             </div>
 
             <div v-if="props.row.pay_type === 'postpaid'">
-              {{ tc('按量计费') }}
+              {{ tc('components.order.OrderTable.pay_as_go') }}
             </div>
           </q-td>
 
           <q-td key="pay" :props="props">
-            {{ props.row.payable_amount }}点
+            {{ props.row.payable_amount }} {{ tc('components.order.OrderTable.points') }}
           </q-td>
 
           <q-td key="status" :props="props" class="non-selectable">
@@ -308,21 +308,21 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
               <q-btn icon="info" flat dense padding="none" color="primary"
                      @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
-                {{ tc('查看详情') }}
+                {{ tc('components.order.OrderTable.check_details') }}
               </q-btn>
 
               <q-btn
                 v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
                 icon="currency_yen" flat dense padding="none" color="primary"
                 @click="store.payOrderDialog(props.row.id, isGroup)">
-                {{ tc('支付订单') }}
+                {{ tc('components.order.OrderTable.pay_orders') }}
               </q-btn>
 
               <q-btn
                 v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
                 icon="close" flat dense padding="none" color="primary"
                 @click="store.cancelOrderDialog(props.row.id, isGroup)">
-                {{ tc('取消订单') }}
+                {{ tc('components.order.OrderTable.cancel_order') }}
               </q-btn>
             </div>
 

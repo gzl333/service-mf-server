@@ -36,7 +36,7 @@ const addCount = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: '最多同时新增10个成员, 如有更多成员请分别添加。',
+      message: `${tc('components.group.GroupAddMemberDialog.notify_max_members')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -57,7 +57,7 @@ const onOKClick = () => {
       classes: 'notification-negative shadow-15',
       icon: 'mdi-alert',
       textColor: 'negative',
-      message: '请输入正确的用户账户',
+      message: `${tc('components.group.GroupAddMemberDialog.notify_account')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -83,19 +83,19 @@ const onOKClick = () => {
         ... use q-card-section for it?
       -->
       <q-card-section>
-        <div class="text-h6 q-pb-lg">{{ tc('增加成员') }}</div>
+        <div class="text-h6 q-pb-lg">{{tc('components.group.GroupAddMemberDialog.add_members')}}</div>
       </q-card-section>
 
       <q-card-section>
         <div class="row items-center q-pb-md">
-          <div class="col-3 text-grey">项目组名称</div>
+          <div class="col-3 text-grey">{{tc('components.group.GroupAddMemberDialog.group_name')}}</div>
           <div class="col">
             {{ store.tables.groupTable.byId[groupId]?.name }}
           </div>
         </div>
 
         <div v-for="index in userCount" :key="index" class="row items-center q-pb-md">
-          <div class="col-3 text-grey">用户账户{{ index }}</div>
+          <div class="col-3 text-grey">{{tc('components.group.GroupAddMemberDialog.user_account')}} {{ index }}</div>
           <div class="col">
             <q-input outlined dense v-model="usernames[index.toString()]" autofocus/>
           </div>
@@ -105,7 +105,7 @@ const onOKClick = () => {
           <div class="col-auto">
             <q-btn class="text-center" flat padding="none" icon="add" color="primary"
                    @click="addCount">
-              更多账户
+              {{tc('components.group.GroupAddMemberDialog.more_accounts')}}
             </q-btn>
           </div>
         </div>
@@ -115,10 +115,10 @@ const onOKClick = () => {
       <!-- buttons example -->
       <q-card-actions align="right">
         <q-btn color="primary" unelevated @click="onDialogCancel">
-          {{ tc('取消') }}
+          {{ tc('components.group.GroupAddMemberDialog.cancel') }}
         </q-btn>
         <q-btn color="primary" outline @click="onOKClick">
-          {{ tc('确定') }}
+          {{ tc('components.group.GroupAddMemberDialog.confirm') }}
         </q-btn>
       </q-card-actions>
 
