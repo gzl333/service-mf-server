@@ -107,7 +107,7 @@ export default {
       operation: 'Operate', // '操作',
       notify_loading: 'Network request, please wait', // '网络请求中，请稍候...',
       notify_no_group: 'No Group', // '暂无项目组',
-      notify_no_result: '无搜索结果',
+      notify_no_result: 'No search results', // '无搜索结果',
       details: 'Detail', // '详情',
       member: 'Member', // '人',
       servers: 'Server Unit', // '台',
@@ -260,7 +260,7 @@ export default {
       points: 'Points', // '点',
       check_details: ' Check Details', // '查看详情',
       pay_orders: 'Pay for the order', // '支付订单',
-      cancel_order: 'Cancel Oder'// '取消订单'
+      cancel_order: 'Cancel Order'// '取消订单'
     }
   },
   personal: {
