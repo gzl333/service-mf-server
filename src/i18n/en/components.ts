@@ -265,7 +265,7 @@ export default {
   },
   personal: {
     ButtonAdd: {
-      create: 'New Create', // '新建',
+      create: 'Create', // '新建',
       create_personal_server: 'Create personal server'// '新建个人云主机'
     }
   },
