@@ -121,18 +121,18 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
 
           <q-td key="operation" :props="props">
             <div class="column justify-center items-center q-gutter-xs">
-              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat dense padding="none"
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat no-caps dense padding="none"
                      color="primary"
                      @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row.id, role:'leader', role_name: tc('components.group.GroupMemberTable.admin')})">
                 {{ tc('components.group.GroupMemberTable.set_admin') }}
               </q-btn>
 
-              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat dense padding="none" color="primary"
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat no-caps dense padding="none" color="primary"
                      @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row.id, role:'member', role_name: tc('components.group.GroupMemberTable.group_members')})">
                 {{ tc('components.group.GroupMemberTable.cancel_admin') }}
               </q-btn>
 
-              <q-btn icon="remove_circle" flat dense padding="none" color="primary"
+              <q-btn icon="remove_circle" flat no-caps dense padding="none" color="primary"
                      @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row.user.username})">
                 {{ tc('components.group.GroupMemberTable.out_group') }}
               </q-btn>

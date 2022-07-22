@@ -52,7 +52,7 @@ const tab = ref(show ?? 'server')
       <div class="col q-pa-none">
 
         <div class="row items-center title-area">
-          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
+          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense no-caps
                  @click="router.back()"/>
           <span>{{ tc('pages.group.GroupDetail.group_detail') }}</span>
         </div>
@@ -87,39 +87,42 @@ const tab = ref(show ?? 'server')
             <div class="row items-center justify-evenly detail-area ">
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.group.GroupDetail.group_name') }}
+                    {{ tc('pages.group.GroupDetail.name') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center text-bold" style="height: 70px">
+                    <div class="row justify-center items-center ellipsis text-bold" style="height: 70px">
                       {{ group.name }}
-
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.remark') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
-                      {{ group.description }}
+                    <div class="row justify-center items-center ellipsis" style="height: 70px">
+                      {{ group.description.slice(0, 25) }}
+                      <q-tooltip>
+                        {{ group.description }}
+                      </q-tooltip>
                     </div>
                   </div>
+
                 </div>
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.group.GroupDetail.group_org') }}
+                    {{ tc('pages.group.GroupDetail.org') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
+                    <div class="row justify-center items-center ellipsis" style="height: 70px">
                       {{ group.company }}
                     </div>
                   </div>
@@ -129,7 +132,7 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px">
                   <div class="col-2 text-grey">
-                    {{ tc('pages.group.GroupDetail.group_leader') }}
+                    {{ tc('pages.group.GroupDetail.owner') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center" style="height: 70px">
@@ -206,17 +209,17 @@ const tab = ref(show ?? 'server')
                   <div class="col-10">
                     <div class="row justify-center items-center q-gutter-sm" style="height: 70px">
 
-                      <q-btn icon="edit" flat padding="none" color="primary" size="md"
+                      <q-btn icon="edit" flat  no-caps padding="none" color="primary" size="md"
                              @click="store.editGroupDialog(groupId)">
                         <q-tooltip>{{ tc('pages.group.GroupDetail.edit_group_info') }}</q-tooltip>
                       </q-btn>
 
-                      <q-btn icon="add" flat padding="none" color="primary" size="md"
+                      <q-btn icon="add" flat no-caps padding="none" color="primary" size="md"
                              @click="store.addGroupMemberDialog(groupId)">
                         <q-tooltip>{{ tc('pages.group.GroupDetail.add_member') }}</q-tooltip>
                       </q-btn>
 
-                      <q-btn v-if="group.myRole ==='owner'" icon="group_off" flat padding="none"
+                      <q-btn v-if="group.myRole ==='owner'" icon="group_off" flat no-caps padding="none"
                              color="primary" size="md"
                              @click="store.deleteGroupDialog(groupId)">
                         <q-tooltip>{{ tc('pages.group.GroupDetail.delete_group') }}</q-tooltip>
@@ -269,13 +272,13 @@ const tab = ref(show ?? 'server')
                   </q-tabs>
 
                   <q-btn v-show="tab==='member' && group.myRole !== 'member' " class="col-shrink" icon="add" size="md"
-                         unelevated dense padding="xs"
+                         unelevated no-caps dense padding="xs"
                          color="primary" @click="store.addGroupMemberDialog(groupId)">
                     {{ tc('pages.group.GroupDetail.add_member') }}
                   </q-btn>
 
                   <q-btn v-show="tab==='server' && group.myRole !== 'member'" class="col-shrink" icon="add" size="md"
-                         unelevated dense padding="xs"
+                         unelevated dense  no-caps padding="xs"
                          color="primary"
                          @click="navigateToUrl(`/my/server/group/server/deploy?group=${groupId}`)">
                     {{ tc('pages.group.GroupDetail.create_server') }}

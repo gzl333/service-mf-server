@@ -136,7 +136,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-2 text-grey-7">
-            {{tc('components.server.ServerDeleteDialog.affiliation')}}
+            {{tc('components.server.ServerDeleteDialog.org')}}
           </div>
           <div class="col">
             {{
@@ -275,18 +275,18 @@ const onOKClick = () => {
 
         <div class="row justify-center items-center">
           <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'red'"
-                 unelevated
+                 unelevated no-caps
                  :disable="toggle || !check1 || !check2"
                  :label="tc('components.server.ServerDeleteDialog.confirm')"
                  @click="onOKClick"/>
           <div class="col">
             {{ tc('components.server.ServerDeleteDialog.if_no_pay') }}
-            <q-btn type="a" color="primary" flat padding="none" :label="tc('components.server.ServerDeleteDialog.rebuild_server')"
+            <q-btn type="a" color="primary" flat no-caps padding="none" :label="tc('components.server.ServerDeleteDialog.rebuild_server')"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
         </div>
 
-        <q-btn class="q-ma-sm" color="primary" unelevated :label="tc('components.server.ServerDeleteDialog.cancel')" @click="onCancelClick"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.server.ServerDeleteDialog.cancel')" @click="onCancelClick"/>
 
       </q-card-actions>
     </q-card>

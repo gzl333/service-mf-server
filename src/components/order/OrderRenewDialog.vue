@@ -56,7 +56,7 @@ const onOKClick = () => {
         classes: 'notification-negative shadow-15',
         icon: 'error',
         textColor: 'negative',
-        message: `${tc('components.order.OrderRenewDialog.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.order.OrderRenewDialog.prepaid_time_months')}`,
+        message: `${tc('components.order.OrderRenewDialog.prepaid_time_warning')}1-${MAX_MONTHS} ${tc('components.order.OrderRenewDialog.prepaid_time_months')}`,
         position: 'bottom',
         closeBtn: true,
         timeout: 5000,
@@ -109,7 +109,7 @@ const onOKClick = () => {
       <q-card-section>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.order.OrderRenewDialog.ip_address') }}
           </div>
           <div class="col">
@@ -118,7 +118,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{ tc('components.order.OrderRenewDialog.network_type') }}
           </div>
           <div class="col">
@@ -127,7 +127,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.remarks')}}
           </div>
           <div class="col">
@@ -136,7 +136,7 @@ const onOKClick = () => {
         </div>
 
         <div v-if="isGroup" class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.group')}}
           </div>
           <div class="col">
@@ -145,8 +145,8 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
-            {{tc('components.order.OrderRenewDialog.affiliation')}}
+          <div class="col-3 text-grey-7">
+            {{tc('components.order.OrderRenewDialog.org')}}
           </div>
           <div class="col">
             {{
@@ -157,7 +157,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.service_node')}}
           </div>
           <div class="col">
@@ -185,7 +185,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.configuration')}}
           </div>
           <div class="col">
@@ -194,7 +194,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row q-pb-lg items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.billing_method')}}
           </div>
           <div v-if="server.pay_type === 'prepaid'" class="col">
@@ -206,7 +206,7 @@ const onOKClick = () => {
         </div>
 
         <div class="row items-center">
-          <div class="col-2 text-grey-7">
+          <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.expiration_time')}}
           </div>
           <div class="col">
@@ -233,23 +233,23 @@ const onOKClick = () => {
         <div v-if="server.pay_type === 'prepaid'">
 
           <div class="row q-pb-lg items-center ">
-            <div class="col-2 text-grey-7">
+            <div class="col-3 text-grey-7">
               {{tc('components.order.OrderRenewDialog.renew_type')}}
             </div>
 
-            <div class="col-10 q-gutter-x-sm">
+            <div class="col-9 q-gutter-x-sm">
 
-              <q-btn style="width: 170px;"
+              <q-btn style="width: 160px;"
                      :outline="renewType==='month'?false:true"
-                     :ripple="false" dense unelevated
+                     :ripple="false" dense unelevated no-caps
                      :color="renewType==='month'?'primary':'grey'"
                      @click="renewType = 'month'">
                 {{ tc('components.order.OrderRenewDialog.specify_renewal_period') }}
               </q-btn>
 
-              <q-btn style="width: 170px;"
+              <q-btn style="width: 160px;"
                      :outline="renewType==='date'?false:true"
-                     :ripple="false" dense unelevated
+                     :ripple="false" dense unelevated no-caps
                      :color="renewType==='date'?'primary':'grey'"
                      @click="renewType = 'date'">
                 {{ tc('components.order.OrderRenewDialog.specify_expiration_time') }}
@@ -259,11 +259,11 @@ const onOKClick = () => {
           </div>
 
           <div v-if="renewType === 'month'" class="row items-center">
-            <div class="col-2 text-grey-7">
+            <div class="col-3 text-grey-7">
               {{ tc('components.order.OrderRenewDialog.renewal_period') }}
             </div>
 
-            <div class="col-10 row items-start q-gutter-x-sm q-pt-md">
+            <div class="col-9 row items-start q-gutter-x-sm q-pt-md">
 
               <q-input ref="monthInput"
                        style="width: 347px;"
@@ -290,11 +290,11 @@ const onOKClick = () => {
 
           <div v-if="renewType === 'date'" class="row items-center">
 
-            <div class="col-2 text-grey-7 q-pt-md">
+            <div class="col-3 text-grey-7 q-pt-md">
               {{ tc('components.order.OrderRenewDialog.target_time') }}
             </div>
 
-            <div class="col-10 row items-center q-gutter-x-sm q-pt-md">
+            <div class="col-9 row items-center q-gutter-x-sm q-pt-md">
 
               <q-input ref="dateInput"
                        style="width: 170px;"
@@ -321,6 +321,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
+               no-caps
                :label="tc('components.order.OrderRenewDialog.place_order')"
                :disable="server.pay_type === 'postpaid'"
                @click="onOKClick"/>
@@ -328,6 +329,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
+               no-caps
                :label="tc('components.order.OrderRenewDialog.cancel')"
                @click="onDialogCancel"/>
 

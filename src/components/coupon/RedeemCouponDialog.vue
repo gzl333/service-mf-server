@@ -116,7 +116,7 @@ const onOKClick = () => {
 
             <q-btn class="col q-mr-sm"
                    :outline="redeemType==='personal'?false:true"
-                   :ripple="false" dense unelevated
+                   :ripple="false" dense unelevated no-caps
                    :color="redeemType==='personal'?'primary':'grey'"
                    @click="redeemType = 'personal'">
               {{ tc('components.coupon.RedeemCouponDialog.personal_account') }}
@@ -124,7 +124,7 @@ const onOKClick = () => {
 
             <q-btn class="col"
                    :outline="redeemType==='group'?false:true"
-                   :ripple="false" dense unelevated
+                   :ripple="false" dense unelevated no-caps
                    :color="redeemType==='group'?'primary':'grey'"
                    @click="redeemType = 'group'">
               {{ tc('components.coupon.RedeemCouponDialog.group_account') }}
@@ -142,7 +142,6 @@ const onOKClick = () => {
 
             <q-select v-if="groupOptions.length !== 0" outlined dense stack-label v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
-                      :label="groupOptions.length === 0 ? tc('暂无可用项目组') : '请选择项目组'"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
@@ -155,7 +154,7 @@ const onOKClick = () => {
             <div v-else>
               <div class="row items-center">
                 {{ tc('components.coupon.RedeemCouponDialog.notify_no_group') }}
-                <q-btn flat padding="none" color="primary"
+                <q-btn flat no-caps padding="none" color="primary"
                        :to="'/my/server/group/create'">
                   {{ tc('components.coupon.RedeemCouponDialog.create_group') }}
                 </q-btn>
@@ -186,6 +185,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
+               no-caps
                :label="tc('components.coupon.RedeemCouponDialog.redeem')"
                @click="onOKClick"
         />
@@ -193,6 +193,7 @@ const onOKClick = () => {
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
+               no-caps
                :label="tc('components.coupon.RedeemCouponDialog.cancel')"
                @click="onDialogCancel"/>
 

@@ -194,13 +194,13 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
           <q-td key="serviceNode" :props="props">
 
-<!--            <div v-if="props.row.app_service === null">-->
+            <!--            <div v-if="props.row.app_service === null">-->
 
-<!--            </div>-->
+            <!--            </div>-->
 
-<!--            <div v-else>-->
+            <!--            <div v-else>-->
 
-<!--            </div>-->
+            <!--            </div>-->
 
             <div>
               {{
@@ -260,25 +260,28 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
           </q-td>
 
           <q-td key="face" :props="props">
-            {{ props.row.face_value }} {{tc('components.coupon.CouponTable.points')}}
+            {{ props.row.face_value }} {{ tc('components.coupon.CouponTable.points') }}
           </q-td>
 
           <q-td key="balance" :props="props">
-            <div class="text-light-green">
-              {{ props.row.balance }} {{tc('components.coupon.CouponTable.points')}}
+            <div class="text-bold">
+              {{ props.row.balance }} {{ tc('components.coupon.CouponTable.points') }}
             </div>
           </q-td>
 
           <q-td key="status" :props="props">
 
-            <div v-if="(new Date() - new Date(props.row.expiration_time)) < 0" class="text-light-green">
-              <q-icon name="check_circle" color="light-green" size="sm"/>
-              {{ tc('components.coupon.CouponTable.available') }}
-            </div>
+            <div class="row justify-center">
+              <div v-if="(new Date() - new Date(props.row.expiration_time)) < 0"
+                   class="row items-center text-light-green">
+                <q-icon name="check_circle" color="light-green" size="sm"/>
+                {{ tc('components.coupon.CouponTable.valid') }}
+              </div>
 
-            <div v-else class="text-red">
-              <q-icon name="cancel" color="red" size="sm"/>
-              {{ tc('components.coupon.CouponTable.invalid') }}
+              <div v-else class="row items-center text-red">
+                <q-icon name="cancel" color="red" size="sm"/>
+                {{ tc('components.coupon.CouponTable.invalid') }}
+              </div>
             </div>
 
           </q-td>

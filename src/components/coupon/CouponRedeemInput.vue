@@ -69,7 +69,7 @@ const redeemCoupon = async () => {
       })
       // 更新对应表
       props.isGroup ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
-      // 跳转 todo
+      // 跳转
       props.isGroup ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
     } else {
       throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)

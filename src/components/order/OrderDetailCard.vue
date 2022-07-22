@@ -45,7 +45,7 @@ const getOsIconName = useGetOsIconName()
       <div class="col">
 
         <div class="row items-center title-area">
-          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
+          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense no-caps
                  @click="router.back()"/>
           <span v-if="isGroup">{{tc('components.order.OrderDetailCard.group_order_detail')}}</span>
           <span v-else>{{tc('components.order.OrderDetailCard.personal_order_details')}}</span>
@@ -70,7 +70,7 @@ const getOsIconName = useGetOsIconName()
                   {{tc('components.order.OrderDetailCard.group')}}
                   <q-btn
                     color="primary"
-                    padding="none" flat dense unelevated
+                    padding="none" flat dense unelevated no-caps
                     :label="order.vo_name"
                     @click="navigateToUrl(`/my/server/group/detail/${order.vo_id}`)">
                     <q-tooltip>
@@ -86,6 +86,7 @@ const getOsIconName = useGetOsIconName()
                        color="primary"
                        padding="none"
                        flat
+                       no-caps
                        dense
                        @click="store.cancelOrderDialog(order.id, isGroup)">
                   {{ tc('components.order.OrderDetailCard.cancel_order') }}
@@ -97,7 +98,7 @@ const getOsIconName = useGetOsIconName()
 
             <div class="row no-wrap justify-center items-center section" style="height: 160px;">
 
-              <div class="col-1 q-mr-sm column justify-center items-center">
+              <div class="col-2 q-mr-sm column justify-center items-center">
 
                 <div v-if="order.order_type === 'new'" class="col-auto text-bold text-h6">
                   {{ tc('components.order.OrderDetailCard.new_purchase') }}
@@ -176,7 +177,7 @@ const getOsIconName = useGetOsIconName()
 
               <q-separator vertical/>
 
-              <div class="col-4 q-pl-md column items-center justify-center full-height">
+              <div class="col-3 q-pl-md column items-center justify-center full-height">
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 
@@ -185,8 +186,9 @@ const getOsIconName = useGetOsIconName()
                        color="primary"
                        size="md"
                        unelevated
+                       no-caps
                        @click="store.payOrderDialog(order.id, isGroup)">
-                  {{ tc('components.order.OrderDetailCard.to_be_delivered') }}
+                  {{ tc('components.order.OrderDetailCard.pay') }}
                 </q-btn>
 
               </div>
@@ -203,6 +205,7 @@ const getOsIconName = useGetOsIconName()
                   v-if="isServerExisted"
                   class="col-auto"
                   color="primary"
+                  no-caps
                   flat
                   dense
                   @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
@@ -301,7 +304,7 @@ const getOsIconName = useGetOsIconName()
                 <div class="col-4">
 
                   <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.affiliation') }}</div>
+                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.org') }}</div>
                     <div class="col-shrink">
                       {{
                         i18n.global.locale === 'zh' ?

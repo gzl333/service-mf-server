@@ -40,14 +40,16 @@ const columns = computed(() => [
     label: (() => tc('components.group.GroupTable.group'))(),
     field: 'name',
     align: 'center',
+    classes: 'ellipsis',
     style: 'padding: 15px 0px; max-width: 200px;white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
   {
     name: 'company',
-    label: (() => tc('components.group.GroupTable.affiliation'))(),
+    label: (() => tc('components.group.GroupTable.org'))(),
     field: 'company',
     align: 'center',
+    classes: 'ellipsis',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
@@ -56,6 +58,7 @@ const columns = computed(() => [
     label: (() => tc('components.group.GroupTable.remarks'))(),
     field: 'desc',
     align: 'center',
+    classes: 'ellipsis',
     style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
@@ -170,6 +173,9 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="desc" :props="props">
             {{ props.row.description }}
+            <q-tooltip>
+              {{ props.row.description }}
+            </q-tooltip>
           </q-td>
 
           <q-td key="creation_time" :props="props">
@@ -185,7 +191,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           </q-td>
 
           <q-td key="member" :props="props">
-            <q-btn color="primary" flat padding="none" dense
+            <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
               {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }}
               {{ tc('components.group.GroupTable.member') }}
@@ -193,7 +199,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           </q-td>
 
           <q-td key="server" :props="props">
-            <q-btn color="primary" flat padding="none" dense
+            <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
               {{ store.getGroupServersByGroupId(props.row.id).length }}
               {{ tc('components.group.GroupTable.servers') }}
@@ -201,7 +207,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           </q-td>
 
           <q-td key="order" :props="props">
-            <q-btn color="primary" flat padding="none" dense
+            <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
               {{ store.getGroupOrdersByGroupId(props.row.id).length }}
               {{ tc('components.group.GroupTable.orders') }}
@@ -209,7 +215,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           </q-td>
 
           <q-td key="coupon" :props="props">
-            <q-btn color="primary" flat padding="none" dense
+            <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
               {{ store.tables.groupTable.byId[props.row.id].coupons.length }}
               {{ tc('components.group.GroupTable.coupons') }}
@@ -228,19 +234,19 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
             <div class="column justify-center items-start ">
 
-              <q-btn icon="info" flat dense padding="none" color="primary"
+              <q-btn icon="info" flat no-caps dense padding="none" color="primary"
                      @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
                 {{ tc('components.group.GroupTable.check_details') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
-                     icon="edit" flat padding="none" color="primary" size="md" dense
+                     icon="edit" flat no-caps padding="none" color="primary" size="md" dense
                      @click="store.editGroupDialog(props.row.id)">
                 {{ tc('components.group.GroupTable.edit_group_info') }}
               </q-btn>
 
               <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"
-                     icon="group_off" flat padding="none" dense
+                     icon="group_off" flat no-caps padding="none" dense
                      color="primary" size="md"
                      @click="store.deleteGroupDialog(props.row.id)">
                 {{ tc('components.group.GroupTable.dismiss_group') }}

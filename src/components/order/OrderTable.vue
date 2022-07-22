@@ -194,7 +194,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             </q-btn>
 
             <q-btn v-if="hoverRow === props.row.id"
-                   class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
+                   class="col-shrink q-px-xs q-ma-none" flat dense no-caps icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.id)">
               <q-tooltip>
                 {{ tc('components.order.OrderTable.copy_to_clipboard') }}
@@ -210,7 +210,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             <q-btn
               class="q-ma-none"
               color="primary"
-              padding="none" flat dense unelevated
+              padding="none" flat dense unelevated no-caps
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
@@ -248,11 +248,15 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="config" :props="props">
-            {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}/{{ props.row.instance_config.vm_ram / 1024 }}GB
+            <div> {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}</div>
+            <div> {{ props.row.instance_config.vm_ram / 1024 }}GB</div>
+
           </q-td>
 
           <q-td key="network" :props="props">
-            {{ props.row.instance_config.public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network') }}
+            {{
+              props.row.instance_config.public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network')
+            }}
           </q-td>
 
           <q-td key="time" :props="props">
@@ -306,21 +310,21 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           <q-td key="operation" :props="props" class="non-selectable">
             <div class="column justify-center items-center q-gutter-xs">
 
-              <q-btn icon="info" flat dense padding="none" color="primary"
+              <q-btn icon="info" flat no-caps dense padding="none" color="primary"
                      @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
                 {{ tc('components.order.OrderTable.check_details') }}
               </q-btn>
 
               <q-btn
                 v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
-                icon="currency_yen" flat dense padding="none" color="primary"
+                icon="currency_yen" flat no-caps dense padding="none" color="primary"
                 @click="store.payOrderDialog(props.row.id, isGroup)">
                 {{ tc('components.order.OrderTable.pay_orders') }}
               </q-btn>
 
               <q-btn
                 v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
-                icon="close" flat dense padding="none" color="primary"
+                icon="close" flat no-caps dense padding="none" color="primary"
                 @click="store.cancelOrderDialog(props.row.id, isGroup)">
                 {{ tc('components.order.OrderTable.cancel_order') }}
               </q-btn>

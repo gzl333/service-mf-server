@@ -106,7 +106,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ tc('components.server.ServerRebuildDialog.affiliation') }}
+            {{ tc('components.server.ServerRebuildDialog.org') }}
           </div>
           <div class="col">
             {{

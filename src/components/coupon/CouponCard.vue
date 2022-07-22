@@ -29,34 +29,26 @@ const service = computed(() => Object.values(store.tables.serviceTable.byId).fil
 
 <template>
   <div class="CouponCard">
-    <q-card class="non-selectable" style="height: 50px; width: 330px;" flat bordered>
+    <q-card class="non-selectable" style="width: 330px;" flat bordered>
       <q-card-section horizontal>
 
-        <q-card-section style="width: 120px;" class="text-white bg-positive q-pa-sm full-height">
+        <q-card-section style="width: 120px;" class="column justify-center text-white bg-positive">
 
-          <div class="row items-center justify-center">
-            <span class="text-h6">{{ coupon.balance }}</span>
-            <span class="text-caption">{{ tc('components.coupon.CouponCard.points') }}</span>
-          </div>
+          <div class="col-shrink text-caption row items-end q-pa-none">{{ tc('components.coupon.CouponCard.balance') }}</div>
+          <div class="col-shrink text-h6 q-pa-none">{{ coupon.balance }}</div>
 
         </q-card-section>
 
-        <!--        <q-separator vertical/>-->
+        <q-card-section style="width: 210px;" class="q-pa-none text-caption items-center full-height">
 
-        <q-card-section style="width: 210px;" class="q-pa-sm text-caption items-center full-height">
+          <div v-if="isGroup" class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.group') }}</div>
+          <div v-if="isGroup" class="col-auto">{{ coupon.vo.name }}</div>
 
-          <div class="row justify-start">
-            <span class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.service') }}</span>
-            <span class="col-auto">{{
-                i18n.global.locale === 'zh' ? service.name : service.name_en
-              }}
-            </span>
-          </div>
+          <div class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.service') }}</div>
+          <div class="col-auto">{{ i18n.global.locale === 'zh' ? service.name : service.name_en }}</div>
 
-          <div class="row">
-            <span class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.expiration_time') }}</span>
-            <span class="col-auto">{{ new Date(coupon.expiration_time).toLocaleString(i18n.global.locale) }}</span>
-          </div>
+          <div class="col-4 text-grey"> {{ tc('components.coupon.CouponCard.expiration_time') }}</div>
+          <div class="col-auto">{{ new Date(coupon.expiration_time).toLocaleString(i18n.global.locale) }}</div>
 
         </q-card-section>
 
