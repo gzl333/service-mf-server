@@ -31,7 +31,7 @@ export default {
       server: 'Servers',
       member: 'Members',
       order: 'Orders',
-      coupon: 'Coupons',
+      coupon: 'Vouchers',
       create_server: 'Deploy Server'
     },
     GroupIndex: {
@@ -39,7 +39,7 @@ export default {
       group_list: 'Groups',
       server_list: 'Servers',
       order_list: 'Orders',
-      coupon_list: 'Coupons'
+      coupon_list: 'Vouchers'
     },
     GroupList: {
       all_groups: 'All Groups',
@@ -115,7 +115,7 @@ export default {
       points: 'Points',
       server_list: 'Servers',
       order_list: 'Orders',
-      coupon_list: 'Coupons',
+      coupon_list: 'Vouchers',
       create: 'New'
     },
     PersonalOrder: {

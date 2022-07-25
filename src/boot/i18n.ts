@@ -43,7 +43,7 @@ export const i18n = createI18n({
 // Register local handler of global i18n event.
 // Dispatched at @cnic/main's MyHeader component.
 window.addEventListener('i18n', ((event: CustomEvent) => {
-  console.log('server i18n event!')
+  // console.log('server i18n event!')
   i18n.global.locale = event.detail
 
   // // set quasar language set locale

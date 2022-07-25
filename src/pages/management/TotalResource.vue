@@ -32,7 +32,6 @@ const serviceDiskNum = computed(() => store.getServiceDiskPie)
 const defaultTicked = computed(() => store.getDefaultTicked)
 const ticked = ref([])
 
-// todo WTF are these any???!!!
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 // const map: any = ref(null)
 const tree: any = ref(null)

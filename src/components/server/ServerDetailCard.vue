@@ -71,8 +71,8 @@ const gotoManualVpn = () => {
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
                  @click="router.back()"/>
-          <span v-if="isGroup">{{tc('components.server.ServeDetailCard.group_server_detail')}}</span>
-          <span v-else>{{tc('components.server.ServeDetailCard.personal_server_detail')}}</span>
+          <span v-if="isGroup">{{ tc('components.server.ServeDetailCard.group_server_detail') }}</span>
+          <span v-else>{{ tc('components.server.ServeDetailCard.personal_server_detail') }}</span>
         </div>
 
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
@@ -81,7 +81,7 @@ const gotoManualVpn = () => {
           <!--todo 区分读取中和读取错误          -->
           <!--          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">-->
           <div v-if="!server || !service " class="col">
-            {{tc('components.server.ServeDetailCard.notify_loading')}}
+            {{ tc('components.server.ServeDetailCard.notify_loading') }}
           </div>
 
           <div v-else class="col content-area">
@@ -92,7 +92,7 @@ const gotoManualVpn = () => {
                     class="col-shrink text-h4 text-bold" flat no-caps padding="none" color="primary"
                     @click="clickToCopy(server.ipv4)">{{ server.ipv4 }}
                     <q-tooltip>
-                      {{tc('components.server.ServeDetailCard.copy')}}
+                      {{ tc('components.server.ServeDetailCard.copy') }}
                     </q-tooltip>
                     <!--创建时间距离当下小于1小时则打上new标记-->
                     <q-badge style="top:-10px;"
@@ -110,7 +110,7 @@ const gotoManualVpn = () => {
                   <div class="col-auto">
                     <span>
                       {{ server.remarks }}
-                      <q-tooltip>{{tc('components.server.ServeDetailCard.remarks')}}</q-tooltip>
+                      <q-tooltip>{{ tc('components.server.ServeDetailCard.remarks') }}</q-tooltip>
                     </span>
 
                     <q-btn v-if="!isGroup || isGroup && myRole!=='member'"
@@ -118,7 +118,7 @@ const gotoManualVpn = () => {
                            class="col-shrink q-px-xs" flat dense icon="edit" size="sm" color="primary"
                            @click="store.editServerNoteDialog({serverId:server.id, isGroup})">
                       <q-tooltip>
-                        {{tc('components.server.ServeDetailCard.edit_remarks')}}
+                        {{ tc('components.server.ServeDetailCard.edit_remarks') }}
                       </q-tooltip>
                     </q-btn>
                   </div>
@@ -339,7 +339,8 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.vpn_config') }}</div>
                   <div class="col">
-                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class=" " color="primary" padding="none" dense flat no-caps
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class=" " color="primary"
+                           padding="none" dense flat no-caps
                            @click="store.fetchConfig(server.service)"/>
                   </div>
                 </div>
@@ -347,7 +348,8 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.vpn_ca') }}</div>
                   <div class="col">
-                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class="" color="primary" padding="none" dense flat no-caps
+                    <q-btn :label="tc('components.server.ServeDetailCard.download')" class="" color="primary"
+                           padding="none" dense flat no-caps
                            @click="store.fetchCa(server.service)"/>
                   </div>
                 </div>
@@ -355,7 +357,8 @@ const gotoManualVpn = () => {
                 <div v-if="service.need_vpn && vpn?.active" class="row q-pb-md items-center">
                   <!--                  <div class="col-3 text-grey">VPN 使用方法</div>-->
                   <!--                  <div class="col">-->
-                  <q-btn :label="tc('components.server.ServeDetailCard.view_vpn_usage')" class="" color="primary" padding="none" dense flat no-caps
+                  <q-btn :label="tc('components.server.ServeDetailCard.view_vpn_usage')" class="" color="primary"
+                         padding="none" dense flat no-caps
                          @click="gotoManualVpn"/>
                   <!--                  </div>-->
                 </div>
@@ -423,17 +426,25 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.hardware_configuration') }}</div>
-                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.cores') }} CPU / {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}</div>
+                  <div class="col-3 text-grey">{{
+                      tc('components.server.ServeDetailCard.hardware_configuration')
+                    }}
+                  </div>
+                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.cores') }} CPU /
+                    {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}
+                  </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.network_type') }}</div>
-                  <div class="col"> {{ server.public_ip ? tc('components.server.ServeDetailCard.public_network') : tc('components.server.ServeDetailCard.private_network') }}</div>
+                  <div class="col"> {{
+                      server.public_ip ? tc('components.server.ServeDetailCard.public_network') : tc('components.server.ServeDetailCard.private_network')
+                    }}
+                  </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.operating_system')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.operating_system') }}</div>
                   <div class="col">
                     <q-icon v-if="getOsIconName(server.image)" :name="getOsIconName(server.image)" flat size="md"/>
                     {{ server.image }}
@@ -441,7 +452,7 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div v-if="server.image_desc" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.system_specification')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.system_specification') }}</div>
                   <div class="col"> {{ server.image_desc }}</div>
                 </div>
 
@@ -450,24 +461,24 @@ const gotoManualVpn = () => {
               <div class="col-4">
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.billing_type')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.billing_type') }}</div>
                   <div v-if="server.pay_type === 'prepaid'" class="col">
-                    {{tc('components.server.ServeDetailCard.monthly_prepaid')}}
+                    {{ tc('components.server.ServeDetailCard.monthly_prepaid') }}
                   </div>
                   <div v-if="server.pay_type === 'postpaid'" class="col">
-                    {{tc('components.server.ServeDetailCard.pay_as_go')}}
+                    {{ tc('components.server.ServeDetailCard.pay_as_go') }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.create_time')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.create_time') }}</div>
                   <div class="col">
                     {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.expiration_time')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.expiration_time') }}</div>
                   <div class="col row items-center">
                     <div class="col-auto">
                       {{
@@ -478,7 +489,7 @@ const gotoManualVpn = () => {
                       <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
                              color="primary" padding="none" icon="autorenew" :ripple="false" dense flat no-caps
                              @click="store.renewOrderDialog(server.id, isGroup)">
-                        {{tc('components.server.ServeDetailCard.renewal')}}
+                        {{ tc('components.server.ServeDetailCard.renewal') }}
                       </q-btn>
                     </div>
 
@@ -500,19 +511,21 @@ const gotoManualVpn = () => {
                 <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.org')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.org') }}</div>
                   <div class="col">
-                    {{ store.tables.dataCenterTable.byId[service.data_center]?.name }}
+                    {{
+                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service.data_center]?.name : store.tables.dataCenterTable.byId[service.data_center]?.name_en
+                    }}
                   </div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.service_node')}}</div>
-                  <div class="col"> {{ service.name }}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.service_node') }}</div>
+                  <div class="col"> {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}</div>
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{tc('components.server.ServeDetailCard.service_type')}}</div>
+                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.service_type') }}</div>
                   <div class="col">
 
                     <!--                    <q-icon-->

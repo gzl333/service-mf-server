@@ -9,6 +9,6 @@ export default {
   management: 'Resource Management',
   personal_resource: 'Personal Resource',
   group_resource: 'Group Resource',
-  redeem: 'Redeem Coupon',
+  redeem: 'Redeem Voucher',
   release_time: 'Release Time'
 }
