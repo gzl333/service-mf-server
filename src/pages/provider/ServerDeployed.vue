@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, Ref } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
@@ -108,9 +108,7 @@ const columns = computed(() => [
   // }
 ])
 
-// todo WTF are these any???!!!
-/* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-const searchQuery: any = ref({
+const searchQuery: Ref = ref({
   page: 1,
   page_size: 15,
   service_id: {
@@ -141,8 +139,7 @@ const change = () => {
   }
 }
 
-/* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-const getData = (query: any) => {
+const getData = (query: Record<string, string | number | boolean>) => {
   if (Object.prototype.toString.call(searchQuery.value.service_id) === '[object Object]') {
     searchQuery.value.service_id = ''
   }

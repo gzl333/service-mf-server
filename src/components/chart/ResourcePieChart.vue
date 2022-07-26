@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 // import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
-// import { i18n } from 'boot/i18n'
+import { i18n } from 'boot/i18n'
 
 import * as echarts from 'echarts/core'
 import { TooltipComponent, LegendComponent } from 'echarts/components'
@@ -23,7 +23,7 @@ const props = defineProps({
 })
 // const emits = defineEmits(['change', 'delete'])
 
-// const { tc } = i18n.global
+const { tc } = i18n.global
 // const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
@@ -48,11 +48,11 @@ onMounted(() => {
     tooltip: {
       trigger: 'item',
       /* eslint-disable  @typescript-eslint/no-explicit-any */
-      formatter: function (data: any) {
+      formatter: function (data: Record<string, any>) {
         if (props.title === '内存') {
           return data.seriesName + '<br/>' + data.name + ': ' + data.value / 1024 + ' GB'
         } else if (props.title === 'CPU') {
-          return data.seriesName + '<br/>' + data.name + ': ' + data.value + ' 核'
+          return data.seriesName + '<br/>' + data.name + ': ' + data.value + ` ${tc('components.chart.ResourcePieChart.core')}`
         } else {
           return data.seriesName + '<br/>' + data.name + ': ' + data.value + ' GB'
         }
@@ -71,7 +71,7 @@ onMounted(() => {
     // color: ['#F2C037', '#4caf50', '#027BE3'],
     series: [
       {
-        name: '提供者',
+        name: `${tc('components.chart.ResourcePieChart.provider')}`,
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,

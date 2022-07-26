@@ -3,7 +3,12 @@
 
 export default {
   // { key: translation }
-  chart: {}, // void
+  chart: {
+    ResourcePieChart: {
+      provider: 'Provider',
+      core: 'Core'
+    }
+  }, // void
   coupon: {
     CouponCard: {
       balance: 'Balance',

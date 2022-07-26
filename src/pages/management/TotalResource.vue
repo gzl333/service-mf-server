@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, watch } from 'vue'
+import { computed, ref, nextTick, watch, Ref } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
@@ -17,6 +17,12 @@ import BeijingMap from 'components/chart/BeijingMap.vue'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
+interface PointInterface {
+  name: string
+  value: number
+  LngAndLat: number[]
+}
+
 const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
@@ -31,132 +37,62 @@ const serviceRamNum = computed(() => store.getServiceRamPie)
 const serviceDiskNum = computed(() => store.getServiceDiskPie)
 const defaultTicked = computed(() => store.getDefaultTicked)
 const ticked = ref([])
+const tree: Ref = ref(null)
+const mapData: Ref = ref([])
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-// const map: any = ref(null)
-const tree: any = ref(null)
-const mapData: any = ref([])
+const translationMapping = {
+  怀柔区: 'Huairou District',
+  密云区: 'Miyun District',
+  昌平区: 'Changping District',
+  顺义区: 'Shunyi District',
+  平谷区: 'Pinggu District',
+  门头沟区: 'Mentougou District',
+  海淀区: 'Haidian District',
+  石景山区: 'Shijingshan District',
+  西城区: 'Xicheng District',
+  东城区: 'Dongcheng District',
+  朝阳区: 'Chaoyang District',
+  大兴区: 'Daxing District',
+  房山区: 'Fangshan District',
+  丰台区: 'Fengtai District',
+  通州区: 'Tongzhou District',
+  延庆区: 'Yanqing District'
+}
 
 void nextTick(() => {
   tree.value.setTicked(defaultTicked.value, true)
 })
 
-const transfer = (target: string[]) => {
+// 地图上的点
+const mapPoints = (target: string[]) => {
   const coordinateArr = []
+  // 页面第一次进来 默认全选 target为选中的值
   for (const item of target) {
     const coordinateObj: Record<string, string | number | number[]> = {}
     coordinateObj.name = item
     coordinateObj.value = 12
     coordinateObj.LngAndLat = []
     for (const dataCenter of Object.values(store.tables.dataCenterTable.byId)) {
-      if (dataCenter.name === item) {
-        coordinateObj.LngAndLat.push(dataCenter.longitude)
-        coordinateObj.LngAndLat.push(dataCenter.latitude)
+      if (i18n.global.locale === 'zh') {
+        if (dataCenter.name === item) {
+          coordinateObj.LngAndLat.push(dataCenter.longitude)
+          coordinateObj.LngAndLat.push(dataCenter.latitude)
+          coordinateArr.push(coordinateObj)
+        }
+      } else {
+        if (dataCenter.name_en === item) {
+          coordinateObj.LngAndLat.push(dataCenter.longitude)
+          coordinateObj.LngAndLat.push(dataCenter.latitude)
+          coordinateArr.push(coordinateObj)
+        }
       }
     }
-    coordinateArr.push(coordinateObj)
   }
   mapData.value = coordinateArr
 }
-const labelData = [
-  {
-    name: (() => tc('pages.management.TotalResource.district_huairou'))(),
-    value: 38.4,
-    lng: 116.63853,
-    lat: 40.322563
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_miyun'))(),
-    value: 47.9,
-    lng: 116.849551,
-    lat: 40.382999
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_changping'))(),
-    value: 196.3,
-    lng: 116.237832,
-    lat: 40.226854
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_shunyi'))(),
-    value: 102,
-    lng: 116.663242,
-    lat: 40.1362
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_pinggu'))(),
-    value: 42.3,
-    lng: 117.128025,
-    lat: 40.147115
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_mentougou'))(),
-    value: 30.8,
-    lng: 116.108179,
-    lat: 39.94648
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_haidian'))(),
-    value: 369.4,
-    lng: 116.304872,
-    lat: 39.96553
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_shijingshan'))(),
-    value: 65.2,
-    lng: 116.229612,
-    lat: 39.912017
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_xicheng'))(),
-    value: 129.8,
-    lng: 116.372397,
-    lat: 39.918561
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_dongcheng'))(),
-    value: 90.5,
-    lng: 116.42272,
-    lat: 39.934579
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_chaoyang'))(),
-    value: 395.5,
-    lng: 116.449767,
-    lat: 39.927254
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_daxing'))(),
-    value: 156.2,
-    lng: 116.348053,
-    lat: 39.732833
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_fangshan'))(),
-    value: 104.6,
-    lng: 116.149892,
-    lat: 39.755039
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_fengtai'))(),
-    value: 232.4,
-    lng: 116.293105,
-    lat: 39.865042
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_tongzhou'))(),
-    value: 42.3,
-    lng: 116.662928,
-    lat: 39.917001
-  },
-  {
-    name: (() => tc('pages.management.TotalResource.district_yanqing'))(),
-    value: 42.3,
-    lng: 115.981186,
-    lat: 40.462706
-  }
-]
-const convertData = function (data: any) {
+
+// 地图上初始的点
+const convertData = function (data: PointInterface[]) {
   const res = []
   for (let i = 0; i < data.length; i++) {
     const geoCoord = data[i].LngAndLat
@@ -175,6 +111,7 @@ const option = computed(() => ({
     trigger: 'item',
     formatter: '{b}'
   },
+  // geo属性渲染地图 通过json文件
   geo: {
     map: 'bj',
     label: {
@@ -195,7 +132,9 @@ const option = computed(() => ({
         areaColor: '#2B91B7'
       }
     },
-    zoom: 1.2
+    zoom: 1.2,
+    // 通过nameMap属性进行映射翻译
+    nameMap: i18n.global.locale === 'en' ? translationMapping : ''
   },
   series: [{
     name: (() => tc('pages.management.TotalResource.org'))(),
@@ -216,7 +155,7 @@ const option = computed(() => ({
       normal: {
         show: true,
         position: 'top',
-        formatter: function (params: any) {
+        formatter: function (params: Record<string, never>) {
           return params.name
         },
         lineHeight: 15,
@@ -238,18 +177,22 @@ const option = computed(() => ({
         color: '#027BE3'
       }
     }
-  }, {
-    name: (() => tc('pages.management.TotalResource.org_num'))(),
-    type: 'map',
-    mapType: 'bj',
-    geoIndex: 0,
-    itemStyle: {
-      normal: { label: { show: true } },
-      emphasis: { label: { show: true } }
-    },
-    data: labelData
-  }]
+  }
+  // 地图点击事件 翻译后 事件失效 会影响翻译
+  //   {
+  //   name: (() => tc('pages.management.TotalResource.org_num'))(),
+  //   type: 'map',
+  //   mapType: 'bj',
+  //   geoIndex: 0,
+  //   itemStyle: {
+  //     normal: { label: { show: true } },
+  //     emphasis: { label: { show: true } }
+  //   },
+  //   data: labelData
+  // }
+  ]
 }))
+
 watch(treeData, () => {
   void nextTick(() => {
     tree.value.expandAll()
@@ -286,7 +229,7 @@ watch(defaultTicked, () => {
             node-key="label"
             tick-strategy="strict"
             v-model:ticked="ticked"
-            @update:ticked="transfer"
+            @update:ticked="mapPoints"
           />
         </div>
       </div>
