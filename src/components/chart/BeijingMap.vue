@@ -8,7 +8,6 @@ import { ref, /* computed, */ onMounted, watch, toRefs } from 'vue'
 import * as echarts from 'echarts'
 import bj from 'src/assets/json/Beijing.json'
 import { GeoJSONSourceInput } from 'echarts/types/src/coord/geo/geoTypes'
-
 const props = defineProps({
   option: {
     type: Object,
@@ -25,6 +24,7 @@ const props = defineProps({
 const container = ref<HTMLElement>()
 onMounted(() => {
   const chart = echarts.init(container.value!)
+  // registerMap注册json文件 注册地图
   echarts.registerMap('bj', bj as GeoJSONSourceInput)
   chart.setOption(props.option)
   const { option } = toRefs(props)

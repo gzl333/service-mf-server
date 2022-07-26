@@ -8,7 +8,6 @@ export default {
   components,
   layouts,
   pages
-
   // // 通用翻译点，全局统一的翻译
   //
   // 忽略: 'Dismiss',

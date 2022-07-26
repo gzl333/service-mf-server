@@ -793,7 +793,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.vcpu_total
         dataArr.push(dataObj)
       }
@@ -803,7 +807,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.ram_total
         dataArr.push(dataObj)
       }
@@ -813,7 +821,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.disk_size_total
         dataArr.push(dataObj)
       }
@@ -823,7 +835,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.vcpu_total
         dataArr.push(dataObj)
       }
@@ -833,7 +849,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.ram_total
         dataArr.push(dataObj)
       }
@@ -843,7 +863,11 @@ export const useStore = defineStore('server', {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
-        dataObj.name = state.tables.serviceTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name
+        } else {
+          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+        }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.disk_size_total
         dataArr.push(dataObj)
       }
@@ -853,12 +877,20 @@ export const useStore = defineStore('server', {
       const treeData = []
       for (const item of state.tables.dataCenterTable.allIds) {
         const treeObj: Record<string, string | number | object> = {}
-        treeObj.label = state.tables.dataCenterTable.byId[item]?.name
+        if (i18n.global.locale === 'zh') {
+          treeObj.label = state.tables.dataCenterTable.byId[item]?.name
+        } else {
+          treeObj.label = state.tables.dataCenterTable.byId[item]?.name_en
+        }
         treeObj.id = state.tables.dataCenterTable.byId[item]?.id
         const dataArr = []
         for (const childItem of state.tables.dataCenterTable.byId[item]?.services) {
           const dataObj: Record<string, string | boolean> = {}
-          dataObj.label = state.tables.serviceTable.byId[childItem]?.name
+          if (i18n.global.locale === 'zh') {
+            dataObj.label = state.tables.serviceTable.byId[childItem]?.name
+          } else {
+            dataObj.label = state.tables.serviceTable.byId[childItem]?.name_en
+          }
           dataObj.id = state.tables.serviceTable.byId[childItem]?.id
           dataObj.noTick = true
           dataArr.push(dataObj)
@@ -901,7 +933,11 @@ export const useStore = defineStore('server', {
     getDefaultTicked (state): string[] {
       const defaultTicked = []
       for (const dataCenter of Object.values(state.tables.dataCenterTable.byId)) {
-        defaultTicked.push(dataCenter.name)
+        if (i18n.global.locale === 'zh') {
+          defaultTicked.push(dataCenter.name)
+        } else {
+          defaultTicked.push(dataCenter.name_en)
+        }
       }
       return defaultTicked
     },

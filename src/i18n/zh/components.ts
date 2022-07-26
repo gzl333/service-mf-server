@@ -1,7 +1,12 @@
 // component translation
 export default {
   // { key: translation }
-  chart: {}, // void
+  chart: {
+    ResourcePieChart: {
+      provider: '提供者',
+      core: '核'
+    }
+  }, // void
   coupon: {
     CouponCard: {
       balance: '余额',
