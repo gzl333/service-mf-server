@@ -9,7 +9,7 @@ export default {
       create_group: 'Create Group',
       group_name: 'Group Name',
       group_desc: 'Group Description',
-      group_org: 'Group Organisation',
+      group_org: 'Group Organization',
       create: 'Create',
       cancel: 'Cancel'
     },
@@ -20,7 +20,7 @@ export default {
       points: 'Points',
       name: 'Name',
       remark: 'Remarks',
-      org: 'Organisation',
+      org: 'Organization',
       owner: 'Owner',
       creation_time: 'Creation Time',
       my_role: 'My Role',
@@ -83,9 +83,9 @@ export default {
       district_fengtai: 'District Fengtai',
       district_tongzhou: 'District Tongzhou',
       district_yanqing: 'District_Yanqing',
-      org: 'Organisation',
-      org_num: 'Organisation Number',
-      current_org_num: 'Current Organisation Number',
+      org: 'Organization',
+      org_num: 'Organization Number',
+      current_org_num: 'Current Organization Number',
       current_service_num: 'Current Service Number',
       service_auto_resource_configuration: 'Service Autonomous Resource Configuration',
       total_cpu: 'Total CPU',
@@ -106,7 +106,7 @@ export default {
   },
   personal: {
     CouponList: {
-      service_node_filter: 'Service Node Filter'
+      service_node_filter: 'Service Unit Filter'
     },
     PersonalDetail: {},
     PersonalIndex: {
@@ -119,14 +119,14 @@ export default {
       create: 'New'
     },
     PersonalOrder: {
-      service_node_filter: 'Service Node Filter'
+      service_node_filter: 'Service Unit Filter'
     },
     ServerDeploy: {
       create_personal_server: 'Deploy Personal Server'
     },
     ServerDetail: {},
     ServerList: {
-      service_node_filter: 'Service Node Filter'
+      service_node_filter: 'Service Unit Filter'
     }
   },
   provider: {
@@ -136,7 +136,7 @@ export default {
     },
     ServerDeployed: {
       ip_address: 'IP Address',
-      service_node: 'Service Node',
+      service_node: 'Service Unit',
       user: 'User',
       remark: 'Remark',
       operating_system: 'Operating System',
@@ -165,15 +165,15 @@ export default {
       ip_address: 'IP Address',
       user_account: 'User Account',
       group_id: 'Group ID',
-      service_node: 'Service Node',
-      service_node_filter: 'Service Node Filter'
+      service_node: 'Service Unit',
+      service_node_filter: 'Service Unit Filter'
     }
   },
   vpn: {
     VpnIndex: {
       no_results: 'The entered keyword has no filter results.',
-      org_filter: 'Organisation Filter',
-      no_vpn_service: 'The organisation has no available VPN services. Please contact the service administrator for more information.',
+      org_filter: 'Organization Filter',
+      no_vpn_service: 'The organization has no available VPN services. Please contact the service administrator for more information.',
       no_need_vpn: 'The service does not require a VPN. Please contact the service administrator for more information.',
       no_vpn_detail: 'The VPN of this service is temporarily unavailable. Please contact the service administrator for more information.',
       account_status: 'Account Status',

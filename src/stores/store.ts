@@ -22,16 +22,16 @@ import { useStoreMain } from '@cnic/main'
 
 const { tc } = i18n.global
 
-const actionMap = new Map<string, string>(
-  [
-    ['start', '开机'],
-    ['reboot', '重启'],
-    ['shutdown', '关机'],
-    ['poweroff', '强制断电'],
-    ['delete', '删除'],
-    ['delete_force', '强制删除']
-  ]
-)
+// const actionMap = new Map<string, string>(
+//   [
+//     ['start', '开机'],
+//     ['reboot', '重启'],
+//     ['shutdown', '关机'],
+//     ['poweroff', '强制断电'],
+//     ['delete', '删除'],
+//     ['delete_force', '强制删除']
+//   ]
+// )
 
 export interface PersonalBalanceInterface {
   id: string
@@ -926,8 +926,8 @@ export const useStore = defineStore('server', {
       })
       services.unshift({
         value: '0',
-        label: '全部服务节点',
-        labelEn: 'All Service Nodes'
+        label: '全部服务单元',
+        labelEn: 'All Service Units'
       })
       return services
     },
@@ -1222,7 +1222,7 @@ export const useStore = defineStore('server', {
       const serviceOptions = [
         {        value: '0',
           label: '全部节点',
-          labelEn: 'All Service Nodes'
+          labelEn: 'All Service Units'
         }
       ]
   */
@@ -1240,8 +1240,8 @@ export const useStore = defineStore('server', {
       // i18n.global.locale === 'zh'
       serviceOptions.unshift({
         value: '0',
-        label: '全部服务节点',
-        labelEn: 'All Service Nodes'
+        label: '全部服务单元',
+        labelEn: 'All Service Units'
       })
       return serviceOptions
     },
@@ -2344,7 +2344,7 @@ export const useStore = defineStore('server', {
               textColor: 'positive',
               // spinner: true,
               icon: 'check_circle',
-              message: `成功删除云主机: ${server.ipv4 || ''}`,
+              message: `${tc('store.notify.delete_server_success')}: ${server.ipv4 || ''}`,
               position: 'bottom',
               closeBtn: true,
               timeout: 5000,
@@ -2376,19 +2376,18 @@ export const useStore = defineStore('server', {
       } else {
         Dialog.create({
           class: 'dialog-primary',
-          title: `${i18n.global.tc(actionMap.get(payload.action) as string) || ''}`,
+          title: `${tc('store.actions.' + payload.action) || ''}`,
           focus: 'cancel',
-          message:
-            '确认执行？',
+          message: `${tc('store.dialog.confirm_action')}?`,
           ok: {
-            label: i18n.global.tc('确认'),
+            label: i18n.global.tc('store.dialog.confirm'),
             push: false,
             // flat: true,
             outline: true,
             color: 'primary'
           },
           cancel: {
-            label: i18n.global.tc('取消'),
+            label: i18n.global.tc('store.dialog.cancel'),
             push: false,
             flat: false,
             unelevated: true,
@@ -2401,7 +2400,7 @@ export const useStore = defineStore('server', {
     editServerNoteDialog (payload: { serverId: string; isGroup?: boolean }) {
       Dialog.create({
         class: 'dialog-primary',
-        title: `编辑${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].ipv4 : this.tables.personalServerTable.byId[payload.serverId].ipv4}的备注信息`,
+        title: `${tc('store.dialog.edit_server_note')}:${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].ipv4 : this.tables.personalServerTable.byId[payload.serverId].ipv4}`,
         // message: '长度限制为40个字',
         prompt: {
           model: `${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].remarks : this.tables.personalServerTable.byId[payload.serverId].remarks}`,
@@ -2427,7 +2426,7 @@ export const useStore = defineStore('server', {
             classes: 'notification-positive shadow-15',
             icon: 'check_circle',
             textColor: 'light-green',
-            message: '成功修改云主机备注为: ' + respPatchRemark.data.remarks,
+            message: `${tc('store.notify.edit_server_note_success')}: ` + respPatchRemark.data.remarks,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2455,7 +2454,7 @@ export const useStore = defineStore('server', {
           classes: 'notification-positive shadow-15',
           textColor: 'positive',
           spinner: true,
-          message: `正在重建云主机 ${server.ipv4 || ''}`,
+          message: `${tc('store.notify.rebuilding_server')}: ${server.ipv4 || ''}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 5000,
@@ -2486,7 +2485,7 @@ export const useStore = defineStore('server', {
                   classes: 'notification-positive shadow-15',
                   textColor: 'positive',
                   icon: 'check_circle',
-                  message: `成功重建云主机: ${server.ipv4 || ''}`,
+                  message: `${tc('store.notify.rebuild_server_success')}: ${server.ipv4 || ''}`,
                   position: 'bottom',
                   closeBtn: true,
                   timeout: 5000,
@@ -2501,7 +2500,7 @@ export const useStore = defineStore('server', {
                   classes: 'notification-negative shadow-15',
                   icon: 'mdi-alert',
                   textColor: 'negative',
-                  message: `${tc('重建云主机超时，请重试')}`,
+                  message: `${tc('store.notify.rebuild_server_timeout')}`,
                   position: 'bottom',
                   closeBtn: true,
                   timeout: 5000,
@@ -2562,8 +2561,8 @@ export const useStore = defineStore('server', {
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
-            textColor: 'light-green',
-            message: '项目组信息修改成功',
+            textColor: 'positive',
+            message: `${tc('store.notify.edit_group_success')}`,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2617,8 +2616,8 @@ export const useStore = defineStore('server', {
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
-            textColor: 'light-green',
-            message: '已经成功添加成员:' + member.user.username,
+            textColor: 'positive',
+            message: `${tc('store.notify.add_group_member_success')}: ` + member.user.username,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2631,7 +2630,7 @@ export const useStore = defineStore('server', {
             classes: 'notification-negative shadow-15',
             icon: 'mdi-alert',
             textColor: 'negative',
-            message: '添加成员失败：' + member.username + ' - ' + member.message,
+            message: `${tc('store.notify.add_group_member_fail')}:` + member.username + ' - ' + member.message,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2647,18 +2646,17 @@ export const useStore = defineStore('server', {
       // 操作的确认提示
       Dialog.create({
         class: 'dialog-primary',
-        title: '移除项目组成员：' + payload.username,
-        message:
-          '确认移除?',
+        title: `${tc('store.dialog.remove_group_member')}: ` + payload.username,
+        // message: `${tc('确认')}?`,
         focus: 'cancel',
         ok: {
-          label: '确认',
+          label: `${tc('store.dialog.confirm')}`,
           push: false,
           outline: true,
           color: 'primary'
         },
         cancel: {
-          label: '放弃',
+          label: `${tc('store.dialog.cancel')}`,
           push: false,
           unelevated: true,
           color: 'primary'
@@ -2677,8 +2675,8 @@ export const useStore = defineStore('server', {
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
-            textColor: 'light-green',
-            message: '已经移除项目组成员：' + payload.username,
+            textColor: 'positive',
+            message: `${tc('store.notify.remove_group_member_success')}: ` + payload.username,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2694,18 +2692,17 @@ export const useStore = defineStore('server', {
       // 操作的确认提示
       Dialog.create({
         class: 'dialog-primary',
-        title: '将成员设置为：' + payload.role_name,
-        message:
-          '确认设置?',
+        title: `${tc('store.dialog.set_role')}: ` + payload.role_name,
+        // message:          '确认设置?',
         focus: 'cancel',
         ok: {
-          label: '确认',
+          label: `${tc('store.dialog.confirm')}`,
           push: false,
           outline: true,
           color: 'primary'
         },
         cancel: {
-          label: '放弃',
+          label: `${tc('store.dialog.cancel')}`,
           push: false,
           unelevated: true,
           color: 'primary'
@@ -2731,8 +2728,8 @@ export const useStore = defineStore('server', {
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
-            textColor: 'light-green',
-            message: '已经设置成员：' + respPostMemberRole.data.user.username + '为' + payload.role_name,
+            textColor: 'positive',
+            message: respPostMemberRole.data.user.username + `${tc('store.notify.set_role_success')}: ` + payload.role_name,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2751,7 +2748,7 @@ export const useStore = defineStore('server', {
           classes: 'notification-negative shadow-15',
           icon: 'mdi-alert',
           textColor: 'negative',
-          message: '输入项不可为空，请全部填写',
+          message: `${tc('store.notify.empty_input')}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 5000,
@@ -2766,8 +2763,8 @@ export const useStore = defineStore('server', {
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
-            textColor: 'light-green',
-            message: '新建项目组成功',
+            textColor: 'positive',
+            message: `${tc('store.notify.new_group_success')}`,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2792,7 +2789,7 @@ export const useStore = defineStore('server', {
           classes: 'notification-negative shadow-15',
           icon: 'mdi-check-circle',
           textColor: 'red',
-          message: '请将组内的云主机全部删除后，再解散该项目组',
+          message: `${tc('store.notify.clean_before_dismiss_group')}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 5000,
@@ -2825,18 +2822,17 @@ export const useStore = defineStore('server', {
         // 操作的确认提示
         Dialog.create({
           class: 'dialog-primary',
-          title: '解散项目组',
-          message:
-            '解散后的项目组无法恢复。 确认解散？',
+          title: `${tc('store.dialog.dismiss_group')}`,
+          message: `${tc('store.dialog.dismiss_group_confirm')}`,
           focus: 'cancel',
           ok: {
-            label: '确认',
+            label: `${tc('store.dialog.confirm')}`,
             push: false,
             outline: true,
             color: 'primary'
           },
           cancel: {
-            label: '放弃',
+            label: `${tc('store.dialog.cancel')}`,
             push: false,
             unelevated: true,
             color: 'primary'
@@ -2851,8 +2847,8 @@ export const useStore = defineStore('server', {
             Notify.create({
               classes: 'notification-positive shadow-15',
               icon: 'mdi-check-circle',
-              textColor: 'light-green',
-              message: '解散项目组成功',
+              textColor: 'positive',
+              message: `${tc('store.notify.dismiss_group_success')}`,
               position: 'bottom',
               closeBtn: true,
               timeout: 5000,
@@ -2882,7 +2878,7 @@ export const useStore = defineStore('server', {
           icon: 'mdi-check-circle',
           textColor: 'positive',
           spinner: true,
-          message: '正在支付',
+          message: `${tc('store.notify.paying_order')}`,
           position: 'bottom',
           closeBtn: true,
           timeout: 5000,
@@ -2912,7 +2908,7 @@ export const useStore = defineStore('server', {
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
             textColor: 'positive',
-            message: '已经成功支付订单',
+            message: `${tc('store.notify.pay_order_success')}`,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -2978,7 +2974,7 @@ export const useStore = defineStore('server', {
               classes: 'notification-positive shadow-15',
               icon: 'mdi-check-circle',
               textColor: 'positive',
-              message: '已经成功取消订单',
+              message: `${tc('store.notify.cancel_order_success')}`,
               position: 'bottom',
               closeBtn: true,
               timeout: 5000,
@@ -3015,7 +3011,7 @@ export const useStore = defineStore('server', {
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
             textColor: 'positive',
-            message: '已经成功创建续期订单',
+            message: `${tc('store.notify.renew_order_success')}`,
             position: 'bottom',
             closeBtn: true,
             timeout: 5000,
@@ -3071,7 +3067,7 @@ export const useStore = defineStore('server', {
               classes: 'notification-positive shadow-15',
               textColor: 'positive',
               icon: 'check_circle',
-              message: `${tc('成功兑换代金券')}: ${respPostCashCoupon.data.id}`,
+              message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
               position: 'bottom',
               closeBtn: true,
               timeout: 5000,

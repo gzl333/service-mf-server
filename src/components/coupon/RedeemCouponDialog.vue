@@ -142,7 +142,7 @@ const onOKClick = () => {
 
             <q-select v-if="groupOptions.length !== 0" outlined dense stack-label v-model="groupSelection"
                       :options="groupOptions" emit-value map-options option-value="value"
-                      :label="groupOptions.length === 0 ? tc('暂无可用项目组') : '请选择项目组'"
+                      :label="tc('components.coupon.RedeemCouponDialog.select_group')"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">

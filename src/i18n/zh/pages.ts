@@ -106,7 +106,7 @@ export default {
   },
   personal: {
     CouponList: {
-      service_node_filter: '筛选服务节点'
+      service_node_filter: '筛选服务单元'
     },
     PersonalDetail: {},
     PersonalIndex: {
@@ -119,14 +119,14 @@ export default {
       create: '新建'
     },
     PersonalOrder: {
-      service_node_filter: '筛选服务节点'
+      service_node_filter: '筛选服务单元'
     },
     ServerDeploy: {
       create_personal_server: '新建个人云主机'
     },
     ServerDetail: {},
     ServerList: {
-      service_node_filter: '筛选服务节点'
+      service_node_filter: '筛选服务单元'
     }
   },
   provider: {
@@ -136,7 +136,7 @@ export default {
     },
     ServerDeployed: {
       ip_address: 'IP地址',
-      service_node: '服务节点',
+      service_node: '服务单元',
       user: '用户',
       remark: '备注',
       operating_system: '操作系统',
@@ -165,8 +165,8 @@ export default {
       ip_address: 'IP地址',
       user_account: '用户账号',
       group_id: '项目组ID',
-      service_node: '服务节点',
-      service_node_filter: '筛选服务节点'
+      service_node: '服务单元',
+      service_node_filter: '筛选服务单元'
     }
   },
   vpn: {
