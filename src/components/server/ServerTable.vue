@@ -193,7 +193,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             </q-btn>
 
             <q-btn v-if="hoverRow === props.row.name"
-                   class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
+                   class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs" color="primary"
                    @click="clickToCopy(props.row.ipv4)">
               <q-tooltip>
                 {{ tc('components.server.ServeTable.copy_to_clipboard') }}
@@ -209,7 +209,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             <q-btn
               class="q-ma-none"
               color="primary"
-              padding="none" flat dense unelevated
+              padding="none" flat dense unelevated no-caps
               :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
               <q-tooltip>
