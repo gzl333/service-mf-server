@@ -183,7 +183,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
             <q-btn
               class="q-ma-none"
               color="primary"
-              padding="none" flat dense unelevated
+              padding="none" flat dense unelevated no-caps
               :label="store.tables.groupTable.byId[props.row.vo?.id]?.name"
               @click="navigateToUrl(`/my/server/group/detail/${props.row.vo?.id}`)">
               <q-tooltip>

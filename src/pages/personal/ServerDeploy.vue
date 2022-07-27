@@ -32,8 +32,15 @@ const quotaId = route.query.quota as string
 
       <div class="col">
         <div class="row items-center title-area q-pb-md">
+          <!--          <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense size="xl"-->
+          <!--                 @click="router.back()">-->
+          <!--            <q-tooltip>-->
+          <!--              go back-->
+          <!--            </q-tooltip>-->
+          <!--          </q-btn>-->
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense
-                 @click="router.back()"/>
+                 @click="router.back()">
+          </q-btn>
           <span>{{ tc('pages.personal.ServerDeploy.create_personal_server') }}</span>
         </div>
       </div>

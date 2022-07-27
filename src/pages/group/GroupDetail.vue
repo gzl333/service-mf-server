@@ -65,15 +65,22 @@ const tab = ref(show ?? 'server')
 
           <div v-else class="col">
 
-            <div class="row items-center justify-end q-pt-lg">
+            <div class="row items-center justify-between q-pt-lg">
 
 <!--              <div class="col-auto column items-start">-->
 <!--                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
 <!--                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>-->
 <!--              </div>-->
+              <div class="col-auto column items-start">
+                <div class="text-grey q-pa-none">{{ tc('pages.group.GroupDetail.name') }}</div>
+                <div class="row items-end">
+                  <div class="text-h6 text-weight-bold">{{ group.name }}
+                  </div>
+                </div>
+              </div>
 
               <div class="col-auto column items-end">
-                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.group.GroupDetail.group_account_balance') }}</div>
+                <div class="text-grey q-pa-none">{{ tc('pages.group.GroupDetail.group_account_balance') }}</div>
                 <div class="row items-end">
                   <div class="text-h4">{{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}</div>
                   <div class="text-h6">{{ tc('pages.group.GroupDetail.points') }}
@@ -86,18 +93,18 @@ const tab = ref(show ?? 'server')
             <!--项目组详情开始-->
             <div class="row items-center justify-evenly detail-area ">
 
-              <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
-                  <div class="col-2 text-grey">
-                    {{ tc('pages.group.GroupDetail.name') }}
-                  </div>
-                  <div class="col-10">
-                    <div class="row justify-center items-center ellipsis text-bold" style="height: 70px">
-                      {{ group.name }}
-                    </div>
-                  </div>
-                </div>
-              </div>
+<!--              <div class="col-auto ">-->
+<!--                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">-->
+<!--                  <div class="col-2 text-grey">-->
+<!--                    {{ tc('pages.group.GroupDetail.name') }}-->
+<!--                  </div>-->
+<!--                  <div class="col-10">-->
+<!--                    <div class="row justify-center items-center ellipsis text-bold" style="height: 70px">-->
+<!--                      {{ group.name }}-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
 
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">

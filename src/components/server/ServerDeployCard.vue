@@ -763,7 +763,7 @@ const deployServer = async () => {
 
       </div>
 
-      <q-btn color="primary q-mb-xl" @click="deployServer" unelevated :loading="isDeploying">
+      <q-btn color="primary q-mb-xl" @click="deployServer" unelevated no-caps :loading="isDeploying">
         {{ radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.place_order') : tc('components.server.ServerDeployCard.create_server') }}
       </q-btn>
 

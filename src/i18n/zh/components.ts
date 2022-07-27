@@ -32,7 +32,7 @@ export default {
       available_balance: '可用余额',
       status: '状态',
       network_loading: '网络请求中，请稍候...',
-      no_coupon: '暂无可用代金券',
+      no_coupon: '暂无代金券',
       no_search_results: '无搜索结果',
       copy_to_clipboard: '复制到剪切板',
       group_detail: '项目组详情',
