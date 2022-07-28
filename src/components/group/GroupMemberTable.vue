@@ -132,7 +132,7 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
                 {{ tc('components.group.GroupMemberTable.cancel_admin') }}
               </q-btn>
 
-              <q-btn icon="remove_circle" flat no-caps dense padding="none" color="primary"
+              <q-btn v-if="props.row.role !== 'owner'" icon="remove_circle" flat no-caps dense padding="none" color="primary"
                      @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row.user.username})">
                 {{ tc('components.group.GroupMemberTable.out_group') }}
               </q-btn>
