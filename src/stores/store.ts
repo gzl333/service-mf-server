@@ -71,7 +71,7 @@ export interface SingleMemberInterface {
     id: string
     username: string
   }
-  role: 'member' | 'leader'
+  role: 'member' | 'leader' | 'owner'
   join_time: string
   inviter: string
 }
@@ -764,7 +764,17 @@ export const useStore = defineStore('server', {
       state.tables.groupMemberTable.byId[groupId].members.forEach((item) => {
         newArr.unshift(item)
       })
-      return newArr.sort(sortFn)
+      // 插入组长
+      const groupOwner = state.tables.groupMemberTable.byId[groupId].owner
+      const groupCreateTime = state.tables.groupTable.byId[groupId].creation_time
+      newArr.sort(sortFn).unshift({
+        id: groupOwner.id,
+        user: groupOwner,
+        role: 'owner',
+        join_time: groupCreateTime,
+        inviter: ''
+      })
+      return newArr
     },
     // 根据myRole返回group数组
     getGroupsByMyRole: (state) => (roles: string[]): GroupInterface[] => {
@@ -3081,9 +3091,13 @@ export const useStore = defineStore('server', {
     /* order */
 
     /* coupon */
-    redeemCouponDialog () {
+    // 传入groupId则默认选中该组
+    redeemCouponDialog (groupId?: string) {
       Dialog.create({
-        component: RedeemCouponDialog
+        component: RedeemCouponDialog,
+        componentProps: {
+          groupId
+        }
       }).onOk(async (val: {
         couponId: string,
         couponCode: string,

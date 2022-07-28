@@ -7,13 +7,12 @@ import { i18n } from 'boot/i18n'
 import { Notify, QInput, useDialogPluginComponent } from 'quasar'
 // import moment from 'moment'
 
-// const props = defineProps({
-//   foo: {
-//     type: String,
-//     required: false,
-//     default: ''
-//   }
-// })
+const props = defineProps({
+  groupId: {
+    type: String,
+    required: false
+  }
+})
 // const emits = defineEmits(['change', 'delete'])
 defineEmits([...useDialogPluginComponent.emits])
 
@@ -36,16 +35,20 @@ const {
 // dom ref
 const inputDom = ref<QInput>()
 
-const redeemType = ref<'personal' | 'group'>('personal')
+// 如果传入groupId则优先选中group模式
+const redeemType = ref<'personal' | 'group'>(props.groupId ? 'group' : 'personal')
 const coupon = ref('')
 
 const groupOptions = computed(() => store.getGroupOptionsWithoutAll)
 const groupSelection = ref('')
 
 const selectDefaultGroup = () => {
-  groupSelection.value = groupOptions.value[0]?.value
+  // 优先选中传入的groupId
+  groupSelection.value = props.groupId || groupOptions.value[0]?.value
 }
+// setup时选中一次
 selectDefaultGroup()
+// options更新时随时更新选中
 watch(groupOptions, selectDefaultGroup)
 
 const onOKClick = () => {
@@ -109,7 +112,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center ">
           <div class="col-2 text-grey-7">
-           {{tc('components.coupon.RedeemCouponDialog.redeem_to')}}
+            {{ tc('components.coupon.RedeemCouponDialog.redeem_to') }}
           </div>
 
           <div class="col-10 row justify-center ">
@@ -169,7 +172,8 @@ const onOKClick = () => {
             {{ tc('components.coupon.RedeemCouponDialog.redeem_code') }}
           </div>
           <div class="col">
-            <q-input ref="inputDom" outlined v-model="coupon" dense :label="tc('components.coupon.RedeemCouponDialog.notify_input_code')" @keydown.enter="onOKClick">
+            <q-input ref="inputDom" outlined v-model="coupon" dense
+                     :label="tc('components.coupon.RedeemCouponDialog.notify_input_code')" @keydown.enter="onOKClick">
               <template v-slot:append>
                 <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
               </template>

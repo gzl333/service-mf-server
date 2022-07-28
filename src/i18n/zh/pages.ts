@@ -27,6 +27,7 @@ export default {
       operation: '操作',
       edit_group_info: '编辑项目组信息',
       add_member: '增加成员',
+      redeem_coupon: '兑换代金券',
       delete_group: '解散项目组',
       server: '云主机',
       member: '成员',

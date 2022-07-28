@@ -67,14 +67,14 @@ const tab = ref(show ?? 'server')
 
             <div class="row items-center justify-between q-pt-lg">
 
-<!--              <div class="col-auto column items-start">-->
-<!--                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
-<!--                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>-->
-<!--              </div>-->
+              <!--              <div class="col-auto column items-start">-->
+              <!--                <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
+              <!--                <CouponRedeemInput style="width: 280px;" :is-group="true" :group-id="groupId"/>-->
+              <!--              </div>-->
               <div class="col-auto column items-start">
                 <div class="text-grey q-pa-none">{{ tc('pages.group.GroupDetail.name') }}</div>
                 <div class="row items-end">
-                  <div class="text-h6 text-weight-bold">{{ group.name }}
+                  <div class="text-h5 text-weight-bold">{{ group.name }}
                   </div>
                 </div>
               </div>
@@ -91,29 +91,18 @@ const tab = ref(show ?? 'server')
             </div>
 
             <!--项目组详情开始-->
-            <div class="row items-center justify-evenly detail-area ">
-
-<!--              <div class="col-auto ">-->
-<!--                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">-->
-<!--                  <div class="col-2 text-grey">-->
-<!--                    {{ tc('pages.group.GroupDetail.name') }}-->
-<!--                  </div>-->
-<!--                  <div class="col-10">-->
-<!--                    <div class="row justify-center items-center ellipsis text-bold" style="height: 70px">-->
-<!--                      {{ group.name }}-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
+            <div class="row items-start justify-evenly detail-area ">
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
+                <div class="column justify-start items-center" style="min-height: 80px;">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.remark') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center ellipsis" style="height: 70px">
-                      {{ group.description.slice(0, 25) }}
+                    <div class="row justify-center items-center ellipsis wrap"
+                         style="max-width: 500px; min-height: 70px;white-space: normal;">
+                      <!--                      {{ group.description.slice(0, 30) }}-->
+                      {{ group.description }}
                       <q-tooltip>
                         {{ group.description }}
                       </q-tooltip>
@@ -124,12 +113,13 @@ const tab = ref(show ?? 'server')
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px; max-width: 150px;white-space: normal;">
+                <div class="column  justify-start items-center"
+                     style="min-height: 80px; max-width: 150px;white-space: normal;">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.org') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center ellipsis" style="height: 70px">
+                    <div class="row justify-center items-center ellipsis" style="min-height: 70px">
                       {{ group.company }}
                     </div>
                   </div>
@@ -137,12 +127,12 @@ const tab = ref(show ?? 'server')
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="min-height: 80px">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.owner') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
+                    <div class="row justify-center items-center" style="min-height: 70px">
                       {{ group.owner.username }}
                     </div>
                   </div>
@@ -150,12 +140,12 @@ const tab = ref(show ?? 'server')
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="min-height: 80px">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.creation_time') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
+                    <div class="row justify-center items-center" style="min-height: 70px">
 
                       <div v-if="i18n.global.locale==='zh'" class="column justify-center items-center">
                         <div class="col">
@@ -181,12 +171,12 @@ const tab = ref(show ?? 'server')
               </div>
 
               <div class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="min-height: 80px">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.my_role') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center" style="height: 70px">
+                    <div class="row justify-center items-center" style="min-height: 70px">
                       <group-role-chip :role="group.myRole"/>
                     </div>
                   </div>
@@ -209,14 +199,14 @@ const tab = ref(show ?? 'server')
               <!--              </div>-->
 
               <div v-if="group.myRole !== 'member'" class="col-auto ">
-                <div class="column justify-start items-center" style="height: 120px">
+                <div class="column justify-start items-center" style="min-height: 80px">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.operation') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center q-gutter-sm" style="height: 70px">
+                    <div class="row justify-center items-center q-gutter-sm" style="min-height: 70px">
 
-                      <q-btn icon="edit" flat  no-caps padding="none" color="primary" size="md"
+                      <q-btn icon="edit" flat no-caps padding="none" color="primary" size="md"
                              @click="store.editGroupDialog(groupId)">
                         <q-tooltip>{{ tc('pages.group.GroupDetail.edit_group_info') }}</q-tooltip>
                       </q-btn>
@@ -226,8 +216,13 @@ const tab = ref(show ?? 'server')
                         <q-tooltip>{{ tc('pages.group.GroupDetail.add_member') }}</q-tooltip>
                       </q-btn>
 
+                      <q-btn icon="currency_yuan" flat no-caps padding="none" color="primary" size="md"
+                             @click="store.redeemCouponDialog(groupId)">
+                        <q-tooltip>{{ tc('pages.group.GroupDetail.redeem_coupon') }}</q-tooltip>
+                      </q-btn>
+
                       <q-btn v-if="group.myRole ==='owner'" icon="group_off" flat no-caps padding="none"
-                             color="primary" size="md"
+                             color="red" size="md"
                              @click="store.deleteGroupDialog(groupId)">
                         <q-tooltip>{{ tc('pages.group.GroupDetail.delete_group') }}</q-tooltip>
                       </q-btn>
@@ -285,10 +280,17 @@ const tab = ref(show ?? 'server')
                   </q-btn>
 
                   <q-btn v-show="tab==='server' && group.myRole !== 'member'" class="col-shrink" icon="add" size="md"
-                         unelevated dense  no-caps padding="xs"
+                         unelevated dense no-caps padding="xs"
                          color="primary"
                          @click="navigateToUrl(`/my/server/group/server/deploy?group=${groupId}`)">
                     {{ tc('pages.group.GroupDetail.create_server') }}
+                  </q-btn>
+
+                  <q-btn v-show="tab==='coupon'" class="col-shrink" icon="currency_yuan" size="md"
+                         unelevated dense no-caps padding="xs"
+                         color="primary"
+                         @click="store.redeemCouponDialog(groupId)">
+                    {{ tc('pages.group.GroupDetail.redeem_coupon') }}
                   </q-btn>
 
                 </div>
@@ -348,7 +350,7 @@ const tab = ref(show ?? 'server')
 .detail-area {
   margin-top: 10px;
   padding: 15px 0;
-  height: 120px;
+  //min-height: 100px;
   border: $grey-4 1px solid;
   border-radius: 5px;
 }

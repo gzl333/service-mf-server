@@ -27,6 +27,7 @@ export default {
       operation: 'Operation',
       edit_group_info: 'Edit Group Information',
       add_member: 'Add Members',
+      redeem_coupon: 'Redeem Voucher',
       delete_group: 'Dismiss Group',
       server: 'Servers',
       member: 'Members',

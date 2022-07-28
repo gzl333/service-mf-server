@@ -193,7 +193,7 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length }}
+              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length + 1 }}
               {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
