@@ -57,25 +57,25 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                   <q-tab
                     no-caps
                     class="q-px-none q-py-md q-mr-md"
-                    name="server"
+                    name="server_all"
                     icon="format_list_bulleted"
-                    :label="tc('pages.provider.ProviderIndex.active_server_stat')"
+                    :label="tc('pages.provider.ProviderIndex.server_all')"
                     :ripple="false"
-                    @click="activeTab = 'server'; navigateToUrl('/my/server/provider/server')"
+                    @click="activeTab = 'server_all'; navigateToUrl('/my/server/provider/server_all')"
                   />
-<!--                  <q-tab-->
-<!--                    no-caps-->
-<!--                    class="q-px-none q-py-md q-mx-sm"-->
-<!--                    name="server"-->
-<!--                    icon="computer"-->
-<!--                    :label="tc('云主机')"-->
-<!--                    :ripple="false"-->
-<!--                    @click="activeTab = 'server'; navigateToUrl('/my/server/group/server/list')"-->
-<!--                  />-->
+                  <q-tab
+                    no-caps
+                    class="q-px-none q-py-md q-mx-sm"
+                    name="server_expired"
+                    icon="computer"
+                    :label="tc('pages.provider.ProviderIndex.server_expired')"
+                    :ripple="false"
+                    @click="activeTab = 'server_expired'; navigateToUrl('/my/server/provider/server_expired')"
+                  />
                 </q-tabs>
               </div>
               <div class="col-1">
-<!--                <ButtonAdd/>-->
+                <!--                <ButtonAdd/>-->
               </div>
             </div>
           </div>

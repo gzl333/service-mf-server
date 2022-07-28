@@ -133,7 +133,8 @@ export default {
   provider: {
     ProviderIndex: {
       resource_provider: 'Resource Provider',
-      active_server_stat: 'Active Server Statistics'
+      server_all: 'All Servers',
+      server_expired: 'Expired Servers'
     },
     ServerDeployed: {
       ip_address: 'IP Address',

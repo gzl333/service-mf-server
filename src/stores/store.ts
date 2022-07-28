@@ -1686,27 +1686,79 @@ export const useStore = defineStore('server', {
     //   return respApply.data.count
     // },
     // 代码风格不好
-    async loadAdminServerTable (payload: { page?: number; page_size?: number }) {
+    // async loadAdminServerTable (payload: { page?: number; page_size?: number }) {
+    //   this.tables.adminServerTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   this.tables.adminServerTable.status = 'loading'
+    //   const respGroupServer = await api.server.server.getServer({ query: payload })
+    //   const service = new schema.Entity('service')
+    //   const server = new schema.Entity('server', { service })
+    //   // if (respGroupServer.data) {
+    //   for (const data of respGroupServer.data.servers) {
+    //     const normalizedData = normalize(data, server)
+    //     Object.assign(this.tables.adminServerTable.byId, normalizedData.entities.server)
+    //     this.tables.adminServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+    //     this.tables.adminServerTable.allIds = [...new Set(this.tables.adminServerTable.allIds)]
+    //   }
+    //   // load table的最后再改isLoaded
+    //   this.tables.adminServerTable.status = 'total'
+    //   // }
+    //   return respGroupServer
+    // },
+
+    // 更新整个adminServerTable
+    async loadAdminServerTable (payload: {
+      page: number;
+      page_size: number;
+      service_id?: string;
+      'ip-contain'?: string;
+      'user-id'?: string;
+      username?: string;
+      'vo-id'?: string;
+    }) {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
       this.tables.adminServerTable = {
         byId: {},
         allIds: [],
         status: 'init'
       }
       this.tables.adminServerTable.status = 'loading'
-      const respGroupServer = await api.server.server.getServer({ query: payload })
-      const service = new schema.Entity('service')
-      const server = new schema.Entity('server', { service })
-      // if (respGroupServer.data) {
-      for (const data of respGroupServer.data.servers) {
-        const normalizedData = normalize(data, server)
-        Object.assign(this.tables.adminServerTable.byId, normalizedData.entities.server)
-        this.tables.adminServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
-        this.tables.adminServerTable.allIds = [...new Set(this.tables.adminServerTable.allIds)]
-      }
-      // load table的最后再改isLoaded
-      this.tables.adminServerTable.status = 'total'
+      // 发送请求
+      const respAdminServer = await api.server.server.getServer({
+        query: {
+          'as-admin': true,
+          ...payload
+        }
+      })
+      console.log(respAdminServer.data)
+
+      // // 将响应normalize，存入state里的userServerTable
+      // const service = new schema.Entity('service')
+      // const user_quota = new schema.Entity('user_quota')
+      // const server = new schema.Entity('server', {
+      //   service,
+      //   user_quota
+      // })
+      // for (const data of respServer.data.servers) {
+      //   const normalizedData = normalize(data, server)
+      //   Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
+      //   this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+      //   this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
       // }
-      return respGroupServer
+      // // 建立personalServerTable之后，分别更新每个server status, 并发更新，无需await
+      // for (const serverId of this.tables.personalServerTable.allIds) {
+      //   this.loadSingleServerStatus({
+      //     isGroup: false,
+      //     serverId
+      //   })
+      // }
+      // // 存完所有item再改isLoaded
+      // this.tables.personalServerTable.status = 'total'
+      //
+      // return
     },
     async loadFedFlavorTable () {
       this.tables.fedFlavorTable = {
@@ -1899,7 +1951,7 @@ export const useStore = defineStore('server', {
       }
       this.tables.personalOrderTable.status = 'total'
     },
-    // 更新整个userServerTable
+    // 更新整个personalServerTable
     async loadPersonalServerTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
       this.tables.personalServerTable = {

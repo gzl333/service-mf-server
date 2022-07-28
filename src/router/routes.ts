@@ -115,14 +115,23 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'provider',
         component: () => import('pages/provider/ProviderIndex.vue'),
-        redirect: '/my/server/provider/server',
+        redirect: '/my/server/provider/server_all',
         meta: {
           requireServiceAdmin: true // 服务管理员权限才能访问
         },
         children: [
           {
-            path: 'server',
-            component: () => import('pages/provider/ServerDeployed.vue')
+            path: 'server_all',
+            component: () => import('pages/provider/ServerDeployedNew.vue')
+          },
+          {
+            path: 'server_expired',
+            component: () => import('pages/provider/ServerExpired.vue')
+          },
+          {
+            path: 'server_detail/:id',
+            component: () => import('pages/provider/ServerDetail.vue'),
+            props: true
           }
         ]
       },

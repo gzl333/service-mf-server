@@ -19,11 +19,29 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
-const searchFactors = ref<string[]>([])
-
 // service_id下拉列表
 const serviceOptions = computed(() => store.getServiceOptions)
 const serviceSelection = ref('0')
+
+// 用户/项目组搜索条件下拉列表
+const filterOptions = computed(() => [
+  {
+    value: 'username',
+    label: `${tc('用户名')}`
+  },
+  {
+    value: 'user-id',
+    label: `${tc('用户ID')}`
+  },
+  {
+    value: 'vo-id',
+    label: `${tc('项目组ID')}`
+  }
+])
+const filterSelection = ref('username')
+
+const filterInput = ref('')
+const ipInput = ref('')
 
 // 分栏定义
 const columns = computed(() => [
@@ -115,8 +133,17 @@ const pagination = ref({
   count: 0 // 总共条数
 })
 
-// 更新表格，并更细count值
-const reloadTable = async () => {
+// 更新表格，并更新count值
+const loadTable = async () => {
+  await store.loadAdminServerTable({
+    page: pagination.value.page,
+    page_size: pagination.value.rowsPerPage,
+    ...(serviceSelection.value !== '0' && { service_id: serviceSelection.value }),
+    ...(filterSelection.value === 'username' && filterInput.value !== '' && { username: filterInput.value }),
+    ...(filterSelection.value === 'user-id' && filterInput.value !== '' && { 'user-id': filterInput.value }),
+    ...(filterSelection.value === 'vo-id' && filterInput.value !== '' && { 'vo-id': filterInput.value }),
+    ...(ipInput.value !== '' && { 'ip-contain': ipInput.value })
+  })
   // 更新table并保存count值
   // pagination.value.count = await $store.dispatch('provider/loadAdminQuotaApplicationTable', {
   //   page: pagination.value.page,
@@ -127,56 +154,36 @@ const reloadTable = async () => {
 }
 
 // 当两个筛选参数变化时,当rowsPerPage变化时
-const resetAndReloadTable = () => {
+const onUpdatePage = () => {
   // 分页信息复位
   pagination.value.page = 1
   // 更新table
-  void reloadTable()
+  void loadTable()
 }
 
 // onMounted时加载初始table第一页
-onMounted(reloadTable)
+onMounted(loadTable)
 
 </script>
 
 <template>
   <div class="ServerDeployed">
 
-    <!--    <div class="row content-area">-->
+    <div class="row items-center justify-between q-pb-md">
 
-    <div class="row">
-      {{ tc('pages.provider.ServerDeployedNew.search_condition') }}:
-    </div>
-    <!--项目组详情开始-->
-    <div class="row items-center justify-evenly detail-area">
+      <div class="col-11 row items-center justify-start q-gutter-x-lg">
 
-      <div class="col-auto row items-center">
-        <q-checkbox v-model="searchFactors" val="ip" color="primary">
-          {{ tc('pages.provider.ServerDeployedNew.ip_address') }}
-        </q-checkbox>
-        <q-input outlined dense/>
-      </div>
-
-      <div class="col-auto row items-center">
-        <q-checkbox v-model="searchFactors" val="username" color="primary">
-          {{ tc('pages.provider.ServerDeployedNew.user_account') }}
-        </q-checkbox>
-        <q-input outlined dense/>
-      </div>
-
-      <div class="col-auto row items-center">
-        <q-checkbox v-model="searchFactors" val="vo" color="primary">
-          {{ tc('pages.provider.ServerDeployedNew.group_id') }}
-        </q-checkbox>
-        <q-input outlined dense/>
-      </div>
-
-      <div class="col-auto row items-center">
-        <q-checkbox v-model="searchFactors" val="service" color="primary">
-          {{ tc('pages.provider.ServerDeployedNew.service_node') }}
-        </q-checkbox>
-        <q-select outlined dense stack-label :label="tc('pages.provider.ServerDeployedNew.service_node_filter')" v-model="serviceSelection"
-                  :options="serviceOptions" emit-value map-options option-value="value"
+        <q-select class="col-3"
+                  :label-color="serviceSelection !== '0' ? 'primary' : ''"
+                  outlined
+                  dense
+                  stack-label
+                  :label="tc('服务单元')"
+                  v-model="serviceSelection"
+                  :options="serviceOptions"
+                  emit-value
+                  map-options
+                  option-value="value"
                   :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
           <!--当前选项的内容插槽-->
           <template v-slot:selected-item="scope">
@@ -185,11 +192,60 @@ onMounted(reloadTable)
                 </span>
           </template>
         </q-select>
+
+        <div class="col-4 row items-center no-wrap">
+          <q-select class="col-4"
+                    outlined
+                    dense
+                    stack-label
+                    v-model="filterSelection"
+                    :options="filterOptions"
+                    emit-value
+                    map-options
+                    option-value="value"
+                    option-label="label">
+            <!--当前选项的内容插槽-->
+            <template v-slot:selected-item="scope">
+                <span :class="filterSelection===scope.opt.value ? 'text-primary' : 'text-black'">
+                  {{ scope.opt.label }}
+                </span>
+            </template>
+          </q-select>
+
+          <q-input
+            class="col-8"
+            :label-color="filterInput ? 'primary' : ''"
+            v-model="filterInput"
+            outlined
+            dense
+            :label="filterSelection==='username' ? tc('指定用户名') : filterSelection==='user-id' ? tc('指定用户ID') : tc('指定项目组ID')"
+          >
+            <template v-slot:append v-if="filterInput">
+              <q-icon name="close" @click="filterInput = ''" class="cursor-pointer"/>
+            </template>
+          </q-input>
+        </div>
+
+        <q-input
+          class="col-3"
+          :label-color="ipInput ? 'primary' : ''"
+          v-model="ipInput"
+          outlined
+          dense
+          :label="tc('IP地址关键字')"
+        >
+          <template v-slot:append v-if="ipInput">
+            <q-icon name="close" @click="ipInput = ''" class="cursor-pointer"/>
+          </template>
+
+        </q-input>
+
       </div>
 
+      <div class="col-1 row justify-end">
+        <q-btn unelevated no-caps color="primary" @click="loadTable">搜索</q-btn>
+      </div>
     </div>
-
-    <!--    </div>-->
 
     <q-table
       flat
@@ -222,7 +278,7 @@ onMounted(reloadTable)
     </q-table>
 
     <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-      <q-btn fab icon="keyboard_arrow_up" color="primary" />
+      <q-btn fab icon="keyboard_arrow_up" color="primary"/>
     </q-page-scroller>
 
     <q-separator/>
