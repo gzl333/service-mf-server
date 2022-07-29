@@ -4,6 +4,10 @@ import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+import api from 'src/api'
+import { Notify } from 'quasar'
+
+import type { ServerInterface } from 'stores/store'
 
 // const props = defineProps({
 //   foo: {
@@ -20,11 +24,32 @@ const store = useStore()
 // const router = useRouter()
 
 // service_id下拉列表
-const serviceOptions = computed(() => store.getServiceOptions)
+const serviceOptions = computed(() => store.getServiceOptionsByRole(store.items.fedRole === 'federal-admin'))
 const serviceSelection = ref('0')
+
+// 云主机是否过期
+const validOptions = computed(() => [
+  {
+    value: null,
+    label: `${tc('全部状态')}`
+  },
+  {
+    value: true,
+    label: `${tc('预付费-已过期')}`
+  }
+  // {
+  //   value: false,
+  //   label: `${tc('过期')}`
+  // }
+])
+const validSelection = ref(null)
 
 // 用户/项目组搜索条件下拉列表
 const filterOptions = computed(() => [
+  {
+    value: '',
+    label: `${tc('全部用户')}`
+  },
   {
     value: 'username',
     label: `${tc('用户名')}`
@@ -38,10 +63,78 @@ const filterOptions = computed(() => [
     label: `${tc('项目组ID')}`
   }
 ])
-const filterSelection = ref('username')
+const filterSelection = ref('')
 
 const filterInput = ref('')
 const ipInput = ref('')
+
+const isLoading = ref(false)
+const rows = ref<ServerInterface[]>()
+
+// 更新表格，并更新count值
+const loadAdminServers = async () => {
+  // table loading
+  isLoading.value = true
+  // request
+  try {
+    const respGetAdminServer = await api.server.server.getServer({
+      query: {
+        'as-admin': true,
+        page: pagination.value.page,
+        page_size: pagination.value.rowsPerPage,
+        ...(serviceSelection.value !== '0' && { service_id: serviceSelection.value }),
+        ...(validSelection.value !== null && { expired: validSelection.value }),
+        ...(filterSelection.value === 'username' && filterInput.value !== '' && { username: filterInput.value }),
+        ...(filterSelection.value === 'user-id' && filterInput.value !== '' && { 'user-id': filterInput.value }),
+        ...(filterSelection.value === 'vo-id' && filterInput.value !== '' && { 'vo-id': filterInput.value }),
+        ...(ipInput.value !== '' && { 'ip-contain': ipInput.value })
+      }
+    })
+    if (respGetAdminServer.status.toString().startsWith('2')) {
+      // 拿到rows值，给table用
+      rows.value = respGetAdminServer.data.servers
+      // pagination count
+      pagination.value.count = respGetAdminServer.data.count
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      Notify.create({
+        classes: 'notification-negative shadow-15',
+        icon: 'mdi-alert',
+        textColor: 'negative',
+        message: error.message,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+    }
+  }
+  // table stop loading
+  isLoading.value = false
+}
+
+// 当点击搜索时/当rowsPerPage变化时
+const resetPageAndLoad = () => {
+  // 分页信息复位
+  pagination.value.page = 1
+  // 更新table
+  void loadAdminServers()
+}
+
+// 重置所有搜索条件
+const resetAll = () => {
+  serviceSelection.value = '0'
+  validSelection.value = null
+  filterSelection.value = ''
+  filterInput.value = ''
+  ipInput.value = ''
+  // 更新table
+  void loadAdminServers()
+}
+
+// onMounted时加载初始table第一页
+onMounted(loadAdminServers)
 
 // 分栏定义
 const columns = computed(() => [
@@ -82,6 +175,24 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
+    name: 'group',
+    label: (() => tc('GROUP'))(),
+    field: 'group',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'user',
+    label: (() => tc('USER'))(),
+    field: 'user',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
     name: 'billing',
     label: (() => tc('components.server.ServeTable.billing_method'))(),
     field: 'billing',
@@ -99,21 +210,39 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 0 0 1px',
     style: 'max-width: 100px;padding: 15px 0px;white-space: normal;'
   },
+  // {
+  //   name: 'vnc',
+  //   label: (() => tc('components.server.ServeTable.remote_control'))(),
+  //   field: 'vnc',
+  //   align: 'center',
+  //   classes: 'ellipsis',
+  //   style: 'padding: 15px 0px',
+  //   headerStyle: 'padding: 0 2px'
+  // },
+  // {
+  //   name: 'status',
+  //   label: (() => tc('components.server.ServeTable.status'))(),
+  //   field: 'status',
+  //   align: 'center',
+  //   style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
+  //   headerStyle: 'padding: 0 2px'
+  // },
   {
-    name: 'vnc',
-    label: (() => tc('components.server.ServeTable.remote_control'))(),
-    field: 'vnc',
+    name: 'creation',
+    label: (() => tc('CREATION'))(),
+    field: 'creation',
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'status',
-    label: (() => tc('components.server.ServeTable.status'))(),
-    field: 'status',
+    name: 'expiration',
+    label: (() => tc('EXPIRATION'))(),
+    field: 'expiration',
     align: 'center',
-    style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 2px'
   },
   {
@@ -126,43 +255,15 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   }])
 
-// 被pagination组件使用。
+// 被pagination组件使用
 const pagination = ref({
   page: 1, // 当前页码
-  rowsPerPage: 10, // 每页条数
+  rowsPerPage: 15, // 每页条数
   count: 0 // 总共条数
 })
 
-// 更新表格，并更新count值
-const loadTable = async () => {
-  await store.loadAdminServerTable({
-    page: pagination.value.page,
-    page_size: pagination.value.rowsPerPage,
-    ...(serviceSelection.value !== '0' && { service_id: serviceSelection.value }),
-    ...(filterSelection.value === 'username' && filterInput.value !== '' && { username: filterInput.value }),
-    ...(filterSelection.value === 'user-id' && filterInput.value !== '' && { 'user-id': filterInput.value }),
-    ...(filterSelection.value === 'vo-id' && filterInput.value !== '' && { 'vo-id': filterInput.value }),
-    ...(ipInput.value !== '' && { 'ip-contain': ipInput.value })
-  })
-  // 更新table并保存count值
-  // pagination.value.count = await $store.dispatch('provider/loadAdminQuotaApplicationTable', {
-  //   page: pagination.value.page,
-  //   pageSize: pagination.value.rowsPerPage,
-  //   serviceId: serviceSelection.value,
-  //   status: statusSelection.value
-  // })
-}
-
-// 当两个筛选参数变化时,当rowsPerPage变化时
-const onUpdatePage = () => {
-  // 分页信息复位
-  pagination.value.page = 1
-  // 更新table
-  void loadTable()
-}
-
-// onMounted时加载初始table第一页
-onMounted(loadTable)
+// row selection
+const rowSelection = ref<ServerInterface[]>([])
 
 </script>
 
@@ -171,14 +272,15 @@ onMounted(loadTable)
 
     <div class="row items-center justify-between q-pb-md">
 
-      <div class="col-11 row items-center justify-start q-gutter-x-lg">
+      <div class="col row items-center justify-start q-gutter-x-lg">
 
-        <q-select class="col-3"
+        <q-select class="col-auto"
+                  style="min-width: 150px;"
                   :label-color="serviceSelection !== '0' ? 'primary' : ''"
                   outlined
                   dense
                   stack-label
-                  :label="tc('服务单元')"
+                  :label="tc('筛选服务单元')"
                   v-model="serviceSelection"
                   :options="serviceOptions"
                   emit-value
@@ -193,17 +295,43 @@ onMounted(loadTable)
           </template>
         </q-select>
 
-        <div class="col-4 row items-center no-wrap">
-          <q-select class="col-4"
+        <q-select class="col-auto"
+                  style="min-width: 150px;"
+                  :label-color="validSelection !== null ? 'primary' : ''"
+                  outlined
+                  dense
+                  stack-label
+                  :label="tc('筛选云主机管理状态')"
+                  v-model="validSelection"
+                  :options="validOptions"
+                  emit-value
+                  map-options
+                  option-value="value"
+                  option-label="label"
+        >
+          <!--当前选项的内容插槽-->
+          <template v-slot:selected-item="scope">
+                <span :class="validSelection===scope.opt.value ? 'text-primary' : 'text-black'">
+                  {{ scope.opt.label }}
+                </span>
+          </template>
+        </q-select>
+
+        <div class="col-auto row items-center no-wrap">
+          <q-select class="col-auto"
+                    style="min-width: 150px;"
                     outlined
                     dense
                     stack-label
+                    :label="tc('筛选用户')"
+                    :label-color="filterInput ? 'primary' : ''"
                     v-model="filterSelection"
                     :options="filterOptions"
                     emit-value
                     map-options
                     option-value="value"
-                    option-label="label">
+                    option-label="label"
+          >
             <!--当前选项的内容插槽-->
             <template v-slot:selected-item="scope">
                 <span :class="filterSelection===scope.opt.value ? 'text-primary' : 'text-black'">
@@ -213,7 +341,8 @@ onMounted(loadTable)
           </q-select>
 
           <q-input
-            class="col-8"
+            style="width: 250px;"
+            v-if="filterSelection !== ''"
             :label-color="filterInput ? 'primary' : ''"
             v-model="filterInput"
             outlined
@@ -227,12 +356,12 @@ onMounted(loadTable)
         </div>
 
         <q-input
-          class="col-3"
+          style="width: 250px;"
           :label-color="ipInput ? 'primary' : ''"
           v-model="ipInput"
           outlined
           dense
-          :label="tc('IP地址关键字')"
+          :label="tc('筛选IP地址关键字')"
         >
           <template v-slot:append v-if="ipInput">
             <q-icon name="close" @click="ipInput = ''" class="cursor-pointer"/>
@@ -240,11 +369,23 @@ onMounted(loadTable)
 
         </q-input>
 
+        <q-btn flat no-caps dense color="primary" @click="resetAll">重置</q-btn>
+
       </div>
 
-      <div class="col-1 row justify-end">
-        <q-btn unelevated no-caps color="primary" @click="loadTable">搜索</q-btn>
+      <div class="col-auto row justify-end">
+        <q-btn unelevated no-caps color="primary" @click="resetPageAndLoad">搜索</q-btn>
       </div>
+    </div>
+
+    <div class="row items-center justify-between q-pb-sm">
+
+      <div>
+        已经选中{{ rowSelection.length }}台云主机
+      </div>
+
+      <q-btn unelevated no-caps color="primary">批量删除</q-btn>
+
     </div>
 
     <q-table
@@ -254,19 +395,111 @@ onMounted(loadTable)
       table-header-class="bg-grey-1 text-grey"
       :rows="rows"
       :columns="columns"
-      row-key="name"
-      :loading="false"
+      :loading="isLoading"
       color="primary"
-      loading-label="网络请求中，请稍候..."
-      no-data-label="暂无配额申请"
+      :loading-label="tc('网络请求中，请稍候...')"
+      :no-data-label="tc('暂无')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
+      row-key="id"
+      selection="multiple"
+      v-model:selected="rowSelection"
     >
+
+      <template v-slot:header-selection="scope">
+        <q-checkbox style="" v-model="scope.selected" dense size="xs"/>
+      </template>
+
       <template v-slot:body="props">
         <q-tr :props="props">
 
-          <q-td key="duration_days" :props="props">
-            test
+          <q-td auto-width>
+            <q-checkbox v-model="props.selected" dense size="xs"/>
+          </q-td>
+
+          <q-td key="ip" :props="props">
+            {{ props.row.ipv4 }}
+          </q-td>
+
+          <q-td key="serviceNode" :props="props">
+            <div>
+              {{
+                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service.id]?.name : store.tables.serviceTable.byId[props.row.service.id]?.name_en
+              }}
+            </div>
+            <div>
+              {{
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center]?.name_en
+              }}
+            </div>
+          </q-td>
+
+          <q-td key="image" :props="props">
+            {{ props.row.image }}
+          </q-td>
+
+          <q-td key="configuration" :props="props">
+            <div> {{ props.row.vcpus }} {{
+                i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
+              }}
+            </div>
+            <div>{{ props.row.ram / 1024 }}GB</div>
+          </q-td>
+
+          <q-td key="group" :props="props">
+            <div v-if="props.row.classification === 'personal'"> 个人</div>
+            <div v-if="props.row.classification === 'vo'"> 项目组</div>
+          </q-td>
+
+          <q-td key="user" :props="props">
+            {{ props.row.user.username }}
+          </q-td>
+
+          <q-td key="billing" :props="props">
+            {{ props.row.pay_type }}
+          </q-td>
+
+          <q-td key="note" :props="props">
+            {{ props.row.remarks }}
+          </q-td>
+
+          <q-td key="vnc" :props="props">
+            vnc
+          </q-td>
+
+          <q-td key="status" :props="props">
+            status
+          </q-td>
+
+          <q-td key="creation" :props="props">
+            <div v-if="i18n.global.locale==='zh'">
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+            </div>
+
+            <div v-else>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+            </div>
+          </q-td>
+
+          <q-td key="expiration" :props="props">
+            <div v-if="i18n.global.locale==='zh'">
+              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+            </div>
+
+            <div v-else>
+              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+            </div>
+          </q-td>
+
+          <q-td key="operation" :props="props">
+            <q-btn unelevated no-caps color="primary">
+              删除
+            </q-btn>
           </q-td>
 
         </q-tr>
@@ -286,11 +519,15 @@ onMounted(loadTable)
     <div v-if="pagination.count" class="row justify-between items-center q-gutter-sm">
 
       <div class="row items-center justify-between text-grey">
-        共计 <span class="text-black">{{ pagination.count }}</span> 项筛选结果，
+        共计 <span class="text-black">{{ pagination.count }}</span> 项搜索结果，
 
-        <q-select color="grey" v-model="pagination.rowsPerPage" :options="[5,10,15,20,25,30]" dense options-dense
+        <q-select color="grey"
+                  v-model="pagination.rowsPerPage"
+                  :options="[10,15,20,30,50,100]"
+                  dense
+                  options-dense
                   borderless
-                  @update:model-value="resetAndReloadTable">
+                  @update:model-value="resetPageAndLoad">
           <!--          &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
           <!--          <template v-slot:selected-item>-->
           <!--                <span class="text-grey">-->
@@ -307,7 +544,7 @@ onMounted(loadTable)
                     direction-links
                     outline
                     :ripple="false"
-                    @update:model-value="reloadTable"
+                    @update:model-value="loadAdminServers"
       />
 
     </div>

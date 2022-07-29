@@ -799,6 +799,7 @@ export const useStore = defineStore('server', {
       })
       return newArr.sort(sortFn)
     },
+    // 图表
     getServiceCpuPie (state): Record<string, string | number>[] {
       const dataArr: Record<string, string | number>[] = []
       for (const item of state.tables.serviceAllocationTable.allIds) {
@@ -963,6 +964,23 @@ export const useStore = defineStore('server', {
     // },
     getServiceOptions (state) {
       const services = state.items.adminServiceIds.map(serviceId => {
+        const currentService = state.tables.serviceTable.byId[serviceId]
+        return {
+          value: currentService?.id,
+          label: currentService?.name,
+          labelEn: currentService?.name_en
+        }
+      })
+      services.unshift({
+        value: '0',
+        label: '全部服务单元',
+        labelEn: 'All Service Units'
+      })
+      return services
+    },
+    // 根据管理员权限，返回serviceOption：1.联邦管理员获取全部服务单元；2.服务单元管理员获取全部管理权限对应服务单元
+    getServiceOptionsByRole: state => (isFedAdmin: boolean) => {
+      const services = (isFedAdmin ? state.tables.serviceTable.allIds : state.items.adminServiceIds).map(serviceId => {
         const currentService = state.tables.serviceTable.byId[serviceId]
         return {
           value: currentService?.id,
@@ -1726,39 +1744,98 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.adminServerTable.status = 'loading'
-      // 发送请求
-      const respAdminServer = await api.server.server.getServer({
-        query: {
-          'as-admin': true,
-          ...payload
-        }
-      })
-      console.log(respAdminServer.data)
 
-      // // 将响应normalize，存入state里的userServerTable
-      // const service = new schema.Entity('service')
-      // const user_quota = new schema.Entity('user_quota')
-      // const server = new schema.Entity('server', {
-      //   service,
-      //   user_quota
-      // })
-      // for (const data of respServer.data.servers) {
-      //   const normalizedData = normalize(data, server)
-      //   Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
-      //   this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
-      //   this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
-      // }
-      // // 建立personalServerTable之后，分别更新每个server status, 并发更新，无需await
-      // for (const serverId of this.tables.personalServerTable.allIds) {
-      //   this.loadSingleServerStatus({
-      //     isGroup: false,
-      //     serverId
-      //   })
-      // }
-      // // 存完所有item再改isLoaded
-      // this.tables.personalServerTable.status = 'total'
-      //
-      // return
+      /*
+      *
+      * try {
+          const respPostCashCoupon = await api.server.cashcoupon.postCashCoupon({
+            query: {
+              id: val.couponId,
+              coupon_code: val.couponCode,
+              ...(val.groupId && { vo_id: val.groupId })
+            }
+          })
+          if (respPostCashCoupon.status.toString().startsWith('2')) {
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              textColor: 'positive',
+              icon: 'check_circle',
+              message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+            // 更新对应表
+            val.groupId ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+            // 跳转
+            val.groupId ? navigateToUrl(`/my/server/group/detail/${val.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+          } else {
+            throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: error.message,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
+        } */
+
+      try {
+        const respGetAdminServer = await api.server.server.getServer({
+          query: {
+            'as-admin': true,
+            ...payload
+          }
+        })
+        if (respGetAdminServer.status.toString().startsWith('2')) {
+          // 将响应normalize，存入state里的userServerTable
+          const service = new schema.Entity('service')
+          const user_quota = new schema.Entity('user_quota')
+          const server = new schema.Entity('server', {
+            service,
+            user_quota
+          })
+          for (const data of respGetAdminServer.data.servers) {
+            const normalizedData = normalize(data, server)
+            Object.assign(this.tables.adminServerTable.byId, normalizedData.entities.server)
+            this.tables.adminServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+            this.tables.adminServerTable.allIds = [...new Set(this.tables.adminServerTable.allIds)]
+          }
+          // adminServerTable，分别更新每个server status, 并发更新，无需await
+          // for (const serverId of this.tables.adminServerTable.allIds) {
+          //   this.loadSingleServerStatus({
+          //     isGroup: false,
+          //     serverId
+          //   })
+          // }
+          // 存完所有item再改isLoaded
+          this.tables.adminServerTable.status = 'total'
+
+          // 返回count值
+          return respGetAdminServer.data.count
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: error.message,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      }
     },
     async loadFedFlavorTable () {
       this.tables.fedFlavorTable = {

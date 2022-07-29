@@ -341,9 +341,9 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
           </q-td>
 
-          <q-td key="creator" :props="props">
-            {{ props.row.user.username }}
-          </q-td>
+<!--          <q-td key="creator" :props="props">-->
+<!--            {{ props.row.user.username }}-->
+<!--          </q-td>-->
 
           <q-td key="note" :props="props">
             <div class="row">
