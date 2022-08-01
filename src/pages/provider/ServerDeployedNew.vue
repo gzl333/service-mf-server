@@ -5,9 +5,11 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
-import { Notify } from 'quasar'
+import { Dialog, Notify } from 'quasar'
 
 import type { ServerInterface } from 'stores/store'
+import { axios } from 'boot/axios'
+import * as path from 'path'
 
 // const props = defineProps({
 //   foo: {
@@ -71,7 +73,7 @@ const ipInput = ref('')
 const isLoading = ref(false)
 const rows = ref<ServerInterface[]>()
 
-// 更新表格，并更新count值
+// 根据当前搜索条件，更新rows，并更新count值
 const loadAdminServers = async () => {
   // table loading
   isLoading.value = true
@@ -114,6 +116,21 @@ const loadAdminServers = async () => {
   isLoading.value = false
 }
 
+// 复位分页
+const resetPageSelection = () => {
+  pagination.value.page = 1
+}
+
+// 重置所有搜索条件
+const resetFilters = () => {
+  serviceSelection.value = '0'
+  validSelection.value = null
+  filterSelection.value = ''
+  filterInput.value = ''
+  ipInput.value = ''
+}
+
+// 复位分页、刷新rows
 // 当点击搜索时/当rowsPerPage变化时
 const resetPageAndLoad = () => {
   // 分页信息复位
@@ -122,7 +139,7 @@ const resetPageAndLoad = () => {
   void loadAdminServers()
 }
 
-// 重置所有搜索条件
+// 重置所有搜索条件、复位分页、刷新rows
 const resetAll = () => {
   serviceSelection.value = '0'
   validSelection.value = null
@@ -258,12 +275,110 @@ const columns = computed(() => [
 // 被pagination组件使用
 const pagination = ref({
   page: 1, // 当前页码
-  rowsPerPage: 15, // 每页条数
+  rowsPerPage: 10, // 每页条数
   count: 0 // 总共条数
 })
 
 // row selection
 const rowSelection = ref<ServerInterface[]>([])
+
+const deleteServer = (server: ServerInterface) => {
+  Dialog.create({
+    class: 'dialog-primary',
+    title: `确认删除：${server.ipv4}`,
+    focus: 'cancel',
+    message: `云主机用户: ${server.user.username}`,
+    ok: {
+      label: i18n.global.tc('store.dialog.confirm'),
+      push: false,
+      // flat: true,
+      outline: true,
+      color: 'primary'
+    },
+    cancel: {
+      label: i18n.global.tc('store.dialog.cancel'),
+      push: false,
+      flat: false,
+      unelevated: true,
+      color: 'primary'
+    }
+  }).onOk(async () => {
+    Notify.create({
+      classes: 'notification-primary shadow-15',
+      textColor: 'primary',
+      spinner: true,
+      icon: 'check_circle',
+      message: `正在删除云主机: ${server.ipv4}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 3000,
+      multiLine: false
+    })
+
+    try {
+      // 解除删除锁
+      const respUnlockServer = await api.server.server.postServerLock({
+        path: { id: server.id },
+        query: {
+          lock: 'free',
+          'as-admin': true
+        }
+      })
+
+      if (respUnlockServer.status !== 200) {
+        throw new Error()
+      }
+
+      // 删除云主机
+      const respDeleteServer = await api.server.server.postServerAction({
+        path: { id: server.id },
+        body: { action: 'delete_force' },
+        query: { 'as-admin': true }
+      })
+
+      if (respDeleteServer.status === 200) {
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          textColor: 'positive',
+          // spinner: true,
+          icon: 'check_circle',
+          message: `云主机删除成功: ${server.ipv4}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+        // load server，但是不reset page selection，保持在原位，减少页面跳动
+        loadAdminServers()
+      } else {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: `云主机删除失败: ${server.ipv4}`,
+          caption: `${respDeleteServer.data.message}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: error.message,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
+    }
+  })
+}
 
 </script>
 
@@ -369,22 +484,59 @@ const rowSelection = ref<ServerInterface[]>([])
 
         </q-input>
 
-        <q-btn flat no-caps dense color="primary" @click="resetAll">重置</q-btn>
+        <q-btn flat no-caps dense color="primary" @click="resetFilters();resetPageSelection();loadAdminServers()">
+          重置
+        </q-btn>
 
       </div>
 
       <div class="col-auto row justify-end">
-        <q-btn unelevated no-caps color="primary" @click="resetPageAndLoad">搜索</q-btn>
+        <q-btn unelevated no-caps color="primary" @click="resetPageSelection();loadAdminServers()">
+          搜索
+        </q-btn>
       </div>
     </div>
 
-    <div class="row items-center justify-between q-pb-sm">
+    <div class="row items-center">
+      <div class="text-grey">搜索结果共计:</div>
+      <div>{{ pagination.count }}</div>
+    </div>
 
-      <div>
-        已经选中{{ rowSelection.length }}台云主机
+    <div v-if="pagination.count" class="row items-center justify-between q-pb-sm">
+
+      <div class="row items-center">
+        <div> 选中{{ rowSelection.length }}台</div>
+        <!--        <q-btn flat dense no-caps color="primary">批量删除</q-btn>-->
       </div>
 
-      <q-btn unelevated no-caps color="primary">批量删除</q-btn>
+      <div class="row">
+        <div class="row items-center justify-between text-grey">
+          <q-select color="grey"
+                    v-model="pagination.rowsPerPage"
+                    :options="[10,15,20,30,50,100]"
+                    dense
+                    options-dense
+                    borderless
+                    @update:model-value="resetPageSelection();loadAdminServers()">
+            <!--          &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
+            <!--          <template v-slot:selected-item>-->
+            <!--                <span class="text-grey">-->
+            <!--                {{ pagination.rowsPerPage }}-->
+            <!--                </span>-->
+            <!--          </template>-->
+          </q-select>
+          项/页
+        </div>
+
+        <q-pagination v-model="pagination.page"
+                      :max="Math.ceil(pagination.count / pagination.rowsPerPage )"
+                      :max-pages="9"
+                      direction-links
+                      outline
+                      :ripple="false"
+                      @update:model-value="loadAdminServers"
+        />
+      </div>
 
     </div>
 
@@ -486,18 +638,28 @@ const rowSelection = ref<ServerInterface[]>([])
 
           <q-td key="expiration" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              <div v-if="props.row.expiration_time === null">
+                长期
+              </div>
+              <div v-else>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              </div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              <div v-if="props.row.expiration_time === null">
+                长期
+              </div>
+              <div v-else>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              </div>
             </div>
           </q-td>
 
           <q-td key="operation" :props="props">
-            <q-btn unelevated no-caps color="primary">
+            <q-btn unelevated no-caps color="primary" @click="deleteServer(props.row)">
               删除
             </q-btn>
           </q-td>
@@ -505,49 +667,10 @@ const rowSelection = ref<ServerInterface[]>([])
         </q-tr>
       </template>
 
-      <!--      <template v-slot:bottom>-->
-      <!--   todo 批量操作 -->
-      <!--      </template>-->
+      <template v-slot:bottom>
+        <!--   todo 批量操作 -->
+      </template>
     </q-table>
-
-    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-      <q-btn fab icon="keyboard_arrow_up" color="primary"/>
-    </q-page-scroller>
-
-    <q-separator/>
-
-    <div v-if="pagination.count" class="row justify-between items-center q-gutter-sm">
-
-      <div class="row items-center justify-between text-grey">
-        共计 <span class="text-black">{{ pagination.count }}</span> 项搜索结果，
-
-        <q-select color="grey"
-                  v-model="pagination.rowsPerPage"
-                  :options="[10,15,20,30,50,100]"
-                  dense
-                  options-dense
-                  borderless
-                  @update:model-value="resetPageAndLoad">
-          <!--          &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
-          <!--          <template v-slot:selected-item>-->
-          <!--                <span class="text-grey">-->
-          <!--                {{ pagination.rowsPerPage }}-->
-          <!--                </span>-->
-          <!--          </template>-->
-        </q-select>
-        项/页
-      </div>
-
-      <q-pagination v-model="pagination.page"
-                    :max="Math.ceil(pagination.count / pagination.rowsPerPage )"
-                    :max-pages="9"
-                    direction-links
-                    outline
-                    :ripple="false"
-                    @update:model-value="loadAdminServers"
-      />
-
-    </div>
 
   </div>
 </template>

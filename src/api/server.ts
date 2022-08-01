@@ -554,14 +554,21 @@ export default {
     },
     postServerAction (payload: {
       path: { id: string },
-      body: { action: string }
+      body: { action: string },
+      query: { 'as-admin': boolean }
     }) {
+      const config = {
+        params: payload.query
+      }
       const data = payload.body
-      return axiosServer.post('/server/' + payload.path.id + '/action', data)
+      return axiosServer.post('/server/' + payload.path.id + '/action', data, config)
     },
     postServerLock (payload: {
       path: { id: string },
-      query: { lock: string }
+      query: {
+        lock: string
+        'as-admin': boolean
+      }
     }) {
       const config = {
         params: payload.query

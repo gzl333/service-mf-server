@@ -94,8 +94,8 @@ const releaseTime = process.env.releaseTime
             <!--              </q-item-section>-->
             <!--            </q-item>-->
 
-            <!--有服务管理权限的用户才能看到，同时在路由里进行权限限制-->
-            <q-item v-if="store.items.adminServiceIds.length > 0"
+            <!--联邦管理员、服务管理员可以看到此按钮，路由里暂未限制权限-->
+            <q-item v-if="store.items.fedRole === 'federal-admin' || store.items.adminServiceIds.length > 0"
                     clickable
                     :active="activeItem === 'provider'"
                     @click="activeItem = 'provider'; navigateToUrl('/my/server/provider')"
