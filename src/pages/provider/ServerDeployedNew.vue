@@ -44,6 +44,48 @@ const validOptions = computed(() => [
 ])
 const validSelection = ref(null)
 
+/* 新设计 */
+
+const creatorOptions = computed(() => [
+  {
+    value: '',
+    label: `${tc('包含全部用户')}`
+  },
+  {
+    value: 'username',
+    label: `${tc('包含用户名-模糊搜索')}`
+  },
+  {
+    value: 'user-id',
+    label: `${tc('包含用户ID-精确搜索')}`
+  }
+])
+const creatorSelection = ref('')
+const creatorInput = ref('')
+
+const groupOptions = computed(() => [
+  {
+    value: 'all',
+    label: `${tc('包含全部项目组')}`
+  },
+  {
+    value: 'except-all',
+    label: `${tc('排除全部项目组')}`
+  },
+  {
+    value: 'group-name',
+    label: `${tc('包含项目组名-模糊搜索')}`
+  },
+  {
+    value: 'group-id',
+    label: `${tc('包含项目组ID-精确搜索')}`
+  }
+])
+const groupSelection = ref('all')
+const groupInput = ref('')
+
+/* 新设计 */
+
 // 用户/项目组搜索条件下拉列表
 const filterOptions = computed(() => [
   {
@@ -51,7 +93,7 @@ const filterOptions = computed(() => [
     label: `${tc('全部用户')}`
   },
   {
-    value: 'username',
+    value: 'group-name',
     label: `${tc('用户名')}`
   },
   {
@@ -180,7 +222,7 @@ const columns = computed(() => [
   },
   {
     name: 'user',
-    label: (() => tc('USER'))(),
+    label: (() => tc('创建者'))(),
     field: 'user',
     align: 'center',
     classes: 'ellipsis',
@@ -363,7 +405,7 @@ const deleteServer = (server: ServerInterface) => {
 <template>
   <div class="ServerDeployed">
 
-    <div class="row items-center justify-between q-pb-md">
+    <div class="column items-start justify-between q-pb-md q-gutter-y-md">
 
       <div class="col row items-center justify-start q-gutter-x-lg">
 
@@ -409,6 +451,9 @@ const deleteServer = (server: ServerInterface) => {
                 </span>
           </template>
         </q-select>
+      </div>
+
+      <div class="col row items-center justify-start q-gutter-x-lg">
 
         <div class="col-auto row items-center no-wrap">
           <q-select class="col-auto"
@@ -416,10 +461,10 @@ const deleteServer = (server: ServerInterface) => {
                     outlined
                     dense
                     stack-label
-                    :label="tc('筛选用户')"
-                    :label-color="filterInput ? 'primary' : ''"
-                    v-model="filterSelection"
-                    :options="filterOptions"
+                    :label="tc('筛选创建者')"
+                    :label-color="creatorInput ? 'primary' : ''"
+                    v-model="creatorSelection"
+                    :options="creatorOptions"
                     emit-value
                     map-options
                     option-value="value"
@@ -427,7 +472,7 @@ const deleteServer = (server: ServerInterface) => {
           >
             <!--当前选项的内容插槽-->
             <template v-slot:selected-item="scope">
-                <span :class="filterSelection===scope.opt.value ? 'text-primary' : 'text-black'">
+                <span :class="creatorSelection===scope.opt.value ? 'text-primary' : 'text-black'">
                   {{ scope.opt.label }}
                 </span>
             </template>
@@ -435,18 +480,59 @@ const deleteServer = (server: ServerInterface) => {
 
           <q-input
             style="width: 250px;"
-            v-if="filterSelection !== ''"
-            :label-color="filterInput ? 'primary' : ''"
-            v-model="filterInput"
+            v-if="creatorSelection !== ''"
+            :label-color="creatorInput ? 'primary' : ''"
+            v-model="creatorInput"
             outlined
             dense
-            :label="filterSelection==='username' ? tc('指定用户名') : filterSelection==='user-id' ? tc('指定用户ID') : tc('指定项目组ID')"
+            :label="creatorSelection==='username' ? tc('指定用户名') :  tc('指定用户ID')"
           >
             <template v-slot:append v-if="filterInput">
               <q-icon name="close" @click="filterInput = ''" class="cursor-pointer"/>
             </template>
           </q-input>
         </div>
+
+        <div class="col-auto row items-center no-wrap">
+          <q-select class="col-auto"
+                    style="min-width: 150px;"
+                    outlined
+                    dense
+                    stack-label
+                    :label="tc('筛选项目组')"
+                    :label-color="groupInput ? 'primary' : ''"
+                    v-model="groupSelection"
+                    :options="groupOptions"
+                    emit-value
+                    map-options
+                    option-value="value"
+                    option-label="label"
+          >
+            <!--当前选项的内容插槽-->
+            <template v-slot:selected-item="scope">
+                <span :class="groupSelection===scope.opt.value ? 'text-primary' : 'text-black'">
+                  {{ scope.opt.label }}
+                </span>
+            </template>
+          </q-select>
+
+          <q-input
+            style="width: 250px;"
+            v-if="groupSelection !== 'all' && groupSelection !== 'except-all'"
+            :label-color="groupInput ? 'primary' : ''"
+            v-model="groupInput"
+            outlined
+            dense
+            :label="groupSelection==='group-name' ? tc('指定项目组名') :  tc('指定VO-ID')"
+          >
+            <template v-slot:append v-if="groupInput">
+              <q-icon name="close" @click="groupInput = ''" class="cursor-pointer"/>
+            </template>
+          </q-input>
+        </div>
+      </div>
+
+      <div class="col row items-center justify-start q-gutter-x-lg">
 
         <q-input
           style="width: 250px;"
