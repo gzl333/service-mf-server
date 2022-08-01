@@ -32,7 +32,7 @@ const store = useStore()
 // const router = useRouter()
 
 // 预付最大月份
-const MAX_MONTHS = 60
+const MAX_MONTHS = 6
 
 // 获取os的icon名称
 const getOsIconName = useGetOsIconName()
