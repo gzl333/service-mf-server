@@ -8,8 +8,6 @@ import api from 'src/api'
 import { Dialog, Notify } from 'quasar'
 
 import type { ServerInterface } from 'stores/store'
-import { axios } from 'boot/axios'
-import * as path from 'path'
 
 // const props = defineProps({
 //   foo: {
@@ -128,26 +126,6 @@ const resetFilters = () => {
   filterSelection.value = ''
   filterInput.value = ''
   ipInput.value = ''
-}
-
-// 复位分页、刷新rows
-// 当点击搜索时/当rowsPerPage变化时
-const resetPageAndLoad = () => {
-  // 分页信息复位
-  pagination.value.page = 1
-  // 更新table
-  void loadAdminServers()
-}
-
-// 重置所有搜索条件、复位分页、刷新rows
-const resetAll = () => {
-  serviceSelection.value = '0'
-  validSelection.value = null
-  filterSelection.value = ''
-  filterInput.value = ''
-  ipInput.value = ''
-  // 更新table
-  void loadAdminServers()
 }
 
 // onMounted时加载初始table第一页

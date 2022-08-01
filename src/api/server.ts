@@ -539,7 +539,7 @@ export default {
     },
     getServerId (payload: {
       path: { id: string },
-      query?: { 'as-admin': boolean }
+      query?: { 'as-admin'?: boolean }
     }) {
       const config = {
         params: payload?.query
@@ -555,7 +555,7 @@ export default {
     postServerAction (payload: {
       path: { id: string },
       body: { action: string },
-      query: { 'as-admin': boolean }
+      query?: { 'as-admin'?: boolean }
     }) {
       const config = {
         params: payload.query
@@ -567,7 +567,7 @@ export default {
       path: { id: string },
       query: {
         lock: string
-        'as-admin': boolean
+        'as-admin'?: boolean
       }
     }) {
       const config = {
