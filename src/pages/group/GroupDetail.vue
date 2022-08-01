@@ -96,11 +96,27 @@ const tab = ref(show ?? 'server')
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="min-height: 80px;">
                   <div class="col-2 text-grey">
+                    ID
+                  </div>
+                  <div class="col-10">
+                    <div class="row justify-center items-center ellipsis wrap"
+                         style="max-width: 270px; min-height: 70px;white-space: normal;">
+                      <!--                      {{ group.description.slice(0, 30) }}-->
+                      {{ group.id }}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="col-auto ">
+                <div class="column justify-start items-center" style="min-height: 80px;">
+                  <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.remark') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center ellipsis wrap"
-                         style="max-width: 500px; min-height: 70px;white-space: normal;">
+                         style="max-width: 400px; min-height: 70px;white-space: normal;">
                       <!--                      {{ group.description.slice(0, 30) }}-->
                       {{ group.description }}
                       <q-tooltip>
