@@ -131,7 +131,7 @@ watch(radioService, () => {
 const isDeploying = ref(false)
 // check inputs
 const checkInputs = () => {
-  if (radioPeriod.value <= 0 || radioPeriod.value > MAX_MONTHS) {
+  if (radioPayment.value === 'prepaid' && (radioPeriod.value <= 0 || radioPeriod.value > MAX_MONTHS)) {
     Notify.create({
       classes: 'notification-negative shadow-15',
       icon: 'error',
@@ -407,7 +407,9 @@ const deployServer = async () => {
             </div>
 
             <div class="col">
-              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">{{ tc('components.server.ServerDeployCard.no_available_service') }}</div>
+              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">
+                {{ tc('components.server.ServerDeployCard.no_available_service') }}
+              </div>
 
               <div v-else class="row items-center q-pb-sm"
                    v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
@@ -640,7 +642,9 @@ const deployServer = async () => {
             {{ tc('components.server.ServerDeployCard.billing_method') }}
           </div>
           <div class="col">
-            {{ radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go') }}
+            {{
+              radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go')
+            }}
           </div>
         </div>
 
@@ -744,10 +748,13 @@ const deployServer = async () => {
           <div class="col ">
             <div v-if="store.tables.fedFlavorTable.byId[radioFlavor]">
               {{
-                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${ tc('components.server.ServerDeployCard.cores') }/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
+                `${store.tables.fedFlavorTable.byId[radioFlavor].vcpus} ${tc('components.server.ServerDeployCard.cores')}/${store.tables.fedFlavorTable.byId[radioFlavor].ram / 1024}GB`
               }}
             </div>
-            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.please_select_configuration') }}</div>
+            <div v-else class="text-red">{{
+                tc('components.server.ServerDeployCard.please_select_configuration')
+              }}
+            </div>
           </div>
         </div>
 
@@ -764,7 +771,9 @@ const deployServer = async () => {
       </div>
 
       <q-btn color="primary q-mb-xl" @click="deployServer" unelevated no-caps :loading="isDeploying">
-        {{ radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.place_order') : tc('components.server.ServerDeployCard.create_server') }}
+        {{
+          radioPayment === 'prepaid' ? tc('components.server.ServerDeployCard.place_order') : tc('components.server.ServerDeployCard.create_server')
+        }}
       </q-btn>
 
     </div>
