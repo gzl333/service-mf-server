@@ -34,6 +34,16 @@ const store = useStore()
 // 预付最大月份
 const MAX_MONTHS = 6
 
+// 是否允许使用后付费模式
+// 目前判断个人账户或者项目组账户余额大于0
+const isAllowPostpaid = computed(() => {
+  if (props.isGroup) {
+    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[radioGroup.value]?.balance]?.balance) >= 0
+  } else {
+    return Number(store.items?.personalBalance) > 0
+  }
+})
+
 // 获取os的icon名称
 const getOsIconName = useGetOsIconName()
 
@@ -54,7 +64,7 @@ const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(radi
 const images = computed(() => store.getImagesByServiceId(radioService.value))
 
 // radio选项 初始状态 (1)
-const radioPayment = ref('prepaid')
+const radioPayment = ref<'prepaid' | 'postpaid'>('prepaid')
 const radioPeriod = ref(1)
 const radioGroup = ref('')
 const radioService = ref('')
@@ -313,14 +323,50 @@ const deployServer = async () => {
               <q-tooltip>{{ tc('components.server.ServerDeployCard.create_server_permission') }}</q-tooltip>
             </q-icon>
           </div>
-          <q-select v-if="groups.length !== 0" class="col-4" outlined v-model="radioGroup" dense
-                    :options="groups" map-options emit-value option-label="name" option-value="id">
+          <q-select v-if="groups.length !== 0"
+                    class="col-auto"
+                    style="min-width: 300px;"
+                    dense
+                    outlined
+                    v-model="radioGroup"
+                    :options="groups"
+                    map-options
+                    emit-value
+                    option-label="name"
+                    option-value="id"
+                    @update:model-value="radioPayment = 'prepaid'"
+          >
+            <!--            选择group后，radioPayment应该复位为prepaid，因为新的组不一定满足postpaid条件-->
 
             <!--当前选项的内容插槽-->
             <template v-slot:selected-item="scope">
-                <span :class="radioGroup===scope.opt.id ? 'text-primary' : 'text-black'">
-                {{ scope.opt.name }}
-                </span>
+              <q-item class="q-pa-none">
+                <q-item-section>
+                  <q-item-label :class="radioGroup===scope.opt.id ? 'text-primary' : 'text-black'">{{
+                      scope.opt.name
+                    }}
+                  </q-item-label>
+                  <q-item-label caption>
+                    {{ tc('components.server.ServerDeployCard.balance') }}:
+                    {{ store.tables.groupBalanceTable.byId[scope.opt.balance]?.balance }}
+                    {{ tc('components.server.ServerDeployCard.points') }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+
+            <!--待选项的内容插槽-->
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.name }}</q-item-label>
+                  <q-item-label caption>
+                    {{ tc('components.server.ServerDeployCard.balance') }}:
+                    {{ store.tables.groupBalanceTable.byId[scope.opt.balance]?.balance }}
+                    {{ tc('components.server.ServerDeployCard.points')}}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
             </template>
 
           </q-select>
@@ -351,11 +397,13 @@ const deployServer = async () => {
         </div>
 
         <div class="row item-row">
-          <q-radio class="radio non-selectable" v-model="radioPayment" val="postpaid" dense>
+          <q-radio class="radio non-selectable" v-model="radioPayment" val="postpaid" :disable="!isAllowPostpaid" dense>
             <span class="text-bold q-pr-lg" :class="radioPayment==='postpaid' ? 'text-primary' : 'text-black'">
               {{ tc('components.server.ServerDeployCard.pay_as_go') }}
             </span>
             <span>{{ tc('components.server.ServerDeployCard.delivery_now') }}</span>
+            <span v-if="!isAllowPostpaid"
+                  class="text-red q-px-md">{{ tc('components.server.ServerDeployCard.low_balance') }}</span>
           </q-radio>
         </div>
       </div>

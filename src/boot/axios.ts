@@ -67,6 +67,7 @@ axiosServer.interceptors.response.use(config => {
 }, (error: AxiosError) => {
   console.log('axiosServer-RESP-Error', error)
   // 响应里的error信息在error.response.data里面，被包成了axios error对象
+  // return Promise.reject(error) todo 待梳理
   return error.response // throw error无法把错误传递给发送请求处
 })
 /* axiosServer的拦截器 */

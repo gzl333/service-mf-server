@@ -304,7 +304,7 @@ export default {
       delete_server_unlock: 'Delete Unlocked Server', // '未锁定云主机删除操作',
       delete_server_lock: 'Delete Locked Server', // '已锁定云主机删除操作',
       confirm: 'Confirm', // '确认',
-      if_no_pay: "Don't want to pay again? please try", // '不想再次支付费用？请尝试', 翻译内容可以用双引号包含吗？
+      if_no_pay: 'Don\'t want to pay again? please try', // '不想再次支付费用？请尝试', 翻译内容可以用双引号包含吗？
       rebuild_server: 'Rebuild Server', // '重建云主机',
       cancel: 'Cancel' // '取消'
     },
@@ -319,6 +319,8 @@ export default {
       group: 'Group', // '项目组',
       server_group: 'Group uses this server', // '使用该云主机的项目组',
       create_server_permission: 'Only group owners and administrators are allowed to deploy new servers.', // '只有组长和管理员可以创建项目组云主机',
+      balance: 'Balance', // '余额',
+      points: 'Points', // '点',
       no_group: 'There are no available groups, please', // '暂无项目组，请', // ? 一句话被分成两部分翻译时是否需要合并？
       create_group: 'create a group', // '创建项目组',
       billing_method: 'Billing Type', // '计费方式',
@@ -326,6 +328,7 @@ export default {
       delivery_after_pay: 'Server will be delivered after payment.', // '云主机将在付费后交付',
       pay_as_go: 'Charge by Usage', // '按量计费', //量是指什么单位？
       delivery_now: 'Server will be delivered immediately and billing will begin.', // '云主机将立即交付，并开始计费',
+      low_balance: 'Charge by Usage is not allowed due to low balance, please recharge.', // '余额不足以使用按量计费方式，请及时充值',
       server_usage_period: 'Expected Usage Period of Server', // '云主机使用时长',
       prepaid_period: 'Prepaid Period', // '预付时长',
       service_node: 'Service Unit', // '服务节点',
