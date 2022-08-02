@@ -41,6 +41,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
         <div class="row justify-center">
 
           <div class="content-fixed-width">
+
             <div class="row justify-between q-pt-lg q-pb-sm">
 
               <div class="col-auto row items-end text-h6 q-px-none">
@@ -48,11 +49,6 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
               </div>
 
               <div class="col-auto row justify-end items-center q-gutter-x-lg">
-
-<!--                <div class="col-auto column items-end">-->
-<!--                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('代金券') }}</div>-->
-<!--                  <CouponRedeemInput style="width: 185px;"/>-->
-<!--                </div>-->
 
                 <div class="col-auto column items-end">
                   <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.personal.PersonalIndex.personal_account_balance') }}</div>

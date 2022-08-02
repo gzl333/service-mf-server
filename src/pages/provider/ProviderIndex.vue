@@ -38,9 +38,24 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
       <div class="col-auto">
         <div class="row justify-center">
           <div class="content-fixed-width">
-            <div class="row">
-              <div class="text-h6 q-pt-lg q-px-none">
+            <div class="row justify-between">
+
+              <div class="col-auto text-h6 q-pt-lg q-px-none">
                 {{ tc('pages.provider.ProviderIndex.resource_provider') }}
+              </div>
+
+              <div class="col-auto">
+
+                当前管理权限:
+
+                <div v-if="store.items.fedRole === 'federal-admin'">
+                  联邦管理员
+                </div>
+
+                <div v-else-if="store.items.adminServiceIds.length > 0">
+                  服务单元管理员
+                </div>
+
               </div>
             </div>
 
@@ -63,15 +78,15 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     :ripple="false"
                     @click="activeTab = 'server'; navigateToUrl('/my/server/provider/server')"
                   />
-<!--                  <q-tab-->
-<!--                    no-caps-->
-<!--                    class="q-px-none q-py-md q-mx-sm"-->
-<!--                    name="server_expired"-->
-<!--                    icon="computer"-->
-<!--                    :label="tc('pages.provider.ProviderIndex.server_expired')"-->
-<!--                    :ripple="false"-->
-<!--                    @click="activeTab = 'server_expired'; navigateToUrl('/my/server/provider/server_expired')"-->
-<!--                  />-->
+                  <!--                  <q-tab-->
+                  <!--                    no-caps-->
+                  <!--                    class="q-px-none q-py-md q-mx-sm"-->
+                  <!--                    name="server_expired"-->
+                  <!--                    icon="computer"-->
+                  <!--                    :label="tc('pages.provider.ProviderIndex.server_expired')"-->
+                  <!--                    :ripple="false"-->
+                  <!--                    @click="activeTab = 'server_expired'; navigateToUrl('/my/server/provider/server_expired')"-->
+                  <!--                  />-->
                 </q-tabs>
               </div>
               <div class="col-1">

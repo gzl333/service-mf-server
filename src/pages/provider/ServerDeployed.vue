@@ -27,11 +27,11 @@ const store = useStore()
 const serviceOptions = computed(() => store.getServiceOptionsByRole(store.items.fedRole === 'federal-admin'))
 const serviceSelection = ref('all')
 
-// 筛选云主机付费类型
+// 筛选云主机计费方式
 const paymentOptions = computed(() => [
   {
     value: 'all',
-    label: `${tc('全部类型')}`
+    label: `${tc('全部方式')}`
   },
   {
     value: 'postpaid',
