@@ -57,11 +57,11 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                   <q-tab
                     no-caps
                     class="q-px-none q-py-md q-mr-md"
-                    name="server_all"
+                    name="server"
                     icon="format_list_bulleted"
                     :label="tc('pages.provider.ProviderIndex.server_all')"
                     :ripple="false"
-                    @click="activeTab = 'server_all'; navigateToUrl('/my/server/provider/server_all')"
+                    @click="activeTab = 'server'; navigateToUrl('/my/server/provider/server')"
                   />
 <!--                  <q-tab-->
 <!--                    no-caps-->

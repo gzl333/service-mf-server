@@ -133,7 +133,7 @@ export default {
   provider: {
     ProviderIndex: {
       resource_provider: '资源提供者',
-      server_all: '全部云主机',
+      server_all: '云主机管理',
       server_expired: '过期云主机'
     },
     ServerDeployed: {

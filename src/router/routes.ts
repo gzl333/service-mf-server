@@ -115,14 +115,14 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'provider',
         component: () => import('pages/provider/ProviderIndex.vue'),
-        redirect: '/my/server/provider/server_all',
+        redirect: '/my/server/provider/server',
         children: [
           {
-            path: 'server_all',
-            component: () => import('pages/provider/ServerDeployedNew.vue')
+            path: 'server',
+            component: () => import('pages/provider/ServerDeployed.vue')
           },
           {
-            path: 'server_detail/:id',
+            path: 'server/detail/:id',
             component: () => import('pages/provider/ServerDetail.vue'),
             props: true
           }
