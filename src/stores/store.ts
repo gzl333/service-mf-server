@@ -989,7 +989,7 @@ export const useStore = defineStore('server', {
         }
       })
       services.unshift({
-        value: '0',
+        value: 'all',
         label: '全部服务单元',
         labelEn: 'All Service Units'
       })
@@ -1727,116 +1727,6 @@ export const useStore = defineStore('server', {
     //   return respGroupServer
     // },
 
-    // 更新整个adminServerTable
-    async loadAdminServerTable (payload: {
-      page: number;
-      page_size: number;
-      service_id?: string;
-      'ip-contain'?: string;
-      'user-id'?: string;
-      username?: string;
-      'vo-id'?: string;
-    }) {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.adminServerTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      this.tables.adminServerTable.status = 'loading'
-
-      /*
-      *
-      * try {
-          const respPostCashCoupon = await api.server.cashcoupon.postCashCoupon({
-            query: {
-              id: val.couponId,
-              coupon_code: val.couponCode,
-              ...(val.groupId && { vo_id: val.groupId })
-            }
-          })
-          if (respPostCashCoupon.status.toString().startsWith('2')) {
-            Notify.create({
-              classes: 'notification-positive shadow-15',
-              textColor: 'positive',
-              icon: 'check_circle',
-              message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-            // 更新对应表
-            val.groupId ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
-            // 跳转
-            val.groupId ? navigateToUrl(`/my/server/group/detail/${val.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
-          } else {
-            throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
-          }
-        } catch (error) {
-          if (error instanceof Error) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: error.message,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
-        } */
-
-      try {
-        const respGetAdminServer = await api.server.server.getServer({
-          query: {
-            'as-admin': true,
-            ...payload
-          }
-        })
-        if (respGetAdminServer.status.toString().startsWith('2')) {
-          // 将响应normalize，存入state里的userServerTable
-          const service = new schema.Entity('service')
-          const user_quota = new schema.Entity('user_quota')
-          const server = new schema.Entity('server', {
-            service,
-            user_quota
-          })
-          for (const data of respGetAdminServer.data.servers) {
-            const normalizedData = normalize(data, server)
-            Object.assign(this.tables.adminServerTable.byId, normalizedData.entities.server)
-            this.tables.adminServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
-            this.tables.adminServerTable.allIds = [...new Set(this.tables.adminServerTable.allIds)]
-          }
-          // adminServerTable，分别更新每个server status, 并发更新，无需await
-          // for (const serverId of this.tables.adminServerTable.allIds) {
-          //   this.loadSingleServerStatus({
-          //     isGroup: false,
-          //     serverId
-          //   })
-          // }
-          // 存完所有item再改isLoaded
-          this.tables.adminServerTable.status = 'total'
-
-          // 返回count值
-          return respGetAdminServer.data.count
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: error.message,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
-      }
-    },
     async loadFedFlavorTable () {
       this.tables.fedFlavorTable = {
         byId: {},

@@ -23,52 +23,94 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
-// service_id下拉列表
+// 筛选服务单元
 const serviceOptions = computed(() => store.getServiceOptionsByRole(store.items.fedRole === 'federal-admin'))
-const serviceSelection = ref('0')
+const serviceSelection = ref('all')
 
-// 云主机是否过期
-const validOptions = computed(() => [
+// 筛选云主机付费类型
+const paymentOptions = computed(() => [
   {
-    value: null,
-    label: `${tc('全部状态')}`
+    value: 'all',
+    label: `${tc('全部类型')}`
   },
   {
-    value: true,
-    label: `${tc('预付费-已过期')}`
-  }
-  // {
-  //   value: false,
-  //   label: `${tc('过期')}`
-  // }
-])
-const validSelection = ref(null)
-
-// 用户/项目组搜索条件下拉列表
-const filterOptions = computed(() => [
+    value: 'postpaid',
+    label: `${tc('按量计费')}`
+  },
   {
-    value: '',
+    value: 'prepaid',
+    label: `${tc('包月预付')}`
+  },
+  {
+    value: 'expired',
+    label: `${tc('包月预付-已过期')}`
+  }
+])
+const paymentSelection = ref('all')
+
+// 筛选网络类型
+const networkOptions = computed(() => [
+  {
+    value: 'all',
+    label: `${tc('全部网络类型')}`
+  },
+  {
+    value: 'true',
+    label: `${tc('公网IP')}`
+  },
+  {
+    value: 'false',
+    label: `${tc('私网IP')}`
+  }
+])
+const networkSelection = ref('all')
+
+// 筛选创建者
+const creatorOptions = computed(() => [
+  {
+    value: 'all',
     label: `${tc('全部用户')}`
   },
   {
     value: 'username',
-    label: `${tc('用户名')}`
+    label: `${tc('用户名关键字')}`
   },
   {
     value: 'user-id',
     label: `${tc('用户ID')}`
+  }
+])
+const creatorSelection = ref('all')
+const creatorInput = ref('')
+
+// 筛选项目组
+const groupOptions = computed(() => [
+  {
+    value: 'all',
+    label: `${tc('全部项目组')}`
+  },
+  {
+    value: 'exclude-vo',
+    label: `${tc('排除项目组')}`
+  },
+  {
+    value: 'vo-name',
+    label: `${tc('项目组名关键字')}`
   },
   {
     value: 'vo-id',
     label: `${tc('项目组ID')}`
   }
 ])
-const filterSelection = ref('')
+const groupSelection = ref('all')
+const groupInput = ref('')
 
-const filterInput = ref('')
+// ip,remark input
 const ipInput = ref('')
+const remarkInput = ref('')
 
 const isLoading = ref(false)
+
 const rows = ref<ServerInterface[]>()
 
 // 根据当前搜索条件，更新rows，并更新count值
@@ -79,15 +121,19 @@ const loadAdminServers = async () => {
   try {
     const respGetAdminServer = await api.server.server.getServer({
       query: {
-        'as-admin': true,
+        'as-admin': 'true',
         page: pagination.value.page,
         page_size: pagination.value.rowsPerPage,
-        ...(serviceSelection.value !== '0' && { service_id: serviceSelection.value }),
-        ...(validSelection.value !== null && { expired: validSelection.value }),
-        ...(filterSelection.value === 'username' && filterInput.value !== '' && { username: filterInput.value }),
-        ...(filterSelection.value === 'user-id' && filterInput.value !== '' && { 'user-id': filterInput.value }),
-        ...(filterSelection.value === 'vo-id' && filterInput.value !== '' && { 'vo-id': filterInput.value }),
-        ...(ipInput.value !== '' && { 'ip-contain': ipInput.value })
+        ...(serviceSelection.value !== 'all' && { service_id: serviceSelection.value }),
+        ...(paymentSelection.value !== 'all' && { status: paymentSelection.value }),
+        ...(networkSelection.value !== 'all' && { public: networkSelection.value }),
+        ...(ipInput.value !== '' && { 'ip-contain': ipInput.value }),
+        ...(remarkInput.value !== '' && { remark: remarkInput.value }),
+        ...(creatorSelection.value === 'user-id' && creatorInput.value !== '' && { 'user-id': creatorInput.value }),
+        ...(creatorSelection.value === 'username' && creatorInput.value !== '' && { username: creatorInput.value }),
+        ...(groupSelection.value === 'exclude-vo' && { 'exclude-vo': 'true' }),
+        ...(groupSelection.value === 'vo-id' && groupInput.value !== '' && { 'vo-id': groupInput.value }),
+        ...(groupSelection.value === 'vo-name' && groupInput.value !== '' && { 'vo-name': groupInput.value })
       }
     })
     if (respGetAdminServer.status.toString().startsWith('2')) {
@@ -121,11 +167,15 @@ const resetPageSelection = () => {
 
 // 重置所有搜索条件
 const resetFilters = () => {
-  serviceSelection.value = '0'
-  validSelection.value = null
-  filterSelection.value = ''
-  filterInput.value = ''
+  serviceSelection.value = 'all'
+  paymentSelection.value = 'all'
+  networkSelection.value = 'all'
   ipInput.value = ''
+  remarkInput.value = ''
+  creatorSelection.value = 'all'
+  creatorInput.value = ''
+  groupSelection.value = 'all'
+  groupInput.value = ''
 }
 
 // onMounted时加载初始table第一页
@@ -180,7 +230,7 @@ const columns = computed(() => [
   },
   {
     name: 'user',
-    label: (() => tc('USER'))(),
+    label: (() => tc('创建者'))(),
     field: 'user',
     align: 'center',
     classes: 'ellipsis',
@@ -363,157 +413,213 @@ const deleteServer = (server: ServerInterface) => {
 <template>
   <div class="ServerDeployed">
 
-    <div class="row items-center justify-between q-pb-md">
+    <div class="border-area column items-start justify-between q-mb-lg">
 
-      <div class="col row items-center justify-start q-gutter-x-lg">
+      <div class="col row full-width items-center justify-start q-pb-sm">
 
-        <q-select class="col-auto"
-                  style="min-width: 150px;"
-                  :label-color="serviceSelection !== '0' ? 'primary' : ''"
-                  outlined
-                  dense
-                  stack-label
-                  :label="tc('筛选服务单元')"
-                  v-model="serviceSelection"
-                  :options="serviceOptions"
-                  emit-value
-                  map-options
-                  option-value="value"
-                  :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
-          <!--当前选项的内容插槽-->
-          <template v-slot:selected-item="scope">
-                <span :class="serviceSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}
-                </span>
-          </template>
-        </q-select>
-
-        <q-select class="col-auto"
-                  style="min-width: 150px;"
-                  :label-color="validSelection !== null ? 'primary' : ''"
-                  outlined
-                  dense
-                  stack-label
-                  :label="tc('筛选云主机管理状态')"
-                  v-model="validSelection"
-                  :options="validOptions"
-                  emit-value
-                  map-options
-                  option-value="value"
-                  option-label="label"
-        >
-          <!--当前选项的内容插槽-->
-          <template v-slot:selected-item="scope">
-                <span :class="validSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ scope.opt.label }}
-                </span>
-          </template>
-        </q-select>
-
-        <div class="col-auto row items-center no-wrap">
+        <div class="col row q-gutter-x-md">
           <q-select class="col-auto"
-                    style="min-width: 150px;"
+                    style="min-width: 170px; max-width: 250px;"
+                    :label-color="serviceSelection !== 'all' ? 'primary' : ''"
                     outlined
                     dense
                     stack-label
-                    :label="tc('筛选用户')"
-                    :label-color="filterInput ? 'primary' : ''"
-                    v-model="filterSelection"
-                    :options="filterOptions"
+                    :label="tc('筛选服务单元')"
+                    v-model="serviceSelection"
+                    :options="serviceOptions"
+                    emit-value
+                    map-options
+                    option-value="value"
+                    :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
+            <!--当前选项的内容插槽-->
+            <!--          <template v-slot:selected-item="scope">-->
+            <!--                <span :class="serviceSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+            <!--                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}-->
+            <!--                </span>-->
+            <!--          </template>-->
+          </q-select>
+
+          <q-select class="col-auto"
+                    style="min-width: 170px;"
+                    :label-color="paymentSelection !== 'all' ? 'primary' : ''"
+                    outlined
+                    dense
+                    stack-label
+                    :label="tc('筛选云主机计费方式')"
+                    v-model="paymentSelection"
+                    :options="paymentOptions"
                     emit-value
                     map-options
                     option-value="value"
                     option-label="label"
           >
             <!--当前选项的内容插槽-->
-            <template v-slot:selected-item="scope">
-                <span :class="filterSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ scope.opt.label }}
-                </span>
-            </template>
+            <!--          <template v-slot:selected-item="scope">-->
+            <!--                <span :class="validSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+            <!--                  {{ scope.opt.label }}-->
+            <!--                </span>-->
+            <!--          </template>-->
+          </q-select>
+
+          <q-select class="col-auto"
+                    style="min-width: 170px;"
+                    :label-color="networkSelection !== 'all' ? 'primary' : ''"
+                    outlined
+                    dense
+                    stack-label
+                    :label="tc('筛选网络类型')"
+                    v-model="networkSelection"
+                    :options="networkOptions"
+                    emit-value
+                    map-options
+                    option-value="value"
+                    option-label="label"
+          >
+            <!--当前选项的内容插槽-->
+            <!--          <template v-slot:selected-item="scope">-->
+            <!--                <span :class="networkSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+            <!--                  {{ scope.opt.label }}-->
+            <!--                </span>-->
+            <!--          </template>-->
           </q-select>
 
           <q-input
             style="width: 250px;"
-            v-if="filterSelection !== ''"
-            :label-color="filterInput ? 'primary' : ''"
-            v-model="filterInput"
+            :label-color="ipInput ? 'primary' : ''"
+            v-model="ipInput"
             outlined
             dense
-            :label="filterSelection==='username' ? tc('指定用户名') : filterSelection==='user-id' ? tc('指定用户ID') : tc('指定项目组ID')"
+            :label="tc('筛选IP地址关键字')"
           >
-            <template v-slot:append v-if="filterInput">
-              <q-icon name="close" @click="filterInput = ''" class="cursor-pointer"/>
+            <template v-slot:append v-if="ipInput">
+              <q-icon name="close" @click="ipInput = ''" class="cursor-pointer"/>
             </template>
+
+          </q-input>
+
+          <q-input
+            style="width: 250px;"
+            :label-color="remarkInput ? 'primary' : ''"
+            v-model="remarkInput"
+            outlined
+            dense
+            :label="tc('筛选云主机备注关键字')"
+          >
+            <template v-slot:append v-if="remarkInput">
+              <q-icon name="close" @click="remarkInput = ''" class="cursor-pointer"/>
+            </template>
+
           </q-input>
         </div>
 
-        <q-input
-          style="width: 250px;"
-          :label-color="ipInput ? 'primary' : ''"
-          v-model="ipInput"
-          outlined
-          dense
-          :label="tc('筛选IP地址关键字')"
-        >
-          <template v-slot:append v-if="ipInput">
-            <q-icon name="close" @click="ipInput = ''" class="cursor-pointer"/>
-          </template>
-
-        </q-input>
-
-        <q-btn flat no-caps dense color="primary" @click="resetFilters();resetPageSelection();loadAdminServers()">
-          重置
-        </q-btn>
-
       </div>
 
-      <div class="col-auto row justify-end">
-        <q-btn unelevated no-caps color="primary" @click="resetPageSelection();loadAdminServers()">
-          搜索
-        </q-btn>
-      </div>
-    </div>
+      <div class="col row full-width items-center justify-between">
 
-    <div class="row items-center">
-      <div class="text-grey">搜索结果共计:</div>
-      <div>{{ pagination.count }}</div>
-    </div>
+        <div class="col row q-gutter-x-md">
+          <div class="col-auto row items-center no-wrap">
+            <q-select class="col-auto"
+                      style="min-width: 170px;"
+                      outlined
+                      dense
+                      stack-label
+                      :label="tc('筛选创建者')"
+                      :label-color="creatorInput ? 'primary' : ''"
+                      v-model="creatorSelection"
+                      :options="creatorOptions"
+                      emit-value
+                      map-options
+                      option-value="value"
+                      option-label="label"
+            >
+              <!--当前选项的内容插槽-->
+              <!--            <template v-slot:selected-item="scope">-->
+              <!--                <span :class="creatorSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+              <!--                  {{ scope.opt.label }}-->
+              <!--                </span>-->
+              <!--            </template>-->
+            </q-select>
+            <q-input
+              style="width: 250px;"
+              v-if="creatorSelection !== 'all'"
+              :label-color="creatorInput ? 'primary' : ''"
+              v-model="creatorInput"
+              outlined
+              dense
+              :label="creatorSelection==='username' ? tc('用户名关键字') : creatorSelection==='user-id' ? tc('准确的用户ID') : ''"
+            >
+              <template v-slot:append v-if="creatorInput">
+                <q-icon name="close" @click="creatorInput = ''" class="cursor-pointer"/>
+              </template>
+            </q-input>
+          </div>
 
-    <div v-if="pagination.count" class="row items-center justify-between q-pb-sm">
+          <div class="col-auto row items-center no-wrap">
+            <q-select class="col-auto"
+                      style="min-width: 170px;"
+                      outlined
+                      dense
+                      stack-label
+                      :label="tc('筛选项目组')"
+                      :label-color="((groupSelection === 'exclude-vo') || (groupSelection !== 'all' && groupSelection !== 'exclude-vo' && groupInput)) ? 'primary' : ''"
+                      v-model="groupSelection"
+                      :options="groupOptions"
+                      emit-value
+                      map-options
+                      option-value="value"
+                      option-label="label"
+            >
+              <!--当前选项的内容插槽-->
+              <!--            <template v-slot:selected-item="scope">-->
+              <!--                <span :class="groupSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+              <!--                  {{ scope.opt.label }}-->
+              <!--                </span>-->
+              <!--            </template>-->
+            </q-select>
 
-      <div class="row items-center">
-        <div> 选中{{ rowSelection.length }}台</div>
-        <!--        <q-btn flat dense no-caps color="primary">批量删除</q-btn>-->
-      </div>
+            <q-input
+              style="width: 250px;"
+              v-if="groupSelection !== 'all' && groupSelection !== 'exclude-vo'"
+              :label-color="groupInput ? 'primary' : ''"
+              v-model="groupInput"
+              outlined
+              dense
+              :label="groupSelection==='vo-name' ? tc('项目组名关键字') : groupSelection==='vo-id' ? tc('准确的项目组ID') : ''"
+            >
+              <template v-slot:append v-if="groupInput">
+                <q-icon name="close" @click="groupInput = ''" class="cursor-pointer"/>
+              </template>
+            </q-input>
 
-      <div class="row">
-        <div class="row items-center justify-between text-grey">
-          <q-select color="grey"
-                    v-model="pagination.rowsPerPage"
-                    :options="[10,15,20,30,50,100]"
-                    dense
-                    options-dense
-                    borderless
-                    @update:model-value="resetPageSelection();loadAdminServers()">
-            <!--          &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
-            <!--          <template v-slot:selected-item>-->
-            <!--                <span class="text-grey">-->
-            <!--                {{ pagination.rowsPerPage }}-->
-            <!--                </span>-->
-            <!--          </template>-->
-          </q-select>
-          项/页
+          </div>
         </div>
 
-        <q-pagination v-model="pagination.page"
-                      :max="Math.ceil(pagination.count / pagination.rowsPerPage )"
-                      :max-pages="9"
-                      direction-links
-                      outline
-                      :ripple="false"
-                      @update:model-value="loadAdminServers"
-        />
+        <div class="col-auto q-gutter-x-sm">
+          <q-btn flat no-caps dense color="primary" @click="resetFilters();resetPageSelection();loadAdminServers()">
+            重置
+          </q-btn>
+          <q-btn unelevated no-caps color="primary" @click="resetPageSelection();loadAdminServers()">
+            搜索
+          </q-btn>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row items-center justify-between">
+
+      <div v-if="pagination.count" class="col-auto row items-center">
+
+        <div class="text-grey">{{ tc('选中总计') }}</div>
+        <div class="">{{ rowSelection.length }}</div>
+
+<!--        <q-btn class="col-auto q-mx-md" flat no-caps dense color="primary">批量删除</q-btn>-->
+
+      </div>
+
+      <div class="col-auto row items-center">
+        <div class="col-auto text-grey">{{ tc('搜索结果总计') }}</div>
+        <div class="col-auto ">{{ pagination.count }}</div>
       </div>
 
     </div>
@@ -528,7 +634,7 @@ const deleteServer = (server: ServerInterface) => {
       :loading="isLoading"
       color="primary"
       :loading-label="tc('网络请求中，请稍候...')"
-      :no-data-label="tc('暂无')"
+      :no-data-label="tc('无搜索结果')"
       hide-pagination
       :pagination="{rowsPerPage: 0}"
       row-key="id"
@@ -646,7 +752,34 @@ const deleteServer = (server: ServerInterface) => {
       </template>
 
       <template v-slot:bottom>
-        <!--   todo 批量操作 -->
+        <div class="row full-width items-center justify-end">
+          <div class="col row items-center justify-end text-grey">
+            <q-select color="grey"
+                      v-model="pagination.rowsPerPage"
+                      :options="[10,20,30,50,100]"
+                      dense
+                      options-dense
+                      borderless
+                      @update:model-value="resetPageSelection();loadAdminServers()">
+              <!--当前选项的内容插槽-->
+              <!--                      <template v-slot:selected-item>-->
+              <!--                            <span class="text-grey">-->
+              <!--                            {{ pagination.rowsPerPage }}-->
+              <!--                            </span>-->
+              <!--                      </template>-->
+            </q-select>
+            项/页
+          </div>
+
+          <q-pagination v-model="pagination.page"
+                        :max="Math.ceil(pagination.count / pagination.rowsPerPage )"
+                        :max-pages="9"
+                        direction-links
+                        outline
+                        :ripple="false"
+                        @update:model-value="loadAdminServers"
+          />
+        </div>
       </template>
     </q-table>
 
@@ -669,11 +802,11 @@ const deleteServer = (server: ServerInterface) => {
   width: 1230px;
 }
 
-.detail-area {
+.border-area {
   width: 1230px;
-  margin-top: 10px;
-  padding: 15px 0;
-  height: 120px;
+  //margin-top: 10px;
+  padding: 20px 20px;
+  //height: 120px;
   border: $grey-4 1px solid;
   border-radius: 5px;
 }
