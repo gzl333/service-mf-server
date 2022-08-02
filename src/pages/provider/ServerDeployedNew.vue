@@ -30,21 +30,42 @@ const serviceSelection = ref('0')
 // 云主机是否过期
 const validOptions = computed(() => [
   {
-    value: null,
+    value: '',
     label: `${tc('全部状态')}`
   },
   {
-    value: true,
+    value: 'postpaid-all',
+    label: `${tc('后付费')}`
+  },
+  {
+    value: 'prepaid-all',
+    label: `${tc('预付费')}`
+  },
+  {
+    value: 'prepaid-expired',
     label: `${tc('预付费-已过期')}`
   }
-  // {
-  //   value: false,
-  //   label: `${tc('过期')}`
-  // }
 ])
-const validSelection = ref(null)
+const validSelection = ref('')
 
 /* 新设计 */
+
+// 网络类型
+const networkOptions = computed(() => [
+  {
+    value: '',
+    label: `${tc('全部网络类型')}`
+  },
+  {
+    value: 'public',
+    label: `${tc('公网IP')}`
+  },
+  {
+    value: 'private',
+    label: `${tc('私网IP')}`
+  }
+])
+const networkSelection = ref('')
 
 const creatorOptions = computed(() => [
   {
@@ -109,6 +130,7 @@ const filterSelection = ref('')
 
 const filterInput = ref('')
 const ipInput = ref('')
+const remarkInput = ref('')
 
 const isLoading = ref(false)
 const rows = ref<ServerInterface[]>()
@@ -164,7 +186,7 @@ const resetPageSelection = () => {
 // 重置所有搜索条件
 const resetFilters = () => {
   serviceSelection.value = '0'
-  validSelection.value = null
+  validSelection.value = ''
   filterSelection.value = ''
   filterInput.value = ''
   ipInput.value = ''
@@ -423,16 +445,16 @@ const deleteServer = (server: ServerInterface) => {
                   option-value="value"
                   :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
           <!--当前选项的内容插槽-->
-          <template v-slot:selected-item="scope">
-                <span :class="serviceSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}
-                </span>
-          </template>
+<!--          <template v-slot:selected-item="scope">-->
+<!--                <span :class="serviceSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+<!--                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}-->
+<!--                </span>-->
+<!--          </template>-->
         </q-select>
 
         <q-select class="col-auto"
                   style="min-width: 150px;"
-                  :label-color="validSelection !== null ? 'primary' : ''"
+                  :label-color="validSelection !== '' ? 'primary' : ''"
                   outlined
                   dense
                   stack-label
@@ -445,12 +467,35 @@ const deleteServer = (server: ServerInterface) => {
                   option-label="label"
         >
           <!--当前选项的内容插槽-->
-          <template v-slot:selected-item="scope">
-                <span :class="validSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ scope.opt.label }}
-                </span>
-          </template>
+<!--          <template v-slot:selected-item="scope">-->
+<!--                <span :class="validSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+<!--                  {{ scope.opt.label }}-->
+<!--                </span>-->
+<!--          </template>-->
         </q-select>
+
+        <q-select class="col-auto"
+                  style="min-width: 150px;"
+                  :label-color="networkSelection !== '' ? 'primary' : ''"
+                  outlined
+                  dense
+                  stack-label
+                  :label="tc('筛选网络类型')"
+                  v-model="networkSelection"
+                  :options="networkOptions"
+                  emit-value
+                  map-options
+                  option-value="value"
+                  option-label="label"
+        >
+          <!--当前选项的内容插槽-->
+<!--          <template v-slot:selected-item="scope">-->
+<!--                <span :class="networkSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+<!--                  {{ scope.opt.label }}-->
+<!--                </span>-->
+<!--          </template>-->
+        </q-select>
+
       </div>
 
       <div class="col row items-center justify-start q-gutter-x-lg">
@@ -471,11 +516,11 @@ const deleteServer = (server: ServerInterface) => {
                     option-label="label"
           >
             <!--当前选项的内容插槽-->
-            <template v-slot:selected-item="scope">
-                <span :class="creatorSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ scope.opt.label }}
-                </span>
-            </template>
+<!--            <template v-slot:selected-item="scope">-->
+<!--                <span :class="creatorSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+<!--                  {{ scope.opt.label }}-->
+<!--                </span>-->
+<!--            </template>-->
           </q-select>
 
           <q-input
@@ -509,11 +554,11 @@ const deleteServer = (server: ServerInterface) => {
                     option-label="label"
           >
             <!--当前选项的内容插槽-->
-            <template v-slot:selected-item="scope">
-                <span :class="groupSelection===scope.opt.value ? 'text-primary' : 'text-black'">
-                  {{ scope.opt.label }}
-                </span>
-            </template>
+<!--            <template v-slot:selected-item="scope">-->
+<!--                <span :class="groupSelection===scope.opt.value ? 'text-primary' : 'text-black'">-->
+<!--                  {{ scope.opt.label }}-->
+<!--                </span>-->
+<!--            </template>-->
           </q-select>
 
           <q-input
@@ -540,10 +585,24 @@ const deleteServer = (server: ServerInterface) => {
           v-model="ipInput"
           outlined
           dense
-          :label="tc('筛选IP地址关键字')"
+          :label="tc('筛选IP地址关键字-模糊搜索')"
         >
           <template v-slot:append v-if="ipInput">
             <q-icon name="close" @click="ipInput = ''" class="cursor-pointer"/>
+          </template>
+
+        </q-input>
+
+        <q-input
+          style="width: 250px;"
+          :label-color="remarkInput ? 'primary' : ''"
+          v-model="remarkInput"
+          outlined
+          dense
+          :label="tc('筛选云主机注释关键字-模糊搜索')"
+        >
+          <template v-slot:append v-if="remarkInput">
+            <q-icon name="close" @click="remarkInput = ''" class="cursor-pointer"/>
           </template>
 
         </q-input>
