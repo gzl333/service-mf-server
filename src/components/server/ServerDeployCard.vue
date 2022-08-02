@@ -38,7 +38,7 @@ const MAX_MONTHS = 6
 // 目前判断个人账户或者项目组账户余额大于0
 const isAllowPostpaid = computed(() => {
   if (props.isGroup) {
-    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[radioGroup.value]?.balance]?.balance) >= 0
+    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[radioGroup.value]?.balance]?.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }
