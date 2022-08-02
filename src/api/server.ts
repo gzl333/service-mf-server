@@ -498,9 +498,16 @@ export default {
         page?: number;
         page_size?: number;
         service_id?: string;
-        user_id?: string;
-        vo_id?: string;
-        'as-admin'?: boolean
+        'ip-contain'?: string;
+        public?: string; // 'true' | 'false';
+        remark?: string;
+        status?: string; // 'prepaid' | 'postpaid' | 'expired';
+        'user-id'?: string;
+        username?: string;
+        'vo-id'?: string;
+        'vo-name'?: string;
+        'exclude-vo'?: string;
+        'as-admin'?: string;
       }
     }) {
       const config = {
