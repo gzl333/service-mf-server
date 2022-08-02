@@ -35,11 +35,11 @@ const validOptions = computed(() => [
   },
   {
     value: 'postpaid-all',
-    label: `${tc('后付费')}`
+    label: `${tc('全部后付费')}`
   },
   {
     value: 'prepaid-all',
-    label: `${tc('预付费')}`
+    label: `${tc('全部预付费')}`
   },
   {
     value: 'prepaid-expired',
