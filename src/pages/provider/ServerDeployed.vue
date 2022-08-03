@@ -514,7 +514,7 @@ const stopServer = (server: ServerInterface) => {
 <template>
   <div class="ServerDeployed">
 
-    <div class="border-area column items-start justify-between q-mb-lg">
+    <div class=" column items-start justify-between q-mb-lg">
 
       <div class="col row full-width items-center justify-start q-pb-sm">
 

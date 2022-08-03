@@ -134,6 +134,14 @@ watch(radioService, () => {
 })
 /* 在table都加载后，3个radio，随着service变化选择默认项 */
 
+/* 用户选择选项 */
+
+const userSelectImage = (imageId: string) => {
+  radioImage.value = imageId
+}
+
+/* 用户选择选项 */
+
 /* 新建云主机 */
 const isDeploying = ref(false)
 // check inputs
@@ -310,7 +318,7 @@ const deployServer = async () => {
     <div v-else>
 
       <div v-if="isGroup" class="section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.group') }}
         </div>
         <div class="row items-center q-gutter-md q-pb-lg">
@@ -380,7 +388,7 @@ const deployServer = async () => {
       </div>
 
       <div class="col section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.billing_method') }}
         </div>
 
@@ -406,7 +414,7 @@ const deployServer = async () => {
       </div>
 
       <div v-if="radioPayment === 'prepaid'" class="col section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.prepaid_period') }}
         </div>
 
@@ -440,7 +448,7 @@ const deployServer = async () => {
 
       <div class="col section">
 
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.service_node') }}
         </div>
 
@@ -571,7 +579,7 @@ const deployServer = async () => {
 
       <div class="col section">
 
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.network_type') }}
         </div>
         <div
@@ -616,28 +624,59 @@ const deployServer = async () => {
       </div>
 
       <div class="col section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.operating_system') }}
         </div>
 
-        <div v-if="images.length > 0" class="row item-row">
-          <div class="col">
-            <q-radio v-for="image in images"
-                     :val="image.id"
-                     :key="image.id"
-                     class="radio non-selectable"
-                     dense
-                     v-model="radioImage">
-              <div class="column items-center q-pr-md" :class="radioImage===image.id ? 'text-primary' : 'text-black'">
-                <div>
-                  <OsLogo :os-name="image.name"/>
-                </div>
-                <div>
-                  {{ image.name }}
-                </div>
+        <div v-if="images.length > 0" class="row item-row q-gutter-lg">
+          <!--          <div class="col">-->
+
+          <!--          <q-radio v-for="image in images"-->
+          <!--                   :val="image.id"-->
+          <!--                   :key="image.id"-->
+          <!--                   class="col-auto radio non-selectable"-->
+          <!--                   dense-->
+          <!--                   v-model="radioImage">-->
+          <!--            <div class="column items-center q-pr-md"-->
+          <!--                 :class="radioImage===image.id ? 'text-primary' : 'text-black'"-->
+          <!--            >-->
+          <!--              <div>-->
+          <!--                <OsLogo :os-name="image.name"/>-->
+          <!--              </div>-->
+          <!--              <div>-->
+          <!--                {{ image.name }}-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </q-radio>-->
+
+          <q-btn
+            :class="radioImage === image.id ? 'shadow-13' : ''"
+            :color="radioImage === image.id ? 'white' : 'grey-4'"
+            v-for="image in images"
+            :val="image.id"
+            :key="image.id"
+            outline
+            dense
+            no-caps
+            :ripple="false"
+            @click="userSelectImage(image.id)"
+          >
+            <div class="column items-center justify-center"
+                 style="width: 200px;height: 100px;">
+              <div class="col-6 row items-center">
+                <OsLogo class="col" :os-name="image.name" size="xl"/>
               </div>
-            </q-radio>
-          </div>
+              <div class="col-6 row items-center">
+                <div class="text-black">{{ image.name.slice(0, 60) }}</div>
+              </div>
+            </div>
+
+<!--            <q-badge v-if="radioImage === image.id" color="primary" floating rounded>-->
+            <!--              <q-icon name="check" size="10px"/>-->
+            <!--            </q-badge>-->
+          </q-btn>
+
+          <!--          </div>-->
         </div>
 
         <div v-else class="row item-row">
@@ -649,7 +688,7 @@ const deployServer = async () => {
       </div>
 
       <div class="col section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           CPU/{{ tc('components.server.ServerDeployCard.memory') }}
         </div>
 
@@ -673,7 +712,7 @@ const deployServer = async () => {
       </div>
 
       <div class="col section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.remarks') }}
         </div>
         <div class="row item-row">
@@ -684,7 +723,7 @@ const deployServer = async () => {
       </div>
 
       <div class="col summarize-section">
-        <div class="text-h7 text-primary section-title">
+        <div class="text-h7 text-grey text-weight-bold section-title">
           {{ tc('components.server.ServerDeployCard.selected_configuration') }}
         </div>
 
@@ -780,15 +819,14 @@ const deployServer = async () => {
             {{ tc('components.server.ServerDeployCard.operating_system') }}
           </div>
           <div class="col">
-            <div
-              v-if="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name">
-              <OsLogo :os-name="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name"
-                      size="sm"/>
-              <!--              <q-icon-->
-              <!--                v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
-              <!--                :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
-              <!--                flat size="md"/>-->
+            <div v-if="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name">
+              <OsLogo
+                :os-name="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name"
+                size="sm"
+              />
+
               {{ store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name }}
+
             </div>
             <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_operating_system') }}</div>
           </div>
@@ -886,5 +924,9 @@ const deployServer = async () => {
 .radio {
   margin-bottom: 5px;
   padding: 0 10px;
+}
+
+.btn-selected {
+  box-shadow: 0 4px 8px 0 $primary, 0 6px 20px 0 $primary;
 }
 </style>
