@@ -6,9 +6,9 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import { Notify } from 'quasar'
 import api from 'src/api'
-
-import useGetOsIconName from 'src/hooks/useGetOsIconName'
 import { navigateToUrl } from 'single-spa'
+
+import OsLogo from 'components/ui/OsLogo.vue'
 
 const props = defineProps({
   isGroup: {
@@ -43,9 +43,6 @@ const isAllowPostpaid = computed(() => {
     return Number(store.items?.personalBalance) > 0
   }
 })
-
-// 获取os的icon名称
-const getOsIconName = useGetOsIconName()
 
 // dom元素
 const input = ref<HTMLElement>()
@@ -363,7 +360,7 @@ const deployServer = async () => {
                   <q-item-label caption>
                     {{ tc('components.server.ServerDeployCard.balance') }}:
                     {{ store.tables.groupBalanceTable.byId[scope.opt.balance]?.balance }}
-                    {{ tc('components.server.ServerDeployCard.points')}}
+                    {{ tc('components.server.ServerDeployCard.points') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -625,13 +622,19 @@ const deployServer = async () => {
 
         <div v-if="images.length > 0" class="row item-row">
           <div class="col">
-            <q-radio v-for="image in images" :val="image.id" :key="image.id"
-                     class="radio non-selectable" dense v-model="radioImage">
+            <q-radio v-for="image in images"
+                     :val="image.id"
+                     :key="image.id"
+                     class="radio non-selectable"
+                     dense
+                     v-model="radioImage">
               <div class="column items-center q-pr-md" :class="radioImage===image.id ? 'text-primary' : 'text-black'">
                 <div>
-                  <q-icon v-if="getOsIconName(image.name)" :name="getOsIconName(image.name)" flat size="md"/>
+                  <OsLogo :os-name="image.name"/>
                 </div>
-                {{ image.name }}
+                <div>
+                  {{ image.name }}
+                </div>
               </div>
             </q-radio>
           </div>
@@ -779,10 +782,12 @@ const deployServer = async () => {
           <div class="col">
             <div
               v-if="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name">
-              <q-icon
-                v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"
-                :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"
-                flat size="md"/>
+              <OsLogo :os-name="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name"
+                            size="sm"/>
+              <!--              <q-icon-->
+              <!--                v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
+              <!--                :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
+              <!--                flat size="md"/>-->
               {{ store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name }}
             </div>
             <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_operating_system') }}</div>

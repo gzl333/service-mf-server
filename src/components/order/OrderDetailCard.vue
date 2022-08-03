@@ -6,8 +6,9 @@ import { /* useRoute, */ useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 // import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
-import useGetOsIconName from 'src/hooks/useGetOsIconName'
+
 import OrderStatus from 'components/order/OrderStatus.vue'
+import OsLogo from 'components/ui/OsLogo.vue'
 
 const props = defineProps({
   orderId: {
@@ -34,8 +35,6 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
 // 复制信息到剪切板
 // const clickToCopy = useCopyToClipboard()
-// 获取os的icon名称
-const getOsIconName = useGetOsIconName()
 
 </script>
 
@@ -47,27 +46,27 @@ const getOsIconName = useGetOsIconName()
         <div class="row items-center title-area">
           <q-btn icon="arrow_back_ios" color="primary" flat unelevated dense no-caps
                  @click="router.back()"/>
-          <span v-if="isGroup">{{tc('components.order.OrderDetailCard.group_order_detail')}}</span>
-          <span v-else>{{tc('components.order.OrderDetailCard.personal_order_details')}}</span>
+          <span v-if="isGroup">{{ tc('components.order.OrderDetailCard.group_order_detail') }}</span>
+          <span v-else>{{ tc('components.order.OrderDetailCard.personal_order_details') }}</span>
         </div>
 
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row">
           <!--todo 区分读取中和读取错误          -->
           <div v-if="!order" class="col">
-            {{tc('components.order.OrderDetailCard.notify_loading')}}
+            {{ tc('components.order.OrderDetailCard.notify_loading') }}
           </div>
 
           <div v-else class="col content-area">
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto">{{tc('components.order.OrderDetailCard.order_id')}}  {{ order.id }}</div>
+              <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_id') }} {{ order.id }}</div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
                 <div v-if="isGroup" class="col-auto">
-                  {{tc('components.order.OrderDetailCard.group')}}
+                  {{ tc('components.order.OrderDetailCard.group') }}
                   <q-btn
                     color="primary"
                     padding="none" flat dense unelevated no-caps
@@ -79,16 +78,20 @@ const getOsIconName = useGetOsIconName()
                   </q-btn>
                 </div>
 
-                <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_place_user') }}   {{ order.username }}</div>
+                <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_place_user') }} {{
+                    order.username
+                  }}
+                </div>
 
-                <q-btn v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
-                       class="col-auto"
-                       color="primary"
-                       padding="none"
-                       flat
-                       no-caps
-                       dense
-                       @click="store.cancelOrderDialog(order.id, isGroup)">
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
+                  class="col-auto"
+                  color="primary"
+                  padding="none"
+                  flat
+                  no-caps
+                  dense
+                  @click="store.cancelOrderDialog(order.id, isGroup)">
                   {{ tc('components.order.OrderDetailCard.cancel_order') }}
                 </q-btn>
 
@@ -117,7 +120,9 @@ const getOsIconName = useGetOsIconName()
                 </div>
 
                 <div class="col-auto text-bold text-h6">
-                  {{ order.pay_type === 'prepaid' ? tc('components.order.OrderDetailCard.monthly_prepaid') : tc('components.order.OrderDetailCard.pay_as_go') }}
+                  {{
+                    order.pay_type === 'prepaid' ? tc('components.order.OrderDetailCard.monthly_prepaid') : tc('components.order.OrderDetailCard.pay_as_go')
+                  }}
                 </div>
 
               </div>
@@ -181,13 +186,14 @@ const getOsIconName = useGetOsIconName()
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 
-                <q-btn v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
-                       class="col-auto"
-                       color="primary"
-                       size="md"
-                       unelevated
-                       no-caps
-                       @click="store.payOrderDialog(order.id, isGroup)">
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'unpaid'"
+                  class="col-auto"
+                  color="primary"
+                  size="md"
+                  unelevated
+                  no-caps
+                  @click="store.payOrderDialog(order.id, isGroup)">
                   {{ tc('components.order.OrderDetailCard.pay') }}
                 </q-btn>
 
@@ -273,7 +279,9 @@ const getOsIconName = useGetOsIconName()
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_type') }}</div>
                     <div class="col-shrink">
-                      {{ order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network') }}
+                      {{
+                        order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network')
+                      }}
                     </div>
                   </div>
 
@@ -289,10 +297,14 @@ const getOsIconName = useGetOsIconName()
                   <div class="row items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
                     <div class="col-shrink">
-                      <q-icon
-                        v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
-                        :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"
-                        flat size="md"/>
+                      <!--                      <q-icon-->
+                      <!--                        v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
+                      <!--                        :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
+                      <!--                        flat size="md"/>-->
+
+                      <OsLogo
+                        :os-name="store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name"
+                        size="md"/>
                       {{
                         store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
                       }}
@@ -361,14 +373,15 @@ const getOsIconName = useGetOsIconName()
 
                     <div v-if="(Number(order.payable_amount) - Number(order.total_amount)) < 0"
                          class="row q-pb-md items-center">
-                      <div class="col-3 text-grey"> {{tc('components.order.OrderDetailCard.discount')}}</div>
+                      <div class="col-3 text-grey"> {{ tc('components.order.OrderDetailCard.discount') }}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.points') }}
+                        {{ (Number(order.payable_amount) - Number(order.total_amount)).toFixed(2) }}
+                        {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 
                     <div class="row items-center text-primary">
-                      <div class="col-3">{{tc('components.order.OrderDetailCard.due_amount')}}</div>
+                      <div class="col-3">{{ tc('components.order.OrderDetailCard.due_amount') }}</div>
                       <div class="col-shrink text-bold text-h5">
                         {{ order.payable_amount }} {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
@@ -380,9 +393,10 @@ const getOsIconName = useGetOsIconName()
 
                     <div v-if="(order.pay_amount - order.total_amount) < 0"
                          class="row q-pb-md items-center">
-                      <div class="col-3 text-grey">{{tc('components.order.OrderDetailCard.discount')}}</div>
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.discount') }}</div>
                       <div class="col-shrink">
-                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }} {{ tc('components.order.OrderDetailCard.points') }}
+                        {{ (Number(order.pay_amount) - Number(order.total_amount)).toFixed(2) }}
+                        {{ tc('components.order.OrderDetailCard.points') }}
                       </div>
                     </div>
 

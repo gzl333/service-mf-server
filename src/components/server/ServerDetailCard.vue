@@ -6,11 +6,11 @@ import { /* useRoute,  */useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
-import useGetOsIconName from 'src/hooks/useGetOsIconName'
 
 import ServerStatus from 'components/server/ServerStatus.vue'
 import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import PasswordToggle from 'components/ui/PasswordToggle.vue'
+import OsLogo from 'components/ui/OsLogo.vue'
 
 const props = defineProps({
   serverId: {
@@ -51,9 +51,6 @@ const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id |
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
-
-// 获取os的icon名称
-const getOsIconName = useGetOsIconName()
 
 const gotoManualVpn = () => {
   // 中文访问/manual 英文访问/manual/en
@@ -145,10 +142,10 @@ const gotoManualVpn = () => {
                 </q-toggle>
 
                 <q-btn :disable="!server.status"
-                       unelevated flat padding="none" size="lg" :color="server.status==1?'primary':'grey-5'"
+                       unelevated flat padding="none" size="lg" :color="server.status===1?'primary':'grey-5'"
                        icon="computer"
-                       @click="server.status==1?store.gotoVNC(server.id):''">
-                  <q-tooltip v-if="server.status==1">
+                       @click="server.status===1?store.gotoVNC(server.id):''">
+                  <q-tooltip v-if="server.status===1">
                     {{ tc('components.server.ServeDetailCard.remote_control') }}
                   </q-tooltip>
                   <q-tooltip v-else>
@@ -446,7 +443,7 @@ const gotoManualVpn = () => {
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.operating_system') }}</div>
                   <div class="col">
-                    <q-icon v-if="getOsIconName(server.image)" :name="getOsIconName(server.image)" flat size="md"/>
+                    <OsLogo :os-name="server.image"/>
                     {{ server.image }}
                   </div>
                 </div>

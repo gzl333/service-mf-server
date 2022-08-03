@@ -5,7 +5,8 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import { Notify, useDialogPluginComponent } from 'quasar'
-import useGetOsIconName from 'src/hooks/useGetOsIconName'
+
+import OsLogo from 'components/ui/OsLogo.vue'
 
 const props = defineProps({
   serverId: {
@@ -38,9 +39,6 @@ const images = computed(() => store.getImagesByServiceId(server.value.service))
 const selectDom = ref<HTMLElement>()
 const select = ref(server.value.image_id)
 const check = ref(false)
-
-// 获取os的icon名称
-const getOsIconName = useGetOsIconName()
 
 // 确定时
 const onOKClick = () => {
@@ -158,7 +156,9 @@ const onOKClick = () => {
             {{ tc('components.server.ServerRebuildDialog.network_type') }}
           </div>
           <div class="col">
-            {{ server.public_ip ? tc('components.server.ServerRebuildDialog.public_network')  : tc('components.server.ServerRebuildDialog.private_network')  }}
+            {{
+              server.public_ip ? tc('components.server.ServerRebuildDialog.public_network') : tc('components.server.ServerRebuildDialog.private_network')
+            }}
           </div>
         </div>
 
@@ -168,7 +168,9 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
-            {{ server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效' }}
+            {{
+              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
+            }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -179,10 +181,10 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
-             {{ tc('components.server.ServerRebuildDialog.operating_system') }}
+            {{ tc('components.server.ServerRebuildDialog.operating_system') }}
           </div>
           <div class="col">
-            <q-icon v-if="getOsIconName(server.image)" :name="getOsIconName(server.image)" flat size="md"/>
+            <OsLogo :os-name="server.image" size="md"/>
             {{ server.image }}
           </div>
         </div>
@@ -204,8 +206,9 @@ const onOKClick = () => {
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
                 <span :class="select===scope.opt.id ? 'text-primary' : 'text-black'">
-                  <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)"
-                          class="q-pl-xs q-pr-md" flat size="md"/>
+<!--                  <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)"-->
+                  <!--                          class="q-pl-xs q-pr-md" flat size="md"/>-->
+                  <OsLogo :os-name="scope.opt.name" size="md"/>
                 {{ scope.opt.name }}
                 </span>
               </template>
@@ -214,11 +217,12 @@ const onOKClick = () => {
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section avatar>
-                    <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)" flat size="md"/>
+                    <OsLogo :os-name="scope.opt.name" size="md"/>
+                    <!--                    <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)" flat size="md"/>-->
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.name }}</q-item-label>
-                    <!--                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>-->
+<!--                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>-->
                   </q-item-section>
                 </q-item>
               </template>
@@ -243,9 +247,11 @@ const onOKClick = () => {
 
       <!-- buttons example -->
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
+        <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated no-caps
+               :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
                @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps
+               :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
       </q-card-actions>
     </q-card>
   </q-dialog>

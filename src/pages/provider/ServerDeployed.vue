@@ -411,6 +411,104 @@ const deleteServer = (server: ServerInterface) => {
   })
 }
 
+const stopServer = (server: ServerInterface) => {
+  Dialog.create({
+    class: 'dialog-primary',
+    title: `确认关机：${server.ipv4}`,
+    focus: 'cancel',
+    message: `云主机用户: ${server.user.username}`,
+    ok: {
+      label: i18n.global.tc('store.dialog.confirm'),
+      push: false,
+      // flat: true,
+      outline: true,
+      color: 'primary'
+    },
+    cancel: {
+      label: i18n.global.tc('store.dialog.cancel'),
+      push: false,
+      flat: false,
+      unelevated: true,
+      color: 'primary'
+    }
+  }).onOk(async () => {
+    Notify.create({
+      classes: 'notification-primary shadow-15',
+      textColor: 'primary',
+      spinner: true,
+      icon: 'check_circle',
+      message: `正在关机云主机: ${server.ipv4}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 3000,
+      multiLine: false
+    })
+
+    try {
+      // 解除操作锁
+      const respUnlockServer = await api.server.server.postServerLock({
+        path: { id: server.id },
+        query: {
+          lock: 'lock-delete',
+          'as-admin': true
+        }
+      })
+
+      if (respUnlockServer.status !== 200) {
+        throw new Error()
+      }
+
+      // 关机云主机
+      const respActionServer = await api.server.server.postServerAction({
+        path: { id: server.id },
+        body: { action: 'poweroff' },
+        query: { 'as-admin': true }
+      })
+
+      if (respActionServer.status === 200) {
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          textColor: 'positive',
+          // spinner: true,
+          icon: 'check_circle',
+          message: `云主机关机成功: ${server.ipv4}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+        // load server，但是不reset page selection，保持在原位，减少页面跳动
+        loadAdminServers()
+      } else {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: `云主机关机失败: ${server.ipv4}`,
+          caption: `${respActionServer.data.message}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: error.message,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
+    }
+  })
+}
+
 </script>
 
 <template>
@@ -754,8 +852,12 @@ const deleteServer = (server: ServerInterface) => {
           </q-td>
 
           <q-td key="operation" :props="props">
-            <q-btn unelevated no-caps color="primary" @click="deleteServer(props.row)">
+            <q-btn flat dense no-caps color="primary" @click="deleteServer(props.row)">
               删除
+            </q-btn>
+
+            <q-btn flat dense no-caps color="primary" @click="stopServer(props.row)">
+              关机
             </q-btn>
           </q-td>
 

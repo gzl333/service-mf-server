@@ -5,6 +5,8 @@ import { useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
+import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+
 import GroupMemberTable from 'components/group/GroupMemberTable.vue'
 import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
@@ -43,6 +45,8 @@ const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
 const coupons = computed(() => store.getGroupCouponsByGroupId(groupId))
 
 const tab = ref(show ?? 'server')
+
+const clickToCopy = useCopyToClipboard()
 
 </script>
 
@@ -100,9 +104,17 @@ const tab = ref(show ?? 'server')
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center ellipsis wrap"
-                         style="max-width: 270px; min-height: 70px;white-space: normal;">
-                      <!--                      {{ group.description.slice(0, 30) }}-->
-                      {{ group.id }}
+                         style="max-width: 280px; min-height: 70px;white-space: normal;">
+                      <div class="col-auto">
+                        {{ group.id }}
+                      </div>
+                      <q-btn class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs"
+                             color="primary"
+                             @click="clickToCopy(group.id)">
+                        <q-tooltip>
+                          {{ tc('components.server.ServeTable.copy_to_clipboard') }}
+                        </q-tooltip>
+                      </q-btn>
                     </div>
                   </div>
 

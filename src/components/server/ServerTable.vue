@@ -6,10 +6,10 @@ import { useStore, ServerInterface } from 'stores/store'
 import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
-import useGetOsIconName from 'src/hooks/useGetOsIconName'
 
 import ServerStatus from 'components/server/ServerStatus.vue'
 import ServerOperationBtnGroup from 'components/server/ServerOperationBtnGroup.vue'
+import OsLogo from 'components/ui/OsLogo.vue'
 
 const props = defineProps({
   servers: {
@@ -132,9 +132,6 @@ const columns = computed(() => [
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
-
-// 获取os的icon名称
-const getOsIconName = useGetOsIconName()
 
 // table row hover
 const hoverRow = ref('')
@@ -265,15 +262,17 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           <q-td key="image" :props="props">
 
             <div>
-              <q-icon v-if="getOsIconName(props.row.image)" :name="getOsIconName(props.row.image)" flat size="md"
-                      color="primary"/>
+              <OsLogo :os-name="props.row.image"/>
+            </div>
+            <div>
+              {{ props.row.image }}
             </div>
 
-            {{ props.row.image }}
             <q-tooltip :offset="[0, -15]">
               {{ props.row.image }}
-              <!--              {{ props.row.image_desc}}-->
+<!--              {{ props.row.image_desc }}-->
             </q-tooltip>
+
           </q-td>
 
           <q-td key="configuration" :props="props">
@@ -341,9 +340,9 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
           </q-td>
 
-<!--          <q-td key="creator" :props="props">-->
-<!--            {{ props.row.user.username }}-->
-<!--          </q-td>-->
+          <!--          <q-td key="creator" :props="props">-->
+          <!--            {{ props.row.user.username }}-->
+          <!--          </q-td>-->
 
           <q-td key="note" :props="props">
             <div class="row">
