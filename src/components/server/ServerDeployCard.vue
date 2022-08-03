@@ -688,6 +688,18 @@ const deployServer = async () => {
           {{ tc('components.server.ServerDeployCard.selected_configuration') }}
         </div>
 
+        <div v-if="isGroup" class="row item-row items-center">
+          <div class="col-2 item-title-narrow text-grey">
+            {{ tc('components.server.ServerDeployCard.group') }}
+          </div>
+          <div class="col">
+            <div v-if="radioGroup !== ''">
+              {{ store.tables.groupTable.byId[radioGroup]?.name }}
+            </div>
+            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_group') }}</div>
+          </div>
+        </div>
+
         <div class="row item-row items-center">
           <div class="col-2 item-title-narrow text-grey">
             {{ tc('components.server.ServerDeployCard.billing_method') }}
@@ -706,18 +718,6 @@ const deployServer = async () => {
           <div class="col"
                :class="(radioPeriod <= 0 || radioPeriod > MAX_MONTHS || !Number.isInteger(radioPeriod)) ? 'text-red' : ''">
             {{ radioPeriod }} {{ tc('components.server.ServerDeployCard.months') }}
-          </div>
-        </div>
-
-        <div v-if="isGroup" class="row item-row items-center">
-          <div class="col-2 item-title-narrow text-grey">
-            {{ tc('components.server.ServerDeployCard.group') }}
-          </div>
-          <div class="col">
-            <div v-if="radioGroup !== ''">
-              {{ store.tables.groupTable.byId[radioGroup]?.name }}
-            </div>
-            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_group') }}</div>
           </div>
         </div>
 
@@ -783,7 +783,7 @@ const deployServer = async () => {
             <div
               v-if="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name">
               <OsLogo :os-name="store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name"
-                            size="sm"/>
+                      size="sm"/>
               <!--              <q-icon-->
               <!--                v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
               <!--                :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${radioService}-${radioImage}`]?.name)"-->
