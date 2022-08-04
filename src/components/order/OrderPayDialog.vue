@@ -39,6 +39,8 @@ const coupons = computed(() => {
   return coupons
   // 筛选能适用当前server -> serviceId -> app_service_id的coupon
     .filter(coupon => coupon?.app_service?.service_id === order.value.service_id)
+  // 筛选余额大于0
+    .filter(coupon => Number(coupon?.balance) > 0)
   // 筛选有效期
     .filter(coupon => (Date.now() - new Date(coupon.expiration_time).getTime()) < 0)
   // 映射为couponId，供option group使用
@@ -51,6 +53,24 @@ const coupons = computed(() => {
 
 const methodSelect = ref('cashcoupon')
 const couponSelect = ref([])
+
+const MAX_COUPONS = 5
+
+const checkCouponSelection = () => {
+  if (couponSelect.value.length > MAX_COUPONS) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'mdi-alert',
+      textColor: 'negative',
+      message: `${tc('orderPayMaxCoupons')}: ${MAX_COUPONS}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    couponSelect.value = couponSelect.value.slice(0, MAX_COUPONS)
+  }
+}
 
 const onOKClick = () => {
   if (methodSelect.value === 'cashcoupon' && couponSelect.value.length === 0) {
@@ -79,7 +99,10 @@ const onOKClick = () => {
     <q-card class="q-dialog-plugin dialog-primary" style="height: 550px;">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ isGroup ? tc('components.order.OrderPayDialog.pay_group_order') : tc('components.order.OrderPayDialog.pay_personal_order') }}</div>
+        <div class="text-primary">{{
+            isGroup ? tc('components.order.OrderPayDialog.pay_group_order') : tc('components.order.OrderPayDialog.pay_personal_order')
+          }}
+        </div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -90,7 +113,7 @@ const onOKClick = () => {
 
         <div class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{tc('components.order.OrderPayDialog.order_id')}}
+            {{ tc('components.order.OrderPayDialog.order_id') }}
           </div>
           <div class="col">
             {{ order.id }}
@@ -99,10 +122,10 @@ const onOKClick = () => {
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
-            {{tc('components.order.OrderPayDialog.amount_payable')}}
+            {{ tc('components.order.OrderPayDialog.amount_payable') }}
           </div>
           <div class="col">
-            {{ order.payable_amount }} {{tc('components.order.OrderPayDialog.points')}}
+            {{ order.payable_amount }} {{ tc('components.order.OrderPayDialog.points') }}
           </div>
         </div>
 
@@ -150,10 +173,12 @@ const onOKClick = () => {
              class="row q-pb-lg items-start">
 
           <div class="col-3 text-grey-7">
-            {{ isGroup ? tc('components.order.OrderPayDialog.group_coupon') : tc('components.order.OrderPayDialog.personal_coupon') }}
+            {{
+              isGroup ? tc('components.order.OrderPayDialog.group_coupon') : tc('components.order.OrderPayDialog.personal_coupon')
+            }}
 
             <div class="row text-black">
-              <div>{{ tc('components.order.OrderPayDialog.selected') }}: </div>
+              <div>{{ tc('components.order.OrderPayDialog.selected') }}:</div>
               <div>{{ couponSelect.length }}</div>
             </div>
 
@@ -187,6 +212,7 @@ const onOKClick = () => {
                 v-model="couponSelect"
                 type="checkbox"
                 :options="coupons"
+                @update:model-value="checkCouponSelection"
               >
                 <template v-slot:label="opt">
                   <CouponCard class="q-pt-sm" :coupon-id="opt.value" :is-group="isGroup"/>
@@ -201,7 +227,9 @@ const onOKClick = () => {
 
         <div v-if="methodSelect==='balance' || methodSelect==='coupon_balance'" class="row q-pb-lg items-center">
           <div class="col-3 text-grey-7">
-            {{ isGroup ? tc('components.order.OrderPayDialog.group_account_balance') : tc('components.order.OrderPayDialog.personal_account_balance') }}
+            {{
+              isGroup ? tc('components.order.OrderPayDialog.group_account_balance') : tc('components.order.OrderPayDialog.personal_account_balance')
+            }}
           </div>
 
           <div v-if="isGroup" class="col"
@@ -210,7 +238,7 @@ const onOKClick = () => {
           </div>
 
           <div v-else class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">
-            {{ store.items.personalBalance.balance }} {{tc('components.order.OrderPayDialog.points') }}
+            {{ store.items.personalBalance.balance }} {{ tc('components.order.OrderPayDialog.points') }}
           </div>
 
         </div>
@@ -220,8 +248,10 @@ const onOKClick = () => {
       <!--      <q-separator/>-->
 
       <q-card-actions align="between" class="absolute-bottom">
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.cancel')" @click="onDialogCancel"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps
+               :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
+        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.cancel')"
+               @click="onDialogCancel"/>
       </q-card-actions>
 
       <!--      <pre> {{ coupons }}</pre>-->

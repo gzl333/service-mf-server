@@ -18,6 +18,7 @@ export default {
   orderResourceReclaim: 'Reclaim Resource',
   orderResourceReclaiming: 'Reclaiming Resource...',
   orderResourceReclaimSuccess: 'Successfully Reclaimed Resource',
+  orderPayMaxCoupons: 'Coupons used in each payment is limited to',
 
   // specifics
   // 独立翻译点,按照工程文件结构组织

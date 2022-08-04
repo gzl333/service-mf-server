@@ -18,6 +18,7 @@ export default {
   orderResourceReclaim: '取回资源',
   orderResourceReclaiming: '正在取回资源...',
   orderResourceReclaimSuccess: '成功取回资源',
+  orderPayMaxCoupons: '单次支付最多使用代金券数量',
 
   // specifics
   components,
