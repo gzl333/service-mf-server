@@ -42,8 +42,8 @@ const props = defineProps({
 // const router = useRouter()
 
 const getPlatformIcon = (platformName: string, style: 'horizontal' | 'vertical' | 'mark') => {
-  platformName = platformName.toLowerCase()
-  if (platformName.includes('ev')) {
+  platformName = platformName?.toLowerCase()
+  if (platformName?.includes('ev')) {
     if (style === 'horizontal') {
       return require('assets/svg/EVCloud-Logo-Horizontal.svg')
     } else if (style === 'vertical') {
@@ -51,7 +51,7 @@ const getPlatformIcon = (platformName: string, style: 'horizontal' | 'vertical' 
     } else if (style === 'mark') {
       return require('assets/svg/EVCloud-Logo-Mark.svg')
     }
-  } else if (platformName.includes('open')) {
+  } else if (platformName?.includes('open')) {
     if (style === 'horizontal') {
       return require('assets/svg/OpenStack-Logo-Horizontal.svg')
     } else if (style === 'vertical') {
@@ -71,7 +71,7 @@ const icon = computed(() => getPlatformIcon(props.platformName, props.logoStyle)
 <template>
 
   <!--本地存在的svg-->
-  <q-icon v-if="icon">
+  <q-icon v-if="icon" :style="{width, height}">
     <img :src="icon" :style="{width, height}"/>
   </q-icon>
 

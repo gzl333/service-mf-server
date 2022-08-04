@@ -51,7 +51,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
               <div class="col-auto row justify-end items-center q-gutter-x-lg">
 
                 <div class="col-auto column items-end">
-                  <div class="text-grey q-pa-none" style="font-size: 5px;">{{ tc('pages.personal.PersonalIndex.personal_account_balance') }}</div>
+                  <div class="text-grey q-pa-none">{{ tc('pages.personal.PersonalIndex.personal_account_balance') }}</div>
                   <div class="row items-end">
                     <div class="text-h4">{{ store.items.personalBalance.balance }}</div>
                     <div class="text-h6">{{ tc('pages.personal.PersonalIndex.points') }}

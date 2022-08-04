@@ -232,8 +232,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             </div>
 
             <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[props.row.service]?.service_type"
-              logo-style="horizontal"/>
+              :platform-name="store.tables.serviceTable.byId[props.row.service]?.service_type"/>
 
           </q-td>
 

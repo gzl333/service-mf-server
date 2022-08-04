@@ -29,32 +29,32 @@ const props = defineProps({
 // const router = useRouter()
 
 const getOsIcon = (osName: string) => {
-  osName = osName.toLowerCase()
-  if (osName.includes('alma')) {
+  osName = osName?.toLowerCase()
+  if (osName?.includes('alma')) {
     return require('assets/svg/os_alma.svg')
-  } else if (osName.includes('arch')) {
+  } else if (osName?.includes('arch')) {
     return require('assets/svg/os_arch.svg')
-  } else if (osName.includes('centos')) {
+  } else if (osName?.includes('centos')) {
     return require('assets/svg/os_centos.svg')
-  } else if (osName.includes('debian')) {
+  } else if (osName?.includes('debian')) {
     return require('assets/svg/os_debian.svg')
-  } else if (osName.includes('fedora') && osName.includes('core')) {
+  } else if (osName?.includes('fedora') && osName.includes('core')) {
     return require('assets/svg/os_fedora_core.svg')
-  } else if (osName.includes('fedora')) {
+  } else if (osName?.includes('fedora')) {
     return require('assets/svg/os_fedora.svg')
-  } else if (osName.includes('freebsd')) {
+  } else if (osName?.includes('freebsd')) {
     return require('assets/svg/os_freebsd.svg')
-  } else if (osName.includes('openbsd')) {
+  } else if (osName?.includes('openbsd')) {
     return require('assets/svg/os_openbsd.svg')
-  } else if (osName.includes('rocky')) {
+  } else if (osName?.includes('rocky')) {
     return require('assets/svg/os_rocky.svg')
-  } else if (osName.includes('ubuntu')) {
+  } else if (osName?.includes('ubuntu')) {
     return require('assets/svg/os_ubuntu.svg')
-  } else if (osName.includes('vz')) {
+  } else if (osName?.includes('vz')) {
     return require('assets/svg/os_vz.svg')
-  } else if (osName.includes('win') && osName.includes('core')) {
+  } else if (osName?.includes('win') && osName.includes('core')) {
     return require('assets/svg/os_windows_core.svg')
-  } else if (osName.includes('win')) { // win比windows宽松
+  } else if (osName?.includes('win')) { // win比windows宽松
     return require('assets/svg/os_windows.svg')
   } else {
     return ''

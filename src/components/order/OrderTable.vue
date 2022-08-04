@@ -4,9 +4,11 @@ import { navigateToUrl } from 'single-spa'
 import { useStore, OrderInterface } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
 import OrderStatus from 'components/order/OrderStatus.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   orders: {
@@ -232,19 +234,9 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               }}
             </div>
 
-            <div>
-              <q-icon
-                v-if="store.tables.serviceTable.byId[props.row.service_id]?.service_type.toLowerCase().includes('ev')">
-                <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-            </div>
+            <CloudPlatformLogo
+              :platform-name="store.tables.serviceTable.byId[props.row.service_id]?.service_type" />
 
-            <div>
-              <q-icon
-                v-if="store.tables.serviceTable.byId[props.row.service_id]?.service_type.toLowerCase().includes('open')">
-                <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-            </div>
           </q-td>
 
           <q-td key="config" :props="props">

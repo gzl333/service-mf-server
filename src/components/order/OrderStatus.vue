@@ -34,7 +34,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
     </div>
 
     <div v-if="order.status === 'cancelled'" class="text-bold text-black">
-       {{ tc('orderPaid') }}
+       {{ tc('orderCancelled') }}
     </div>
 
     <div v-if="order.status === 'refund'" class="text-bold text-black">

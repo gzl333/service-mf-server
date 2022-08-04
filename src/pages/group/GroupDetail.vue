@@ -104,7 +104,7 @@ const clickToCopy = useCopyToClipboard()
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center ellipsis wrap"
-                         style="max-width: 280px; min-height: 70px;white-space: normal;">
+                         style="max-width: 100px; min-height: 70px;white-space: normal;">
                       <div class="col-auto">
                         {{ group.id }}
                       </div>
@@ -147,7 +147,8 @@ const clickToCopy = useCopyToClipboard()
                     {{ tc('pages.group.GroupDetail.org') }}
                   </div>
                   <div class="col-10">
-                    <div class="row justify-center items-center ellipsis" style="min-height: 70px">
+                    <div class="row justify-center items-center ellipsis"
+                         style="max-width: 100px; min-height: 70px;white-space: normal;">
                       {{ group.company }}
                     </div>
                   </div>

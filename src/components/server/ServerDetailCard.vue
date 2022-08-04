@@ -11,6 +11,7 @@ import ServerStatus from 'components/server/ServerStatus.vue'
 import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import PasswordToggle from 'components/ui/PasswordToggle.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   serverId: {
@@ -524,22 +525,7 @@ const gotoManualVpn = () => {
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('cloudPlatform') }}</div>
                   <div class="col">
-
-                    <!--                    <q-icon-->
-                    <!--                      v-if="service.service_type.toLowerCase().includes('ev')"-->
-                    <!--                      name="img:~assets/svg/EVCloud-Logo-Horizontal.svg"-->
-                    <!--                      style="width: 130px;height: 25px"/>-->
-
-                    <q-icon
-                      v-if="service.service_type.toLowerCase().includes('ev')" style="width: 130px;height: 25px">
-                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                    </q-icon>
-
-                    <q-icon
-                      v-if="service.service_type.toLowerCase().includes('open')" style="width: 130px;height: 25px">
-                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                    </q-icon>
-
+                    <CloudPlatformLogo :platform-name="service.service_type" height="30px" width="155px"/>
                   </div>
                 </div>
 

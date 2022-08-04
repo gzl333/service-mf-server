@@ -9,6 +9,7 @@ import api from 'src/api'
 import { navigateToUrl } from 'single-spa'
 
 import OsLogo from 'components/ui/OsLogo.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   isGroup: {
@@ -468,32 +469,18 @@ const deployServer = async () => {
                    v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
                    :key="service.id">
 
-                <q-radio class="col-auto non-selectable" dense v-model="radioService" :val="service.id"
+                <q-radio class="col-auto  non-selectable" dense v-model="radioService"
+                         :val="service.id"
                          :key="service.id">
-                  <div class="column">
+                  <div class="row items-center q-gutter-sm">
+
+                    <CloudPlatformLogo class="col-auto" :platform-name="service.service_type"/>
+
+                    <div class="col-auto" :class="radioService===service.id ? 'text-primary' : 'text-black'">
+                      {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
+                    </div>
 
                   </div>
-                  <span>
-                  <q-icon
-                    class="q-px-sm"
-                    v-if="service.service_type.toLowerCase().includes('ev')"
-                    style="width: 100px;height: 20px">
-                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-                  </q-icon>
-                </span>
-
-                  <span>
-                  <q-icon
-                    class="q-px-sm"
-                    v-if="service.service_type.toLowerCase().includes('open')"
-                    style="width: 100px;height: 20px">
-                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-                  </q-icon>
-                </span>
-
-                  <span :class="radioService===service.id ? 'text-primary' : 'text-black'">
-                  {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
-                </span>
 
                 </q-radio>
 
@@ -507,75 +494,6 @@ const deployServer = async () => {
 
         </div>
       </div>
-
-      <!--      <div class="col section">-->
-      <!--        <div class="text-h7 text-primary section-title row justify-between">-->
-      <!--          {{ tc('云主机配额') }}-->
-
-      <!--          <q-btn v-if="isGroup" unelevated icon="add" padding="xs" color="primary"-->
-      <!--                 :to="`/my/group/quota/apply?group=${radioGroup}&service=${radioService}`">-->
-      <!--            {{ tc('申请新配额') }}-->
-      <!--          </q-btn>-->
-      <!--          <q-btn v-else unelevated icon="add" padding="xs" color="primary"-->
-      <!--                 :to="`/my/personal/quota/apply?service=${radioService}`">-->
-      <!--            {{ tc('申请新配额') }}-->
-      <!--          </q-btn>-->
-      <!--        </div>-->
-
-      <!--        <div class="row item-row">-->
-      <!--          <div class="col-1  text-bold">-->
-      <!--            {{ tc('可用配额') }}-->
-      <!--          </div>-->
-      <!--          <div class="col">-->
-
-      <!--            <div v-if="quotasValid.length === 0" class="row items-center">-->
-      <!--              {{ tc('无') }}-->
-      <!--            </div>-->
-
-      <!--            <div v-else>-->
-      <!--              <q-radio v-for="quota in quotasValid" :val="quota.id" :key="quota.id"-->
-      <!--                       class="radio non-selectable"-->
-      <!--                       dense v-model="radioQuota"-->
-      <!--                       :disable="quota.expired || quota.exhausted">-->
-      <!--                <div>{{ quota }}</div>-->
-      <!--                &lt;!&ndash;                <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>&ndash;&gt;-->
-      <!--                &lt;!&ndash;                <q-btn label="a" :to="{path: '/'}"/>&ndash;&gt;-->
-      <!--              </q-radio>-->
-      <!--            </div>-->
-
-      <!--          </div>-->
-      <!--        </div>-->
-
-      <!--        &lt;!&ndash;        <q-separator spaced="lg"/>&ndash;&gt;-->
-
-      <!--        <div class="row item-row">-->
-      <!--          <div class="col-1  text-bold">-->
-      <!--            {{ tc('不可用配额') }}-->
-      <!--          </div>-->
-      <!--          <div class="col">-->
-      <!--            <div v-if="quotasInvalid.length === 0">{{ tc('无') }}</div>-->
-      <!--            <div v-else>-->
-      <!--              <div class="row">-->
-      <!--                &lt;!&ndash;                <q-btn class="q-pa-none" color="primary" flat dense padding="none" size="md"&ndash;&gt;-->
-      <!--                &lt;!&ndash;                       @click="isFolded=!isFolded">&ndash;&gt;-->
-      <!--                &lt;!&ndash;                  {{ isFolded ? tc('展开') : tc('折叠') }}&ndash;&gt;-->
-      <!--                &lt;!&ndash;                </q-btn>&ndash;&gt;-->
-      <!--                <a class="text-primary cursor-pointer"-->
-      <!--                   @click="isFolded=!isFolded" :to="{path:'/my'}">{{ isFolded ? tc('展开') : tc('收起') }}</a>-->
-      <!--              </div>-->
-      <!--              <div v-if="!isFolded">-->
-      <!--                <q-radio v-for="quota in quotasInvalid" :val="quota.id" :key="quota.id"-->
-      <!--                         class="radio non-selectable"-->
-      <!--                         v-model="radioQuota"-->
-      <!--                         dense :disable="quota.expired || quota.exhausted">-->
-      <!--                  <div>{{ quota }}</div>-->
-      <!--                  &lt;!&ndash;                  <quota-detail-card-dense :quota="quota" :is-group="isGroup"/>&ndash;&gt;-->
-      <!--                </q-radio>-->
-      <!--              </div>-->
-      <!--            </div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
 
       <div class="col section">
 
@@ -746,33 +664,19 @@ const deployServer = async () => {
           </div>
           <div class="col">
             <div
-              v-if="store.tables.dataCenterTable.byId[radioDataCenter] && store.tables.serviceTable.byId[radioService]">
+              v-if="store.tables.dataCenterTable.byId[radioDataCenter] && store.tables.serviceTable.byId[radioService]"
+              class="row items-center">
 
-              <span>
+              <div class="col-auto">
                 {{
                   i18n.global.locale === 'zh' ?
                     `${store.tables.dataCenterTable.byId[radioDataCenter]?.name} - ${store.tables.serviceTable.byId[radioService]?.name}` :
                     `${store.tables.dataCenterTable.byId[radioDataCenter]?.name_en} - ${store.tables.serviceTable.byId[radioService]?.name_en}`
                 }}
-              </span>
+              </div>
 
-              <span>
-                <q-icon
-                  class="q-px-sm"
-                  v-if="store.tables.serviceTable.byId[radioService]?.service_type.toLowerCase().includes('ev')"
-                  style="width: 100px;height: 20px">
-                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-                </q-icon>
-              </span>
-
-              <span>
-                <q-icon
-                  class="q-px-sm"
-                  v-if="store.tables.serviceTable.byId[radioService]?.service_type.toLowerCase().includes('open')"
-                  style="width: 100px;height: 20px">
-                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-                </q-icon>
-              </span>
+              <CloudPlatformLogo class="col-auto"
+                                 :platform-name="store.tables.serviceTable.byId[radioService]?.service_type"/>
 
             </div>
             <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_service_node') }}</div>

@@ -9,6 +9,9 @@ import { Dialog, Notify } from 'quasar'
 
 import type { ServerInterface } from 'stores/store'
 
+import OsLogo from 'components/ui/OsLogo.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
+
 // const props = defineProps({
 //   foo: {
 //     type: String,
@@ -778,10 +781,14 @@ const stopServer = (server: ServerInterface) => {
                   store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center]?.name_en
               }}
             </div>
+
+            <CloudPlatformLogo :platform-name="store.tables.serviceTable.byId[props.row.service.id]?.service_type"/>
+
           </q-td>
 
           <q-td key="image" :props="props">
-            {{ props.row.image }}
+            <OsLogo :os-name="props.row.image"/>
+            <div> {{ props.row.image }}</div>
           </q-td>
 
           <q-td key="configuration" :props="props">

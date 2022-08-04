@@ -4,7 +4,10 @@ import { navigateToUrl } from 'single-spa'
 import { CouponInterface, useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   coupons: {
@@ -205,33 +208,20 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
             <div>
               {{
                 i18n.global.locale === 'zh' ?
-                  Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.name :
-                  Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.name_en
+                  store.tables.serviceTable.byId[props.row.app_service.service_id]?.name :
+                  store.tables.serviceTable.byId[props.row.app_service.service_id]?.name_en
               }}
             </div>
             <div>
               {{
                 i18n.global.locale === 'zh' ?
-                  store.tables.dataCenterTable.byId[Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.data_center]?.name :
-                  store.tables.dataCenterTable.byId[Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.data_center]?.name_en
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.app_service.service_id]?.data_center]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.app_service.service_id]?.data_center]?.name_en
               }}
             </div>
 
-            <div>
-              <q-icon
-                v-if="Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.service_type.toLowerCase().includes('ev')">
-                <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-              <!--                            <q-tooltip>{{tc('该节点的服务类型为EVCloud')}}</q-tooltip>-->
-            </div>
-
-            <div>
-              <q-icon
-                v-if="Object.values(store.tables.serviceTable.byId).filter(service => service.pay_app_service_id === props.row?.app_service?.id)[0]?.service_type.toLowerCase().includes('open')">
-                <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-              <!--                            <q-tooltip>{{tc('该节点的服务类型为OpenStack')}}</q-tooltip>-->
-            </div>
+            <CloudPlatformLogo
+              :platform-name="store.tables.serviceTable.byId[props.row.app_service.service_id]?.service_type"/>
 
           </q-td>
 
