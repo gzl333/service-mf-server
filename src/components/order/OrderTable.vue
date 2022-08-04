@@ -254,8 +254,9 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="network" :props="props">
+            <!--            {{ props.row.instance_config }}-->
             {{
-              props.row.instance_config.public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network')
+              props.row.instance_config.vm_public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network')
             }}
           </q-td>
 
@@ -308,28 +309,36 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           </q-td>
 
           <q-td key="operation" :props="props" class="non-selectable">
-            <div class="column justify-center items-center q-gutter-xs">
+            <div class="row justify-center">
+              <div class="column justify-center items-start q-gutter-xs">
 
-              <q-btn icon="info" flat no-caps dense padding="none" color="primary"
-                     @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
-                {{ tc('components.order.OrderTable.check_details') }}
-              </q-btn>
+                <q-btn icon="info" flat no-caps dense padding="none" color="primary"
+                       @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
+                  {{ tc('components.order.OrderTable.check_details') }}
+                </q-btn>
 
-              <q-btn
-                v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
-                icon="currency_yen" flat no-caps dense padding="none" color="primary"
-                @click="store.payOrderDialog(props.row.id, isGroup)">
-                {{ tc('components.order.OrderTable.pay_orders') }}
-              </q-btn>
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'paid' && props.row.resources[0].instance_status === 'failed'"
+                  icon="published_with_changes" flat no-caps dense padding="none" color="primary"
+                  @click="store.reclaimOrderResource(props.row.id, isGroup)">
+                  {{ tc('orderResourceReclaim') }}
+                </q-btn>
 
-              <q-btn
-                v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
-                icon="close" flat no-caps dense padding="none" color="primary"
-                @click="store.cancelOrderDialog(props.row.id, isGroup)">
-                {{ tc('components.order.OrderTable.cancel_order') }}
-              </q-btn>
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                  icon="currency_yen" flat no-caps dense padding="none" color="primary"
+                  @click="store.payOrderDialog(props.row.id, isGroup)">
+                  {{ tc('components.order.OrderTable.pay_orders') }}
+                </q-btn>
+
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                  icon="close" flat no-caps dense padding="none" color="primary"
+                  @click="store.cancelOrderDialog(props.row.id, isGroup)">
+                  {{ tc('components.order.OrderTable.cancel_order') }}
+                </q-btn>
+              </div>
             </div>
-
           </q-td>
 
         </q-tr>

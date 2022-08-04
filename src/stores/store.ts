@@ -3107,6 +3107,85 @@ export const useStore = defineStore('server', {
       )
     },
     /* 续费下订单 */
+
+    /* 取回资源 */
+    async reclaimOrderResource (orderId: string, isGroup: boolean) {
+      Notify.create({
+        classes: 'notification-positive shadow-15',
+        // icon: 'mdi-check-circle',
+        spinner: true,
+        textColor: 'positive',
+        message: `${tc('orderResourceReclaiming')}`,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+      try {
+        const respReclaim = await api.server.order.postOrderIdClaim({ path: { id: orderId } })
+        if (respReclaim.status === 200) {
+          Notify.create({
+            classes: 'notification-positive shadow-15',
+            icon: 'mdi-check-circle',
+            textColor: 'positive',
+            message: `${tc('orderResourceReclaimSuccess')}`,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+          // 更新orderId对应order
+          void await this.loadSingleOrder({
+            isGroup,
+            orderId
+          })
+          // 更新order交付的server
+          const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
+          if (serverId) {
+            // 持续尝试取回交付的server信息
+            const timerId = setInterval(
+              async () => {
+                // 取回server信息
+                void await this.loadSingleServer({
+                  isGroup,
+                  serverId
+                })
+                // 表里存在该server则表示取回成功，消除timer
+                if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
+                  clearInterval(timerId)
+                }
+              }, 1000
+            )
+          }
+          // 更新order影响的余额
+          if (isGroup) {
+            const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
+            void await this.loadSingleGroupBalance(groupId)
+          } else {
+            void await this.loadPersonalBalance()
+          }
+          // order影响的coupon
+          isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+          // 跳转到该order详情页面
+          navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+        } else {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: respReclaim.data.message,
+            caption: respReclaim.data.code,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      } catch {
+        //
+      }
+    },
+    /* 取回资源 */
     /* order */
 
     /* coupon */

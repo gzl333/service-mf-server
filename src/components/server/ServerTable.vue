@@ -10,6 +10,7 @@ import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import ServerStatus from 'components/server/ServerStatus.vue'
 import ServerOperationBtnGroup from 'components/server/ServerOperationBtnGroup.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   servers: {
@@ -216,11 +217,13 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           </q-td>
 
           <q-td key="serviceNode" :props="props">
+
             <div>
               {{
                 i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service]?.name : store.tables.serviceTable.byId[props.row.service]?.name_en
               }}
             </div>
+
             <div>
               {{
                 i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service]?.data_center]?.name :
@@ -228,35 +231,10 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               }}
             </div>
 
-            <div>
-              <q-icon
-                v-if="store.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('ev')">
-                <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-              <!--                            <q-tooltip>{{tc('该节点的服务类型为EVCloud')}}</q-tooltip>-->
-            </div>
+            <CloudPlatformLogo
+              :platform-name="store.tables.serviceTable.byId[props.row.service]?.service_type"
+              logo-style="horizontal"/>
 
-            <div>
-              <q-icon
-                v-if="store.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('open')">
-                <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
-              </q-icon>
-              <!--                            <q-tooltip>{{tc('该节点的服务类型为OpenStack')}}</q-tooltip>-->
-            </div>
-
-            <!--            <q-tooltip class="bg-grey-4" :offset="[0, -15]">-->
-            <!--              <span class="text-black">-->
-            <!--                {{ tc('该节点的服务类型为') }}-->
-            <!--              </span>-->
-            <!--              <q-icon-->
-            <!--                v-if="store.state.fed.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('ev')"-->
-            <!--                name="img:svg/EVCloud-Logo-Horizontal.svg"-->
-            <!--                style="width: 100px;height: 20px"/>-->
-            <!--              <q-icon-->
-            <!--                v-if="store.state.fed.tables.serviceTable.byId[props.row.service]?.service_type.toLowerCase().includes('open')"-->
-            <!--                name="img:svg/OpenStack-Logo-Horizontal.svg"-->
-            <!--                style="width: 100px;height: 20px"/>-->
-            <!--            </q-tooltip>-->
           </q-td>
 
           <q-td key="image" :props="props">
@@ -270,7 +248,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
             <q-tooltip :offset="[0, -15]">
               {{ props.row.image }}
-<!--              {{ props.row.image_desc }}-->
+              <!--              {{ props.row.image_desc }}-->
             </q-tooltip>
 
           </q-td>

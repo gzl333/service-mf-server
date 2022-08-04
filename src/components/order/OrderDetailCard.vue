@@ -129,11 +129,12 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
               <q-separator vertical/>
 
-              <div class="col-7 q-lr-md">
+              <div class="col-8 q-lr-md">
                 <q-stepper
                   flat
                   done-color="light-green"
                 >
+                  <!--位置1 起始项 -->
                   <q-step
                     name="placed"
                     :title="tc('components.order.OrderDetailCard.submit_order')"
@@ -143,10 +144,13 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   >
                   </q-step>
 
+                  <!--位置2 支付状态：取消、无需支付、待支付、已支付 -->
+
+                  <!--取消-->
                   <q-step
                     v-if="order.status === 'cancelled'"
                     name="cancelled"
-                    :title="tc('components.order.OrderDetailCard.cancel_order')"
+                    :title="tc('orderCancelled')"
                     :caption="new Date(order.cancelled_time).toLocaleString(i18n.global.locale)"
                     icon="close"
                     :done="order.status === 'cancelled'"
@@ -155,24 +159,41 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   >
                   </q-step>
 
+                  <!--无需支付、待支付、已支付-->
                   <q-step
                     v-else
                     :disable="order.pay_type === 'postpaid'"
                     name="paid"
                     :title="tc('components.order.OrderDetailCard.pay_order')"
-                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.no_prepayment_required'): order.status === 'paid' ?new Date(order.payment_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_paid')"
+                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.no_prepayment_required'): order.status === 'unpaid' ? tc('orderToPay') :  new Date(order.payment_time).toLocaleString(i18n.global.locale)"
                     icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
                   </q-step>
 
+                  <!--位置3：(非支付取消状态下)交付状态： 待交付、交付成功、交付失败 -->
+
+                  <!--待交付、交付成功-->
                   <q-step
-                    v-if="order.status === 'unpaid' || order.status === 'paid'"
+                    v-if="order.status !== 'cancelled' && order.resources[0].instance_status !== 'failed'"
+                    name="delivered"
+                    :title="order.resources[0].instance_status === 'wait' ? tc('components.order.OrderDetailCard.resource_delivery') : tc('orderResourceDelivered')"
+                    :caption="order.resources[0].instance_status === 'wait' ? tc('components.order.OrderDetailCard.to_be_delivered') : new Date(order.resources[0].delivered_time).toLocaleString(i18n.global.locale)"
+                    icon="task_alt"
+                    :done="order.resources[0].instance_status === 'success'"
+                  >
+                  </q-step>
+
+                  <!--交付失败-->
+                  <q-step
+                    v-if="order.status !== 'cancelled' && order.resources[0].instance_status === 'failed'"
                     name="delivered"
                     :title="tc('components.order.OrderDetailCard.resource_delivery')"
-                    :caption="order.status === 'paid' ? new Date(order.resources[0]?.delivered_time).toLocaleString(i18n.global.locale): tc('components.order.OrderDetailCard.to_be_delivered')"
+                    :caption="tc('orderResourceFailed')"
                     icon="task_alt"
-                    :done="order.status === 'paid'"
+                    :done="true"
+                    done-icon="close"
+                    done-color="red"
                   >
                   </q-step>
 
@@ -182,7 +203,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
               <q-separator vertical/>
 
-              <div class="col-3 q-pl-md column items-center justify-center full-height">
+              <div class="col-2 q-pl-md column items-center justify-center full-height">
 
                 <OrderStatus :is-group="isGroup" :order-id="order.id" class="text-h6"/>
 
@@ -193,8 +214,21 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   size="md"
                   unelevated
                   no-caps
-                  @click="store.payOrderDialog(order.id, isGroup)">
+                  @click="store.payOrderDialog(order.id, isGroup)"
+                >
                   {{ tc('components.order.OrderDetailCard.pay') }}
+                </q-btn>
+
+                <q-btn
+                  v-if="(!isGroup || store.tables.groupTable.byId[order.vo_id]?.myRole !== 'member') && order.status === 'paid' && order.resources[0].instance_status === 'failed'"
+                  class="col-auto"
+                  color="primary"
+                  size="md"
+                  unelevated
+                  no-caps
+                  @click="store.reclaimOrderResource(order.id, isGroup)"
+                >
+                  {{ tc('orderResourceReclaim') }}
                 </q-btn>
 
               </div>
@@ -338,7 +372,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   </div>
 
                   <div class="row items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.service_type') }}</div>
+                    <div class="col-3 text-grey">{{ tc('cloudPlatform') }}</div>
                     <div class="col-shrink">
                       <q-icon
                         v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"

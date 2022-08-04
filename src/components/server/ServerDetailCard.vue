@@ -522,7 +522,7 @@ const gotoManualVpn = () => {
                 </div>
 
                 <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.service_type') }}</div>
+                  <div class="col-3 text-grey">{{ tc('cloudPlatform') }}</div>
                   <div class="col">
 
                     <!--                    <q-icon-->

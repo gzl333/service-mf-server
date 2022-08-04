@@ -29,21 +29,33 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
 <template>
   <span class="OrderStatus">
 
-    <div v-if="order.status === 'unpaid'" class="text-bold text-red" >
-       {{ tc('components.order.OrderStatus.to_be_paid') }}
-    </div>
-
-     <div v-if="order.status === 'paid'" class="text-bold text-light-green" >
-       {{ tc('components.order.OrderStatus.paid') }}
+    <div v-if="order.status === 'unpaid'" class="text-bold text-primary">
+       {{ tc('orderToPay') }}
     </div>
 
     <div v-if="order.status === 'cancelled'" class="text-bold text-black">
-       {{ tc('components.order.OrderStatus.cancelled') }}
+       {{ tc('orderPaid') }}
     </div>
 
     <div v-if="order.status === 'refund'" class="text-bold text-black">
-       {{ tc('components.order.OrderStatus.refunded') }}
+       {{ tc('orderCancelled') }}
     </div>
+
+    <div v-if="order.status === 'paid' && order.resources[0].instance_status === 'wait'"
+         class="text-bold text-light-green">
+       {{ tc('orderRefunded') }}
+    </div>
+
+    <div v-if="order.status === 'paid' && order.resources[0].instance_status === 'success'"
+         class="text-bold text-light-green">
+       {{ tc('orderResourceDelivered') }}
+    </div>
+
+    <div v-if="order.status === 'paid' && order.resources[0].instance_status === 'failed'"
+         class="text-bold text-red">
+       {{ tc('orderResourceFailed') }}
+    </div>
+
   </span>
 </template>
 

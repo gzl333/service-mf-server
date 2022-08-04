@@ -29,7 +29,8 @@ const axiosServer = axios.create({
   // 序列化器，没有这个无法在query里发送数组参数。body里的数组不需要序列化器。
   // https://github.com/axios/axios/issues/604#issuecomment-321460450
   paramsSerializer: function (params) {
-    return qs.stringify(params, { arrayFormat: 'comma' })
+    // return qs.stringify(params, { arrayFormat: 'comma' })
+    return qs.stringify(params, { arrayFormat: 'repeat' })
   }
 })
 

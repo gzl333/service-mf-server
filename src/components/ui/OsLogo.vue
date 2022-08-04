@@ -29,7 +29,7 @@ const props = defineProps({
 // const router = useRouter()
 
 const getOsIcon = (osName: string) => {
-  osName = osName?.toLowerCase()
+  osName = osName.toLowerCase()
   if (osName.includes('alma')) {
     return require('assets/svg/os_alma.svg')
   } else if (osName.includes('arch')) {

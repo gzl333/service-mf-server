@@ -173,7 +173,6 @@ export default {
       operating_system: '操作系统',
       org: '所属机构',
       service_node: '服务单元',
-      service_type: '云管平台',
       total_billing: '计费总额',
       discount: '优惠',
       points: '点',
@@ -404,8 +403,7 @@ export default {
       long_term: '长期',
       renewal: '续期',
       org: '所属机构',
-      service_node: '服务单元',
-      service_type: '云管平台'
+      service_node: '服务单元'
     },
     ServerOperationBtnGroup: {
       server_operation_locked: '已锁定云主机操作',

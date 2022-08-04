@@ -6,6 +6,20 @@ import store from 'src/i18n/zh/store'
 import hooks from 'src/i18n/zh/hooks'
 
 export default {
+  // generals
+  cloudPlatform: '云管平台',
+
+  orderToPay: '待支付',
+  orderPaid: '已支付',
+  orderCancelled: '已取消',
+  orderRefunded: '已退款',
+  orderResourceDelivered: '已交付',
+  orderResourceFailed: '交付失败',
+  orderResourceReclaim: '取回资源',
+  orderResourceReclaiming: '正在取回资源...',
+  orderResourceReclaimSuccess: '成功取回资源',
+
+  // specifics
   components,
   layouts,
   pages,

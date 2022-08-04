@@ -384,7 +384,7 @@ export default {
       },
       query: {
         payment_method: 'balance' | 'cashcoupon' | 'coupon-balance',
-        coupon_ids?: string[]
+        coupon_ids?: string[] // qs.stringify comma 风格不识别
       }
     }) {
       const config = {

@@ -174,8 +174,7 @@ export default {
       network_segment: 'Network Segment', // '网段',
       operating_system: 'Operating System', // '操作系统',
       org: 'Organization', // '所属机构',
-      service_node: 'Service Unit', // '服务节点',
-      service_type: 'VM Manager', // '服务类型',
+      service_node: 'Service Unit', // '服务节点'
       total_billing: 'Total Amount', // '计费总额',
       discount: 'Discount', // '优惠',
       points: 'Points', // '点',
@@ -406,8 +405,7 @@ export default {
       long_term: 'Long-term', // '长期',
       renewal: 'Renew', // '续期',
       org: 'Organization', // '所属机构',
-      service_node: 'Service Unit', // '服务节点',
-      service_type: 'VM Manager' // '服务类型'
+      service_node: 'Service Unit' // '服务节点'
     },
     ServerOperationBtnGroup: {
       server_operation_locked: 'Server Operation Locked', // '已锁定云主机操作',
