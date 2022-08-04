@@ -629,28 +629,9 @@ const deployServer = async () => {
         </div>
 
         <div v-if="images.length > 0" class="row item-row q-gutter-lg">
-          <!--          <div class="col">-->
-
-          <!--          <q-radio v-for="image in images"-->
-          <!--                   :val="image.id"-->
-          <!--                   :key="image.id"-->
-          <!--                   class="col-auto radio non-selectable"-->
-          <!--                   dense-->
-          <!--                   v-model="radioImage">-->
-          <!--            <div class="column items-center q-pr-md"-->
-          <!--                 :class="radioImage===image.id ? 'text-primary' : 'text-black'"-->
-          <!--            >-->
-          <!--              <div>-->
-          <!--                <OsLogo :os-name="image.name"/>-->
-          <!--              </div>-->
-          <!--              <div>-->
-          <!--                {{ image.name }}-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </q-radio>-->
 
           <q-btn
-            :class="radioImage === image.id ? 'shadow-13' : ''"
+            :class="radioImage === image.id ? 'shadow-14' : ''"
             :color="radioImage === image.id ? 'white' : 'grey-4'"
             v-for="image in images"
             :val="image.id"
@@ -663,20 +644,19 @@ const deployServer = async () => {
           >
             <div class="column items-center justify-center"
                  style="width: 200px;height: 100px;">
-              <div class="col-6 row items-center">
-                <OsLogo class="col" :os-name="image.name" size="xl"/>
+              <div class="col-7 row items-center">
+                <OsLogo class="col" :os-name="image.name" size="60px"/>
               </div>
-              <div class="col-6 row items-center">
-                <div class="text-black">{{ image.name.slice(0, 60) }}</div>
+              <div class="col-5 row items-center">
+                <div class="text-black q-pa-none">{{ image.name.slice(0, 60) }}</div>
               </div>
             </div>
 
-<!--            <q-badge v-if="radioImage === image.id" color="primary" floating rounded>-->
-            <!--              <q-icon name="check" size="10px"/>-->
-            <!--            </q-badge>-->
+            <q-badge v-if="radioImage === image.id" style="height: 15px; width: 15px;" color="primary" floating>
+              <q-icon name="check" size="5px"/>
+            </q-badge>
           </q-btn>
 
-          <!--          </div>-->
         </div>
 
         <div v-else class="row item-row">

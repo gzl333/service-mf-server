@@ -239,7 +239,7 @@ const onOKClick = () => {
 
         <q-checkbox style="margin-left: -10px;" v-model="check" color="primary">
           <div :class="check?'text-primary':'text-black'">
-            {{ tc('components.server.ServerRebuildDialog.understand_delete') }}
+            {{ tc('components.server.ServerRebuildDialog.understand_rebuild') }}
           </div>
         </q-checkbox>
 

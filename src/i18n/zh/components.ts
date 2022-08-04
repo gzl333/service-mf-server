@@ -437,7 +437,7 @@ export default {
       operating_system: '操作系统',
       target_operating_system: '目标操作系统',
       read_carefully_check: '请仔细阅读以下事项，并在确认后勾选:',
-      understand_delete: '我了解删除云主机会丢失全部数据，且无法自行恢复',
+      understand_rebuild: '我了解重建云主机会丢失全部数据，且无法恢复',
       confirm: '确认',
       cancel: '取消'
     },

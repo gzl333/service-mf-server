@@ -439,7 +439,7 @@ export default {
       operating_system: 'Operating System', // '操作系统',
       target_operating_system: 'Target Operating System', // '目标操作系统',
       read_carefully_check: 'Please carefully read the following items and check after confirmation:', // '请仔细阅读以下事项，并在确认后勾选:',
-      understand_delete: 'I understand that deleting server will lose all data and I cannot recover it myself.', // '我了解删除云主机会丢失全部数据，且无法自行恢复',
+      understand_rebuild: 'I understand that rebuilding server will lose all data and it cannot be recovered.', // '我了解删除云主机会丢失全部数据，且无法自行恢复',
       confirm: 'Confirm', // '确认',
       cancel: 'Cancel' // '取消'
     },
