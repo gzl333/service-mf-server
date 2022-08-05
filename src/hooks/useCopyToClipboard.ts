@@ -17,9 +17,9 @@ export default function () {
         // html: true,
         message: isSecret ? `${tc('hooks.useCopyToClipboard.content_copied')}` : `${text} ${tc('hooks.useCopyToClipboard.copied')}`,
         position: 'bottom',
-        closeBtn: true,
+        closeBtn: false,
         // timeout: 2000,
-        multiLine: false
+        multiLine: true
       })
     })
   }

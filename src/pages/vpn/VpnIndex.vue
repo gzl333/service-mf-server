@@ -112,13 +112,16 @@ const gotoManualVpn = () => {
                     :ripple="false"
                     no-caps
                   >
-                    <div v-if="i18n.global.locale === 'zh'">
+                    <div v-if="i18n.global.locale === 'zh'"
+                         style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
                       {{ store.tables.dataCenterTable.byId[id].name }}
                     </div>
-                    <div v-else>
-                      <div v-for="line in store.tables.dataCenterTable.byId[id].name_en.split(',')" :key="line">
-                        {{ line }}
-                      </div>
+                    <div v-else
+                         style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
+                      {{ store.tables.dataCenterTable.byId[id].name_en }}
+                      <!--                      <div v-for="line in store.tables.dataCenterTable.byId[id].name_en.split(',')" :key="line">-->
+                      <!--                        {{ line }}-->
+                      <!--                      </div>-->
                     </div>
                   </q-tab>
                 </q-tabs>

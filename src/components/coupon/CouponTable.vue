@@ -54,7 +54,7 @@ const columns = computed(() => [
     align: 'center',
     classes: 'ellipsis',
     headerStyle: 'padding: 0 0 0 1px',
-    style: 'padding: 15px 0px;max-width: 120px;white-space: normal;'
+    style: 'padding: 15px 0px; max-width: 120px; word-break: break-all; word-wrap: break-word; white-space: normal;'
   }] : []),
   {
     name: 'serviceNode',
@@ -63,7 +63,7 @@ const columns = computed(() => [
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 2px'
+    headerStyle: 'padding: 0 2px; min-width: 150px; max-width: 200px;  word-break: break-all; word-wrap: break-word; white-space: normal;'
   },
   {
     name: 'redeemTime',

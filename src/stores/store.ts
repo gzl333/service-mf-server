@@ -2463,6 +2463,7 @@ export const useStore = defineStore('server', {
     },
     // 编辑云主机备注
     editServerNoteDialog (payload: { serverId: string; isGroup?: boolean }) {
+      const MAX_LENGTH_REMARK = 100
       Dialog.create({
         class: 'dialog-primary',
         title: `${tc('store.dialog.edit_server_note')}:${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].ipv4 : this.tables.personalServerTable.byId[payload.serverId].ipv4}`,
@@ -2470,7 +2471,7 @@ export const useStore = defineStore('server', {
         prompt: {
           model: `${payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId].remarks : this.tables.personalServerTable.byId[payload.serverId].remarks}`,
           counter: true,
-          maxlength: 40,
+          maxlength: MAX_LENGTH_REMARK,
           type: 'text' // optional
         },
         color: 'primary',

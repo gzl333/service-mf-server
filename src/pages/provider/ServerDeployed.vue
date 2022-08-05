@@ -201,7 +201,7 @@ const columns = computed(() => [
     field: 'serviceNode',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px',
+    style: 'padding: 15px 0px; min-width: 150px; max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 2px'
   },
   {
@@ -211,7 +211,7 @@ const columns = computed(() => [
     align: 'center',
     classes: 'ellipsis',
     headerStyle: 'padding: 0 0 0 1px',
-    style: 'max-width: 100px;padding: 15px 0px'
+    style: 'padding: 15px 0px; min-width: 80px; max-width: 100px; word-break: break-all; word-wrap: break-word; white-space: normal;'
   },
   {
     name: 'configuration',
@@ -237,7 +237,7 @@ const columns = computed(() => [
     field: 'user',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px',
+    style: 'padding: 15px 0px; max-width: 150px; word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 2px'
   },
   {
@@ -256,7 +256,7 @@ const columns = computed(() => [
     align: 'center',
     classes: 'ellipsis',
     headerStyle: 'padding: 0 0 0 1px',
-    style: 'max-width: 100px;padding: 15px 0px;white-space: normal;'
+    style: 'padding: 15px 0px; max-width: 100px; word-break: break-all; word-wrap: break-word; white-space: normal;'
   },
   // {
   //   name: 'vnc',

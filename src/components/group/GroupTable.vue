@@ -41,7 +41,7 @@ const columns = computed(() => [
     field: 'name',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px; max-width: 200px;white-space: normal;',
+    style: 'padding: 15px 0px; max-width: 200px;word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
   {
@@ -50,7 +50,7 @@ const columns = computed(() => [
     field: 'company',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
+    style: 'padding: 15px 0px; max-width: 150px;word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
   {
@@ -59,7 +59,7 @@ const columns = computed(() => [
     field: 'desc',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px; max-width: 150px;white-space: normal;',
+    style: 'padding: 15px 0px; max-width: 150px;word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
   {
@@ -173,9 +173,9 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="desc" :props="props">
             {{ props.row.description }}
-            <q-tooltip>
-              {{ props.row.description }}
-            </q-tooltip>
+<!--            <q-tooltip>-->
+<!--              {{ props.row.description }}-->
+<!--            </q-tooltip>-->
           </q-td>
 
           <q-td key="creation_time" :props="props">

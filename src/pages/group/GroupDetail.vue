@@ -100,35 +100,11 @@ const clickToCopy = useCopyToClipboard()
               <div class="col-auto ">
                 <div class="column justify-start items-center" style="min-height: 80px;">
                   <div class="col-2 text-grey">
-                    ID
-                  </div>
-                  <div class="col-10">
-                    <div class="row justify-center items-center ellipsis wrap"
-                         style="max-width: 100px; min-height: 70px;white-space: normal;">
-                      <div class="col-auto">
-                        {{ group.id }}
-                      </div>
-                      <q-btn class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs"
-                             color="primary"
-                             @click="clickToCopy(group.id)">
-                        <q-tooltip>
-                          {{ tc('components.server.ServeTable.copy_to_clipboard') }}
-                        </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <div class="col-auto ">
-                <div class="column justify-start items-center" style="min-height: 80px;">
-                  <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.remark') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center ellipsis wrap"
-                         style="max-width: 400px; min-height: 70px;white-space: normal;">
+                         style="max-width: 200px; min-height: 70px; word-break: break-all; word-wrap: break-word; white-space: normal;">
                       <!--                      {{ group.description.slice(0, 30) }}-->
                       {{ group.description }}
                       <q-tooltip>
@@ -141,14 +117,13 @@ const clickToCopy = useCopyToClipboard()
               </div>
 
               <div class="col-auto ">
-                <div class="column  justify-start items-center"
-                     style="min-height: 80px; max-width: 150px;white-space: normal;">
+                <div class="column  justify-start items-center" style="min-height: 80px;">
                   <div class="col-2 text-grey">
                     {{ tc('pages.group.GroupDetail.org') }}
                   </div>
                   <div class="col-10">
                     <div class="row justify-center items-center ellipsis"
-                         style="max-width: 100px; min-height: 70px;white-space: normal;">
+                         style="max-width: 200px; min-height: 70px; word-break: break-all; word-wrap: break-word; white-space: normal;">
                       {{ group.company }}
                     </div>
                   </div>
@@ -212,20 +187,28 @@ const clickToCopy = useCopyToClipboard()
                 </div>
               </div>
 
-              <!--              <div class="col-auto ">-->
-              <!--                <div class="column justify-start items-center" style="height: 120px">-->
-              <!--                  <div class="col-2 text-grey">-->
-              <!--                    余额-->
-              <!--                  </div>-->
-              <!--                  <div class="col-10">-->
-              <!--                    <div class="row justify-center items-center"-->
-              <!--                         :class="Number(store.tables.groupBalanceTable.byId[group.balance]?.balance) >= 0 ? 'text-light-green':'text-red'"-->
-              <!--                         style="height: 70px">-->
-              <!--                      {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}点-->
-              <!--                    </div>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
+              <div class="col-auto ">
+                <div class="column justify-start items-center" style="min-height: 80px;">
+                  <div class="col-2 text-grey">
+                    ID
+                  </div>
+                  <div class="col-10">
+                    <div class="row justify-center items-center ellipsis wrap"
+                         style="max-width: 100px; min-height: 70px; word-break: break-all; word-wrap: break-word; white-space: normal;">
+                      <div class="col-auto">
+                        {{ group.id }}
+                      </div>
+                      <q-btn class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs"
+                             color="primary"
+                             @click="clickToCopy(group.id)">
+                        <q-tooltip>
+                          {{ tc('components.server.ServeTable.copy_to_clipboard') }}
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div v-if="group.myRole !== 'member'" class="col-auto ">
                 <div class="column justify-start items-center" style="min-height: 80px">
