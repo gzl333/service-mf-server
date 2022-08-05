@@ -172,20 +172,20 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
 
             <q-separator/>
 
-            <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-red"
-                    :disable="server.lock === 'lock-operation'"
-                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete', isGroup})">
-              <div class="row">
-                <q-item-section class="col-auto">
-                  <q-icon name="delete" size="sm"/>
-                </q-item-section>
-                <q-item-section class="col-auto">
-                  <q-item-section>
-                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>
-                  </q-item-section>
-                </q-item-section>
-              </div>
-            </q-item>
+<!--            <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-red"-->
+<!--                    :disable="server.lock === 'lock-operation'"-->
+<!--                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete', isGroup})">-->
+<!--              <div class="row">-->
+<!--                <q-item-section class="col-auto">-->
+<!--                  <q-icon name="delete" size="sm"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section class="col-auto">-->
+<!--                  <q-item-section>-->
+<!--                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>-->
+<!--                  </q-item-section>-->
+<!--                </q-item-section>-->
+<!--              </div>-->
+<!--            </q-item>-->
 
             <q-item clickable v-close-popup class="bg-white text-red"
                     :disable="server.lock === 'lock-operation'"
@@ -196,7 +196,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
                 </q-item-section>
                 <q-item-section class="col-auto">
                   <q-item-section>
-                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_delete') }}</q-item-label>
+                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>
                   </q-item-section>
                 </q-item-section>
               </div>

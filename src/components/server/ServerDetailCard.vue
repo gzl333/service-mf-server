@@ -215,15 +215,15 @@ const gotoManualVpn = () => {
                     </q-tooltip>
                   </q-btn>
 
-                  <q-btn v-if="server.status && server.status !== 1"
-                         :disable="server.lock === 'lock-operation'"
-                         icon="delete" text-color="red"
-                         unelevated flat padding="none" size="lg"
-                         @click="store.serverOperationDialog({ serverId: server.id, action: 'delete', isGroup, isJump: true})">
-                    <q-tooltip>
-                     {{ tc('components.server.ServeDetailCard.delete') }}
-                    </q-tooltip>
-                  </q-btn>
+<!--                  <q-btn v-if="server.status && server.status !== 1"-->
+<!--                         :disable="server.lock === 'lock-operation'"-->
+<!--                         icon="delete" text-color="red"-->
+<!--                         unelevated flat padding="none" size="lg"-->
+<!--                         @click="store.serverOperationDialog({ serverId: server.id, action: 'delete', isGroup, isJump: true})">-->
+<!--                    <q-tooltip>-->
+<!--                     {{ tc('components.server.ServeDetailCard.delete') }}-->
+<!--                    </q-tooltip>-->
+<!--                  </q-btn>-->
 
                   <q-btn v-if="server.status && server.status"
                          :disable="server.lock === 'lock-operation'"
@@ -231,7 +231,7 @@ const gotoManualVpn = () => {
                          unelevated flat padding="none" size="lg"
                          @click="store.serverOperationDialog({ serverId: server.id, action: 'delete_force', isGroup, isJump: true})">
                     <q-tooltip>
-                      {{ tc('components.server.ServeDetailCard.force_delete') }}
+                      {{ tc('components.server.ServeDetailCard.delete') }}
                     </q-tooltip>
                   </q-btn>
 
