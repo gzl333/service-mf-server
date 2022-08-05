@@ -7,6 +7,8 @@ import hooks from 'src/i18n/zh/hooks'
 
 export default {
   // generals
+  name: '名称',
+
   cloudPlatform: '云管平台',
 
   orderToPay: '待支付',

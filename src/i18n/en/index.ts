@@ -7,6 +7,8 @@ import hooks from 'src/i18n/en/hooks'
 
 export default {
   // generals
+  name: 'Name',
+
   cloudPlatform: 'Cloud Platform',
 
   orderToPay: 'To be Paid',

@@ -37,7 +37,7 @@ const columns = computed(() => [
   },
   {
     name: 'name',
-    label: (() => tc('components.group.GroupTable.group'))(),
+    label: (() => tc('name'))(),
     field: 'name',
     align: 'center',
     classes: 'ellipsis',
