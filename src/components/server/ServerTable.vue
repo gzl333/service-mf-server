@@ -257,7 +257,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                 i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
-            <div>{{ props.row.ram / 1024 }}GB</div>
+            <div>{{ props.row.ram / 1024 }} GB</div>
           </q-td>
 
           <q-td key="billing" :props="props">

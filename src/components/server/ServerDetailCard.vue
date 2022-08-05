@@ -105,11 +105,11 @@ const gotoManualVpn = () => {
                 </div>
                 <div class="row q-pb-md items-center">
                   <!--                  <div class="col-2 text-grey">备注</div>-->
-                  <div class="col-auto">
-                    <span>
+                  <div class="col-auto row">
+                    <div class="col-auto" style="max-width: 400px; word-break: break-all; word-wrap: break-word; white-space: normal;">
                       {{ server.remarks }}
                       <q-tooltip>{{ tc('components.server.ServeDetailCard.remarks') }}</q-tooltip>
-                    </span>
+                    </div>
 
                     <q-btn v-if="!isGroup || isGroup && myRole!=='member'"
                            :disable="toggle"

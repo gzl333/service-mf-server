@@ -130,7 +130,7 @@ const onOKClick = () => {
           <div class="col-3 text-grey-7">
             {{tc('components.order.OrderRenewDialog.remarks')}}
           </div>
-          <div class="col">
+          <div class="col" style="max-width: 400px; word-break: break-all; word-wrap: break-word; white-space: normal;">
             {{ server.remarks }}
           </div>
         </div>
