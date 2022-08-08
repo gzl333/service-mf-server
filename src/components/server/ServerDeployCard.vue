@@ -135,14 +135,6 @@ watch(radioService, () => {
 })
 /* 在table都加载后，3个radio，随着service变化选择默认项 */
 
-/* 用户选择选项 */
-
-const userSelectImage = (imageId: string) => {
-  radioImage.value = imageId
-}
-
-/* 用户选择选项 */
-
 /* 新建云主机 */
 const isDeploying = ref(false)
 // check inputs
@@ -558,7 +550,7 @@ const deployServer = async () => {
             dense
             no-caps
             :ripple="false"
-            @click="userSelectImage(image.id)"
+            @click="radioImage = image.id"
           >
             <div class="column items-center justify-center"
                  style="width: 200px;height: 100px;">
@@ -752,6 +744,13 @@ const deployServer = async () => {
       </q-btn>
 
     </div>
+
+    <q-page-sticky expand position="bottom">
+      <div class="bg-grey-4" style="height: 150px; ">
+        footer content
+      </div>
+    </q-page-sticky>
+
   </div>
 </template>
 

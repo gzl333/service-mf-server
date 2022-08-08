@@ -7,6 +7,11 @@ const routes: RouteRecordRaw[] = [
     redirect: '/my/server/personal',
     children: [
       {
+        path: 'deploy', // 组列表
+        component: () => import('pages/ServerDeploy.vue'),
+        props: true
+      },
+      {
         path: 'personal',
         component: () => import('pages/personal/PersonalIndex.vue'),
         redirect: '/my/server/personal/list',
