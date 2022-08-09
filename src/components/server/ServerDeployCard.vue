@@ -745,12 +745,6 @@ const deployServer = async () => {
 
     </div>
 
-    <q-page-sticky expand position="bottom">
-      <div class="bg-grey-4" style="height: 150px; ">
-        footer content
-      </div>
-    </q-page-sticky>
-
   </div>
 </template>
 
