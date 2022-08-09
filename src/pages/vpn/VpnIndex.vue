@@ -68,197 +68,179 @@ const gotoManualVpn = () => {
 
 <template>
   <div class="VpnIndex">
-    <div class="column">
+    <q-scroll-area style="height: calc(100vh - 60px);">
+      <div class="column">
 
-      <!--      <div class="col-auto">-->
-      <!--        <div class="row justify-center">-->
-      <!--          <global-header-content class="content-fixed-width"/>-->
-      <!--        </div>-->
-      <!--      </div>-->
+        <!--      <div class="col-auto">-->
+        <!--        <div class="row justify-center">-->
+        <!--          <global-header-content class="content-fixed-width"/>-->
+        <!--        </div>-->
+        <!--      </div>-->
 
-      <!--      <q-separator/>-->
+        <!--      <q-separator/>-->
 
-      <div class="col-auto">
-        <div class="row justify-center">
-          <!--          <div class="col"/>-->
-          <div class="content-fixed-width">
-            <div class="row">
-              <div class="text-h6 q-pt-lg q-px-none">
-                VPN
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col">
-
-                <div v-if="datacentersFiltered.length === 0" class="row full-height items-center">
-                  <div class="col">{{ tc('pages.vpn.VpnIndex.no_results') }}</div>
+        <div class="col-auto">
+          <div class="row justify-center">
+            <!--          <div class="col"/>-->
+            <div class="content-fixed-width">
+              <div class="row">
+                <div class="text-h6 q-pt-lg q-px-none">
+                  VPN
                 </div>
+              </div>
 
-                <q-tabs
-                  v-else
-                  v-model="tabDataCenter"
-                  indicator-color="primary"
-                  active-color="primary"
-                  align="left"
-                  inline-label
-                >
-                  <q-tab
-                    v-for="id in datacentersFiltered"
-                    :key="id"
-                    class="q-px-none q-py-md q-mr-md wrap"
-                    :name="id"
-                    icon="vpn_lock"
-                    :ripple="false"
-                    no-caps
+              <div class="row">
+                <div class="col">
+
+                  <div v-if="datacentersFiltered.length === 0" class="row full-height items-center">
+                    <div class="col">{{ tc('pages.vpn.VpnIndex.no_results') }}</div>
+                  </div>
+
+                  <q-tabs
+                    v-else
+                    v-model="tabDataCenter"
+                    indicator-color="primary"
+                    active-color="primary"
+                    align="left"
+                    inline-label
                   >
-                    <div v-if="i18n.global.locale === 'zh'"
-                         style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                      {{ store.tables.dataCenterTable.byId[id].name }}
-                    </div>
-                    <div v-else
-                         style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                      {{ store.tables.dataCenterTable.byId[id].name_en }}
-                      <!--                      <div v-for="line in store.tables.dataCenterTable.byId[id].name_en.split(',')" :key="line">-->
-                      <!--                        {{ line }}-->
-                      <!--                      </div>-->
-                    </div>
-                  </q-tab>
-                </q-tabs>
-              </div>
-
-              <div class="col-2">
-                <div class="row full-height items-center">
-                  <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')"
-                           stack-label>
-                    <template v-slot:prepend>
-                      <q-icon name="search"/>
-                    </template>
-                    <template v-slot:append v-if="filter">
-                      <q-icon name="close" @click="filter = ''" class="cursor-pointer"/>
-                    </template>
-                  </q-input>
+                    <q-tab
+                      v-for="id in datacentersFiltered"
+                      :key="id"
+                      class="q-px-none q-py-md q-mr-md wrap"
+                      :name="id"
+                      icon="vpn_lock"
+                      :ripple="false"
+                      no-caps
+                    >
+                      <div v-if="i18n.global.locale === 'zh'"
+                           style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
+                        {{ store.tables.dataCenterTable.byId[id].name }}
+                      </div>
+                      <div v-else
+                           style="max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;">
+                        {{ store.tables.dataCenterTable.byId[id].name_en }}
+                        <!--                      <div v-for="line in store.tables.dataCenterTable.byId[id].name_en.split(',')" :key="line">-->
+                        <!--                        {{ line }}-->
+                        <!--                      </div>-->
+                      </div>
+                    </q-tab>
+                  </q-tabs>
                 </div>
-              </div>
 
+                <div class="col-2">
+                  <div class="row full-height items-center">
+                    <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')"
+                             stack-label>
+                      <template v-slot:prepend>
+                        <q-icon name="search"/>
+                      </template>
+                      <template v-slot:append v-if="filter">
+                        <q-icon name="close" @click="filter = ''" class="cursor-pointer"/>
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <q-separator/>
+        <q-separator/>
 
-      <div class="col-auto q-pt-xl">
-        <div class="row justify-center">
-          <div class="content-fixed-width">
+        <div class="col-auto q-pt-xl">
+          <div class="row justify-center">
+            <div class="content-fixed-width">
 
-            <div v-if="datacentersFiltered.length !== 0" class="row">
+              <div v-if="datacentersFiltered.length !== 0" class="row">
 
-              <div class="col-auto">
-                <q-tabs
-                  v-model="tabService"
-                  vertical
-                  active-color="primary"
-                  active-bg-color="grey-2"
-                >
-                  <q-tab
-                    v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
-                    :key="serviceId" :name="serviceId"
-                    class="q-pl-none"
-                    style="justify-content:initial; text-align: left; font-weight: bold;"
-                    :ripple="false"
-                    no-caps
+                <div class="col-auto">
+                  <q-tabs
+                    v-model="tabService"
+                    vertical
+                    active-color="primary"
+                    active-bg-color="grey-2"
                   >
-                    {{
-                      i18n.global.locale === 'zh' ?
-                        store.tables.serviceTable.byId[serviceId]?.name :
-                        store.tables.serviceTable.byId[serviceId]?.name_en
-                    }}
-                  </q-tab>
-                </q-tabs>
-              </div>
-
-              <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
-                {{ tc('pages.vpn.VpnIndex.no_vpn_service') }}
-              </div>
-
-              <div class="col">
-                <q-tab-panels
-                  v-model="tabService"
-                  animated
-                  vertical
-                  transition-prev="jump-up"
-                  transition-next="jump-up"
-                >
-
-                  <q-tab-panel
-                    v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
-                    :key="serviceId" :name="serviceId"
-                    class="bg-grey-2 overflow-hidden q-py-none"
-                    style="min-height: 192px;"
-                  >
-
-                    <div
-                      v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||
-                      !store.tables.serviceTable.byId[tabService].need_vpn"
+                    <q-tab
+                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
+                      :key="serviceId" :name="serviceId"
+                      class="q-pl-none"
+                      style="justify-content:initial; text-align: left; font-weight: bold;"
+                      :ripple="false"
+                      no-caps
                     >
-                      <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
-                        {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}
+                      {{
+                        i18n.global.locale === 'zh' ?
+                          store.tables.serviceTable.byId[serviceId]?.name :
+                          store.tables.serviceTable.byId[serviceId]?.name_en
+                      }}
+                    </q-tab>
+                  </q-tabs>
+                </div>
+
+                <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
+                  {{ tc('pages.vpn.VpnIndex.no_vpn_service') }}
+                </div>
+
+                <div class="col">
+                  <q-tab-panels
+                    v-model="tabService"
+                    animated
+                    vertical
+                    transition-prev="jump-up"
+                    transition-next="jump-up"
+                  >
+
+                    <q-tab-panel
+                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
+                      :key="serviceId" :name="serviceId"
+                      class="bg-grey-2 overflow-hidden q-py-none"
+                      style="min-height: 192px;"
+                    >
+
+                      <div
+                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||
+                      !store.tables.serviceTable.byId[tabService].need_vpn"
+                      >
+                        <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
+                          {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}
+                        </div>
+
+                        <div v-else>
+                          {{ tc('pages.vpn.VpnIndex.no_vpn_detail') }}
+                        </div>
+
                       </div>
 
                       <div v-else>
-                        {{ tc('pages.vpn.VpnIndex.no_vpn_detail') }}
-                      </div>
-
-                    </div>
-
-                    <div v-else>
-
-                      <div class="row items-center" style="height: 48px">
-                        <div class="col-2 text-grey">
-                          VPN {{ tc('pages.vpn.VpnIndex.account_status') }}
-                        </div>
-
-                        <div v-if="vpn.active" class="col-shrink row items-center">
-                          <q-icon name="check_circle" color="light-green" size="sm"/>
-                          {{ tc('pages.vpn.VpnIndex.activated') }}
-                        </div>
-
-                        <div v-else class="col-shrink row items-center">
-                          <q-icon name="cancel" color="red" size="sm"/>
-                          {{ tc('pages.vpn.VpnIndex.deactivated') }}
-                        </div>
-                      </div>
-
-                      <div v-if="vpn.active">
-                        <div class="row items-center" style="height: 48px">
-                          <div class="col-2 text-grey">
-                            VPN {{ tc('pages.vpn.VpnIndex.user_name') }}
-                          </div>
-                          <div class="col">
-                            {{ vpn?.username }}
-                            <q-btn
-                              class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
-                              @click="clickToCopy(vpn?.username)">
-                              <q-tooltip>
-                                {{ tc('pages.vpn.VpnIndex.copy') }}
-                              </q-tooltip>
-                            </q-btn>
-                          </div>
-                        </div>
 
                         <div class="row items-center" style="height: 48px">
                           <div class="col-2 text-grey">
-                            VPN {{ tc('pages.vpn.VpnIndex.password') }}
+                            VPN {{ tc('pages.vpn.VpnIndex.account_status') }}
                           </div>
 
-                          <div class="col-shrink">
+                          <div v-if="vpn.active" class="col-shrink row items-center">
+                            <q-icon name="check_circle" color="light-green" size="sm"/>
+                            {{ tc('pages.vpn.VpnIndex.activated') }}
+                          </div>
 
-                            <div class="row">
-                              <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+                          <div v-else class="col-shrink row items-center">
+                            <q-icon name="cancel" color="red" size="sm"/>
+                            {{ tc('pages.vpn.VpnIndex.deactivated') }}
+                          </div>
+                        </div>
 
-                              <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                                     @click="clickToCopy(vpn?.password, true)">
+                        <div v-if="vpn.active">
+                          <div class="row items-center" style="height: 48px">
+                            <div class="col-2 text-grey">
+                              VPN {{ tc('pages.vpn.VpnIndex.user_name') }}
+                            </div>
+                            <div class="col">
+                              {{ vpn?.username }}
+                              <q-btn
+                                class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
+                                @click="clickToCopy(vpn?.username)">
                                 <q-tooltip>
                                   {{ tc('pages.vpn.VpnIndex.copy') }}
                                 </q-tooltip>
@@ -266,56 +248,76 @@ const gotoManualVpn = () => {
                             </div>
                           </div>
 
+                          <div class="row items-center" style="height: 48px">
+                            <div class="col-2 text-grey">
+                              VPN {{ tc('pages.vpn.VpnIndex.password') }}
+                            </div>
+
+                            <div class="col-shrink">
+
+                              <div class="row">
+                                <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+
+                                <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                       @click="clickToCopy(vpn?.password, true)">
+                                  <q-tooltip>
+                                    {{ tc('pages.vpn.VpnIndex.copy') }}
+                                  </q-tooltip>
+                                </q-btn>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <div class="row items-center" style="height: 48px">
+                            <div class="col-2 text-grey">
+                              VPN {{ tc('pages.vpn.VpnIndex.configuration_file') }}
+                            </div>
+                            <div class="col">
+                              <q-btn :label="tc('pages.vpn.VpnIndex.download')" class=" " color="primary" padding="none"
+                                     dense flat no-caps
+                                     @click="store.fetchConfig(tabService)"/>
+                            </div>
+                          </div>
+
+                          <div class="row items-center" style="height: 48px">
+                            <div class="col-2 text-grey">
+                              VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}
+                            </div>
+                            <div class="col">
+                              <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none"
+                                     dense flat no-caps
+                                     @click="store.fetchCa(tabService)"/>
+                            </div>
+                          </div>
+
+                          <div class="row items-center" style="height: 48px">
+                            <div class="col">
+                              <q-btn :label="tc('pages.vpn.VpnIndex.vpn_instruction')" class="" color="primary"
+                                     padding="none" dense flat no-caps
+                                     @click="gotoManualVpn"/>
+                            </div>
+                          </div>
                         </div>
 
-                        <div class="row items-center" style="height: 48px">
-                          <div class="col-2 text-grey">
-                            VPN {{ tc('pages.vpn.VpnIndex.configuration_file') }}
-                          </div>
-                          <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class=" " color="primary" padding="none"
-                                   dense flat no-caps
-                                   @click="store.fetchConfig(tabService)"/>
-                          </div>
+                        <div v-else>
+                          {{ tc('pages.vpn.VpnIndex.create_vpn_account') }}
                         </div>
 
-                        <div class="row items-center" style="height: 48px">
-                          <div class="col-2 text-grey">
-                            VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}
-                          </div>
-                          <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none"
-                                   dense flat no-caps
-                                   @click="store.fetchCa(tabService)"/>
-                          </div>
-                        </div>
-
-                        <div class="row items-center" style="height: 48px">
-                          <div class="col">
-                            <q-btn :label="tc('pages.vpn.VpnIndex.vpn_instruction')" class="" color="primary"
-                                   padding="none" dense flat no-caps
-                                   @click="gotoManualVpn"/>
-                          </div>
-                        </div>
                       </div>
 
-                      <div v-else>
-                        {{ tc('pages.vpn.VpnIndex.create_vpn_account') }}
-                      </div>
+                    </q-tab-panel>
 
-                    </div>
+                  </q-tab-panels>
 
-                  </q-tab-panel>
-
-                </q-tab-panels>
-
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-    </div>
+      </div>
+    </q-scroll-area>
   </div>
 </template>
 

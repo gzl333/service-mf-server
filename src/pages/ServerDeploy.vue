@@ -43,110 +43,121 @@
 
 <template>
   <div class="ServerDeploy">
+    <q-scroll-area style="height: calc(100vh - 60px);">
 
-    <div class="row justify-center" style="padding-bottom: 200px;">
-      <div class="content-fixed-width column">
+      <div class="row justify-center" style="padding-bottom: 200px;">
+        <div class="content-fixed-width column">
 
-        <div class="col-auto q-py-xl">
-          <div class="text-h4 text-primary">
-            Deploy New Server Instance
+          <div class="col-auto q-py-xl">
+            <div class="text-h4 text-primary">
+              Deploy New Server Instance
+            </div>
           </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Server Owner
+            </div>
+            <div>
+              <q-btn>Personal Account</q-btn>
+              <q-btn>Group Account</q-btn>
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Group (if choose group account)
+            </div>
+            <div>
+              a list of available groups
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Payment Method
+            </div>
+            <div>
+              <q-btn>Monthly / Yearly Prepaid</q-btn>
+              <q-btn>Postpaid</q-btn>
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Usage Period (if choose postpaid)
+            </div>
+            <div>
+              a prepaid period
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Service Unit
+            </div>
+            <div>
+              a list available service units
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Server Operating System
+            </div>
+            <div>
+              a list available OS
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Server Size
+            </div>
+            <div>
+              a list available configurations
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Server Network
+            </div>
+            <div>
+              a list available networks
+            </div>
+          </div>
+
+          <div class="col-auto q-py-lg">
+            <div class="text-h7 text-grey text-weight-bold">
+              Server Remarks
+            </div>
+            <div>
+              a remark input
+            </div>
+          </div>
+
         </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Server Owner
-          </div>
-          <div>
-            <q-btn>Personal Account</q-btn>
-            <q-btn>Group Account</q-btn>
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Group (if choose group account)
-          </div>
-          <div>
-            a list of available groups
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Payment Method
-          </div>
-          <div>
-            <q-btn>Monthly / Yearly Prepaid</q-btn>
-            <q-btn>Postpaid</q-btn>
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Usage Period (if choose postpaid)
-          </div>
-          <div>
-            a prepaid period
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Service Unit
-          </div>
-          <div>
-            a list available service units
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Server Operating System
-          </div>
-          <div>
-            a list available OS
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Server Size
-          </div>
-          <div>
-            a list available configurations
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Server Network
-          </div>
-          <div>
-            a list available networks
-          </div>
-        </div>
-
-        <div class="col-auto q-py-lg">
-          <div class="text-h7 text-grey text-weight-bold">
-            Server Remarks
-          </div>
-          <div>
-            a remark input
-          </div>
-        </div>
-
       </div>
-    </div>
+    </q-scroll-area>
+    <!--    <q-page-sticky expand position="bottom">-->
+    <!--      <div class="row justify-center bg-grey-3" style="height: 150px; width: 100vw;">-->
+    <!--        <div class="content-fixed-width bg-green">-->
+    <!--          hello-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </q-page-sticky>-->
 
-    <q-page-sticky position="bottom">
-      <div class="row justify-center bg-grey-3" style="height: 150px; width: 100vw;">
-
-        <div class="content-fixed-width bg-green">
-          hello
-        </div>
-
-      </div>
+    <!-- place QPageSticky at end of page -->
+    <q-page-sticky expand position="bottom">
+      <q-toolbar class="bg-accent text-white">
+        <q-avatar>
+          <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+        </q-avatar>
+        <q-toolbar-title>
+          Page Title
+        </q-toolbar-title>
+      </q-toolbar>
     </q-page-sticky>
 
   </div>

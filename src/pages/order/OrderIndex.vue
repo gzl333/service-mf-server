@@ -24,7 +24,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
 
 <template>
   <div class="OrderIndex">
-    <div class="PersonalIndex">
+    <q-scroll-area style="height: calc(100vh - 60px);">
       <div class="column">
 
         <!--      <div class="col-auto">-->
@@ -91,7 +91,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
         </div>
 
       </div>
-    </div>
+    </q-scroll-area>
   </div>
 </template>
 

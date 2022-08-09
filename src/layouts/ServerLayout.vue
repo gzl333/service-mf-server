@@ -122,7 +122,9 @@ const releaseTime = process.env.releaseTime
           </q-list>
 
           <div class="row justify-center q-pt-lg">
-            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="store.redeemCouponDialog()"> {{ tc('layouts.redeem') }}</q-btn>
+            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="store.redeemCouponDialog()">
+              {{ tc('layouts.redeem') }}
+            </q-btn>
           </div>
 
           <div class="row justify-center q-pt-lg">
@@ -141,9 +143,11 @@ const releaseTime = process.env.releaseTime
     </q-drawer>
 
     <q-page-container>
-      <q-scroll-area style="height: calc(100vh - 60px);">
+      <q-page>
+        <!--      <q-scroll-area style="height: calc(100vh - 60px);">-->
         <router-view :key="$route.fullPath"/>
-      </q-scroll-area>
+        <!--      </q-scroll-area>-->
+      </q-page>
     </q-page-container>
 
   </q-layout>
