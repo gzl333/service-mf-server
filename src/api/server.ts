@@ -262,7 +262,24 @@ export default {
       return axiosServer.post('/cashcoupon', null, config)
     }
   },
-  'describe-price': {},
+  'describe-price': {
+    getDescribePrice (payload: {
+      query: {
+        resource_type: 'vm' | 'disk' | ' bucket'
+        pay_type?: 'prepaid' | 'postpaid'
+        period?: number
+        flavor_id?: string
+        external_ip?: boolean
+        system_disk_size?: number
+        data_disk_size?: number
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/describe-price', config)
+    }
+  },
   flavor: {
     getFlavor () {
       return axiosServer.get('/flavor')
