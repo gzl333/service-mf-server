@@ -24,17 +24,17 @@ const route = useRoute()
 // const router = useRouter()
 
 // 预付最大月份
-const MAX_MONTHS = 6
+const MAX_MONTHS = 12
 
 // 是否允许使用后付费模式
 // 目前判断个人账户或者项目组账户余额大于0
-const isAllowPostpaid = computed(() => {
-  if (selectionOwner.value === 'group') {
-    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
-  } else {
-    return Number(store.items?.personalBalance) > 0
-  }
-})
+// const isAllowPostpaid = computed(() => {
+//   if (selectionOwner.value === 'group') {
+//     return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
+//   } else {
+//     return Number(store.items?.personalBalance) > 0
+//   }
+// })
 
 // dom元素
 const input = ref<HTMLElement>()
@@ -87,7 +87,7 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
         pay_type: selectionPayment.value,
         period: selectionPeriod.value,
         flavor_id: selectionFlavor.value,
-        external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`].public
+        external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`]?.public
       }
     })
 
@@ -176,42 +176,56 @@ watch(selectionService, () => {
             </div>
             <div class="row items-center q-gutter-lg">
               <q-btn
-                :class="selectionOwner === 'personal' ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionOwner === 'personal' ? 'white' : 'grey-4'"
+                :class="selectionOwner === 'personal' ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionOwner === 'personal' ? 'white' : 'grey-3'"
                 outline
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionOwner = 'personal'"
               >
-                <div class="column items-center justify-center q-pa-md"
-                     style="width: 250px;height: 150px;">
+                <div class="column items-center justify-center q-pa-sm"
+                     style="width: 280px;height: 160px;">
 
-                  <div class="col-7 text-black">
+                  <q-icon class="col-4" name="las la-user-alt" size="60px"
+                          :color="selectionOwner === 'personal' ? 'primary' : 'black'"/>
+
+                  <div class="col-4 row items-center"
+                       :class="selectionOwner === 'personal' ? 'text-primary' : 'text-black'">
                     Personal Account
                   </div>
-                  <div class="col-5 text-black">
+
+                  <div class="col-3 text-grey-6 text-body2">
                     New server will belong to your personal account.
+                  </div>
+
+                  <div class="col-1 text-black text-caption">
+                    Balance: {{ store.items.personalBalance.balance }} Points
                   </div>
                 </div>
               </q-btn>
 
               <q-btn
-                :class="selectionOwner === 'group' ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionOwner === 'group' ? 'white' : 'grey-4'"
+                :class="selectionOwner === 'group' ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionOwner === 'group' ? 'white' : 'grey-3'"
                 outline
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionOwner = 'group'"
               >
-                <div class="column items-center justify-center q-pa-md"
-                     style="width: 250px;height: 150px;">
+                <div class="column items-center justify-center q-pa-sm"
+                     style="width: 280px;height: 160px;">
 
-                  <div class="col-7 text-black">
+                  <q-icon class="col-4" name="las la-users" size="60px"
+                          :color="selectionOwner === 'group' ? 'primary' : 'black'"/>
+
+                  <div class="col-4 row items-center"
+                       :class="selectionOwner === 'group' ? 'text-primary' : 'text-black'">
                     Group Account
                   </div>
-                  <div class="col-5 text-black">
+
+                  <div class="col-4 text-grey-6 text-body2">
                     New server will belong to one of your group accounts.
                   </div>
                 </div>
@@ -227,8 +241,8 @@ watch(selectionService, () => {
               </div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
-                  :class="selectionGroup === group.id ? 'shadow-14' : 'bg-grey-1'"
-                  :color="selectionGroup === group.id ? 'white' : 'grey-4'"
+                  :class="selectionGroup === group.id ? 'shadow-5' : 'bg-grey-1'"
+                  :color="selectionGroup === group.id ? 'white' : 'grey-3'"
                   v-for="group in groups"
                   :val="group.id"
                   :key="group.id"
@@ -238,16 +252,27 @@ watch(selectionService, () => {
                   :ripple="false"
                   @click="selectionGroup = group.id"
                 >
-                  <div class="column items-center justify-center q-pa-md"
-                       style="width: 250px;height: 150px;">
 
-                    <div class="col-7 text-black">
-                      {{ group.name }}
-                    </div>
-                    <div class="col-5 text-black">
-                      Your group.
+                  <div class="row items-center q-pa-sm" style="width: 280px; height: 110px;">
+
+                    <q-icon class="col-3" name="las la-users" size="60px"
+                            :color="selectionGroup === group.id ? 'primary' : 'black'"/>
+
+                    <div class="col-9">
+                      <div class="column items-center justify-center q-pa-sm">
+                        <div class="row items-center justify-center"
+                             :class="selectionGroup === group.id ? 'text-primary' : 'text-black'">
+                          <div class="col-auto">
+                            {{ group.name }}
+                          </div>
+                        </div>
+                        <div class="row items-center justify-center text-caption text-black">
+                          Balance: {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }} Points
+                        </div>
+                      </div>
                     </div>
                   </div>
+
                 </q-btn>
               </div>
             </div>
@@ -259,43 +284,59 @@ watch(selectionService, () => {
             </div>
             <div class="row items-center q-gutter-lg">
               <q-btn
-                :class="selectionPayment === 'prepaid' ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionPayment === 'prepaid' ? 'white' : 'grey-4'"
+                :class="selectionPayment === 'prepaid' ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionPayment === 'prepaid' ? 'white' : 'grey-3'"
                 outline
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionPayment = 'prepaid'"
               >
-                <div class="column items-center justify-center q-pa-md"
-                     style="width: 250px;height: 150px;">
 
-                  <div class="col-7 text-black">
-                    Prepaid
-                  </div>
-                  <div class="col-5 text-black">
-                    Server will deliver after payment.
+                <div class="row items-center q-pa-sm" style="width: 280px; height: 100px;">
+
+                  <q-icon class="col-3" name="las la-money-bill-alt" size="60px"
+                          :color="selectionPayment === 'prepaid' ? 'primary' : 'black'"/>
+
+                  <div class="col-9">
+                    <div class="column items-center justify-center q-pa-sm">
+                      <div class="col-4 row items-center justify-center"
+                           :class="selectionPayment === 'prepaid' ? 'text-primary' : 'text-black'">
+                        Monthly Prepaid
+                      </div>
+                      <div class="row items-center justify-center text-body2 text-grey">
+                        Server will be delivered after payment.
+                      </div>
+                    </div>
                   </div>
                 </div>
+
               </q-btn>
 
               <q-btn
-                :class="selectionPayment === 'postpaid' ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionPayment === 'postpaid' ? 'white' : 'grey-4'"
+                :class="selectionPayment === 'postpaid' ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionPayment === 'postpaid' ? 'white' : 'grey-3'"
                 outline
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionPayment = 'postpaid'"
               >
-                <div class="column items-center justify-center q-pa-md"
-                     style="width: 250px;height: 150px;">
+                <div class="row items-center q-pa-sm" style="width: 280px; height: 100px;">
 
-                  <div class="col-7 text-black">
-                    Postpaid
-                  </div>
-                  <div class="col-5 text-black">
-                    Server will deliver now.
+                  <q-icon class="col-3" name="las la-file-invoice-dollar" size="60px"
+                          :color="selectionPayment === 'postpaid' ? 'primary' : 'black'"/>
+
+                  <div class="col-9">
+                    <div class="column items-center justify-center q-pa-sm">
+                      <div class="col-4 row items-center justify-center"
+                           :class="selectionPayment === 'postpaid' ? 'text-primary' : 'text-black'">
+                        Charge by Usage
+                      </div>
+                      <div class="row items-center justify-center text-body2 text-grey">
+                        Server will be delivered now.
+                      </div>
+                    </div>
                   </div>
                 </div>
               </q-btn>
@@ -310,8 +351,8 @@ watch(selectionService, () => {
               </div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
-                  :class="selectionPeriod === month ? 'shadow-14' : 'bg-grey-1'"
-                  :color="selectionPeriod === month ? 'white' : 'grey-4'"
+                  :class="selectionPeriod === month ? 'shadow-5' : 'bg-grey-1'"
+                  :color="selectionPeriod === month ? 'white' : 'grey-3'"
                   v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
                   :val="month"
                   :key="month"
@@ -322,9 +363,9 @@ watch(selectionService, () => {
                   @click="selectionPeriod = month"
                 >
                   <div class="column items-center justify-center"
-                       style="width: 150px;height: 30px;">
+                       style="width: 124px;height: 30px;">
 
-                    <div class="col-auto text-black">
+                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-black'">
                       {{ month }} months
                     </div>
 
@@ -340,18 +381,19 @@ watch(selectionService, () => {
             </div>
 
             <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-lg">
-              <div class="row items-center" :class="selectionDatacenter === dataCenter.id ? 'text-primary' : ''">
-                {{ dataCenter.name }}
+              <div class="row items-center text-subtitle1"
+                   :class="selectionDatacenter === dataCenter.id ? 'text-primary' : 'text-black'">
+                {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
               </div>
 
               <div v-if="dataCenter.services.length === 0" class="row items-center">
                 No service available at this organisation.
               </div>
 
-              <div v-else class="row items-center q-gutter-x-lg">
+              <div v-else class="row items-center q-gutter-lg">
                 <q-btn
-                  :class="selectionService === service.id ? 'shadow-14' : 'bg-grey-1'"
-                  :color="selectionService === service.id ? 'white' : 'grey-4'"
+                  :class="selectionService === service.id ? 'shadow-5' : 'bg-grey-1'"
+                  :color="selectionService === service.id ? 'white' : 'grey-3'"
                   v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
                   :key="service.id"
                   :val="service.id"
@@ -362,14 +404,38 @@ watch(selectionService, () => {
                   @click="selectionService = service.id"
                 >
                   <div class="column items-center justify-center q-pa-sm"
-                       style="width: 250px;height: 80px;">
+                       style="width: 280px;height: 100px;">
 
-                    <div class="col-6 text-black">
-                      {{ service.name }}
+                    <div class="col-4" :class="selectionService === service.id ? 'text-primary' : 'text-black'">
+                      {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-4">
                       <CloudPlatformLogo class="col-auto" :platform-name="service.service_type"/>
+                    </div>
+
+                    <div class="col-4 row items-center justify-center text-black">
+                      <div class="col-auto text-grey">Service Status</div>
+
+                      <q-icon
+                        v-if="store.getImagesByServiceId(service.id).length > 0 && (store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) > 0"
+                        class="col-auto" name="check_circle_outline" color="light-green" size="xs">
+                        <q-tooltip>
+                          All working well.
+                        </q-tooltip>
+                      </q-icon>
+
+                      <q-icon v-else class="col-auto" name="error_outline" color="red" size="xs">
+                        <q-tooltip>
+                          <div v-if="store.getImagesByServiceId(service.id).length === 0">
+                            Currently no operating system available at this service unit.
+                          </div>
+                          <div
+                            v-if="(store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) === 0">
+                            Currently no network available at this service unit.
+                          </div>
+                        </q-tooltip>
+                      </q-icon>
                     </div>
 
                   </div>
@@ -390,8 +456,8 @@ watch(selectionService, () => {
 
             <div v-else class="row items-center q-gutter-lg">
               <q-btn
-                :class="selectionImage === image.id ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionImage === image.id ? 'white' : 'grey-4'"
+                :class="selectionImage === image.id ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionImage === image.id ? 'white' : 'grey-3'"
                 v-for="image in images"
                 :val="image.id"
                 :key="image.id"
@@ -401,14 +467,15 @@ watch(selectionService, () => {
                 :ripple="false"
                 @click="selectionImage = image.id"
               >
-                <div class="column items-center justify-center q-pa-md"
-                     style="width: 250px;height: 150px;">
+                <div class="column items-center justify-center q-pa-sm"
+                     style="width: 280px;height: 150px;">
 
                   <div class="col-7 row items-center">
                     <OsLogo class="col" :os-name="image.name" size="60px"/>
                   </div>
-                  <div class="col-5 row items-center">
-                    <div class="text-black q-pa-none">{{ image.name.slice(0, 60) }}</div>
+                  <div class="col-5 row items-center"
+                       :class="selectionImage === image.id ? 'text-primary' : 'text-black'">
+                    {{ image.name.slice(0, 60) }}
                   </div>
                 </div>
               </q-btn>
@@ -428,8 +495,8 @@ watch(selectionService, () => {
               <div class="row">Private Networks</div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-14' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'white' : 'grey-4'"
+                  :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
+                  :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
                   v-for="network in privateNetworks"
                   :val="network.id"
                   :key="network.id"
@@ -439,10 +506,10 @@ watch(selectionService, () => {
                   :ripple="false"
                   @click="selectionNetwork = network.id"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 150px;height: 50px;">
+                  <div class="column items-center justify-center q-pa-sm"
+                       style="width: 124px;height: 30px;">
 
-                    <div class="text-black">
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'">
                       {{ network.segment }}
                     </div>
 
@@ -455,8 +522,8 @@ watch(selectionService, () => {
               <div class="row">Public Networks</div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-14' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'white' : 'grey-4'"
+                  :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
+                  :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
                   v-for="network in publicNetworks"
                   :val="network.id"
                   :key="network.id"
@@ -466,11 +533,11 @@ watch(selectionService, () => {
                   :ripple="false"
                   @click="selectionNetwork = network.id"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 150px;height: 50px;">
+                  <div class="column items-center justify-center q-pa-sm"
+                       style="width: 124px;height: 30px;">
 
-                    <div class="text-black">
-                      {{ network.name }}
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'">
+                      {{ network.segment }}
                     </div>
 
                   </div>
@@ -491,8 +558,8 @@ watch(selectionService, () => {
 
             <div v-else class="row items-center q-gutter-lg">
               <q-btn
-                :class="selectionFlavor === flavor.id ? 'shadow-14' : 'bg-grey-1'"
-                :color="selectionFlavor === flavor.id ? 'white' : 'grey-4'"
+                :class="selectionFlavor === flavor.id ? 'shadow-5' : 'bg-grey-1'"
+                :color="selectionFlavor === flavor.id ? 'white' : 'grey-3'"
                 v-for="flavor in flavors"
                 :val="flavor.id"
                 :key="flavor.id"
@@ -502,11 +569,13 @@ watch(selectionService, () => {
                 :ripple="false"
                 @click="selectionFlavor = flavor.id"
               >
-                <div class="column items-center justify-center"
-                     style="width: 150px;height: 50px;">
-                  <div class="text-black">
-                    {{ `${flavor.vcpus}cores/${flavor.ram / 1024}GB` }}
+                <div class="column items-center justify-center q-pa-sm"
+                     style="width: 124px;height: 30px;">
+
+                  <div :class="selectionFlavor === flavor.id ? 'text-primary' : 'text-black'">
+                    {{ `${flavor.vcpus} Cores / ${flavor.ram / 1024} GB` }}
                   </div>
+
                 </div>
               </q-btn>
             </div>
@@ -517,7 +586,7 @@ watch(selectionService, () => {
               Remark
             </div>
             <div class="row">
-              <q-input class="col-8" ref="input" v-model="inputRemarks" maxlength="100" dense outlined counter/>
+              <q-input class="col-8" ref="input" v-model="inputRemarks" maxlength="100" outlined counter/>
             </div>
           </div>
 
