@@ -239,6 +239,11 @@ watch(selectionService, () => {
               <div class="q-py-md text-h6">
                 Group
               </div>
+
+              <div v-if="groups.length === 0" class="row items-center">
+                No groups available. Please create a group before using it.
+              </div>
+
               <div class="row items-center q-gutter-lg">
                 <q-btn
                   :class="selectionGroup === group.id ? 'shadow-5' : 'bg-grey-1'"
