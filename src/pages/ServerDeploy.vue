@@ -8,6 +8,8 @@ import api from 'src/api'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
+import { Notify } from 'quasar'
+import { navigateToUrl } from 'single-spa'
 
 // const props = defineProps({
 //   foo: {
@@ -24,7 +26,7 @@ const route = useRoute()
 // const router = useRouter()
 
 // 预付最大月份
-const MAX_MONTHS = 12
+const MAX_MONTHS = 6
 
 // 是否允许使用后付费模式
 // 目前判断个人账户或者项目组账户余额大于0
@@ -71,10 +73,7 @@ const inputRemarks = ref('')
 // const selectionDataDisk = ref(0)
 
 // 询价对象
-const currentPrice = ref<{ original: string; trade: string }>({
-  original: '0',
-  trade: '0'
-})
+const currentPrice = ref<{ original: string; trade: string } | null>(null)
 // 根据selection进行询价
 watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], async () => {
   // prepaid时才询价
@@ -90,8 +89,10 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
         external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`]?.public
       }
     })
-
     currentPrice.value = respGetPrice.data.price
+
+    // 若失败，清除当前询价结果
+    // currentPrice.value = null
   }
 })
 
@@ -153,6 +154,168 @@ watch(selectionService, () => {
 })
 /* 在table都加载后，3个selection，随着service变化选择默认项 */
 
+/* 新建云主机 */
+const isDeploying = ref(false)
+// check inputs
+const checkInputs = () => {
+  if (selectionPayment.value === 'prepaid' && (selectionPeriod.value <= 0 || selectionPeriod.value > MAX_MONTHS)) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('components.server.ServerDeployCard.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.server.ServerDeployCard.prepaid_time_months')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
+  } else if (!selectionNetwork.value) {
+    // 如果selection没有选择全，则弹出通知
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('components.server.ServerDeployCard.select_network')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
+  } else if (!selectionImage.value) {
+    // 如果selection没有选择全，则弹出通知
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('components.server.ServerDeployCard.select_os')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
+  } else if (!selectionFlavor.value) {
+    // 如果selection没有选择全，则弹出通知
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('components.server.ServerDeployCard.select_configuration')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
+  } else if (!inputRemarks.value) {
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('components.server.ServerDeployCard.fill_remarks')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    input.value?.focus()
+    return false
+  }
+  return true
+}
+const deployServer = async () => {
+  if (checkInputs()) {
+    isDeploying.value = true
+    const selection = {
+      pay_type: selectionPayment.value,
+      ...(selectionPayment.value === 'prepaid' ? { period: selectionPeriod.value } : {}),
+      ...(selectionOwner.value === 'group' ? { vo_id: selectionGroup.value } : {}),
+      service_id: selectionService.value,
+      image_id: selectionImage.value,
+      flavor_id: selectionFlavor.value,
+      network_id: selectionNetwork.value,
+      remarks: inputRemarks.value
+    }
+
+    const respPostServer = await api.server.server.postServer({ body: selection })
+
+    // 创建后处理方式分两种，预付费和后付费
+    if (selectionPayment.value === 'prepaid') {
+      // 包月预付
+      // 2xx 成功创建订单
+      if (respPostServer.status.toString().startsWith('2')) {
+        // 更新订单table
+        const orderId = respPostServer.data.order_id
+        void await store.loadSingleOrder({
+          isGroup: selectionOwner.value === 'group',
+          orderId
+        })
+        // 跳转至订单list
+        selectionOwner.value === 'group' ? navigateToUrl(`/my/server/group/order/detail/${orderId}`) : navigateToUrl(`/my/server/personal/order/detail/${orderId}`)
+      } else {
+        // 其他非2xx的状态码
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: respPostServer.data.message,
+          caption: respPostServer.data.code,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+      }
+    } else if (selectionPayment.value === 'postpaid') {
+      // 按量计费
+      if (respPostServer.status.toString().startsWith('2')) {
+        // 更新订单table
+        const orderId = respPostServer.data.order_id
+        void await store.loadSingleOrder({
+          isGroup: selectionOwner.value === 'group',
+          orderId
+        })
+        // 更新personal/group ServerTable,根据返回的serverId获取该server的全部信息，存入table
+        const serverId = selectionOwner.value === 'group' ? store.tables.groupOrderTable.byId[orderId].resources[0].instance_id : store.tables.personalOrderTable.byId[orderId].resources[0].instance_id
+        void await store.loadSingleServer({
+          serverId,
+          isGroup: selectionOwner.value === 'group'
+        })
+        // notify
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          icon: 'check_circle',
+          textColor: 'positive',
+          message: `${tc('components.server.ServerDeployCard.server_create_success')}: ${selectionOwner.value === 'group' ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+        // 跳转至server list
+        selectionOwner.value === 'group' ? navigateToUrl('/my/server/group/list') : navigateToUrl('/my/server/personal/list')
+      } else {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: respPostServer.data.message,
+          caption: respPostServer.data.code,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 15000,
+          multiLine: false
+        })
+      }
+    }
+
+    // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
+    isDeploying.value = false
+  }
+}
+/* 新建云主机 */
 </script>
 
 <template>
@@ -591,7 +754,14 @@ watch(selectionService, () => {
               Remark
             </div>
             <div class="row">
-              <q-input class="col-8" ref="input" v-model="inputRemarks" maxlength="100" outlined counter/>
+              <q-input class="col-8"
+                       ref="input"
+                       v-model="inputRemarks"
+                       maxlength="100"
+                       clearable
+                       clear-icon="close"
+                       outlined
+                       counter/>
             </div>
           </div>
 
@@ -601,135 +771,308 @@ watch(selectionService, () => {
     </q-scroll-area>
 
     <q-page-sticky expand position="bottom">
-      <div class="column items-center justify-center full-width bg-grey-1 shadow-10">
-        <div class="col-auto content-fixed-width row items-center justify-between">
+      <div class="column items-center justify-center full-width shadow-up-5 q-pa-md"
+           style="background-color: rgba(0, 0, 0, 0.05); backdrop-filter: blur(10px);"
+      >
+        <div class="col-auto row items-center justify-between no-wrap content-fixed-width">
 
-          <div class="col-10">
-            <div v-if="selectionOwner === 'group'" class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.group') }}
-              </div>
-              <div class="col">
-                <div v-if="selectionGroup !== ''">
-                  {{ store.tables.groupTable.byId[selectionGroup]?.name }}
+          <div class="col-3 full-height">
+
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Server Owner
                 </div>
-                <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_group') }}</div>
+                <div class="col-auto text-primary">
+                  {{
+                    selectionOwner === 'personal' ? 'Personal Account' : store.tables.groupTable.byId[selectionGroup]?.name
+                  }}
+                </div>
               </div>
             </div>
 
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.billing_method') }}
-              </div>
-              <div class="col">
-                {{
-                  selectionPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go')
-                }}
-              </div>
-            </div>
-
-            <div v-if="selectionPayment === 'prepaid'" class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.prepaid_period') }}
-              </div>
-              <div class="col"
-                   :class="(selectionPeriod <= 0 || selectionPeriod > MAX_MONTHS || !Number.isInteger(selectionPeriod)) ? 'text-red' : ''">
-                {{ selectionPeriod }} {{ tc('components.server.ServerDeployCard.months') }}
-              </div>
-            </div>
-
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.service_node') }}
-              </div>
-              <div class="col">
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Service Unit
+                </div>
                 <div
                   v-if="store.tables.dataCenterTable.byId[selectionDatacenter] && store.tables.serviceTable.byId[selectionService]"
-                  class="row items-center">
-
-                  <div class="col-auto">
-                    {{
-                      i18n.global.locale === 'zh' ?
-                        `${store.tables.dataCenterTable.byId[selectionDatacenter]?.name} - ${store.tables.serviceTable.byId[selectionService]?.name}` :
-                        `${store.tables.dataCenterTable.byId[selectionDatacenter]?.name_en} - ${store.tables.serviceTable.byId[selectionService]?.name_en}`
-                    }}
+                  class="col-auto text-primary">
+                  <div v-if="i18n.global.locale === 'zh'">
+                    <div>{{ store.tables.serviceTable.byId[selectionService]?.name }}</div>
+                    <div>{{ store.tables.dataCenterTable.byId[selectionDatacenter]?.name }}</div>
                   </div>
-
-                  <CloudPlatformLogo class="col-auto"
-                                     :platform-name="store.tables.serviceTable.byId[selectionService]?.service_type"/>
-
+                  <div v-else>
+                    <div>{{ store.tables.serviceTable.byId[selectionService]?.name_en }}</div>
+                    <div>{{ store.tables.dataCenterTable.byId[selectionDatacenter]?.name_en }}</div>
+                  </div>
                 </div>
-                <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_service_node') }}</div>
-              </div>
-            </div>
+                <CloudPlatformLogo class="col-auto"
+                                   :platform-name="store.tables.serviceTable.byId[selectionService]?.service_type"/>
 
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.network_type') }}
               </div>
-              <div class="col">
-                <div
-                  v-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name">
-                  {{
-                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('components.server.ServerDeployCard.public_ip_segment') : tc('components.server.ServerDeployCard.private_ip_segment')
-                  }}: {{ store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name }}
-                </div>
-                <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_network') }}</div>
-              </div>
-            </div>
-
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.operating_system') }}
-              </div>
-              <div class="col">
-                <div v-if="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name">
-                  <OsLogo
-                    :os-name="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name"
-                    size="sm"
-                  />
-
-                  {{ store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name }}
-
-                </div>
-                <div v-else class="text-red">{{
-                    tc('components.server.ServerDeployCard.select_operating_system')
-                  }}
-                </div>
-              </div>
-            </div>
-
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                CPU/{{ tc('components.server.ServerDeployCard.memory') }}
-              </div>
-              <div class="col ">
-                <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]">
-                  {{
-                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('components.server.ServerDeployCard.cores')}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`
-                  }}
-                </div>
-                <div v-else class="text-red">{{
-                    tc('components.server.ServerDeployCard.please_select_configuration')
-                  }}
-                </div>
-              </div>
-            </div>
-
-            <div class="row item-row items-center">
-              <div class="col-2 item-title-narrow text-grey">
-                {{ tc('components.server.ServerDeployCard.remarks') }}
-              </div>
-              <div v-if="inputRemarks" class="col">
-                {{ inputRemarks }}
-              </div>
-              <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.fill_remarks') }}</div>
             </div>
 
           </div>
 
-          <div v-if="selectionPayment === 'prepaid'" class="col-2">
-            {{ currentPrice }}
+          <div class="col-3">
+
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Operating System
+                </div>
+                <div class="col-auto text-primary">
+                  <div v-if="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name">
+                    <OsLogo
+                      :os-name="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name"
+                      size="sm"
+                    />
+                    {{ store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name }}
+                  </div>
+                  <div v-else class="text-red">
+                    {{ tc('components.server.ServerDeployCard.select_operating_system') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Network
+                </div>
+
+                <div
+                  v-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name"
+                  class="col-auto text-primary"
+                >
+                  {{
+                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('components.server.ServerDeployCard.public_ip_segment') : tc('components.server.ServerDeployCard.private_ip_segment')
+                  }}: {{
+                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.segment
+                  }}
+                </div>
+                <div v-else class="text-red">
+                  {{ tc('components.server.ServerDeployCard.select_network') }}
+                </div>
+
+              </div>
+            </div>
+
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Server Size
+                </div>
+
+                <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]"
+                     class="col-auto text-primary ">
+                  {{
+                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('components.server.ServerDeployCard.cores')}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`
+                  }}
+                </div>
+                <div v-else class="text-red">
+                  {{ tc('components.server.ServerDeployCard.please_select_configuration') }}
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-3">
+
+            <div class="row items-start">
+              <div class="col-auto column q-pb-sm">
+                <div class="col-auto">
+                  Remark
+                </div>
+
+                <div v-if="inputRemarks" class="col-auto text-primary wrap"
+                     style="word-break: break-all; word-wrap: break-word; white-space: normal;">
+                  {{ inputRemarks }}
+                </div>
+                <div v-else class="text-red">
+                  {{
+                    tc('components.server.ServerDeployCard.fill_remarks')
+                  }}
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!--          <div class="col-9">-->
+          <!--            <div v-if="selectionOwner === 'group'" class="row item-row items-center">-->
+          <!--              <div class="col-2 item-title-narrow text-grey">-->
+          <!--                {{ tc('components.server.ServerDeployCard.group') }}-->
+          <!--              </div>-->
+          <!--              <div class="col">-->
+          <!--                <div v-if="selectionGroup !== ''">-->
+          <!--                  {{ store.tables.groupTable.byId[selectionGroup]?.name }}-->
+          <!--                </div>-->
+          <!--                <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_group') }}</div>-->
+          <!--              </div>-->
+          <!--            </div>-->
+
+          <!--            <div class="row item-row items-center">-->
+          <!--              <div class="col-2 item-title-narrow text-grey">-->
+          <!--                {{ tc('components.server.ServerDeployCard.billing_method') }}-->
+          <!--              </div>-->
+          <!--              <div class="col">-->
+          <!--                {{-->
+          <!--                  selectionPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go')-->
+          <!--                }}-->
+          <!--              </div>-->
+          <!--            </div>-->
+
+          <!--          <div v-if="selectionPayment === 'prepaid'" class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              {{ tc('components.server.ServerDeployCard.prepaid_period') }}-->
+          <!--            </div>-->
+          <!--            <div class="col"-->
+          <!--                 :class="(selectionPeriod <= 0 || selectionPeriod > MAX_MONTHS || !Number.isInteger(selectionPeriod)) ? 'text-red' : ''">-->
+          <!--              {{ selectionPeriod }} {{ tc('components.server.ServerDeployCard.months') }}-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <!--          <div class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              {{ tc('components.server.ServerDeployCard.service_node') }}-->
+          <!--            </div>-->
+          <!--            <div class="col">-->
+          <!--              <div-->
+          <!--                v-if="store.tables.dataCenterTable.byId[selectionDatacenter] && store.tables.serviceTable.byId[selectionService]"-->
+          <!--                class="row items-center">-->
+
+          <!--                <div class="col-auto">-->
+          <!--                  {{-->
+          <!--                    i18n.global.locale === 'zh' ?-->
+          <!--                      `${store.tables.dataCenterTable.byId[selectionDatacenter]?.name} - ${store.tables.serviceTable.byId[selectionService]?.name}` :-->
+          <!--                      `${store.tables.dataCenterTable.byId[selectionDatacenter]?.name_en} - ${store.tables.serviceTable.byId[selectionService]?.name_en}`-->
+          <!--                  }}-->
+          <!--                </div>-->
+
+          <!--                <CloudPlatformLogo class="col-auto"-->
+          <!--                                   :platform-name="store.tables.serviceTable.byId[selectionService]?.service_type"/>-->
+
+          <!--              </div>-->
+          <!--              <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_service_node') }}</div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <!--          <div class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              {{ tc('components.server.ServerDeployCard.network_type') }}-->
+          <!--            </div>-->
+          <!--            <div class="col">-->
+
+          <!--              <div-->
+          <!--                v-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name">-->
+          <!--                {{-->
+          <!--                  store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('components.server.ServerDeployCard.public_ip_segment') : tc('components.server.ServerDeployCard.private_ip_segment')-->
+          <!--                }}: {{ store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name }}-->
+          <!--              </div>-->
+          <!--              <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.select_network') }}</div>-->
+
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <!--          <div class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              {{ tc('components.server.ServerDeployCard.operating_system') }}-->
+          <!--            </div>-->
+          <!--            <div class="col">-->
+          <!--              <div v-if="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name">-->
+          <!--                <OsLogo-->
+          <!--                  :os-name="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name"-->
+          <!--                  size="sm"-->
+          <!--                />-->
+
+          <!--                {{ store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name }}-->
+
+          <!--              </div>-->
+          <!--              <div v-else class="text-red">{{-->
+          <!--                  tc('components.server.ServerDeployCard.select_operating_system')-->
+          <!--                }}-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <!--          <div class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              CPU/{{ tc('components.server.ServerDeployCard.memory') }}-->
+          <!--            </div>-->
+          <!--            <div class="col ">-->
+          <!--              <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]">-->
+          <!--                {{-->
+          <!--                  `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('components.server.ServerDeployCard.cores')}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`-->
+          <!--                }}-->
+          <!--              </div>-->
+          <!--              <div v-else class="text-red">{{-->
+          <!--                  tc('components.server.ServerDeployCard.please_select_configuration')-->
+          <!--                }}-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
+          <!--          <div class="row item-row items-center">-->
+          <!--            <div class="col-2 item-title-narrow text-grey">-->
+          <!--              {{ tc('components.server.ServerDeployCard.remarks') }}-->
+          <!--            </div>-->
+          <!--            <div v-if="inputRemarks" class="col">-->
+          <!--              {{ inputRemarks }}-->
+          <!--            </div>-->
+          <!--            <div v-else class="text-red">{{ tc('components.server.ServerDeployCard.fill_remarks') }}</div>-->
+          <!--          </div>-->
+
+          <!--          </div>-->
+
+          <div class="col-3">
+            <div class="row items-center justify-center text-primary text-h6">
+              <div class="col-auto">
+                {{
+                  selectionPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go')
+                }}
+              </div>
+
+              <div v-if="selectionPayment === 'prepaid'" class="col-auto">
+                : {{ selectionPeriod }} {{ tc('components.server.ServerDeployCard.months') }}
+              </div>
+
+            </div>
+            <div v-if="selectionPayment === 'prepaid' && currentPrice !== null" class="row items-start justify-between">
+              <div class="col-auto column">
+                <div class="col-auto">
+                  折后
+                </div>
+                <div class="col-auto text-primary text-h6">
+                  {{ currentPrice?.trade.slice(0, -2) }} Points
+                </div>
+              </div>
+
+              <div class="col-auto column items-start">
+                <div class="col-auto">
+                  原价
+                </div>
+                <div class="col-auto q-pt-xs text-strike">
+                  {{ currentPrice?.original.slice(0, -2) }} Points
+                </div>
+              </div>
+
+            </div>
+            <q-btn class="full-width"
+                   unelevated
+                   no-caps
+                   color="primary"
+                   size="lg"
+                   :loading="isDeploying"
+                   @click="deployServer">
+              Deploy Now
+            </q-btn>
           </div>
         </div>
       </div>
