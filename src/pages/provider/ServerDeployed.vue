@@ -139,7 +139,7 @@ const loadAdminServers = async () => {
         ...(groupSelection.value === 'vo-name' && groupInput.value !== '' && { 'vo-name': groupInput.value })
       }
     })
-    if (respGetAdminServer.status.toString().startsWith('2')) {
+    if (respGetAdminServer?.status.toString().startsWith('2')) {
       // 拿到rows值，给table用
       rows.value = respGetAdminServer.data.servers
       // pagination count
@@ -359,7 +359,7 @@ const deleteServer = (server: ServerInterface) => {
         }
       })
 
-      if (respUnlockServer.status !== 200) {
+      if (respUnlockServer?.status !== 200) {
         throw new Error()
       }
 
@@ -370,7 +370,7 @@ const deleteServer = (server: ServerInterface) => {
         query: { 'as-admin': true }
       })
 
-      if (respDeleteServer.status === 200) {
+      if (respDeleteServer?.status === 200) {
         Notify.create({
           classes: 'notification-positive shadow-15',
           textColor: 'positive',
@@ -457,7 +457,7 @@ const stopServer = (server: ServerInterface) => {
         }
       })
 
-      if (respUnlockServer.status !== 200) {
+      if (respUnlockServer?.status !== 200) {
         throw new Error()
       }
 
@@ -468,7 +468,7 @@ const stopServer = (server: ServerInterface) => {
         query: { 'as-admin': true }
       })
 
-      if (respActionServer.status === 200) {
+      if (respActionServer?.status === 200) {
         Notify.create({
           classes: 'notification-positive shadow-15',
           textColor: 'positive',

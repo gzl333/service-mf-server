@@ -22,6 +22,49 @@ export default {
   orderResourceReclaimSuccess: 'Successfully Reclaimed Resource',
   orderPayMaxCoupons: 'Coupons used in each payment is limited to',
 
+  // deploy page
+  serverNew: 'Deploy New Server',
+  serverOwner: 'Server Owner',
+  personalAccount: 'Personal Account',
+  personalAccountDescription: 'New server will be deployed under your personal account',
+  groupAccount: 'Group Account',
+  groupAccountDescription: 'New server will be deployed under one of your group accounts',
+  balance: 'Balance',
+  points: 'Point | Points', // 复数
+  group: 'Group',
+  noGroup: 'No groups available. Please create a group or join a group before using it.',
+  paymentMethod: 'Payment Method',
+  prepaid: 'Monthly/Yearly Prepaid',
+  prepaidDescription: 'An order will be placed. New server will be deployed after payment.',
+  postpaid: 'Usage Based Billing',
+  postpaidDescription: 'New server will be deployed now. Meanwhile usage based billing starts.',
+  usagePeriod: 'Usage Period',
+  countMonth: 'Month | Months', // 复数
+  serviceUnit: 'Service Unit',
+  noServiceUnit: 'Currently no service unit available at this organisation.',
+  serviceStatus: 'Service Status',
+  serviceStatusGood: 'All working well.',
+  // serviceStatusNoOs: 'Currently no operating system available at this service unit.',
+  // serviceStatusNoNetwork: 'Currently no network available at this service unit.',
+  operatingSystem: 'Operating System',
+  noOperatingSystem: 'Currently no operating system available at this service unit.',
+  selectOperatingSystem: 'Please select an operating system',
+  network: 'Network | Networks', // 复数
+  noNetwork: 'No networks available at this service unit.',
+  selectNetwork: 'Please select a network.',
+  publicNetwork: 'Public Network',
+  privateNetwork: 'Private Network',
+  serverSize: 'Server Size',
+  noServerSize: 'Currently no server sizes available at this service unit.',
+  selectServerSize: 'Please select a server size',
+  countCore: 'Core | Cores', // 复数
+  remark: 'Remark',
+  inputRemark: 'Please fill in the remark',
+  afterDiscount: 'Discounted',
+  original: 'Original',
+  placeOrder: 'Place Order',
+  deployServer: 'Deploy Server',
+
   // specifics
   // 独立翻译点,按照工程文件结构组织
   components,

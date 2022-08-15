@@ -329,13 +329,13 @@ const deployServer = async () => {
           <div class="col-auto q-py-xl row items-center">
             <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="xl"/>
             <div class="col-auto text-h4 text-primary">
-              Deploy New Server
+              {{ tc('serverNew') }}
             </div>
           </div>
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Server Owner
+              {{ tc('serverOwner') }}
             </div>
             <div class="row items-center q-gutter-lg">
               <q-btn
@@ -355,15 +355,15 @@ const deployServer = async () => {
 
                   <div class="col-4 row items-center"
                        :class="selectionOwner === 'personal' ? 'text-primary' : 'text-black'">
-                    Personal Account
+                    {{ tc('personalAccount') }}
                   </div>
 
                   <div class="col-3 text-grey-6 text-body2">
-                    New server will belong to your personal account.
+                    {{ tc('personalAccountDescription') }}
                   </div>
 
                   <div class="col-1 text-black text-caption">
-                    Balance: {{ store.items.personalBalance.balance }} Points
+                    {{ tc('balance') }}: {{ store.items.personalBalance.balance }} {{ tc('points') }}
                   </div>
                 </div>
               </q-btn>
@@ -385,11 +385,11 @@ const deployServer = async () => {
 
                   <div class="col-4 row items-center"
                        :class="selectionOwner === 'group' ? 'text-primary' : 'text-black'">
-                    Group Account
+                    {{ tc('groupAccount') }}
                   </div>
 
                   <div class="col-4 text-grey-6 text-body2">
-                    New server will belong to one of your group accounts.
+                    {{ tc('groupAccountDescription') }}
                   </div>
                 </div>
               </q-btn>
@@ -400,11 +400,11 @@ const deployServer = async () => {
           <Transition>
             <div v-if="selectionOwner === 'group'" class="col-auto q-py-lg">
               <div class="q-py-md text-h6">
-                Group
+                {{ tc('group') }}
               </div>
 
               <div v-if="groups.length === 0" class="row items-center">
-                No groups available. Please create a group before using it.
+                {{ tc('noGroup') }}
               </div>
 
               <div class="row items-center q-gutter-lg">
@@ -435,7 +435,8 @@ const deployServer = async () => {
                           </div>
                         </div>
                         <div class="row items-center justify-center text-caption text-black">
-                          Balance: {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }} Points
+                          {{ tc('balance') }}: {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}
+                          {{ tc('points') }}
                         </div>
                       </div>
                     </div>
@@ -448,7 +449,7 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Payment Method
+              {{ tc('paymentMethod') }}
             </div>
             <div class="row items-center q-gutter-lg">
               <q-btn
@@ -461,7 +462,7 @@ const deployServer = async () => {
                 @click="selectionPayment = 'prepaid'"
               >
 
-                <div class="row items-center q-pa-sm" style="width: 280px; height: 100px;">
+                <div class="row items-center q-pa-sm" style="width: 280px; height: 120px;">
 
                   <q-icon class="col-3" name="las la-money-bill-alt" size="60px"
                           :color="selectionPayment === 'prepaid' ? 'primary' : 'black'"/>
@@ -470,10 +471,10 @@ const deployServer = async () => {
                     <div class="column items-center justify-center q-pa-sm">
                       <div class="col-4 row items-center justify-center"
                            :class="selectionPayment === 'prepaid' ? 'text-primary' : 'text-black'">
-                        Monthly Prepaid
+                        {{ tc('prepaid') }}
                       </div>
                       <div class="row items-center justify-center text-body2 text-grey">
-                        Server will be delivered after payment.
+                        {{ tc('prepaidDescription') }}
                       </div>
                     </div>
                   </div>
@@ -490,7 +491,7 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionPayment = 'postpaid'"
               >
-                <div class="row items-center q-pa-sm" style="width: 280px; height: 100px;">
+                <div class="row items-center q-pa-sm" style="width: 280px; height: 120px;">
 
                   <q-icon class="col-3" name="las la-file-invoice-dollar" size="60px"
                           :color="selectionPayment === 'postpaid' ? 'primary' : 'black'"/>
@@ -499,10 +500,10 @@ const deployServer = async () => {
                     <div class="column items-center justify-center q-pa-sm">
                       <div class="col-4 row items-center justify-center"
                            :class="selectionPayment === 'postpaid' ? 'text-primary' : 'text-black'">
-                        Charge by Usage
+                        {{ tc('postpaid') }}
                       </div>
                       <div class="row items-center justify-center text-body2 text-grey">
-                        Server will be delivered now.
+                        {{ tc('postpaidDescription') }}
                       </div>
                     </div>
                   </div>
@@ -515,7 +516,7 @@ const deployServer = async () => {
           <Transition>
             <div v-if="selectionPayment === 'prepaid'" class="col-auto q-py-lg">
               <div class="q-py-md text-h6">
-                Usage Period
+                {{ tc('usagePeriod') }}
               </div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
@@ -534,7 +535,8 @@ const deployServer = async () => {
                        style="width: 124px;height: 30px;">
 
                     <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-black'">
-                      {{ month }} months
+                      <!--复数i18n-->
+                      {{ month }} {{ tc('countMonth', month) }}
                     </div>
 
                   </div>
@@ -545,7 +547,7 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Service Unit
+              {{ tc('serviceUnit') }}
             </div>
 
             <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-lg">
@@ -555,7 +557,7 @@ const deployServer = async () => {
               </div>
 
               <div v-if="dataCenter.services.length === 0" class="row items-center">
-                No service available at this organisation.
+                {{ tc('noServiceUnit') }}
               </div>
 
               <div v-else class="row items-center q-gutter-lg">
@@ -583,24 +585,26 @@ const deployServer = async () => {
                     </div>
 
                     <div class="col-4 row items-center justify-center text-black">
-                      <div class="col-auto text-grey">Service Status</div>
+                      <div class="col-auto text-grey">
+                        {{ tc('serviceStatus') }}
+                      </div>
 
                       <q-icon
                         v-if="store.getImagesByServiceId(service.id).length > 0 && (store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) > 0"
                         class="col-auto" name="check_circle_outline" color="light-green" size="xs">
                         <q-tooltip>
-                          All working well.
+                          {{ tc('serviceStatusGood') }}
                         </q-tooltip>
                       </q-icon>
 
                       <q-icon v-else class="col-auto" name="error_outline" color="red" size="xs">
                         <q-tooltip>
                           <div v-if="store.getImagesByServiceId(service.id).length === 0">
-                            Currently no operating system available at this service unit.
+                            {{ tc('noOperatingSystem') }}
                           </div>
                           <div
                             v-if="(store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) === 0">
-                            Currently no network available at this service unit.
+                            {{ tc('noNetwork') }}
                           </div>
                         </q-tooltip>
                       </q-icon>
@@ -615,11 +619,11 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Operating System
+              {{ tc('operatingSystem') }}
             </div>
 
             <div v-if="images.length === 0" class="row items-center">
-              No OS available at this service unit.
+              {{ tc('noOperatingSystem') }}
             </div>
 
             <div v-else class="row items-center q-gutter-lg">
@@ -652,15 +656,17 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Server Network
+              {{ tc('network') }}
             </div>
 
             <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0" class="row items-center">
-              No networks available at this service unit.
+              {{ tc('noNetwork') }}
             </div>
 
             <div v-if="privateNetworks.length > 0" class="q-pb-lg">
-              <div class="row">Private Networks</div>
+              <div class="row">
+                {{ tc('privateNetwork') }}
+              </div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
                   :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
@@ -687,7 +693,9 @@ const deployServer = async () => {
             </div>
 
             <div v-if="publicNetworks.length > 0" class="q-pb-lg">
-              <div class="row">Public Networks</div>
+              <div class="row">
+                {{ tc('publicNetwork') }}
+              </div>
               <div class="row items-center q-gutter-lg">
                 <q-btn
                   :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
@@ -717,11 +725,11 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Server Size
+              {{ tc('serverSize') }}
             </div>
 
             <div v-if="flavors.length === 0" class="row items-center">
-              No flavors available at this service unit.
+              {{ tc('noServerSize') }}
             </div>
 
             <div v-else class="row items-center q-gutter-lg">
@@ -741,7 +749,7 @@ const deployServer = async () => {
                      style="width: 124px;height: 30px;">
 
                   <div :class="selectionFlavor === flavor.id ? 'text-primary' : 'text-black'">
-                    {{ `${flavor.vcpus} Cores / ${flavor.ram / 1024} GB` }}
+                    {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
                   </div>
 
                 </div>
@@ -751,7 +759,7 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-lg">
             <div class="q-py-md text-h6">
-              Remark
+              {{ tc('remark') }}
             </div>
             <div class="row">
               <q-input class="col-8"
@@ -781,11 +789,11 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Server Owner
+                  {{ tc('serverOwner') }}
                 </div>
                 <div class="col-auto text-primary">
                   {{
-                    selectionOwner === 'personal' ? 'Personal Account' : store.tables.groupTable.byId[selectionGroup]?.name
+                    selectionOwner === 'personal' ? tc('personalAccount') : store.tables.groupTable.byId[selectionGroup]?.name
                   }}
                 </div>
               </div>
@@ -794,7 +802,7 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Service Unit
+                  {{ tc('serviceUnit') }}
                 </div>
                 <div
                   v-if="store.tables.dataCenterTable.byId[selectionDatacenter] && store.tables.serviceTable.byId[selectionService]"
@@ -821,7 +829,7 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Operating System
+                  {{ tc('operatingSystem') }}
                 </div>
                 <div class="col-auto text-primary">
                   <div v-if="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name">
@@ -832,7 +840,7 @@ const deployServer = async () => {
                     {{ store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name }}
                   </div>
                   <div v-else class="text-red">
-                    {{ tc('components.server.ServerDeployCard.select_operating_system') }}
+                    {{ tc('selectOperatingSystem') }}
                   </div>
                 </div>
               </div>
@@ -841,7 +849,7 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Network
+                  {{ tc('network') }}
                 </div>
 
                 <div
@@ -849,13 +857,13 @@ const deployServer = async () => {
                   class="col-auto text-primary"
                 >
                   {{
-                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('components.server.ServerDeployCard.public_ip_segment') : tc('components.server.ServerDeployCard.private_ip_segment')
+                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('publicNetwork') : tc('privateNetwork')
                   }}: {{
                     store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.segment
                   }}
                 </div>
                 <div v-else class="text-red">
-                  {{ tc('components.server.ServerDeployCard.select_network') }}
+                  {{ tc('selectNetwork') }}
                 </div>
 
               </div>
@@ -864,17 +872,17 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Server Size
+                  {{ tc('serverSize') }}
                 </div>
 
                 <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]"
                      class="col-auto text-primary ">
                   {{
-                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('components.server.ServerDeployCard.cores')}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`
+                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('countCore', store.tables.fedFlavorTable.byId[selectionFlavor].vcpus)}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`
                   }}
                 </div>
                 <div v-else class="text-red">
-                  {{ tc('components.server.ServerDeployCard.please_select_configuration') }}
+                  {{ tc('selectServerSize') }}
                 </div>
 
               </div>
@@ -887,7 +895,7 @@ const deployServer = async () => {
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
                 <div class="col-auto">
-                  Remark
+                  {{ tc('remark') }}
                 </div>
 
                 <div v-if="inputRemarks" class="col-auto text-primary wrap"
@@ -896,7 +904,7 @@ const deployServer = async () => {
                 </div>
                 <div v-else class="text-red">
                   {{
-                    tc('components.server.ServerDeployCard.fill_remarks')
+                    tc('inputRemark')
                   }}
                 </div>
 
@@ -1035,31 +1043,33 @@ const deployServer = async () => {
             <div class="row items-center justify-center text-primary text-h6">
               <div class="col-auto">
                 {{
-                  selectionPayment === 'prepaid' ? tc('components.server.ServerDeployCard.monthly_prepaid') : tc('components.server.ServerDeployCard.pay_as_go')
+                  selectionPayment === 'prepaid' ? tc('prepaid') : tc('postpaid')
                 }}
               </div>
-
-              <div v-if="selectionPayment === 'prepaid'" class="col-auto">
-                : {{ selectionPeriod }} {{ tc('components.server.ServerDeployCard.months') }}
-              </div>
-
             </div>
+
+            <div class="row items-center justify-center text-primary text-h6">
+              <div v-if="selectionPayment === 'prepaid'" class="col-auto">
+                {{ selectionPeriod }} {{ tc('countMonth', store.tables.fedFlavorTable.byId[selectionPeriod]?.vcpus) }}
+              </div>
+            </div>
+
             <div v-if="selectionPayment === 'prepaid' && currentPrice !== null" class="row items-start justify-between">
               <div class="col-auto column">
                 <div class="col-auto">
-                  折后
+                  {{ tc('afterDiscount') }}
                 </div>
                 <div class="col-auto text-primary text-h6">
-                  {{ currentPrice?.trade.slice(0, -2) }} Points
+                  {{ currentPrice?.trade.slice(0, -2) }} {{ tc('points') }}
                 </div>
               </div>
 
               <div class="col-auto column items-start">
                 <div class="col-auto">
-                  原价
+                  {{  tc('original') }}
                 </div>
-                <div class="col-auto q-pt-xs text-strike">
-                  {{ currentPrice?.original.slice(0, -2) }} Points
+                <div class="col-auto text-h6 text-weight-regular text-strike">
+                  {{ currentPrice?.original.slice(0, -2) }} {{ tc('points') }}
                 </div>
               </div>
 
@@ -1071,7 +1081,15 @@ const deployServer = async () => {
                    size="lg"
                    :loading="isDeploying"
                    @click="deployServer">
-              Deploy Now
+
+              <div v-if="selectionPayment === 'prepaid'">
+                {{ tc('placeOrder')}}
+              </div>
+
+              <div v-if="selectionPayment === 'postpaid'">
+                {{ tc('deployServer')}}
+              </div>
+
             </q-btn>
           </div>
         </div>
