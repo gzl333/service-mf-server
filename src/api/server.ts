@@ -539,6 +539,7 @@ export default {
         image_id: string;
         flavor_id: string;
         network_id: string;
+        systemdisk_size?: number;
         remarks?: string;
         azone_id?: string;
         vo_id?: string;

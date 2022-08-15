@@ -24,7 +24,7 @@ export default {
 
   // deploy page
   serverNew: '新建云主机',
-  serverOwner: '云主机归属',
+  serverOwner: '云主机账户',
   personalAccount: '个人账户',
   personalAccountDescription: '新的云主机将创建在个人账户内',
   groupAccount: '项目组账户',
@@ -38,12 +38,13 @@ export default {
   prepaidDescription: '订单将立即创建。云主机将在支付订单后交付。',
   postpaid: '按量计费',
   postpaidDescription: '云主机将立即交付。同时开始按量计费。',
+  postpaidNotAllowed: '因账户内余额不足，暂无法使用按量计费',
   usagePeriod: '使用时长',
   countMonth: '个月', // 复数
   serviceUnit: '服务单元',
   noServiceUnit: '该机构暂无可用服务单元。',
   serviceStatus: '服务状态',
-  serviceStatusGood: '全部正常',
+  serviceStatusGood: '正常',
   // serviceStatusNoOs: '该服务单元暂无可用操作系统',
   // serviceStatusNoNetwork: '该服务单元暂无可用网络',
   operatingSystem: '操作系统',

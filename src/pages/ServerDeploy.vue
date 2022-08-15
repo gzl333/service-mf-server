@@ -2,7 +2,7 @@
 import { ref, computed, watch/* , PropType */ } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
-import { useRoute/* , useRouter  */ } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
 
@@ -23,26 +23,29 @@ import { navigateToUrl } from 'single-spa'
 const { tc } = i18n.global
 const store = useStore()
 const route = useRoute()
-// const router = useRouter()
+const router = useRouter()
 
 // 预付最大月份
 const MAX_MONTHS = 6
 
-// 是否允许使用后付费模式
-// 目前判断个人账户或者项目组账户余额大于0
-// const isAllowPostpaid = computed(() => {
-//   if (selectionOwner.value === 'group') {
-//     return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
-//   } else {
-//     return Number(store.items?.personalBalance) > 0
-//   }
-// })
+// // system disk 限制，单位GiB
+// // 接口限定最大500GiB
+// const MAX_SYSTEM_DISK = 500
+// // 根据所选image限定最小值, 创建接口要求为50倍数。该字段由服务管理员填写，可能填错，因此需提高健壮性，此处取成最小的50倍数。
+// const MIN_SYSTEM_DISK = computed(() => Math.ceil(store.tables.serviceImageTable.byLocalId[`${selectionService.value}-${selectionImage.value}`]?.min_sys_disk_gb / 50 || 1) * 50)
+
+// 是否禁止使用后付费模式
+// 目前判断个人账户或者项目组账户余额<=0
+const isAllowPostpaid = computed(() => {
+  if (selectionOwner.value === 'group') {
+    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
+  } else {
+    return Number(store.items?.personalBalance) > 0
+  }
+})
 
 // dom元素
 const input = ref<HTMLElement>()
-
-// const groupId = route.query.group as string
-// const serviceId = route.query.service as string
 
 // 选项数据
 // // 全局数据
@@ -56,6 +59,7 @@ const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 const publicNetworks = computed(() => store.getPublicNetworksByServiceId(selectionService.value))
 const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(selectionService.value))
 const images = computed(() => store.getImagesByServiceId(selectionService.value))
+// const systemDisks = computed(() => Array.from({ length: (MAX_SYSTEM_DISK - MIN_SYSTEM_DISK.value) / 50 + 1 }, (item, index) => MIN_SYSTEM_DISK.value + index * 50))
 
 // selection选项 初始状态 (1)
 const selectionOwner = ref<'personal' | 'group'>('personal')
@@ -65,11 +69,12 @@ const selectionPeriod = ref(1)
 const selectionService = ref('')
 const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center || '')
 const selectionImage = ref('')
+
 const selectionFlavor = ref('')
 const selectionNetwork = ref('')
 const inputRemarks = ref('')
 // // 待实现
-// const selectionSystemDisk = ref(0)
+// const selectionSystemDisk = ref(50)
 // const selectionDataDisk = ref(0)
 
 // 询价对象
@@ -119,7 +124,7 @@ const chooseImage = () => {
   selectionImage.value = images.value[0]?.id || ''
 }
 const chooseFlavor = () => {
-  selectionImage.value = flavors.value[0]?.id || ''
+  selectionFlavor.value = flavors.value[0]?.id || ''
 }
 
 // setup时调用一次 (3) table已加载时，从别的页面进入本页面要选一次默认值
@@ -148,9 +153,9 @@ watch(flavors, chooseFlavor)
 
 /* (5) 在table都加载后，3个selection，随着service变化选择默认项 */
 watch(selectionService, () => {
-  selectionNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
-  selectionImage.value = images.value[0]?.id || ''
-  selectionFlavor.value = flavors.value[0]?.id || ''
+  chooseNetwork()
+  chooseImage()
+  chooseNetwork()
 })
 /* 在table都加载后，3个selection，随着service变化选择默认项 */
 
@@ -326,15 +331,15 @@ const deployServer = async () => {
       <div class="row justify-center" style="padding-bottom: 200px;">
         <div class="content-fixed-width column">
 
-          <div class="col-auto q-py-xl row items-center">
-            <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="xl"/>
+          <div class="col-auto q-py-lg row items-center">
+            <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="xl" @click="router.back()"/>
             <div class="col-auto text-h4 text-primary">
               {{ tc('serverNew') }}
             </div>
           </div>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+          <div class="col-auto q-pb-lg">
+            <div class="q-py-sm text-h6 ">
               {{ tc('serverOwner') }}
             </div>
             <div class="row items-center q-gutter-lg">
@@ -399,7 +404,7 @@ const deployServer = async () => {
 
           <Transition>
             <div v-if="selectionOwner === 'group'" class="col-auto q-py-lg">
-              <div class="q-py-md text-h6">
+              <div class="q-py-sm text-h6">
                 {{ tc('group') }}
               </div>
 
@@ -448,7 +453,7 @@ const deployServer = async () => {
           </Transition>
 
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('paymentMethod') }}
             </div>
             <div class="row items-center q-gutter-lg">
@@ -483,6 +488,7 @@ const deployServer = async () => {
               </q-btn>
 
               <q-btn
+                :disable="!isAllowPostpaid"
                 :class="selectionPayment === 'postpaid' ? 'shadow-5' : 'bg-grey-1'"
                 :color="selectionPayment === 'postpaid' ? 'white' : 'grey-3'"
                 outline
@@ -498,15 +504,26 @@ const deployServer = async () => {
 
                   <div class="col-9">
                     <div class="column items-center justify-center q-pa-sm">
+
                       <div class="col-4 row items-center justify-center"
                            :class="selectionPayment === 'postpaid' ? 'text-primary' : 'text-black'">
                         {{ tc('postpaid') }}
                       </div>
+
                       <div class="row items-center justify-center text-body2 text-grey">
                         {{ tc('postpaidDescription') }}
                       </div>
+
+                      <q-icon v-if="!isAllowPostpaid" class="col-auto" name="error_outline" color="red" size="xs">
+                      </q-icon>
+
                     </div>
                   </div>
+
+                  <q-tooltip v-if="!isAllowPostpaid">
+                    {{ tc('postpaidNotAllowed') }}
+                  </q-tooltip>
+
                 </div>
               </q-btn>
 
@@ -515,7 +532,7 @@ const deployServer = async () => {
 
           <Transition>
             <div v-if="selectionPayment === 'prepaid'" class="col-auto q-py-lg">
-              <div class="q-py-md text-h6">
+              <div class="q-py-sm text-h6">
                 {{ tc('usagePeriod') }}
               </div>
               <div class="row items-center q-gutter-lg">
@@ -546,7 +563,7 @@ const deployServer = async () => {
           </Transition>
 
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('serviceUnit') }}
             </div>
 
@@ -608,6 +625,7 @@ const deployServer = async () => {
                           </div>
                         </q-tooltip>
                       </q-icon>
+
                     </div>
 
                   </div>
@@ -618,7 +636,7 @@ const deployServer = async () => {
           </div>
 
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('operatingSystem') }}
             </div>
 
@@ -654,8 +672,38 @@ const deployServer = async () => {
             </div>
           </div>
 
+          <!--          <div class="col-auto q-py-lg">-->
+          <!--            <div class="q-py-md text-h6">-->
+          <!--              {{ tc('systemDiskSize') }}-->
+          <!--            </div>-->
+          <!--            <div class="row items-center q-gutter-lg">-->
+          <!--              <q-btn-->
+          <!--                :class="selectionSystemDisk === disk ? 'shadow-5' : 'bg-grey-1'"-->
+          <!--                :color="selectionSystemDisk === disk ? 'white' : 'grey-3'"-->
+          <!--                v-for="disk in systemDisks"-->
+          <!--                :val="disk"-->
+          <!--                :key="disk"-->
+          <!--                outline-->
+          <!--                dense-->
+          <!--                no-caps-->
+          <!--                :ripple="false"-->
+          <!--                @click="selectionSystemDisk = disk"-->
+          <!--              >-->
+          <!--                <div class="column items-center justify-center"-->
+          <!--                     style="width: 124px;height: 30px;">-->
+
+          <!--                  <div class="col-auto" :class="selectionSystemDisk === disk ? 'text-primary' : 'text-black'">-->
+          <!--                    &lt;!&ndash;复数i18n&ndash;&gt;-->
+          <!--                    {{ disk }} GB-->
+          <!--                  </div>-->
+
+          <!--                </div>-->
+          <!--              </q-btn>-->
+          <!--            </div>-->
+          <!--          </div>-->
+
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('network') }}
             </div>
 
@@ -681,10 +729,15 @@ const deployServer = async () => {
                   @click="selectionNetwork = network.id"
                 >
                   <div class="column items-center justify-center q-pa-sm"
-                       style="width: 124px;height: 30px;">
+                       style="width: 124px;height: 50px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'">
-                      {{ network.segment }}
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'" class="column">
+                      <div class="col-auto">
+                        {{ network.name }}
+                      </div>
+                      <div class="col-auto">
+                        {{ network.segment }}
+                      </div>
                     </div>
 
                   </div>
@@ -710,10 +763,15 @@ const deployServer = async () => {
                   @click="selectionNetwork = network.id"
                 >
                   <div class="column items-center justify-center q-pa-sm"
-                       style="width: 124px;height: 30px;">
+                       style="width: 124px;height: 50px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'">
-                      {{ network.segment }}
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'" class="column">
+                      <div class="col-auto">
+                        {{ network.name }}
+                      </div>
+                      <div class="col-auto">
+                        {{ network.segment }}
+                      </div>
                     </div>
 
                   </div>
@@ -724,7 +782,7 @@ const deployServer = async () => {
           </div>
 
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('serverSize') }}
             </div>
 
@@ -758,7 +816,7 @@ const deployServer = async () => {
           </div>
 
           <div class="col-auto q-py-lg">
-            <div class="q-py-md text-h6">
+            <div class="q-py-sm text-h6">
               {{ tc('remark') }}
             </div>
             <div class="row">
@@ -779,7 +837,7 @@ const deployServer = async () => {
     </q-scroll-area>
 
     <q-page-sticky expand position="bottom">
-      <div class="column items-center justify-center full-width shadow-up-5 q-pa-md"
+      <div class="column items-center justify-center full-width shadow-up-5 q-pa-sm"
            style="background-color: rgba(0, 0, 0, 0.05); backdrop-filter: blur(10px);"
       >
         <div class="col-auto row items-center justify-between no-wrap content-fixed-width">
@@ -878,7 +936,7 @@ const deployServer = async () => {
                 <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]"
                      class="col-auto text-primary ">
                   {{
-                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('countCore', store.tables.fedFlavorTable.byId[selectionFlavor].vcpus)}/${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024}GB`
+                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('countCore', store.tables.fedFlavorTable.byId[selectionFlavor].vcpus)} / ${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024} GB`
                   }}
                 </div>
                 <div v-else class="text-red">
@@ -903,9 +961,7 @@ const deployServer = async () => {
                   {{ inputRemarks }}
                 </div>
                 <div v-else class="text-red">
-                  {{
-                    tc('inputRemark')
-                  }}
+                  {{ tc('inputRemark') }}
                 </div>
 
               </div>
@@ -1060,16 +1116,16 @@ const deployServer = async () => {
                   {{ tc('afterDiscount') }}
                 </div>
                 <div class="col-auto text-primary text-h6">
-                  {{ currentPrice?.trade.slice(0, -2) }} {{ tc('points') }}
+                  {{ currentPrice?.trade }} {{ tc('points', Number(currentPrice?.trade)) }}
                 </div>
               </div>
 
               <div class="col-auto column items-start">
                 <div class="col-auto">
-                  {{  tc('original') }}
+                  {{ tc('original') }}
                 </div>
                 <div class="col-auto text-h6 text-weight-regular text-strike">
-                  {{ currentPrice?.original.slice(0, -2) }} {{ tc('points') }}
+                  {{ currentPrice?.original }} {{ tc('points', Number(currentPrice?.original)) }}
                 </div>
               </div>
 
@@ -1083,11 +1139,11 @@ const deployServer = async () => {
                    @click="deployServer">
 
               <div v-if="selectionPayment === 'prepaid'">
-                {{ tc('placeOrder')}}
+                {{ tc('placeOrder') }}
               </div>
 
               <div v-if="selectionPayment === 'postpaid'">
-                {{ tc('deployServer')}}
+                {{ tc('deployServer') }}
               </div>
 
             </q-btn>
@@ -1103,8 +1159,7 @@ const deployServer = async () => {
 .ServerDeploy {
 }
 
-.v-enter-active,
-.v-leave-active {
+.v-enter-active {
   transition: opacity 0.5s ease;
 }
 
