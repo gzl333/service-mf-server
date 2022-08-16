@@ -294,7 +294,7 @@ const clickToCopy = useCopyToClipboard()
                   <q-btn v-show="tab==='server' && group.myRole !== 'member'" class="col-shrink" icon="add" size="md"
                          unelevated dense no-caps padding="xs"
                          color="primary"
-                         @click="navigateToUrl(`/my/server/group/server/deploy?group=${groupId}`)">
+                         @click="navigateToUrl(`/my/server/deploy?group=${groupId}`)">
                     {{ tc('pages.group.GroupDetail.create_server') }}
                   </q-btn>
 

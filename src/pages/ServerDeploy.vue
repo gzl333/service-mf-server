@@ -6,6 +6,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
 
+// @ts-expect-error
+// import { useStoreMain } from '@cnic/main'
+
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
 import { Notify } from 'quasar'
@@ -24,6 +27,7 @@ const { tc } = i18n.global
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+// const storeMain = useStoreMain()
 
 // 预付最大月份
 const MAX_MONTHS = 6
@@ -83,21 +87,23 @@ const currentPrice = ref<{ original: string; trade: string } | null>(null)
 watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], async () => {
   // prepaid时才询价
   if (selectionPayment.value === 'prepaid') {
-    // todo try...catch...
-    // 发出询价请求
-    const respGetPrice = await api.server['describe-price'].getDescribePrice({
-      query: {
-        resource_type: 'vm',
-        pay_type: selectionPayment.value,
-        period: selectionPeriod.value,
-        flavor_id: selectionFlavor.value,
-        external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`]?.public
-      }
-    })
-    currentPrice.value = respGetPrice.data.price
-
-    // 若失败，清除当前询价结果
-    // currentPrice.value = null
+    try {
+      // 发出询价请求
+      const respGetPrice = await api.server['describe-price'].getDescribePrice({
+        query: {
+          resource_type: 'vm',
+          pay_type: selectionPayment.value,
+          period: selectionPeriod.value,
+          flavor_id: selectionFlavor.value,
+          external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`]?.public
+        }
+      })
+      // 拿到price
+      currentPrice.value = respGetPrice.data.price
+    } catch {
+      // 若询价失败，清除当前询价结果
+      currentPrice.value = null
+    }
   }
 })
 
@@ -109,7 +115,7 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
 
 // selection默认选择 (2)
 const chooseOwner = () => {
-  selectionOwner.value = route.query.group ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
+  selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
 const chooseGroup = () => {
   selectionGroup.value = route.query.group as string || groups.value[0]?.id || ''

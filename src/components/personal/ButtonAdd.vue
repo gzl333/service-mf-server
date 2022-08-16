@@ -30,7 +30,7 @@ const fabButton = ref(false)
       direction="down"
     >
       <q-fab-action :label="tc('components.personal.ButtonAdd.create_personal_server')" unelevated color="primary" icon="computer"
-                    @click="navigateToUrl('/my/server/personal/deploy')"/>
+                    @click="navigateToUrl('/my/server/deploy')"/>
     </q-fab>
   </div>
 </template>

@@ -36,7 +36,7 @@ const fabButton = ref(false)
       <q-fab-action :label="tc('components.group.ButtonAdd.create_group')" unelevated color="primary" icon="group"
                     @click="navigateToUrl('/my/server/group/create')"/>
       <q-fab-action :label="tc('components.group.ButtonAdd.create_server')" unelevated color="primary" icon="computer"
-                    @click="navigateToUrl('/my/server/group/server/deploy')"/>
+                    @click="navigateToUrl('/my/server/deploy?isgroup=true')"/>
     </q-fab>
   </div>
 </template>

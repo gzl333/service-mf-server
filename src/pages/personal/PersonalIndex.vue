@@ -117,7 +117,7 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                          rounded
                          color="primary"
                          icon="add"
-                         @click="navigateToUrl('/my/server/personal/deploy')"
+                         @click="navigateToUrl('/my/server/deploy')"
                   >
                     {{ tc('pages.personal.PersonalIndex.create') }}
                   </q-btn>
