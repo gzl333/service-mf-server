@@ -61,8 +61,8 @@ const columns = computed(() => [
     field: 'service',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 2px; min-width: 150px; max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;'
+    style: 'padding: 15px 0px; min-width: 150px; max-width: 200px; word-break: break-all; word-wrap: break-word; white-space: normal;',
+    headerStyle: 'padding: 0 2px; '
   },
   {
     name: 'config',
