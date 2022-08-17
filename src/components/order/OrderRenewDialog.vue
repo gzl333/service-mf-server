@@ -114,8 +114,6 @@ const onOKClick = () => {
     // 发送请求
     onDialogOK({ period: monthCount.value })
   } else if (renewType.value === 'date') {
-    console.log(moment.utc(targetTimeStr.value).isBetween(server.value.expiration_time, moment.utc(server.value.expiration_time).add(6, 'month')))
-
     // 不应超过MAX_MONTHS_RENEW
     if (moment.utc(targetTimeStr.value).isAfter(moment.utc(server.value.expiration_time).add(MAX_MONTHS_RENEW, 'month'))) {
       Notify.create({
@@ -132,7 +130,7 @@ const onOKClick = () => {
       return
     }
 
-    // 校验输入
+    // 不应晚于当前时间
     if (Date.parse(server.value.expiration_time) >= Date.parse(targetTimeStr.value)) {
       Notify.create({
         classes: 'notification-negative shadow-15',
@@ -145,7 +143,9 @@ const onOKClick = () => {
         multiLine: false
       })
       dateInput.value?.focus()
+      return
     }
+
     // 发送请求
     onDialogOK({ renew_to_time: targetTimeStr.value })
   }
