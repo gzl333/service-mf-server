@@ -278,6 +278,19 @@ export default {
         params: payload.query
       }
       return axiosServer.get('/describe-price', config)
+    },
+    getDescribePriceRenewal (payload: {
+      query: {
+        resource_type: 'vm' | 'disk' | ' bucket'
+        instance_id: string
+        period?: number
+        renew_to_time?: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/describe-price/renewal', config)
     }
   },
   flavor: {

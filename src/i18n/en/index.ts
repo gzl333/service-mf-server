@@ -61,8 +61,8 @@ export default {
   countCore: 'Core | Cores', // 复数
   remark: 'Remark',
   inputRemark: 'Please fill in the remark',
-  afterDiscount: 'Discounted',
-  original: 'Original',
+  discountPrice: 'Discounted Price',
+  originalPrice: 'Original Price',
   placeOrder: 'Place Order',
   deployServer: 'Deploy Server',
 

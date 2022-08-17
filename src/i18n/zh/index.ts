@@ -61,8 +61,8 @@ export default {
   countCore: '核', // 复数
   remark: '备注',
   inputRemark: '请输入备注',
-  afterDiscount: '折后价格',
-  original: '原价',
+  discountPrice: '折后价格',
+  originalPrice: '原价',
   placeOrder: '新建订单',
   deployServer: '新建云主机',
 

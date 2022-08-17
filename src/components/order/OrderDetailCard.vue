@@ -9,6 +9,7 @@ import { i18n } from 'boot/i18n'
 
 import OrderStatus from 'components/order/OrderStatus.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
+import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 
 const props = defineProps({
   orderId: {
@@ -263,28 +264,28 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">CPU</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{ order.instance_config.vm_cpu }} {{ tc('components.order.OrderDetailCard.cores') }}
                     </div>
                   </div>
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.memory') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{ order.instance_config.vm_ram / 1024 }}GB
                     </div>
                   </div>
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.system_disk') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{ order.instance_config.vm_systemdisk_size }}GB
                     </div>
                   </div>
 
                   <div v-if="isServerExisted" class="row  items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.server_id') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       <div v-for="server in order.resources" :key="server.id">
                         {{ server.id }}
                       </div>
@@ -298,7 +299,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   <div v-if="isServerExisted" class="row q-pb-md items-center">
 
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       <q-btn flat color="primary" no-caps
                              padding="none"
                              @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
@@ -312,7 +313,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_type') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{
                         order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network')
                       }}
@@ -321,7 +322,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_segment') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{
                         store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
                       }}
@@ -330,7 +331,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       <!--                      <q-icon-->
                       <!--                        v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
                       <!--                        :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
@@ -351,7 +352,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.org') }}</div>
-                    <div class="col-shrink">
+                    <div class="col" >
                       {{
                         i18n.global.locale === 'zh' ?
                           store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
@@ -362,7 +363,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.service_node') }}</div>
-                    <div class="col-shrink">
+                    <div class="col">
                       {{
                         i18n.global.locale === 'zh' ?
                           store.tables.serviceTable.byId[order.service_id]?.name :
@@ -373,18 +374,22 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row items-center">
                     <div class="col-3 text-grey">{{ tc('cloudPlatform') }}</div>
-                    <div class="col-shrink">
-                      <q-icon
-                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"
-                        style="width: 130px;height: 25px">
-                        <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                      </q-icon>
+                    <div class="col">
 
-                      <q-icon
-                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('open')"
-                        style="width: 130px;height: 25px">
-                        <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>
-                      </q-icon>
+                      <CloudPlatformLogo
+                        :platform-name="store.tables.serviceTable.byId[order.service_id]?.service_type" />
+<!--                      -->
+                      <!--                      <q-icon-->
+                      <!--                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"-->
+                      <!--                        style="width: 130px;height: 25px">-->
+                      <!--                        <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>-->
+                      <!--                      </q-icon>-->
+
+                      <!--                      <q-icon-->
+                      <!--                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('open')"-->
+                      <!--                        style="width: 130px;height: 25px">-->
+                      <!--                        <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 130px;height: 25px"/>-->
+                      <!--                      </q-icon>-->
                     </div>
                   </div>
 

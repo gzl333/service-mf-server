@@ -1139,7 +1139,7 @@ const deployServer = async () => {
             <div v-if="selectionPayment === 'prepaid' && currentPrice !== null" class="row items-start justify-between">
               <div class="col-auto column">
                 <div class="col-auto">
-                  {{ tc('afterDiscount') }}
+                  {{ tc('discountPrice') }}
                 </div>
                 <div class="col-auto text-primary text-h6">
                   {{ currentPrice?.trade }} {{ tc('points', Number(currentPrice?.trade)) }}
@@ -1148,7 +1148,7 @@ const deployServer = async () => {
 
               <div class="col-auto column items-start">
                 <div class="col-auto">
-                  {{ tc('original') }}
+                  {{ tc('originalPrice') }}
                 </div>
                 <div class="col-auto text-h6 text-weight-regular text-strike">
                   {{ currentPrice?.original }} {{ tc('points', Number(currentPrice?.original)) }}
