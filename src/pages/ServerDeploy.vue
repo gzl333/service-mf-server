@@ -181,6 +181,19 @@ const checkInputs = () => {
       multiLine: false
     })
     return false
+  } else if (selectionOwner.value === 'group' && selectionGroup.value === '') {
+    // 如果要创建项目组云主机，但是没有选中组
+    Notify.create({
+      classes: 'notification-negative shadow-15',
+      icon: 'error',
+      textColor: 'negative',
+      message: `${tc('noGroup')}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    return false
   } else if (!selectionNetwork.value) {
     // 如果selection没有选择全，则弹出通知
     Notify.create({
@@ -852,14 +865,21 @@ const deployServer = async () => {
 
             <div class="row items-start">
               <div class="col-auto column q-pb-sm">
+
                 <div class="col-auto">
                   {{ tc('serverOwner') }}
                 </div>
-                <div class="col-auto text-primary">
-                  {{
-                    selectionOwner === 'personal' ? tc('personalAccount') : store.tables.groupTable.byId[selectionGroup]?.name
-                  }}
+
+                <div v-if="selectionOwner === 'personal'" class="col-auto text-primary">
+                  {{ tc('personalAccount') }}
                 </div>
+
+                <div v-if="selectionOwner === 'group'"
+                     class="col-auto"
+                     :class="store.tables.groupTable.byId[selectionGroup]?.name ? 'text-primary' : 'text-red'">
+                  {{ store.tables.groupTable.byId[selectionGroup]?.name || tc('noGroup') }}
+                </div>
+
               </div>
             </div>
 
