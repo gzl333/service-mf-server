@@ -147,7 +147,7 @@ const onOKClick = () => {
       dateInput.value?.focus()
     }
     // 发送请求
-    // onDialogOK({ renew_to_time: targetTimeStr.value })
+    onDialogOK({ renew_to_time: targetTimeStr.value })
   }
 }
 </script>
