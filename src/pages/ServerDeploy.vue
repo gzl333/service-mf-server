@@ -41,6 +41,12 @@ const MAX_MONTHS = 6
 // 是否禁止使用后付费模式
 // 目前判断个人账户或者项目组账户余额<=0
 const isAllowPostpaid = computed(() => {
+  // 联邦管理员、服务单元管理员不限制
+  if (store.items.fedRole === 'federal-admin' || store.items.adminServiceIds.length > 0) {
+    return true
+  }
+
+  // 普通用户进行判断
   if (selectionOwner.value === 'group') {
     return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
   } else {
