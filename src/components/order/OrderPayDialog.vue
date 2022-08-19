@@ -51,7 +51,7 @@ const coupons = computed(() => {
 }
 )
 
-const methodSelect = ref('cashcoupon')
+const methodSelect = ref<'balance' | 'cashcoupon' | 'coupon_balance'>('cashcoupon')
 const couponSelect = ref([])
 
 const MAX_COUPONS = 5
@@ -87,7 +87,7 @@ const onOKClick = () => {
   } else {
     onDialogOK({
       payment_method: methodSelect.value,
-      coupon_ids: couponSelect.value
+      ...(methodSelect.value === 'balance' ? {} : { coupon_ids: couponSelect.value })
     })
   }
 }
