@@ -1,4 +1,4 @@
-// 获取操作系统logo的钩子函数
+// deprecated 获取操作系统logo的钩子函数
 
 export default function () {
   return (osName: string) => {
