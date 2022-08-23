@@ -353,23 +353,23 @@ const deployServer = async () => {
 
     <q-scroll-area style="height: calc(100vh - 60px);">
 
-      <div class="row justify-center" style="padding-bottom: 200px;">
+      <div class="row justify-center" style="padding-bottom: 130px;">
         <div class="content-fixed-width column">
 
-          <div class="col-auto q-py-lg row items-center">
-            <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="xl" @click="router.back()"/>
-            <div class="col-auto text-h4 text-primary">
+          <div class="col-auto q-py-sm row items-center">
+            <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="lg" @click="router.back()"/>
+            <div class="col-auto text-h6 text-primary">
               {{ tc('serverNew') }}
             </div>
           </div>
 
-          <div class="col-auto q-pb-lg">
-            <div class="q-py-sm text-h6 ">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('serverOwner') }}
             </div>
-            <div class="row items-center q-gutter-lg">
+            <div class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionOwner === 'personal' ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionOwner === 'personal' ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionOwner === 'personal' ? 'white' : 'grey-3'"
                 outline
                 dense
@@ -377,29 +377,32 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionOwner = 'personal'"
               >
-                <div class="column items-center justify-center q-pa-sm"
-                     style="width: 280px;height: 160px;">
 
-                  <q-icon class="col-4" name="las la-user-alt" size="60px"
-                          :color="selectionOwner === 'personal' ? 'primary' : 'black'"/>
+                <div class="row items-center" style="width: 287px; height: 80px;">
 
-                  <div class="col-4 row items-center"
-                       :class="selectionOwner === 'personal' ? 'text-primary' : 'text-black'">
-                    {{ tc('personalAccount') }}
+                  <q-icon class="col-3" name="las la-user-alt" size="60px"
+                          :color="selectionOwner === 'personal' ? 'primary' : 'grey'"/>
+
+                  <div class="col-9 column items-center justify-center">
+                    <div class="col-4 row items-center justify-center"
+                         :class="selectionOwner === 'personal' ? 'text-primary' : 'text-black'"
+                    >
+                      {{ tc('personalAccount') }}
+                    </div>
+                    <div class="col-3 row items-center justify-center text-body2 text-grey" style="line-height: 1;">
+                      {{ tc('personalAccountDescription') }}
+                    </div>
+                    <div class="col-1 text-black text-caption">
+                      {{ tc('balance') }}: {{ store.items.personalBalance.balance }} {{ tc('points') }}
+                    </div>
                   </div>
 
-                  <div class="col-3 text-grey-6 text-body2">
-                    {{ tc('personalAccountDescription') }}
-                  </div>
-
-                  <div class="col-1 text-black text-caption">
-                    {{ tc('balance') }}: {{ store.items.personalBalance.balance }} {{ tc('points') }}
-                  </div>
                 </div>
+
               </q-btn>
 
               <q-btn
-                :class="selectionOwner === 'group' ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionOwner === 'group' ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionOwner === 'group' ? 'white' : 'grey-3'"
                 outline
                 dense
@@ -407,29 +410,33 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionOwner = 'group'"
               >
-                <div class="column items-center justify-center q-pa-sm"
-                     style="width: 280px;height: 160px;">
 
-                  <q-icon class="col-4" name="las la-users" size="60px"
-                          :color="selectionOwner === 'group' ? 'primary' : 'black'"/>
+                <div class="row items-center" style="width: 287px; height: 80px;">
 
-                  <div class="col-4 row items-center"
-                       :class="selectionOwner === 'group' ? 'text-primary' : 'text-black'">
-                    {{ tc('groupAccount') }}
+                  <q-icon class="col-3" name="las la-users" size="60px"
+                          :color="selectionOwner === 'group' ? 'primary' : 'grey'"/>
+
+                  <div class="col-9 column items-center justify-center">
+                    <div class="col-4 row items-center justify-center"
+                         :class="selectionOwner === 'group' ? 'text-primary' : 'text-black'"
+                    >
+                      {{ tc('groupAccount') }}
+                    </div>
+                    <div class="col-4 row items-center justify-center text-body2 text-grey" style="line-height: 1;">
+                      {{ tc('groupAccountDescription') }}
+                    </div>
                   </div>
 
-                  <div class="col-4 text-grey-6 text-body2">
-                    {{ tc('groupAccountDescription') }}
-                  </div>
                 </div>
+
               </q-btn>
 
             </div>
           </div>
 
           <Transition>
-            <div v-if="selectionOwner === 'group'" class="col-auto q-py-lg">
-              <div class="q-py-sm text-h6">
+            <div v-if="selectionOwner === 'group'" class="col-auto q-pb-md">
+              <div class="text-body1 text-weight-bold">
                 {{ tc('group') }}
               </div>
 
@@ -437,9 +444,9 @@ const deployServer = async () => {
                 {{ tc('noGroup') }}
               </div>
 
-              <div class="row items-center q-gutter-lg">
+              <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionGroup === group.id ? 'shadow-5' : 'bg-grey-1'"
+                  :class="selectionGroup === group.id ? 'shadow-3' : 'bg-grey-1'"
                   :color="selectionGroup === group.id ? 'white' : 'grey-3'"
                   v-for="group in groups"
                   :val="group.id"
@@ -451,15 +458,16 @@ const deployServer = async () => {
                   @click="selectionGroup = group.id"
                 >
 
-                  <div class="row items-center q-pa-sm" style="width: 280px; height: 110px;">
+                  <div class="row items-center" style="width: 287px; height: 60px;">
 
                     <q-icon class="col-3" name="las la-users" size="60px"
-                            :color="selectionGroup === group.id ? 'primary' : 'black'"/>
+                            :color="selectionGroup === group.id ? 'primary' : 'grey'"/>
 
                     <div class="col-9">
-                      <div class="column items-center justify-center q-pa-sm">
+                      <div class="column items-center justify-center">
                         <div class="row items-center justify-center"
-                             :class="selectionGroup === group.id ? 'text-primary' : 'text-black'">
+                             :class="selectionGroup === group.id ? 'text-primary' : 'text-black'"
+                             style="line-height: 1;">
                           <div class="col-auto">
                             {{ group.name }}
                           </div>
@@ -477,13 +485,13 @@ const deployServer = async () => {
             </div>
           </Transition>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
-            <div class="row items-center q-gutter-lg">
+            <div class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionPayment === 'prepaid' ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionPayment === 'prepaid' ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionPayment === 'prepaid' ? 'white' : 'grey-3'"
                 outline
                 dense
@@ -492,29 +500,28 @@ const deployServer = async () => {
                 @click="selectionPayment = 'prepaid'"
               >
 
-                <div class="row items-center q-pa-sm" style="width: 280px; height: 120px;">
+                <div class="row items-center" style="width: 287px; height: 80px;">
 
                   <q-icon class="col-3" name="las la-money-bill-alt" size="60px"
-                          :color="selectionPayment === 'prepaid' ? 'primary' : 'black'"/>
+                          :color="selectionPayment === 'prepaid' ? 'primary' : 'grey'"/>
 
                   <div class="col-9">
-                    <div class="column items-center justify-center q-pa-sm">
+                    <div class="column items-center justify-center">
                       <div class="col-4 row items-center justify-center"
                            :class="selectionPayment === 'prepaid' ? 'text-primary' : 'text-black'">
                         {{ tc('prepaid') }}
                       </div>
-                      <div class="row items-center justify-center text-body2 text-grey">
+                      <div class="col-4 row items-center justify-center text-body2 text-grey" style="line-height: 1;">
                         {{ tc('prepaidDescription') }}
                       </div>
                     </div>
                   </div>
                 </div>
-
               </q-btn>
 
               <q-btn
                 :disable="!isAllowPostpaid"
-                :class="selectionPayment === 'postpaid' ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionPayment === 'postpaid' ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionPayment === 'postpaid' ? 'white' : 'grey-3'"
                 outline
                 dense
@@ -522,26 +529,22 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionPayment = 'postpaid'"
               >
-                <div class="row items-center q-pa-sm" style="width: 280px; height: 120px;">
+                <div class="row items-center" style="width: 287px; height: 80px;">
 
                   <q-icon class="col-3" name="las la-file-invoice-dollar" size="60px"
-                          :color="selectionPayment === 'postpaid' ? 'primary' : 'black'"/>
+                          :color="selectionPayment === 'postpaid' ? 'primary' : 'grey'"/>
 
                   <div class="col-9">
-                    <div class="column items-center justify-center q-pa-sm">
-
+                    <div class="column items-center justify-center ">
                       <div class="col-4 row items-center justify-center"
                            :class="selectionPayment === 'postpaid' ? 'text-primary' : 'text-black'">
                         {{ tc('postpaid') }}
                       </div>
-
-                      <div class="row items-center justify-center text-body2 text-grey">
+                      <div class="row items-center justify-center text-body2 text-grey" style="line-height: 1;">
                         {{ tc('postpaidDescription') }}
                       </div>
-
                       <q-icon v-if="!isAllowPostpaid" class="col-auto" name="error_outline" color="red" size="xs">
                       </q-icon>
-
                     </div>
                   </div>
 
@@ -556,13 +559,13 @@ const deployServer = async () => {
           </div>
 
           <Transition>
-            <div v-if="selectionPayment === 'prepaid'" class="col-auto q-py-lg">
-              <div class="q-py-sm text-h6">
+            <div v-if="selectionPayment === 'prepaid'" class="col-auto q-pb-md">
+              <div class="text-body1 text-weight-bold">
                 {{ tc('usagePeriod') }}
               </div>
-              <div class="row items-center q-gutter-lg">
+              <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionPeriod === month ? 'shadow-5' : 'bg-grey-1'"
+                  :class="selectionPeriod === month ? 'shadow-3' : 'bg-grey-1'"
                   :color="selectionPeriod === month ? 'white' : 'grey-3'"
                   v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
                   :val="month"
@@ -574,9 +577,9 @@ const deployServer = async () => {
                   @click="selectionPeriod = month"
                 >
                   <div class="column items-center justify-center"
-                       style="width: 124px;height: 30px;">
+                       style="width: 131px;height: 30px;">
 
-                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-black'">
+                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-grey'">
                       <!--复数i18n-->
                       {{ month }} {{ tc('countMonth', month) }}
                     </div>
@@ -587,14 +590,14 @@ const deployServer = async () => {
             </div>
           </Transition>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('serviceUnit') }}
             </div>
 
-            <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-lg">
-              <div class="row items-center text-subtitle1"
-                   :class="selectionDatacenter === dataCenter.id ? 'text-primary' : 'text-black'">
+            <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-xs">
+              <div class="row items-center text-subtitle2"
+                   :class="selectionDatacenter === dataCenter.id ? 'text-primary' : 'text-grey'">
                 {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
               </div>
 
@@ -602,9 +605,9 @@ const deployServer = async () => {
                 {{ tc('noServiceUnit') }}
               </div>
 
-              <div v-else class="row items-center q-gutter-lg">
+              <div v-else class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionService === service.id ? 'shadow-5' : 'bg-grey-1'"
+                  :class="selectionService === service.id ? 'shadow-3' : 'bg-grey-1'"
                   :color="selectionService === service.id ? 'white' : 'grey-3'"
                   v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
                   :key="service.id"
@@ -615,18 +618,18 @@ const deployServer = async () => {
                   :ripple="false"
                   @click="selectionService = service.id"
                 >
-                  <div class="column items-center justify-center q-pa-sm"
-                       style="width: 280px;height: 100px;">
+                  <div class="column items-center justify-center"
+                       style="width: 287px;height: 80px;">
 
-                    <div class="col-4" :class="selectionService === service.id ? 'text-primary' : 'text-black'">
+                    <div class="col-auto" :class="selectionService === service.id ? 'text-primary' : 'text-black'">
                       {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                     </div>
 
-                    <div class="col-4">
+                    <div class="col-auto">
                       <CloudPlatformLogo class="col-auto" :platform-name="service.service_type"/>
                     </div>
 
-                    <div class="col-4 row items-center justify-center text-black">
+                    <div class="col-auto row items-center justify-center text-black">
                       <div class="col-auto text-grey">
                         {{ tc('serviceStatus') }}
                       </div>
@@ -660,8 +663,8 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-lg">
+            <div class="text-body1 text-weight-bold">
               {{ tc('operatingSystem') }}
             </div>
 
@@ -669,9 +672,9 @@ const deployServer = async () => {
               {{ tc('noOperatingSystem') }}
             </div>
 
-            <div v-else class="row items-center q-gutter-lg">
+            <div v-else class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionImage === image.id ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionImage === image.id ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionImage === image.id ? 'white' : 'grey-3'"
                 v-for="image in images"
                 :val="image.id"
@@ -682,17 +685,22 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionImage = image.id"
               >
-                <div class="column items-center justify-center q-pa-sm"
-                     style="width: 280px;height: 150px;">
 
-                  <div class="col-7 row items-center">
-                    <OsLogo class="col" :os-name="image.name" size="60px"/>
+                <div class="row items-center" style="width: 287px; height: 60px;">
+
+                  <OsLogo class="col-3" :os-name="image.name" size="60px"/>
+
+                  <div class="col-9 column items-center justify-center">
+                    <div class="col row items-center justify-center"
+                         :class="selectionImage === image.id ? 'text-primary' : 'text-grey'"
+                         style="line-height: 1;"
+                    >
+                      {{ image.name.slice(0, 80) }}
+                    </div>
                   </div>
-                  <div class="col-5 row items-center"
-                       :class="selectionImage === image.id ? 'text-primary' : 'text-black'">
-                    {{ image.name.slice(0, 60) }}
-                  </div>
+
                 </div>
+
               </q-btn>
             </div>
           </div>
@@ -727,8 +735,8 @@ const deployServer = async () => {
           <!--            </div>-->
           <!--          </div>-->
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('network') }}
             </div>
 
@@ -736,13 +744,13 @@ const deployServer = async () => {
               {{ tc('noNetwork') }}
             </div>
 
-            <div v-if="privateNetworks.length > 0" class="q-pb-lg">
-              <div class="row">
+            <div v-if="privateNetworks.length > 0" class="q-pb-xs">
+              <div class="row" :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-grey' : 'text-primary'">
                 {{ tc('privateNetwork') }}
               </div>
-              <div class="row items-center q-gutter-lg">
+              <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
+                  :class="selectionNetwork === network.id ? 'shadow-3' : 'bg-grey-1'"
                   :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
                   v-for="network in privateNetworks"
                   :val="network.id"
@@ -753,10 +761,10 @@ const deployServer = async () => {
                   :ripple="false"
                   @click="selectionNetwork = network.id"
                 >
-                  <div class="column items-center justify-center q-pa-sm"
-                       style="width: 124px;height: 50px;">
+                  <div class="column items-center justify-center"
+                       style="width: 131px;height: 30px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'" class="column">
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column" style="line-height: 1;">
                       <div class="col-auto">
                         {{ network.name }}
                       </div>
@@ -770,13 +778,13 @@ const deployServer = async () => {
               </div>
             </div>
 
-            <div v-if="publicNetworks.length > 0" class="q-pb-lg">
-              <div class="row">
+            <div v-if="publicNetworks.length > 0" class="q-pb-xs">
+              <div class="row" :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
                 {{ tc('publicNetwork') }}
               </div>
-              <div class="row items-center q-gutter-lg">
+              <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-5' : 'bg-grey-1'"
+                  :class="selectionNetwork === network.id ? 'shadow-3' : 'bg-grey-1'"
                   :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
                   v-for="network in publicNetworks"
                   :val="network.id"
@@ -788,9 +796,9 @@ const deployServer = async () => {
                   @click="selectionNetwork = network.id"
                 >
                   <div class="column items-center justify-center q-pa-sm"
-                       style="width: 124px;height: 50px;">
+                       style="width: 131px;height: 30px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-black'" class="column">
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column" style="line-height: 1;">
                       <div class="col-auto">
                         {{ network.name }}
                       </div>
@@ -806,8 +814,8 @@ const deployServer = async () => {
 
           </div>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('serverSize') }}
             </div>
 
@@ -815,9 +823,9 @@ const deployServer = async () => {
               {{ tc('noServerSize') }}
             </div>
 
-            <div v-else class="row items-center q-gutter-lg">
+            <div v-else class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionFlavor === flavor.id ? 'shadow-5' : 'bg-grey-1'"
+                :class="selectionFlavor === flavor.id ? 'shadow-3' : 'bg-grey-1'"
                 :color="selectionFlavor === flavor.id ? 'white' : 'grey-3'"
                 v-for="flavor in flavors"
                 :val="flavor.id"
@@ -828,10 +836,10 @@ const deployServer = async () => {
                 :ripple="false"
                 @click="selectionFlavor = flavor.id"
               >
-                <div class="column items-center justify-center q-pa-sm"
-                     style="width: 124px;height: 30px;">
+                <div class="column items-center justify-center"
+                     style="width: 131px;height: 30px;">
 
-                  <div :class="selectionFlavor === flavor.id ? 'text-primary' : 'text-black'">
+                  <div :class="selectionFlavor === flavor.id ? 'text-primary' : 'text-grey'">
                     {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
                   </div>
 
@@ -840,8 +848,8 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="col-auto q-py-lg">
-            <div class="q-py-sm text-h6">
+          <div class="col-auto q-pb-md">
+            <div class="text-body1 text-weight-bold">
               {{ tc('remark') }}
             </div>
             <div class="row">
@@ -849,6 +857,7 @@ const deployServer = async () => {
                        ref="input"
                        v-model="inputRemarks"
                        maxlength="100"
+                       dense
                        clearable
                        clear-icon="close"
                        outlined
@@ -877,7 +886,7 @@ const deployServer = async () => {
                 </div>
 
                 <div v-if="selectionOwner === 'personal'"
-                     class="col-auto text-primary" >
+                     class="col-auto text-primary">
                   {{ tc('personalAccount') }}
                 </div>
 
@@ -1011,14 +1020,16 @@ const deployServer = async () => {
               </div>
             </div>
 
-            <div class="row items-center justify-center text-primary text-subtitle1 text-weight-bold"  style="line-height: 1;">
+            <div class="row items-center justify-center text-primary text-subtitle1 text-weight-bold"
+                 style="line-height: 1;">
               <div v-if="selectionPayment === 'prepaid'" class="col-auto">
-<!--                {{ selectionPeriod }} {{ tc('countMonth', store.tables.fedFlavorTable.byId[selectionPeriod]?.vcpus) }}-->
+                <!--                {{ selectionPeriod }} {{ tc('countMonth', store.tables.fedFlavorTable.byId[selectionPeriod]?.vcpus) }}-->
                 {{ selectionPeriod }} {{ tc('countMonth', selectionPeriod) }}
               </div>
             </div>
 
-            <div v-if="selectionPayment === 'prepaid' && currentPrice !== null" class="row items-start justify-between"  style="line-height: 1;">
+            <div v-if="selectionPayment === 'prepaid' && currentPrice !== null" class="row items-start justify-between"
+                 style="line-height: 1;">
               <div class="col-auto column" style="line-height: 1;">
                 <div class="col-auto text-caption" style="line-height: 1;">
                   {{ tc('discountPrice') }}
