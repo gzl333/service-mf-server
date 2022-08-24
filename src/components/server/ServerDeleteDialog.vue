@@ -269,10 +269,10 @@ const onOKClick = () => {
               toggle ? tc('components.server.ServerDeleteDialog.locked') : tc('components.server.ServerDeleteDialog.unlocked')
             }}</span>
           <q-tooltip v-if="server.lock === 'free'">
-            {{ tc('components.server.ServerDeleteDialog.locked.delete_server_unlock') }}
+            {{ tc('components.server.ServerDeleteDialog.delete_server_unlock') }}
           </q-tooltip>
           <q-tooltip v-else>
-            {{ tc('components.server.ServerDeleteDialog.locked.delete_server_lock') }}
+            {{ tc('components.server.ServerDeleteDialog.delete_server_lock') }}
           </q-tooltip>
         </q-toggle>
 

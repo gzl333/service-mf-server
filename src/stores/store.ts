@@ -2404,31 +2404,48 @@ export const useStore = defineStore('server', {
           }
           try {
             // 发送请求
-            await axios.post(api, data)
-            // 如果删除主机，重新获取userServerTable或groupServerTable
-            Notify.create({
-              classes: 'notification-positive shadow-15',
-              textColor: 'positive',
-              // spinner: true,
-              icon: 'check_circle',
-              message: `${tc('store.notify.delete_server_success')}: ${server.ipv4 || ''}`,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-            // // 应延时
-            // void await new Promise(resolve => (
-            //   setTimeout(resolve, 1000)
-            // ))
-            // 更新userServerTable或groupServerTable // 可以优化成直接删除
-            payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
-            // // 更新personal/group quotaTable, 删除了server，对应quota里面servers字段也更新了。// 可以优化成直接删除
-            // payload.isGroup ? void context.dispatch('loadGroupQuotaTable') : void context.dispatch('loadPersonalQuotaTable')
-            // 是否跳转
-            if (payload.isJump) {
-              // @ts-ignore
-              this.$router.back()
+            const respDeleteServer = await axios.post(api, data)
+            if (respDeleteServer.status === 204) {
+              // 如果删除主机，重新获取userServerTable或groupServerTable
+              Notify.create({
+                classes: 'notification-positive shadow-15',
+                textColor: 'positive',
+                // spinner: true,
+                icon: 'check_circle',
+                message: `${tc('store.notify.delete_server_success')}: ${server.ipv4 || ''}`,
+                position: 'bottom',
+                closeBtn: true,
+                timeout: 5000,
+                multiLine: false
+              })
+
+              // 更新userServerTable或groupServerTable // 可以优化成直接删除
+              payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
+
+              // 是否跳转
+              if (payload.isJump) {
+                // @ts-ignore
+                this.$router.back()
+              }
+            } else {
+              // notify
+              Notify.create({
+                classes: 'notification-negative shadow-15',
+                icon: 'mdi-alert',
+                textColor: 'negative',
+                message: respDeleteServer.data.message,
+                caption: respDeleteServer.data.code,
+                position: 'bottom',
+                closeBtn: true,
+                timeout: 5000,
+                multiLine: false
+              })
+
+              // 若请求失败则应更新单个server status
+              void this.loadSingleServerStatus({
+                isGroup: payload.isGroup || false,
+                serverId: payload.serverId
+              })
             }
           } catch {
             // 若请求失败则应更新单个server status
