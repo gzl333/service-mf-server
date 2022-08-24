@@ -79,9 +79,9 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   </q-btn>
                 </div>
 
-                <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_place_user') }} {{
-                    order.username
-                  }}
+                <div class="col-auto">
+                  {{ tc('components.order.OrderDetailCard.order_place_user') }}
+                  {{ order.username }}
                 </div>
 
                 <q-btn
@@ -102,25 +102,25 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
             <div class="row no-wrap justify-center items-center section" style="height: 160px;">
 
-              <div class="col-2 q-mr-sm column justify-center items-center">
+              <div class="col-2 q-mr-sm column justify-center items-center text-subtitle1 text-weight-bold">
 
-                <div v-if="order.order_type === 'new'" class="col-auto text-bold text-h6">
+                <div v-if="order.order_type === 'new'" class="col-auto">
                   {{ tc('components.order.OrderDetailCard.new_purchase') }}
                 </div>
 
-                <div v-if="order.order_type === 'renewal'" class="col-auto text-bold text-h6">
+                <div v-if="order.order_type === 'renewal'" class="col-auto">
                   {{ tc('components.order.OrderDetailCard.renewal') }}
                 </div>
 
-                <div v-if="order.order_type === 'upgrade'" class="col-auto text-bold text-h6">
+                <div v-if="order.order_type === 'upgrade'" class="col-auto">
                   {{ tc('components.order.OrderDetailCard.upgrade') }}
                 </div>
 
-                <div v-if="order.order_type === 'downgrade'" class="col-auto text-bold text-h6">
+                <div v-if="order.order_type === 'downgrade'" class="col-auto">
                   {{ tc('components.order.OrderDetailCard.downgrade') }}
                 </div>
 
-                <div class="col-auto text-bold text-h6">
+                <div class="col-auto">
                   {{
                     order.pay_type === 'prepaid' ? tc('components.order.OrderDetailCard.monthly_prepaid') : tc('components.order.OrderDetailCard.pay_as_go')
                   }}
@@ -329,7 +329,10 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     </div>
                   </div>
 
-                  <div class="row items-center">
+                  <!--image可能会在创建order后删除，localId失效，失效则不显示这一栏-->
+                  <div
+                    v-if="store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]"
+                    class="row items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
                     <div class="col">
                       <!--                      <q-icon-->
@@ -343,6 +346,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                       {{
                         store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
                       }}
+
                     </div>
                   </div>
 
@@ -352,7 +356,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.org') }}</div>
-                    <div class="col" >
+                    <div class="col">
                       {{
                         i18n.global.locale === 'zh' ?
                           store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
@@ -377,8 +381,8 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     <div class="col">
 
                       <CloudPlatformLogo
-                        :platform-name="store.tables.serviceTable.byId[order.service_id]?.service_type" />
-<!--                      -->
+                        :platform-name="store.tables.serviceTable.byId[order.service_id]?.service_type"/>
+                      <!--                      -->
                       <!--                      <q-icon-->
                       <!--                        v-if="store.tables.serviceTable.byId[order.service_id].service_type.toLowerCase().includes('ev')"-->
                       <!--                        style="width: 130px;height: 25px">-->

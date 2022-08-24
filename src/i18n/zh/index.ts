@@ -66,6 +66,13 @@ export default {
   placeOrder: '新建订单',
   deployServer: '新建云主机',
 
+  // server detail card
+  vpnInfo: 'VPN信息',
+  seeVpn: '查看VPN',
+  jumpToVpn: '跳转至该VPN',
+  vpnNotRequired: '无需VPN',
+  memory: '内存',
+
   // specifics
   components,
   layouts,

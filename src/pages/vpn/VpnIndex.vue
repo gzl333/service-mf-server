@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
-// import { useRoute, useRouter } from 'vue-router'
+import { useRoute/* , useRouter  */ } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
@@ -20,7 +20,7 @@ import PasswordToggle from 'components/ui/PasswordToggle.vue'
 
 const { tc } = i18n.global
 const store = useStore()
-// const route = useRoute()
+const route = useRoute()
 // const router = useRouter()
 
 // 筛选datacenter的关键字
@@ -35,23 +35,28 @@ const tabService = ref('') // serviceId
 
 // (2)tab选择默认项的方法
 const chooseTabDataCenter = () => {
-  tabDataCenter.value = datacentersFiltered.value[0]
+  tabDataCenter.value = route.query.datacenter as string || datacentersFiltered.value[0]
 }
 const chooseTabService = () => {
-  tabService.value = store.tables.dataCenterTable.byId[tabDataCenter.value]?.services[0]
+  tabService.value = route.query.service as string || store.tables.dataCenterTable.byId[tabDataCenter.value]?.services[0]
 }
 
 // (3)setup时调用一次，table已加载时进入页面要选一次默认值
 chooseTabDataCenter()
 chooseTabService()
 
-// (4)dataCenterTable变化，filter变化时：横向tab默认选择第一项，
+// (4)dataCenterTable变化，filter变化时，横向tab默认选择: 指定datacenter或者第一项，
 watch([store.tables.dataCenterTable.allIds, filter], chooseTabDataCenter)
 
-// (5)serviceTable或者tabDataCenter变化时： 属相tab选择services里第一项
+// (5)serviceTable变化时， 竖向tab选择：指定service或者services里第一项
 // ?直接watch serviceTable不起作用。有些table可以，有些不可以。
 const servicesCurrentDataCenter = computed(() => store.tables.dataCenterTable.byId[tabDataCenter.value]?.services)
-watch([servicesCurrentDataCenter, tabDataCenter], chooseTabService)
+watch(servicesCurrentDataCenter, chooseTabService)
+
+// (6)点击tabDatacenter， tabDataCenter变化，忽略指定项， 选择service第一项
+watch(tabDataCenter, () => {
+  tabService.value = store.tables.dataCenterTable.byId[tabDataCenter.value]?.services[0]
+})
 
 // 全部vpn对象
 const vpn = computed(() => store.tables.userVpnTable.byId[tabService.value])

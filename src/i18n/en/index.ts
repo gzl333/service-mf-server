@@ -66,6 +66,13 @@ export default {
   placeOrder: 'Place Order',
   deployServer: 'Deploy Server',
 
+  // server detail card
+  vpnInfo: 'VPN Info',
+  seeVpn: 'See VPN',
+  jumpToVpn: 'Jump to this VPN',
+  vpnNotRequired: 'VPN is not required',
+  memory: 'Memory',
+
   // specifics
   // 独立翻译点,按照工程文件结构组织
   components,
