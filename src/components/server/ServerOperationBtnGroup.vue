@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType, ref, computed } from 'vue'
+import { PropType, /* ref, */ computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
 import { useStore, ServerInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
