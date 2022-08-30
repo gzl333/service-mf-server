@@ -3262,52 +3262,6 @@ export const useStore = defineStore('server', {
         componentProps: {
           groupId
         }
-      }).onOk(async (val: {
-        couponId: string,
-        couponCode: string,
-        groupId?: string
-      }) => {
-        // 兑换代金券
-        try {
-          const respPostCashCoupon = await api.server.cashcoupon.postCashCoupon({
-            query: {
-              id: val.couponId,
-              coupon_code: val.couponCode,
-              ...(val.groupId && { vo_id: val.groupId })
-            }
-          })
-          if (respPostCashCoupon.status.toString().startsWith('2')) {
-            Notify.create({
-              classes: 'notification-positive shadow-15',
-              textColor: 'positive',
-              icon: 'check_circle',
-              message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-            // 更新对应表
-            val.groupId ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
-            // 跳转
-            val.groupId ? navigateToUrl(`/my/server/group/detail/${val.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
-          } else {
-            throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
-          }
-        } catch (error) {
-          if (error instanceof Error) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: error.message,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
-        }
       })
     }
     /* coupon */

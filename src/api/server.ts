@@ -260,6 +260,44 @@ export default {
         params: payload.query
       }
       return axiosServer.post('/cashcoupon', null, config)
+    },
+    postCashCouponExchange (payload: {
+      query: {
+        code: string;
+        vo_id?: string;
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/cashcoupon/exchange', null, config)
+    },
+    deleteCashCoupon (payload: {
+      path: {
+        id: string;
+      },
+      query?: {
+        force?: string;
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.delete('/cashcoupon/' + payload.path.id, config)
+    },
+    getCashCouponPayment (payload: {
+      path: {
+        id: string;
+      },
+      query?: {
+        page?: number;
+        page_size?: number;
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/cashcoupon/' + payload.path.id + '/payment', config)
     }
   },
   'describe-price': {
@@ -852,7 +890,7 @@ export default {
       return axiosServer.patch('/vpn/' + payload.path.service_id, data)
     },
     postVpnActive (payload: {
-      path: {service_id: string}
+      path: { service_id: string }
     }) {
       return axiosServer.post('/vpn/' + payload.path.service_id + '/active')
     },
@@ -863,7 +901,7 @@ export default {
       return axiosServer.get('/vpn/' + payload.path.service_id + '/config')
     },
     postVpnDeactive (payload: {
-      path: {service_id: string}
+      path: { service_id: string }
     }) {
       return axiosServer.post('/vpn/' + payload.path.service_id + '/deactive')
     }

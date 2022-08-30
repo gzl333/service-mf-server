@@ -5,6 +5,8 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import { Notify, QInput, useDialogPluginComponent } from 'quasar'
+import api from 'src/api'
+import { navigateToUrl } from 'single-spa'
 // import moment from 'moment'
 
 const props = defineProps({
@@ -35,6 +37,9 @@ const {
 // dom ref
 const inputDom = ref<QInput>()
 
+// btn loading
+const isLoading = ref(false)
+
 // 如果传入groupId则优先选中group模式
 const redeemType = ref<'personal' | 'group'>(props.groupId ? 'group' : 'personal')
 const coupon = ref('')
@@ -51,13 +56,9 @@ selectDefaultGroup()
 // options更新时随时更新选中
 watch(groupOptions, selectDefaultGroup)
 
-const onOKClick = () => {
-  // 分割出id和coupon_code
-  const positionSplit = coupon.value.trim().indexOf('#')
-  const couponId = coupon.value.slice(0, positionSplit)
-  const couponCode = coupon.value.slice(positionSplit + 1)
+const onOKClick = async () => {
   // 校验coupon格式
-  if (positionSplit === -1 || couponId.length <= 0 || couponCode.length <= 0) {
+  if (coupon.value.length === 0) {
     // notify
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -86,12 +87,50 @@ const onOKClick = () => {
     })
     return
   }
-  // 发送请求
-  onDialogOK({
-    couponId,
-    couponCode,
-    ...(redeemType.value === 'group' && { groupId: groupSelection.value })
-  })
+  // 发送请求,兑换代金券
+  try {
+    isLoading.value = true
+    const respPostCashCoupon = await api.server.cashcoupon.postCashCouponExchange({
+      query: {
+        code: coupon.value,
+        ...(redeemType.value === 'group' && { vo_id: props.groupId })
+      }
+    })
+    isLoading.value = false
+    if (respPostCashCoupon.status.toString().startsWith('2')) {
+      Notify.create({
+        classes: 'notification-positive shadow-15',
+        textColor: 'positive',
+        icon: 'check_circle',
+        message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+      // 更新对应表
+      redeemType.value === 'group' ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
+      // 关闭dialog
+      onDialogOK()
+      // 跳转
+      redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+    } else {
+      throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      Notify.create({
+        classes: 'notification-negative shadow-15',
+        icon: 'mdi-alert',
+        textColor: 'negative',
+        message: error.message,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+    }
+  }
 }
 </script>
 
@@ -172,7 +211,7 @@ const onOKClick = () => {
             {{ tc('components.coupon.RedeemCouponDialog.redeem_code') }}
           </div>
           <div class="col">
-            <q-input ref="inputDom" outlined v-model="coupon" dense
+            <q-input ref="inputDom" outlined v-model.trim="coupon" dense
                      :label="tc('components.coupon.RedeemCouponDialog.notify_input_code')" @keydown.enter="onOKClick">
               <template v-slot:append>
                 <q-icon v-if="coupon !== ''" name="close" @click="coupon = ''" class="cursor-pointer"/>
@@ -193,6 +232,7 @@ const onOKClick = () => {
                no-caps
                :label="tc('components.coupon.RedeemCouponDialog.redeem')"
                @click="onOKClick"
+               :loading="isLoading"
         />
 
         <q-btn class="q-ma-sm"
