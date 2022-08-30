@@ -41,8 +41,8 @@ const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId
 const service = computed(() => store.tables.serviceTable.byId[server.value?.service])
 // quota info
 // const quota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[server.value.user_quota] : store.tables.personalQuotaTable.byId[server.value?.user_quota])
-// vpn info
-const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service])
+// // vpn info
+// const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service])
 
 // lock toggle
 const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
@@ -53,11 +53,11 @@ const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id |
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
 
-const gotoManualVpn = () => {
-  // 中文访问/manual 英文访问/manual/en
-  const url = computed(() => location.origin + (i18n.global.locale === 'zh' ? '/manual/vpn' : '/manual/en/vpn'))
-  window.open(url.value)
-}
+// const gotoManualVpn = () => {
+//   // 中文访问/manual 英文访问/manual/en
+//   const url = computed(() => location.origin + (i18n.global.locale === 'zh' ? '/manual/vpn' : '/manual/en/vpn'))
+//   window.open(url.value)
+// }
 
 </script>
 

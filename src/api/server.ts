@@ -851,11 +851,21 @@ export default {
       const data = payload.body
       return axiosServer.patch('/vpn/' + payload.path.service_id, data)
     },
+    postVpnActive (payload: {
+      path: {service_id: string}
+    }) {
+      return axiosServer.post('/vpn/' + payload.path.service_id + '/active')
+    },
     getVpnCa (payload: { path: { service_id: string } }) {
       return axiosServer.get('/vpn/' + payload.path.service_id + '/ca')
     },
     getVpnConfig (payload: { path: { service_id: string } }) {
       return axiosServer.get('/vpn/' + payload.path.service_id + '/config')
+    },
+    postVpnDeactive (payload: {
+      path: {service_id: string}
+    }) {
+      return axiosServer.post('/vpn/' + payload.path.service_id + '/deactive')
     }
   }
 }

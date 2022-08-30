@@ -21,7 +21,7 @@ const store = useStore()
 // const route = userRoute()
 const tc = i18n.global.tc
 
-const toggle = ref(computed(() => props.server.lock === 'lock-operation'))
+const toggleValue = computed(() => props.server.lock === 'lock-operation')
 // 当前用户在group内的角色
 const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id || '']?.myRole)
 </script>
@@ -32,7 +32,7 @@ const myRole = computed(() => store.tables.groupTable.byId[props.server?.vo_id |
 
       <q-btn color="grey-3" padding="none">
         <q-toggle
-          v-model="toggle"
+          :model-value="toggleValue"
           checked-icon="lock"
           unchecked-icon="lock_open"
           color="light-green"

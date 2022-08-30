@@ -225,15 +225,28 @@ const gotoManualVpn = () => {
                             VPN {{ tc('pages.vpn.VpnIndex.account_status') }}
                           </div>
 
-                          <div v-if="vpn.active" class="col-shrink row items-center">
-                            <q-icon name="check_circle" color="light-green" size="sm"/>
-                            {{ tc('pages.vpn.VpnIndex.activated') }}
+                          <div class="col-shrink row items-center">
+                            <q-toggle
+                              :model-value="vpn.active"
+                              checked-icon="check"
+                              unchecked-icon="clear"
+                              :color="vpn.active ? 'light-green' : 'red'"
+                              keep-color
+                              @click="store.toggleVpnStatus({serviceId: vpn.id})"
+                            >
+                              {{ vpn.active ? tc('pages.vpn.VpnIndex.activated') : tc('pages.vpn.VpnIndex.deactivated') }}
+                            </q-toggle>
                           </div>
 
-                          <div v-else class="col-shrink row items-center">
-                            <q-icon name="cancel" color="red" size="sm"/>
-                            {{ tc('pages.vpn.VpnIndex.deactivated') }}
-                          </div>
+                          <!--                          <div v-if="vpn.active" class="col-shrink row items-center">-->
+                          <!--                            <q-icon name="check_circle" color="light-green" size="sm"/>-->
+                          <!--                            {{ tc('pages.vpn.VpnIndex.activated') }}-->
+                          <!--                          </div>-->
+
+                          <!--                          <div v-else class="col-shrink row items-center">-->
+                          <!--                            <q-icon name="cancel" color="red" size="sm"/>-->
+                          <!--                            {{ tc('pages.vpn.VpnIndex.deactivated') }}-->
+                          <!--                          </div>-->
                         </div>
 
                         <div v-if="vpn.active">
@@ -305,9 +318,9 @@ const gotoManualVpn = () => {
                           </div>
                         </div>
 
-                        <div v-else>
-                          {{ tc('pages.vpn.VpnIndex.create_vpn_account') }}
-                        </div>
+                        <!--                        <div v-else>-->
+                        <!--                          {{ tc('pages.vpn.VpnIndex.create_vpn_account') }}-->
+                        <!--                        </div>-->
 
                       </div>
 

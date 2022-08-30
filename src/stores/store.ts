@@ -2280,6 +2280,52 @@ export const useStore = defineStore('server', {
     /* tables */
 
     /* dialogs */
+
+    /* vpn */
+    async toggleVpnStatus (payload: { serviceId: string }) {
+      // 因成功相应data为空，需要在此分开处理打开、关闭的逻辑
+      if (this.tables.userVpnTable.byId[payload.serviceId]?.active) {
+        const respDeactivate = await api.server.vpn.postVpnDeactive({ path: { service_id: payload.serviceId } })
+        if (respDeactivate.status === 200) {
+          this.tables.userVpnTable.status = 'loading'
+          this.tables.userVpnTable.byId[payload.serviceId].active = false
+          this.tables.userVpnTable.status = 'total'
+        } else {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: respDeactivate.data.message,
+            caption: respDeactivate.data.code,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      } else {
+        const respActivate = await api.server.vpn.postVpnActive({ path: { service_id: payload.serviceId } })
+        if (respActivate.status === 200) {
+          this.tables.userVpnTable.status = 'loading'
+          this.tables.userVpnTable.byId[payload.serviceId].active = true
+          this.tables.userVpnTable.status = 'total'
+        } else {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: respActivate.data.message,
+            caption: respActivate.data.code,
+            position: 'bottom',
+            closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+      }
+    },
+    /* vpn */
+
     /* server */
     // 打开vnc
     async gotoVNC (id: string) {
