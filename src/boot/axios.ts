@@ -34,22 +34,20 @@ const axiosServer = axios.create({
   }
 })
 
+// token要在拦截器里加载，每次请求都取最新的。因access token可能会过期而更新。
 /* 原生axios的拦截器 */
 axios.interceptors.request.use(config => {
   // get jwt token from @cnic/main's store
   const store = useStoreMain()
-  config.headers.common.Authorization = `Bearer ${store.items.tokenAccess as string}`
+  Object.assign(config, { headers: { Authorization: `Bearer ${store.items.tokenAccess as string}` } })
   return config
 }, (error: AxiosError) => {
-  console.log('axios-REQ-Error', error)
-  return error.request // throw error无法把错误传递给发送请求处
+  return Promise.reject(error)
 })
 axios.interceptors.response.use(config => {
   return config
 }, (error: AxiosError) => {
-  console.log('axios-RESP-Error', error)
-  // 响应里的error信息在error.response.data里面，被包成了axios error对象
-  return error.response // throw error无法把错误传递给发送请求处
+  return Promise.reject(error)
 })
 /* 原生axios的拦截器 */
 
@@ -57,19 +55,15 @@ axios.interceptors.response.use(config => {
 axiosServer.interceptors.request.use(config => {
   // get jwt token from @cnic/main's store
   const store = useStoreMain()
-  config.headers.common.Authorization = `Bearer ${store.items.tokenAccess as string}`
+  Object.assign(config, { headers: { Authorization: `Bearer ${store.items.tokenAccess as string}` } })
   return config
 }, (error: AxiosError) => {
-  console.log('axiosServer-REQ-Error', error)
-  return error.request // throw error无法把错误传递给发送请求处
+  return Promise.reject(error)
 })
 axiosServer.interceptors.response.use(config => {
   return config
 }, (error: AxiosError) => {
-  console.log('axiosServer-RESP-Error', error)
-  // 响应里的error信息在error.response.data里面，被包成了axios error对象
-  // return Promise.reject(error) todo 待梳理
-  return error.response // throw error无法把错误传递给发送请求处
+  return Promise.reject(error)
 })
 /* axiosServer的拦截器 */
 

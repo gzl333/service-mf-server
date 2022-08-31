@@ -3,6 +3,7 @@
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
 import { axios, baseURLServer } from 'boot/axios'
+import { AxiosError } from 'axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
 import { Dialog, Notify } from 'quasar'
@@ -1453,31 +1454,49 @@ export const useStore = defineStore('server', {
         status: 'init'
       }
       this.tables.groupTable.status = 'loading'
-      // 发送请求
-      const respGroup = await api.server.vo.getVo()
-      // normalize
-      const group = new schema.Entity('group')
-      for (const data of respGroup.data.results) {
-        // 添加role/balance/order字段
-        const storeMain = useStoreMain()
-        const currentId = storeMain.items.tokenDecoded.email
-        const myRole = currentId === data.owner.username ? 'owner' : 'member'
-        Object.assign(data, {
-          myRole,
-          balance: '',
-          order: [],
-          coupons: []
-        })
+      try {
+        // 发送请求
+        const respGroup = await api.server.vo.getVo()
         // normalize
-        const normalizedData = normalize(data, group)
-        // 保存table
-        Object.assign(this.tables.groupTable.byId, normalizedData.entities.group)
-        this.tables.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
-        this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
+        const group = new schema.Entity('group')
+        for (const data of respGroup.data.results) {
+          // 添加role/balance/order字段
+          const storeMain = useStoreMain()
+          const currentId = storeMain.items.tokenDecoded.email
+          const myRole = currentId === data.owner.username ? 'owner' : 'member'
+          Object.assign(data, {
+            myRole,
+            balance: '',
+            order: [],
+            coupons: []
+          })
+          // normalize
+          const normalizedData = normalize(data, group)
+          // 保存table
+          Object.assign(this.tables.groupTable.byId, normalizedData.entities.group)
+          this.tables.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
+          this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
+        }
+        // load table的最后再改status
+        this.tables.groupTable.status = 'total'
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: error?.response?.data.code,
+            caption: error?.response?.data.message,
+            position: 'bottom',
+            // closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
+        this.tables.groupTable.status = 'error'
       }
-      // load table的最后再改status
-      this.tables.groupTable.status = 'total'
     },
+    // todo change promise
     // 根据groupTable,建立groupMemberTable
     async loadGroupMemberTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
