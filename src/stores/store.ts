@@ -1479,14 +1479,14 @@ export const useStore = defineStore('server', {
         }
         // load table的最后再改status
         this.tables.groupTable.status = 'total'
-      } catch (error) {
-        if (error instanceof AxiosError) {
+      } catch (exception) {
+        if (exception instanceof AxiosError) {
           Notify.create({
             classes: 'notification-negative shadow-15',
             icon: 'mdi-alert',
             textColor: 'negative',
-            message: error?.response?.data.code,
-            caption: error?.response?.data.message,
+            message: exception?.response?.data.code,
+            caption: exception?.response?.data.message,
             position: 'bottom',
             // closeBtn: true,
             timeout: 5000,

@@ -10,25 +10,24 @@ declare global {
   }
 }
 
-// const quasar = useQuasar()
+// 获取浏览器locale: localStorage的locale偏好 或者 浏览器locale设置
+// 因只提供英文和简体中文两种locale，只截取locale code的前两位
+const browserLocale = localStorage.getItem('usp_locale') as string || Quasar.lang.getLocale()?.slice(0, 2)
 
-// // set quasar language set locale
-// void import('quasar/lang/' + quasar.lang.getLocale()).then(lang => {
-//   quasar.lang.set(lang.default)
-// })
+console.log(browserLocale)
 
-// try {
-//   import('quasar/lang/' + Quasar.lang.getLocale()).then(lang => {
-//     console.log(lang.default)
-//     Quasar.lang.set(lang.default)
-//   })
-// } catch (err) {
-//   // Requested Quasar Language Pack does not exist,
-//   // let's not break the app, so catching error
-// }
-
-// 获取浏览器locale, 因只提供英文和简体中文两种locale，只截取locale code的前两位
-const browserLocale = Quasar.lang.getLocale()?.slice(0, 2)
+// 此处设置仍不成功
+if (browserLocale === 'zh') {
+  import('quasar/lang/zh-CN').then(lang => {
+    // console.log(lang.default)
+    Quasar.lang.set(lang.default)
+  })
+} else {
+  import('quasar/lang/en-US').then(lang => {
+    // console.log(lang.default)
+    Quasar.lang.set(lang.default)
+  })
+}
 
 // 导出i18n实例供全局使用，singleSpa中避免使用useI18n方式
 export const i18n = createI18n({
@@ -44,23 +43,20 @@ export const i18n = createI18n({
 // Dispatched at @cnic/main's MyHeader component.
 window.addEventListener('i18n', ((event: CustomEvent) => {
   // console.log('server i18n event!')
+
+  // change app locale
   i18n.global.locale = event.detail
 
-  // // set quasar language set locale
-  // void import('quasar/lang/' + event.detail.includes('zh') ? 'zh-CN' : 'en-US').then(lang => {
-  //   console.log(lang.default)
-  //   quasar.lang.set(lang.default)
-  // })
-
-  // try {
-  //   import('quasar/lang/' + event.detail.includes('zh') ? 'zh-CN' : 'en-US').then(lang => {
-  //     console.log(lang.default)
-  //     Quasar.lang.set(lang.default)
-  //   })
-  // } catch (err) {
-  //   // Requested Quasar Language Pack does not exist,
-  //   // let's not break the app, so catching error
-  // }
+  // change quasar language packs
+  if (event.detail.includes('zh')) {
+    import('quasar/lang/zh-CN').then(lang => {
+      Quasar.lang.set(lang.default)
+    })
+  } else {
+    import('quasar/lang/en-US').then(lang => {
+      Quasar.lang.set(lang.default)
+    })
+  }
 
 // eslint-disable-next-line no-undef
 }) as EventListener)
