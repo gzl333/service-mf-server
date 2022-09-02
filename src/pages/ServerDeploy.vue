@@ -369,8 +369,8 @@ const deployServer = async () => {
             </div>
             <div class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionOwner === 'personal' ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionOwner === 'personal' ? 'white' : 'grey-3'"
+                :class="selectionOwner === 'personal' ? '' : ''"
+                :color="selectionOwner === 'personal' ? 'primary' : 'grey-3'"
                 outline
                 dense
                 no-caps
@@ -393,7 +393,8 @@ const deployServer = async () => {
                       {{ tc('personalAccountDescription') }}
                     </div>
                     <div class="col-1 text-black text-caption">
-                      {{ tc('balance') }}: {{ store.items.personalBalance.balance }} {{ tc('points') }}
+                      {{ tc('balance') }}: {{ store.items.personalBalance.balance }}
+                      {{ tc('points', Number(store.items.personalBalance.balance)) }}
                     </div>
                   </div>
 
@@ -402,8 +403,8 @@ const deployServer = async () => {
               </q-btn>
 
               <q-btn
-                :class="selectionOwner === 'group' ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionOwner === 'group' ? 'white' : 'grey-3'"
+                :class="selectionOwner === 'group' ? '' : ''"
+                :color="selectionOwner === 'group' ? 'primary' : 'grey-3'"
                 outline
                 dense
                 no-caps
@@ -446,8 +447,8 @@ const deployServer = async () => {
 
               <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionGroup === group.id ? 'shadow-3' : 'bg-grey-1'"
-                  :color="selectionGroup === group.id ? 'white' : 'grey-3'"
+                  :class="selectionGroup === group.id ? '' : ''"
+                  :color="selectionGroup === group.id ? 'primary' : 'grey-3'"
                   v-for="group in groups"
                   :val="group.id"
                   :key="group.id"
@@ -491,8 +492,8 @@ const deployServer = async () => {
             </div>
             <div class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionPayment === 'prepaid' ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionPayment === 'prepaid' ? 'white' : 'grey-3'"
+                :class="selectionPayment === 'prepaid' ? '' : ''"
+                :color="selectionPayment === 'prepaid' ? 'primary' : 'grey-3'"
                 outline
                 dense
                 no-caps
@@ -521,8 +522,8 @@ const deployServer = async () => {
 
               <q-btn
                 :disable="!isAllowPostpaid"
-                :class="selectionPayment === 'postpaid' ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionPayment === 'postpaid' ? 'white' : 'grey-3'"
+                :class="selectionPayment === 'postpaid' ? '' : ''"
+                :color="selectionPayment === 'postpaid' ? 'primary' : 'grey-3'"
                 outline
                 dense
                 no-caps
@@ -565,8 +566,8 @@ const deployServer = async () => {
               </div>
               <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionPeriod === month ? 'shadow-3' : 'bg-grey-1'"
-                  :color="selectionPeriod === month ? 'white' : 'grey-3'"
+                  :class="selectionPeriod === month ? '' : ''"
+                  :color="selectionPeriod === month ? 'primary' : 'grey-3'"
                   v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
                   :val="month"
                   :key="month"
@@ -607,8 +608,8 @@ const deployServer = async () => {
 
               <div v-else class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionService === service.id ? 'shadow-3' : 'bg-grey-1'"
-                  :color="selectionService === service.id ? 'white' : 'grey-3'"
+                  :class="selectionService === service.id ? '' : ''"
+                  :color="selectionService === service.id ? 'primary' : 'grey-3'"
                   v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
                   :key="service.id"
                   :val="service.id"
@@ -674,8 +675,8 @@ const deployServer = async () => {
 
             <div v-else class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionImage === image.id ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionImage === image.id ? 'white' : 'grey-3'"
+                :class="selectionImage === image.id ? '' : ''"
+                :color="selectionImage === image.id ? 'primary' : 'grey-3'"
                 v-for="image in images"
                 :val="image.id"
                 :key="image.id"
@@ -712,7 +713,7 @@ const deployServer = async () => {
           <!--            <div class="row items-center q-gutter-lg">-->
           <!--              <q-btn-->
           <!--                :class="selectionSystemDisk === disk ? 'shadow-5' : 'bg-grey-1'"-->
-          <!--                :color="selectionSystemDisk === disk ? 'white' : 'grey-3'"-->
+          <!--                :color="selectionSystemDisk === disk ? 'primary' : 'grey-3'"-->
           <!--                v-for="disk in systemDisks"-->
           <!--                :val="disk"-->
           <!--                :key="disk"-->
@@ -745,13 +746,14 @@ const deployServer = async () => {
             </div>
 
             <div v-if="privateNetworks.length > 0" class="q-pb-xs">
-              <div class="row" :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-grey' : 'text-primary'">
+              <div class="row"
+                   :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-grey' : 'text-primary'">
                 {{ tc('privateNetwork') }}
               </div>
               <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-3' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
+                  :class="selectionNetwork === network.id ? '' : ''"
+                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
                   v-for="network in privateNetworks"
                   :val="network.id"
                   :key="network.id"
@@ -764,7 +766,8 @@ const deployServer = async () => {
                   <div class="column items-center justify-center"
                        style="width: 131px;height: 30px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column" style="line-height: 1;">
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column"
+                         style="line-height: 1;">
                       <div class="col-auto">
                         {{ network.name }}
                       </div>
@@ -779,13 +782,14 @@ const deployServer = async () => {
             </div>
 
             <div v-if="publicNetworks.length > 0" class="q-pb-xs">
-              <div class="row" :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
+              <div class="row"
+                   :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
                 {{ tc('publicNetwork') }}
               </div>
               <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionNetwork === network.id ? 'shadow-3' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'white' : 'grey-3'"
+                  :class="selectionNetwork === network.id ? '' : ''"
+                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
                   v-for="network in publicNetworks"
                   :val="network.id"
                   :key="network.id"
@@ -798,7 +802,8 @@ const deployServer = async () => {
                   <div class="column items-center justify-center q-pa-sm"
                        style="width: 131px;height: 30px;">
 
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column" style="line-height: 1;">
+                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column"
+                         style="line-height: 1;">
                       <div class="col-auto">
                         {{ network.name }}
                       </div>
@@ -825,8 +830,8 @@ const deployServer = async () => {
 
             <div v-else class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionFlavor === flavor.id ? 'shadow-3' : 'bg-grey-1'"
-                :color="selectionFlavor === flavor.id ? 'white' : 'grey-3'"
+                :class="selectionFlavor === flavor.id ? '' : ''"
+                :color="selectionFlavor === flavor.id ? 'primary' : 'grey-3'"
                 v-for="flavor in flavors"
                 :val="flavor.id"
                 :key="flavor.id"
