@@ -126,6 +126,9 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
         })
       }
     }
+  } else {
+    // 不满足询价条件时，应清空询价结果，避免遗留历史询价结果
+    currentPrice.value = null
   }
 })
 
