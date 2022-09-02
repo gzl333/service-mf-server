@@ -92,8 +92,9 @@ const inputRemarks = ref('')
 const currentPrice = ref<{ original: string; trade: string } | null>(null)
 // 根据selection进行询价
 watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], async () => {
-  // prepaid时才询价
-  if (selectionPayment.value === 'prepaid') {
+  // prepaid时才询价，其他几个参数都不为空时才询价（其中period初始值为1, 肯定不为空）
+  // 初始化过程中有些table未load，此时不该询价。都有有效选择后，则可以询价。
+  if (selectionPayment.value === 'prepaid' && selectionFlavor.value !== '' && selectionNetwork.value !== '') {
     try {
       // 发出询价请求
       const respGetPrice = await api.server['describe-price'].getDescribePrice({
