@@ -7,6 +7,7 @@ import { i18n } from 'boot/i18n'
 import { Notify, QInput, useDialogPluginComponent } from 'quasar'
 import api from 'src/api'
 import { navigateToUrl } from 'single-spa'
+import { AxiosError } from 'axios'
 // import moment from 'moment'
 
 const props = defineProps({
@@ -97,35 +98,33 @@ const onOKClick = async () => {
       }
     })
     isLoading.value = false
-    if (respPostCashCoupon.status.toString().startsWith('2')) {
-      Notify.create({
-        classes: 'notification-positive shadow-15',
-        textColor: 'positive',
-        icon: 'check_circle',
-        message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
-        position: 'bottom',
-        closeBtn: true,
-        timeout: 5000,
-        multiLine: false
-      })
-      // 更新对应表
-      redeemType.value === 'group' ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
-      // 关闭dialog
-      onDialogOK()
-      // 跳转
-      redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
-    } else {
-      throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
-    }
-  } catch (error) {
-    if (error instanceof Error) {
+    Notify.create({
+      classes: 'notification-positive shadow-15',
+      textColor: 'positive',
+      icon: 'check_circle',
+      message: `${tc('store.notify.redeem_success')}: ${respPostCashCoupon.data.id}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    // 更新对应表
+    redeemType.value === 'group' ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
+    // 关闭dialog
+    onDialogOK()
+    // 跳转
+    redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+  } catch (exception) {
+    isLoading.value = false
+    if (exception instanceof AxiosError) {
       Notify.create({
         classes: 'notification-negative shadow-15',
         icon: 'mdi-alert',
         textColor: 'negative',
-        message: error.message,
+        message: exception?.response?.data.code,
+        caption: exception?.response?.data.message,
         position: 'bottom',
-        closeBtn: true,
+        // closeBtn: true,
         timeout: 5000,
         multiLine: false
       })

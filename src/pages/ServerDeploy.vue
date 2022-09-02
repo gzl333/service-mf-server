@@ -13,6 +13,7 @@ import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
 import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
+import { AxiosError } from 'axios'
 
 // const props = defineProps({
 //   foo: {
@@ -106,9 +107,23 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
       })
       // 拿到price
       currentPrice.value = respGetPrice.data.price
-    } catch {
+    } catch (exception) {
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
+
+      if (exception instanceof AxiosError) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: exception?.response?.data.code,
+          caption: exception?.response?.data.message,
+          position: 'bottom',
+          // closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
     }
   }
 })
@@ -269,13 +284,12 @@ const deployServer = async () => {
       remarks: inputRemarks.value
     }
 
-    const respPostServer = await api.server.server.postServer({ body: selection })
+    try {
+      const respPostServer = await api.server.server.postServer({ body: selection })
 
-    // 创建后处理方式分两种，预付费和后付费
-    if (selectionPayment.value === 'prepaid') {
-      // 包月预付
-      // 2xx 成功创建订单
-      if (respPostServer.status.toString().startsWith('2')) {
+      // 创建后处理方式分两种，预付费和后付费
+      if (selectionPayment.value === 'prepaid') {
+        // 包月预付
         // 更新订单table
         const orderId = respPostServer.data.order_id
         void await store.loadSingleOrder({
@@ -284,23 +298,8 @@ const deployServer = async () => {
         })
         // 跳转至订单list
         selectionOwner.value === 'group' ? navigateToUrl(`/my/server/group/order/detail/${orderId}`) : navigateToUrl(`/my/server/personal/order/detail/${orderId}`)
-      } else {
-        // 其他非2xx的状态码
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: respPostServer.data.message,
-          caption: respPostServer.data.code,
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 15000,
-          multiLine: false
-        })
-      }
-    } else if (selectionPayment.value === 'postpaid') {
-      // 按量计费
-      if (respPostServer.status.toString().startsWith('2')) {
+      } else if (selectionPayment.value === 'postpaid') {
+        // 按量计费
         // 更新订单table
         const orderId = respPostServer.data.order_id
         void await store.loadSingleOrder({
@@ -326,23 +325,27 @@ const deployServer = async () => {
         })
         // 跳转至server list
         selectionOwner.value === 'group' ? navigateToUrl('/my/server/group/list') : navigateToUrl('/my/server/personal/list')
-      } else {
+      }
+
+      // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
+      isDeploying.value = false
+    } catch (exception) {
+      // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
+      isDeploying.value = false
+      if (exception instanceof AxiosError) {
         Notify.create({
           classes: 'notification-negative shadow-15',
           icon: 'mdi-alert',
           textColor: 'negative',
-          message: respPostServer.data.message,
-          caption: respPostServer.data.code,
+          message: exception?.response?.data.code,
+          caption: exception?.response?.data.message,
           position: 'bottom',
-          closeBtn: true,
-          timeout: 15000,
+          // closeBtn: true,
+          timeout: 5000,
           multiLine: false
         })
       }
     }
-
-    // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
-    isDeploying.value = false
   }
 }
 /* 新建云主机 */

@@ -11,6 +11,7 @@ import type { ServerInterface } from 'stores/store'
 
 import OsLogo from 'components/ui/OsLogo.vue'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
+import { AxiosError } from 'axios'
 
 // const props = defineProps({
 //   foo: {
@@ -139,21 +140,20 @@ const loadAdminServers = async () => {
         ...(groupSelection.value === 'vo-name' && groupInput.value !== '' && { 'vo-name': groupInput.value })
       }
     })
-    if (respGetAdminServer?.status.toString().startsWith('2')) {
-      // 拿到rows值，给table用
-      rows.value = respGetAdminServer.data.servers
-      // pagination count
-      pagination.value.count = respGetAdminServer.data.count
-    }
-  } catch (error) {
-    if (error instanceof Error) {
+    // 拿到rows值，给table用
+    rows.value = respGetAdminServer.data.servers
+    // pagination count
+    pagination.value.count = respGetAdminServer.data.count
+  } catch (exception) {
+    if (exception instanceof AxiosError) {
       Notify.create({
         classes: 'notification-negative shadow-15',
         icon: 'mdi-alert',
         textColor: 'negative',
-        message: error.message,
+        message: exception?.response?.data.code,
+        caption: exception?.response?.data.message,
         position: 'bottom',
-        closeBtn: true,
+        // closeBtn: true,
         timeout: 5000,
         multiLine: false
       })
@@ -351,61 +351,42 @@ const deleteServer = (server: ServerInterface) => {
 
     try {
       // 解除删除锁
-      const respUnlockServer = await api.server.server.postServerLock({
+      void await api.server.server.postServerLock({
         path: { id: server.id },
         query: {
           lock: 'free',
           'as-admin': true
         }
       })
-
-      if (respUnlockServer?.status !== 200) {
-        throw new Error()
-      }
-
       // 删除云主机
-      const respDeleteServer = await api.server.server.postServerAction({
+      void await api.server.server.postServerAction({
         path: { id: server.id },
         body: { action: 'delete_force' },
         query: { 'as-admin': true }
       })
-
-      if (respDeleteServer?.status === 200) {
-        Notify.create({
-          classes: 'notification-positive shadow-15',
-          textColor: 'positive',
-          // spinner: true,
-          icon: 'check_circle',
-          message: `云主机删除成功: ${server.ipv4}`,
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-        // load server，但是不reset page selection，保持在原位，减少页面跳动
-        loadAdminServers()
-      } else {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: `云主机删除失败: ${server.ipv4}`,
-          caption: `${respDeleteServer.data.message}`,
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
-    } catch (error) {
-      if (error instanceof Error) {
+      Notify.create({
+        classes: 'notification-positive shadow-15',
+        textColor: 'positive',
+        // spinner: true,
+        icon: 'check_circle',
+        message: `云主机删除成功: ${server.ipv4}`,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+      // load server，但是不reset page selection，保持在原位，减少页面跳动
+      loadAdminServers()
+    } catch (exception) {
+      if (exception instanceof AxiosError) {
         Notify.create({
           classes: 'notification-negative shadow-15',
           icon: 'mdi-alert',
           textColor: 'negative',
-          message: error.message,
+          message: exception?.response?.data.code,
+          caption: exception?.response?.data.message,
           position: 'bottom',
-          closeBtn: true,
+          // closeBtn: true,
           timeout: 5000,
           multiLine: false
         })
@@ -449,7 +430,7 @@ const stopServer = (server: ServerInterface) => {
 
     try {
       // 解除操作锁
-      const respUnlockServer = await api.server.server.postServerLock({
+      void await api.server.server.postServerLock({
         path: { id: server.id },
         query: {
           lock: 'lock-delete',
@@ -457,53 +438,36 @@ const stopServer = (server: ServerInterface) => {
         }
       })
 
-      if (respUnlockServer?.status !== 200) {
-        throw new Error()
-      }
-
       // 关机云主机
-      const respActionServer = await api.server.server.postServerAction({
+      void await api.server.server.postServerAction({
         path: { id: server.id },
         body: { action: 'poweroff' },
         query: { 'as-admin': true }
       })
 
-      if (respActionServer?.status === 200) {
-        Notify.create({
-          classes: 'notification-positive shadow-15',
-          textColor: 'positive',
-          // spinner: true,
-          icon: 'check_circle',
-          message: `云主机关机成功: ${server.ipv4}`,
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-        // load server，但是不reset page selection，保持在原位，减少页面跳动
-        loadAdminServers()
-      } else {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: `云主机关机失败: ${server.ipv4}`,
-          caption: `${respActionServer.data.message}`,
-          position: 'bottom',
-          closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
-    } catch (error) {
-      if (error instanceof Error) {
+      Notify.create({
+        classes: 'notification-positive shadow-15',
+        textColor: 'positive',
+        // spinner: true,
+        icon: 'check_circle',
+        message: `云主机关机成功: ${server.ipv4}`,
+        position: 'bottom',
+        closeBtn: true,
+        timeout: 5000,
+        multiLine: false
+      })
+      // load server，但是不reset page selection，保持在原位，减少页面跳动
+      loadAdminServers()
+    } catch (exception) {
+      if (exception instanceof AxiosError) {
         Notify.create({
           classes: 'notification-negative shadow-15',
           icon: 'mdi-alert',
           textColor: 'negative',
-          message: error.message,
+          message: exception?.response?.data.code,
+          caption: exception?.response?.data.message,
           position: 'bottom',
-          closeBtn: true,
+          // closeBtn: true,
           timeout: 5000,
           multiLine: false
         })

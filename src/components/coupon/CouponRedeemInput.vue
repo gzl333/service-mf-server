@@ -6,6 +6,7 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
 import { Notify } from 'quasar'
+import { AxiosError } from 'axios'
 
 const props = defineProps({
   isGroup: {
@@ -56,33 +57,30 @@ const redeemCoupon = async () => {
         ...(props.isGroup && { vo_id: props.groupId })
       }
     })
-    if (respPostCashCoupon.status.toString().startsWith('2')) {
-      Notify.create({
-        classes: 'notification-positive shadow-15',
-        textColor: 'positive',
-        icon: 'check_circle',
-        message: `${tc('components.coupon.CouponRedeemInput.notification_success')}: ${respPostCashCoupon.data.id}}`,
-        position: 'bottom',
-        closeBtn: true,
-        timeout: 5000,
-        multiLine: false
-      })
-      // 更新对应表
-      props.isGroup ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
-      // 跳转
-      props.isGroup ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
-    } else {
-      throw new Error(respPostCashCoupon.data.code + ':' + respPostCashCoupon.data.message)
-    }
-  } catch (error) {
-    if (error instanceof Error) {
+    Notify.create({
+      classes: 'notification-positive shadow-15',
+      textColor: 'positive',
+      icon: 'check_circle',
+      message: `${tc('components.coupon.CouponRedeemInput.notification_success')}: ${respPostCashCoupon.data.id}}`,
+      position: 'bottom',
+      closeBtn: true,
+      timeout: 5000,
+      multiLine: false
+    })
+    // 更新对应表
+    props.isGroup ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
+    // 跳转
+    props.isGroup ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+  } catch (exception) {
+    if (exception instanceof AxiosError) {
       Notify.create({
         classes: 'notification-negative shadow-15',
         icon: 'mdi-alert',
         textColor: 'negative',
-        message: error.message,
+        message: exception?.response?.data.code,
+        caption: exception?.response?.data.message,
         position: 'bottom',
-        closeBtn: true,
+        // closeBtn: true,
         timeout: 5000,
         multiLine: false
       })
