@@ -2,7 +2,7 @@
 
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
-import { axios, baseURLServer } from 'boot/axios'
+import { baseURLServer } from 'boot/axios'
 import { AxiosError } from 'axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
@@ -2605,9 +2605,8 @@ export const useStore = defineStore('server', {
       // const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/action' : endpoint_url + '/api/server/' + payload.serverId + '/action')
 
       // 废弃endpoint_url字段，改为统一vms的后端api
-      const api = baseURLServer + '/server/' + payload.serverId + '/action'
-
-      const data = { action: payload.action }
+      // const apiURL = baseURLServer + '/server/' + payload.serverId + '/action'
+      // const data = { action: payload.action }
 
       // 执行操作的函数。delete/force_delete不用。start直接用。其他经dialog确认后用。
       const executeOperation = async () => {
@@ -2619,7 +2618,11 @@ export const useStore = defineStore('server', {
         }
 
         try {
-          await axios.post(api, data)
+          // await axios.post(api, data)
+          void await api.server.server.postServerAction({
+            path: { id: payload.serverId },
+            body: { action: payload.action }
+          })
           // 应延时
           void await new Promise(resolve => (
             setTimeout(resolve, 5000)
@@ -2672,7 +2675,11 @@ export const useStore = defineStore('server', {
           }
           try {
             // 发送请求
-            void await axios.post(api, data)
+            // void await axios.post(apiURL, data)
+            void await api.server.server.postServerAction({
+              path: { id: payload.serverId },
+              body: { action: payload.action }
+            })
 
             // 如果删除主机，重新获取userServerTable或groupServerTable
             Notify.create({
@@ -2806,10 +2813,10 @@ export const useStore = defineStore('server', {
         }
       }).onOk(async (image_id: string) => {
         const server = payload.isGroup ? this.tables.groupServerTable.byId[payload.serverId] : this.tables.personalServerTable.byId[payload.serverId]
-        // 去掉协议
-        const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
-        const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/rebuild' : endpoint_url + '/api/server/' + payload.serverId + '/rebuild')
-        const data = { image_id }
+        // // 去掉协议
+        // const endpoint_url = server.endpoint_url.substr(server.endpoint_url.indexOf('//'))
+        // const api = window.location.protocol + (endpoint_url.endsWith('/') ? endpoint_url + 'api/server/' + payload.serverId + '/rebuild' : endpoint_url + '/api/server/' + payload.serverId + '/rebuild')
+        // const data = { image_id }
 
         // 发送请求
         Notify.create({
@@ -2824,8 +2831,12 @@ export const useStore = defineStore('server', {
         })
 
         try {
-          void await axios.post(api, data)
+          // void await axios.post(api, data)
           // vms响应表明正在重建：则不保证重建成功，须持续取回新的信息，以判定是否重建成功
+          void await api.server.server.postServerRebuild({
+            path: { id: payload.serverId },
+            body: { image_id }
+          })
 
           // 持续尝试取回新的server信息
           let countGetter = 0
