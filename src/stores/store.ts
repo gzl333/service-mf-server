@@ -1328,16 +1328,44 @@ export const useStore = defineStore('server', {
       this.loadPersonalBalance()
     },
     async loadServerRole () {
-      const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
-      if (respGetUserPermissionPolicy.status === 200) {
+      try {
+        const respGetUserPermissionPolicy = await api.server.user.getUserPermissionPolicy()
         this.items.fedRole = respGetUserPermissionPolicy.data.role
         this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
+      } catch (exception) {
+        if (exception instanceof AxiosError) {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: exception?.response?.data.code,
+            caption: exception?.response?.data.message,
+            position: 'bottom',
+            // closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
       }
     },
     async loadPersonalBalance () {
-      const respGetAccountBalanceUser = await api.server.account.getAccountBalanceUser()
-      if (respGetAccountBalanceUser.status === 200) {
+      try {
+        const respGetAccountBalanceUser = await api.server.account.getAccountBalanceUser()
         this.items.personalBalance = respGetAccountBalanceUser.data
+      } catch (exception) {
+        if (exception instanceof AxiosError) {
+          Notify.create({
+            classes: 'notification-negative shadow-15',
+            icon: 'mdi-alert',
+            textColor: 'negative',
+            message: exception?.response?.data.code,
+            caption: exception?.response?.data.message,
+            position: 'bottom',
+            // closeBtn: true,
+            timeout: 5000,
+            multiLine: false
+          })
+        }
       }
     },
     /* items */
@@ -2925,7 +2953,6 @@ export const useStore = defineStore('server', {
     },
     /* 修改group信息 */
 
-    // todo 修改promise用法
     /* 增加group成员 */
     addGroupMemberDialog (groupId: string) {
       Dialog.create({
@@ -2934,46 +2961,62 @@ export const useStore = defineStore('server', {
           groupId
         }
       }).onOk(async (val: { /* groupId: string; */usernames: string[] }) => { // val是onDialogOK调用时传入的实参
-        // 发送patch请求
-        const respPostAddMembers = await api.server.vo.postVoAddMembers({
-          path: { id: groupId },
-          body: val
-        })
-        // 此请求可能有多个成功，多个失败混在一起。因此不能用状态码判断。
-        // 把成功的账户member信息存入table
-        for (const member of respPostAddMembers.data.success) {
-          // 存入单个member
-          // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
-          // 删掉已有的同名member
-          this.tables.groupMemberTable.byId[groupId].members = this.tables.groupMemberTable.byId[groupId].members.filter((memberGroup) => {
-            return memberGroup.user.username !== member.user.username
+        try {
+          // 发送patch请求
+          const respPostAddMembers = await api.server.vo.postVoAddMembers({
+            path: { id: groupId },
+            body: val
           })
-          // 增加新拿到的member
-          this.tables.groupMemberTable.byId[groupId].members.unshift(member)
-          // 通知：单个member成功信息
-          Notify.create({
-            classes: 'notification-positive shadow-15',
-            icon: 'mdi-check-circle',
-            textColor: 'positive',
-            message: `${tc('store.notify.add_group_member_success')}: ` + member.user.username,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
-        // 通知：失败账户错误信息
-        for (const member of respPostAddMembers.data.failed) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: `${tc('store.notify.add_group_member_fail')}:` + member.username + ' - ' + member.message,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
+          // 此请求可能有多个成功，多个失败混在一起。因此不能用状态码判断。
+          // 把成功的账户member信息存入table
+          for (const member of respPostAddMembers.data.success) {
+            // 存入单个member
+            // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
+            // 删掉已有的同名member
+            this.tables.groupMemberTable.byId[groupId].members = this.tables.groupMemberTable.byId[groupId].members.filter((memberGroup) => {
+              return memberGroup.user.username !== member.user.username
+            })
+            // 增加新拿到的member
+            this.tables.groupMemberTable.byId[groupId].members.unshift(member)
+            // 通知：单个member成功信息
+            Notify.create({
+              classes: 'notification-positive shadow-15',
+              icon: 'mdi-check-circle',
+              textColor: 'positive',
+              message: `${tc('store.notify.add_group_member_success')}: ` + member.user.username,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
+          // 通知：失败账户错误信息
+          for (const member of respPostAddMembers.data.failed) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: `${tc('store.notify.add_group_member_fail')}:` + member.username + ' - ' + member.message,
+              position: 'bottom',
+              closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
         }
       })
     },
@@ -3000,11 +3043,11 @@ export const useStore = defineStore('server', {
           color: 'primary'
         }
       }).onOk(async () => {
-        const respPostRemoveMembers = await api.server.vo.postVoRemoveMembers({
-          path: { id: payload.groupId },
-          body: { usernames: [payload.username] }
-        })
-        if (respPostRemoveMembers.status === 204) {
+        try {
+          void await api.server.vo.postVoRemoveMembers({
+            path: { id: payload.groupId },
+            body: { usernames: [payload.username] }
+          })
           // 保存最新group
           this.tables.groupMemberTable.byId[payload.groupId].members = this.tables.groupMemberTable.byId[payload.groupId].members.filter((member) => {
             return member.user.username !== payload.username
@@ -3020,6 +3063,20 @@ export const useStore = defineStore('server', {
             timeout: 5000,
             multiLine: false
           })
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
         }
       })
     },
@@ -3046,13 +3103,13 @@ export const useStore = defineStore('server', {
           color: 'primary'
         }
       }).onOk(async () => {
-        const respPostMemberRole = await api.server.vo.postVoMembersRole({
-          path: {
-            member_id: payload.member_id,
-            role: payload.role
-          }
-        })
-        if (respPostMemberRole.status === 200) {
+        try {
+          const respPostMemberRole = await api.server.vo.postVoMembersRole({
+            path: {
+              member_id: payload.member_id,
+              role: payload.role
+            }
+          })
           // 保存最新member
           // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
           // 删掉已有的同名member
@@ -3073,6 +3130,20 @@ export const useStore = defineStore('server', {
             timeout: 5000,
             multiLine: false
           })
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
         }
       })
     },
@@ -3093,8 +3164,8 @@ export const useStore = defineStore('server', {
           multiLine: false
         })
       } else {
-        const respPostVO = await api.server.vo.postVo({ body: payload })
-        if (respPostVO.status === 200) {
+        try {
+          void await api.server.vo.postVo({ body: payload })
           // 重要：更新table，因为group是个根依赖，新增一个组，要牵涉数据非常多，不如直接全部重读组相关数
           void await this.forceLoadGroupModuleTable()
           // 通知
@@ -3110,7 +3181,21 @@ export const useStore = defineStore('server', {
           })
           // 跳转到group list
           navigateToUrl('/my/server/group/list')
-        } // 失败则由axios统一报错
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
+        }
       }
     },
     /* 新建group */
@@ -3119,8 +3204,6 @@ export const useStore = defineStore('server', {
     deleteGroupDialog (groupId: string) {
       // 检查组内:云主机、配额、配额申请记录 是否删除干净
       const isServerPurged = Boolean(this.getGroupServersByGroupId(groupId).length === 0)
-      // const isQuotaPurged = Boolean(this.getGroupQuotasByGroupIdByStatus(groupId, 'all').length === 0)
-      // const isQuotaApplicationPurged = Boolean(this.getGroupQuotaApplicationsByGroupId(groupId).length === 0)
 
       if (!isServerPurged) {
         Notify.create({
@@ -3133,29 +3216,6 @@ export const useStore = defineStore('server', {
           timeout: 5000,
           multiLine: false
         })
-        // }
-        // else if (!isQuotaPurged) {
-        //   Notify.create({
-        //     classes: 'notification-negative shadow-15',
-        //     icon: 'mdi-check-circle',
-        //     textColor: 'red',
-        //     message: '请将组内的云主机配额全部删除后，再解散该项目组',
-        //     position: 'bottom',
-        //     closeBtn: true,
-        //     timeout: 5000,
-        //     multiLine: false
-        //   })
-        // } else if (!isQuotaApplicationPurged) {
-        //   Notify.create({
-        //     classes: 'notification-negative shadow-15',
-        //     icon: 'mdi-check-circle',
-        //     textColor: 'red',
-        //     message: '请将组内的云主机配额申请记录全部删除后，再解散该项目组',
-        //     position: 'bottom',
-        //     closeBtn: true,
-        //     timeout: 5000,
-        //     multiLine: false
-        //   })
       } else {
         // 操作的确认提示
         Dialog.create({
@@ -3176,9 +3236,10 @@ export const useStore = defineStore('server', {
             color: 'primary'
           }
         }).onOk(async () => {
-          // 发送请求
-          const respDeleteVO = await api.server.vo.deleteVo({ path: { id: groupId } })
-          if (respDeleteVO.status === 204) {
+          try {
+            // 发送请求
+            void await api.server.vo.deleteVo({ path: { id: groupId } })
+
             // 更新table，因为group是个根依赖，删除一个组，要牵涉数据非常多，不如直接全部重读组相关数据
             void await this.forceLoadGroupModuleTable()
             // notify
@@ -3194,6 +3255,20 @@ export const useStore = defineStore('server', {
             })
             // jump
             navigateToUrl('/my/server/group/list')
+          } catch (exception) {
+            if (exception instanceof AxiosError) {
+              Notify.create({
+                classes: 'notification-negative shadow-15',
+                icon: 'mdi-alert',
+                textColor: 'negative',
+                message: exception?.response?.data.code,
+                caption: exception?.response?.data.message,
+                position: 'bottom',
+                // closeBtn: true,
+                timeout: 5000,
+                multiLine: false
+              })
+            }
           }
         })
       }
@@ -3222,26 +3297,16 @@ export const useStore = defineStore('server', {
           timeout: 5000,
           multiLine: false
         })
-        const respPostOrderIdPay = await api.server.order.postOrderIdPay({
-          path: { id: orderId },
-          query: {
-            payment_method: val.payment_method,
-            coupon_ids: val.coupon_ids
-          }
-        })
-        if (respPostOrderIdPay.status !== 200) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: respPostOrderIdPay.data.message,
-            caption: respPostOrderIdPay.data.code,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
+
+        try {
+          void await api.server.order.postOrderIdPay({
+            path: { id: orderId },
+            query: {
+              payment_method: val.payment_method,
+              coupon_ids: val.coupon_ids
+            }
           })
-        } else {
+
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
@@ -3273,8 +3338,7 @@ export const useStore = defineStore('server', {
                 if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
                   clearInterval(timerId)
                 }
-              }, 1000
-            )
+              }, 1000)
           }
           // 更新order影响的余额
           if (isGroup) {
@@ -3287,6 +3351,20 @@ export const useStore = defineStore('server', {
           isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
           // 跳转到该order详情页面
           navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
         }
       })
     },
@@ -3302,12 +3380,12 @@ export const useStore = defineStore('server', {
         }
       }).onOk(async (val: boolean) => {
         if (val) {
-          const respPostOrderCancel = await api.server.order.postOrderIdCancel({
-            path: {
-              id: orderId
-            }
-          })
-          if (respPostOrderCancel.status === 200) {
+          try {
+            void await api.server.order.postOrderIdCancel({
+              path: {
+                id: orderId
+              }
+            })
             Notify.create({
               classes: 'notification-positive shadow-15',
               icon: 'mdi-check-circle',
@@ -3325,6 +3403,20 @@ export const useStore = defineStore('server', {
             })
             // 跳转到该order详情页面
             navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+          } catch (exception) {
+            if (exception instanceof AxiosError) {
+              Notify.create({
+                classes: 'notification-negative shadow-15',
+                icon: 'mdi-alert',
+                textColor: 'negative',
+                message: exception?.response?.data.code,
+                caption: exception?.response?.data.message,
+                position: 'bottom',
+                // closeBtn: true,
+                timeout: 5000,
+                multiLine: false
+              })
+            }
           }
         }
       })
@@ -3340,11 +3432,11 @@ export const useStore = defineStore('server', {
           isGroup
         }
       }).onOk(async (val: { period?: number, renew_to_time?: string }) => {
-        const respPostServerRenew = await api.server.server.postServerRenew({
-          path: { id: serverId },
-          query: val
-        })
-        if (respPostServerRenew.status === 200) {
+        try {
+          const respPostServerRenew = await api.server.server.postServerRenew({
+            path: { id: serverId },
+            query: val
+          })
           Notify.create({
             classes: 'notification-positive shadow-15',
             icon: 'mdi-check-circle',
@@ -3363,21 +3455,22 @@ export const useStore = defineStore('server', {
           })
           // 跳转到该order详情页面
           navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
-        } else {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: respPostServerRenew.data.message,
-            caption: respPostServerRenew.data.code,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
+        } catch (exception) {
+          if (exception instanceof AxiosError) {
+            Notify.create({
+              classes: 'notification-negative shadow-15',
+              icon: 'mdi-alert',
+              textColor: 'negative',
+              message: exception?.response?.data.code,
+              caption: exception?.response?.data.message,
+              position: 'bottom',
+              // closeBtn: true,
+              timeout: 5000,
+              multiLine: false
+            })
+          }
         }
-      }
-      )
+      })
     },
     /* 续费下订单 */
 
@@ -3395,67 +3488,65 @@ export const useStore = defineStore('server', {
         multiLine: false
       })
       try {
-        const respReclaim = await api.server.order.postOrderIdClaim({ path: { id: orderId } })
-        if (respReclaim.status === 200) {
-          Notify.create({
-            classes: 'notification-positive shadow-15',
-            icon: 'mdi-check-circle',
-            textColor: 'positive',
-            message: `${tc('orderResourceReclaimSuccess')}`,
-            position: 'bottom',
-            closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-          // 更新orderId对应order
-          void await this.loadSingleOrder({
-            isGroup,
-            orderId
-          })
-          // 更新order交付的server
-          const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
-          if (serverId) {
-            // 持续尝试取回交付的server信息
-            const timerId = setInterval(
-              async () => {
-                // 取回server信息
-                void await this.loadSingleServer({
-                  isGroup,
-                  serverId
-                })
-                // 表里存在该server则表示取回成功，消除timer
-                if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
-                  clearInterval(timerId)
-                }
-              }, 1000
-            )
-          }
-          // 更新order影响的余额
-          if (isGroup) {
-            const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
-            void await this.loadSingleGroupBalance(groupId)
-          } else {
-            void await this.loadPersonalBalance()
-          }
-          // order影响的coupon
-          isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
-          // 跳转到该order详情页面
-          navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+        void await api.server.order.postOrderIdClaim({ path: { id: orderId } })
+        Notify.create({
+          classes: 'notification-positive shadow-15',
+          icon: 'mdi-check-circle',
+          textColor: 'positive',
+          message: `${tc('orderResourceReclaimSuccess')}`,
+          position: 'bottom',
+          closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+        // 更新orderId对应order
+        void await this.loadSingleOrder({
+          isGroup,
+          orderId
+        })
+        // 更新order交付的server
+        const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
+        if (serverId) {
+          // 持续尝试取回交付的server信息
+          const timerId = setInterval(
+            async () => {
+              // 取回server信息
+              void await this.loadSingleServer({
+                isGroup,
+                serverId
+              })
+              // 表里存在该server则表示取回成功，消除timer
+              if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
+                clearInterval(timerId)
+              }
+            }, 1000)
+        }
+        // 更新order影响的余额
+        if (isGroup) {
+          const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
+          void await this.loadSingleGroupBalance(groupId)
         } else {
+          void await this.loadPersonalBalance()
+        }
+        // order影响的coupon
+        isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+        // 跳转到该order详情页面
+        navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
+      } catch (exception) {
+        if (exception instanceof AxiosError) {
+          console.log(exception)
           Notify.create({
             classes: 'notification-negative shadow-15',
             icon: 'mdi-alert',
             textColor: 'negative',
-            message: respReclaim.data.message,
-            caption: respReclaim.data.code,
+            message: exception?.response?.data.code,
+            caption: exception?.response?.data.message,
             position: 'bottom',
-            closeBtn: true,
+            // closeBtn: true,
             timeout: 5000,
             multiLine: false
           })
         }
-      } catch {
-        //
       }
     },
     /* 取回资源 */

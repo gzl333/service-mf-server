@@ -9,6 +9,7 @@ import moment from 'moment'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import api from 'src/api'
+import { AxiosError } from 'axios'
 
 const props = defineProps({
   serverId: {
@@ -78,11 +79,23 @@ const getPrice = async () => {
       })
       // 拿到price
       currentPrice.value = respGetPriceRenew.data.price
-    } catch (error) {
+    } catch (exception) {
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
       // 应提示错误内容
-      // console.log(error)
+      if (exception instanceof AxiosError) {
+        Notify.create({
+          classes: 'notification-negative shadow-15',
+          icon: 'mdi-alert',
+          textColor: 'negative',
+          message: exception?.response?.data.code,
+          caption: exception?.response?.data.message,
+          position: 'bottom',
+          // closeBtn: true,
+          timeout: 5000,
+          multiLine: false
+        })
+      }
     }
   }
 }
