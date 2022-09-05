@@ -11,7 +11,7 @@ import type { ServerInterface } from 'stores/store'
 
 import OsLogo from 'components/ui/OsLogo.vue'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
-import { AxiosError } from 'axios'
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 // const props = defineProps({
 //   foo: {
@@ -26,6 +26,8 @@ const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
+
+const exceptionNotifier = useExceptionNotifier()
 
 // 筛选服务单元
 const serviceOptions = computed(() => store.getServiceOptionsByRole(store.items.fedRole === 'federal-admin'))
@@ -145,19 +147,7 @@ const loadAdminServers = async () => {
     // pagination count
     pagination.value.count = respGetAdminServer.data.count
   } catch (exception) {
-    if (exception instanceof AxiosError) {
-      Notify.create({
-        classes: 'notification-negative shadow-15',
-        icon: 'mdi-alert',
-        textColor: 'negative',
-        message: exception?.response?.data.code,
-        caption: exception?.response?.data.message,
-        position: 'bottom',
-        // closeBtn: true,
-        timeout: 5000,
-        multiLine: false
-      })
-    }
+    exceptionNotifier(exception)
   }
   // table stop loading
   isLoading.value = false
@@ -378,19 +368,7 @@ const deleteServer = (server: ServerInterface) => {
       // load server，但是不reset page selection，保持在原位，减少页面跳动
       loadAdminServers()
     } catch (exception) {
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
+      exceptionNotifier(exception)
     }
   })
 }
@@ -459,19 +437,7 @@ const stopServer = (server: ServerInterface) => {
       // load server，但是不reset page selection，保持在原位，减少页面跳动
       loadAdminServers()
     } catch (exception) {
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
+      exceptionNotifier(exception)
     }
   })
 }

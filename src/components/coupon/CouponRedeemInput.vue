@@ -6,7 +6,8 @@ import { useStore } from 'stores/store'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
 import { Notify } from 'quasar'
-import { AxiosError } from 'axios'
+
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const props = defineProps({
   isGroup: {
@@ -25,6 +26,8 @@ const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
+
+const exceptionNotifier = useExceptionNotifier()
 
 const coupon = ref('')
 
@@ -72,19 +75,7 @@ const redeemCoupon = async () => {
     // 跳转
     props.isGroup ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
   } catch (exception) {
-    if (exception instanceof AxiosError) {
-      Notify.create({
-        classes: 'notification-negative shadow-15',
-        icon: 'mdi-alert',
-        textColor: 'negative',
-        message: exception?.response?.data.code,
-        caption: exception?.response?.data.message,
-        position: 'bottom',
-        // closeBtn: true,
-        timeout: 5000,
-        multiLine: false
-      })
-    }
+    exceptionNotifier(exception)
   }
 }
 </script>

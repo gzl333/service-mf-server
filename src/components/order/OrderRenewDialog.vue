@@ -9,7 +9,7 @@ import moment from 'moment'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import api from 'src/api'
-import { AxiosError } from 'axios'
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const props = defineProps({
   serverId: {
@@ -29,6 +29,9 @@ const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
+
+const exceptionNotifier = useExceptionNotifier()
+
 const {
   dialogRef,
   onDialogHide,
@@ -80,22 +83,9 @@ const getPrice = async () => {
       // 拿到price
       currentPrice.value = respGetPriceRenew.data.price
     } catch (exception) {
+      exceptionNotifier(exception)
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
-      // 应提示错误内容
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
     }
   }
 }

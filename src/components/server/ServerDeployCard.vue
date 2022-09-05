@@ -10,7 +10,7 @@ import { navigateToUrl } from 'single-spa'
 
 import OsLogo from 'components/ui/OsLogo.vue'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
-import { AxiosError } from 'axios'
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const props = defineProps({
   isGroup: {
@@ -35,6 +35,8 @@ const store = useStore()
 
 // 预付最大月份
 const MAX_MONTHS = 6
+
+const exceptionNotifier = useExceptionNotifier()
 
 // 是否允许使用后付费模式
 // 目前判断个人账户或者项目组账户余额大于0
@@ -267,22 +269,9 @@ const deployServer = async () => {
       // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
       isDeploying.value = false
     } catch (exception) {
+      exceptionNotifier(exception)
       // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
       isDeploying.value = false
-
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
     }
   }
 }

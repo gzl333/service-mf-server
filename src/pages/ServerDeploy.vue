@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch/* , PropType */ } from 'vue'
-// import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
+import { Notify } from 'quasar'
+import { navigateToUrl } from 'single-spa'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
 
@@ -11,9 +12,8 @@ import api from 'src/api'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
-import { Notify } from 'quasar'
-import { navigateToUrl } from 'single-spa'
-import { AxiosError } from 'axios'
+
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 // const props = defineProps({
 //   foo: {
@@ -32,6 +32,8 @@ const router = useRouter()
 
 // 预付最大月份
 const MAX_MONTHS = 6
+
+const exceptionNotifier = useExceptionNotifier()
 
 // // system disk 限制，单位GiB
 // // 接口限定最大500GiB
@@ -109,22 +111,9 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
       // 拿到price
       currentPrice.value = respGetPrice.data.price
     } catch (exception) {
+      exceptionNotifier(exception)
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
-
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
     }
   } else {
     // 不满足询价条件时，应清空询价结果，避免遗留历史询价结果
@@ -334,21 +323,9 @@ const deployServer = async () => {
       // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
       isDeploying.value = false
     } catch (exception) {
+      exceptionNotifier(exception)
       // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
       isDeploying.value = false
-      if (exception instanceof AxiosError) {
-        Notify.create({
-          classes: 'notification-negative shadow-15',
-          icon: 'mdi-alert',
-          textColor: 'negative',
-          message: exception?.response?.data.code,
-          caption: exception?.response?.data.message,
-          position: 'bottom',
-          // closeBtn: true,
-          timeout: 5000,
-          multiLine: false
-        })
-      }
     }
   }
 }

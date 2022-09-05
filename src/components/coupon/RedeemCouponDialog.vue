@@ -7,8 +7,9 @@ import { i18n } from 'boot/i18n'
 import { Notify, QInput, useDialogPluginComponent } from 'quasar'
 import api from 'src/api'
 import { navigateToUrl } from 'single-spa'
-import { AxiosError } from 'axios'
 // import moment from 'moment'
+
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const props = defineProps({
   groupId: {
@@ -24,6 +25,7 @@ defineEmits([...useDialogPluginComponent.emits])
 // const route = useRoute()
 // const router = useRouter()
 
+const exceptionNotifier = useExceptionNotifier()
 const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
@@ -115,20 +117,8 @@ const onOKClick = async () => {
     // 跳转
     redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
   } catch (exception) {
+    exceptionNotifier(exception)
     isLoading.value = false
-    if (exception instanceof AxiosError) {
-      Notify.create({
-        classes: 'notification-negative shadow-15',
-        icon: 'mdi-alert',
-        textColor: 'negative',
-        message: exception?.response?.data.code,
-        caption: exception?.response?.data.message,
-        position: 'bottom',
-        // closeBtn: true,
-        timeout: 5000,
-        multiLine: false
-      })
-    }
   }
 }
 </script>

@@ -3,11 +3,13 @@
 import { defineStore } from 'pinia'
 import { normalize, schema } from 'normalizr'
 import { baseURLServer } from 'boot/axios'
-import { AxiosError } from 'axios'
 import api from 'src/api'
 import { i18n } from 'boot/i18n'
 import { Dialog, Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
+
+// @ts-expect-error
+import { useStoreMain } from '@cnic/main'
 
 import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
@@ -18,10 +20,10 @@ import OrderCancelDialog from 'components/order/OrderCancelDialog.vue'
 import OrderRenewDialog from 'components/order/OrderRenewDialog.vue'
 import RedeemCouponDialog from 'components/coupon/RedeemCouponDialog.vue'
 
-// @ts-expect-error
-import { useStoreMain } from '@cnic/main'
+import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const { tc } = i18n.global
+const exceptionNotifier = useExceptionNotifier()
 
 // const actionMap = new Map<string, string>(
 //   [
@@ -1333,19 +1335,7 @@ export const useStore = defineStore('server', {
         this.items.fedRole = respGetUserPermissionPolicy.data.role
         this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     async loadPersonalBalance () {
@@ -1353,19 +1343,7 @@ export const useStore = defineStore('server', {
         const respGetAccountBalanceUser = await api.server.account.getAccountBalanceUser()
         this.items.personalBalance = respGetAccountBalanceUser.data
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     /* items */
@@ -1508,19 +1486,7 @@ export const useStore = defineStore('server', {
         // load table的最后再改status
         this.tables.groupTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.groupTable.status = 'error'
       }
     },
@@ -1555,19 +1521,7 @@ export const useStore = defineStore('server', {
             }
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1598,19 +1552,7 @@ export const useStore = defineStore('server', {
           // 给groupTable补充balance字段
           this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1633,19 +1575,7 @@ export const useStore = defineStore('server', {
         this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
         this.tables.groupBalanceTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.groupBalanceTable.status = 'error'
       }
     },
@@ -1672,19 +1602,7 @@ export const useStore = defineStore('server', {
             this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1715,19 +1633,7 @@ export const useStore = defineStore('server', {
         })
         this.tables.dataCenterTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.dataCenterTable.status = 'error'
       }
     },
@@ -1756,19 +1662,7 @@ export const useStore = defineStore('server', {
         })
         this.tables.serviceTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.serviceTable.status = 'error'
       }
     },
@@ -1793,19 +1687,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.serviceAllocationTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.serviceAllocationTable.status = 'error'
       }
     },
@@ -1830,19 +1712,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.fedAllocationTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.fedAllocationTable.status = 'error'
       }
     },
@@ -1862,19 +1732,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.fedFlavorTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.fedFlavorTable.status = 'error'
       }
     },
@@ -1900,19 +1758,7 @@ export const useStore = defineStore('server', {
             this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1940,19 +1786,7 @@ export const useStore = defineStore('server', {
             this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1976,19 +1810,7 @@ export const useStore = defineStore('server', {
             this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -2014,19 +1836,7 @@ export const useStore = defineStore('server', {
           this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
           this.tables.groupOrderTable.status = 'total'
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           this.tables.groupOrderTable.status = 'error'
         }
       } else {
@@ -2041,19 +1851,7 @@ export const useStore = defineStore('server', {
           this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
           this.tables.personalOrderTable.status = 'total'
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           this.tables.personalOrderTable.status = 'error'
         }
       }
@@ -2079,19 +1877,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalOrderTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.personalOrderTable.status = 'error'
       }
     },
@@ -2127,19 +1913,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalServerTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.personalServerTable.status = 'error'
       }
     },
@@ -2178,19 +1952,7 @@ export const useStore = defineStore('server', {
             this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -2233,19 +1995,7 @@ export const useStore = defineStore('server', {
         const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
         table.byId[payload.serverId].status = respStatus.data.status.status_code
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         table.byId[payload.serverId].status = 0
       }
     },
@@ -2282,19 +2032,7 @@ export const useStore = defineStore('server', {
           this.tables.personalServerTable.status = 'total'
         }
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         if (payload.isGroup) {
           this.tables.groupServerTable.status = 'error'
         } else {
@@ -2327,19 +2065,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalCouponTable.status = 'total'
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
         this.tables.personalCouponTable.status = 'error'
       }
     },
@@ -2372,19 +2098,7 @@ export const useStore = defineStore('server', {
             this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -2405,19 +2119,7 @@ export const useStore = defineStore('server', {
           this.tables.userVpnTable.byId[payload.serviceId].active = false
           this.tables.userVpnTable.status = 'total'
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       } else {
         try {
@@ -2426,19 +2128,7 @@ export const useStore = defineStore('server', {
           this.tables.userVpnTable.byId[payload.serviceId].active = true
           this.tables.userVpnTable.status = 'total'
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       }
     },
@@ -2452,19 +2142,7 @@ export const useStore = defineStore('server', {
         const url = response.data.vnc.url
         window.open(url, 'new', 'height=900, width=1400, top=150, left=150, title=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no')
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 下载vpn ca
@@ -2473,19 +2151,7 @@ export const useStore = defineStore('server', {
         const url = baseURLServer + '/vpn/' + serviceId + '/ca'
         window.open(url)
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 下载vpn config
@@ -2494,19 +2160,7 @@ export const useStore = defineStore('server', {
         const url = baseURLServer + '/vpn/' + serviceId + '/config'
         window.open(url)
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 修改server.lock的operation状态( lock-delete <-> lock-operation )
@@ -2522,19 +2176,7 @@ export const useStore = defineStore('server', {
         const server = table.byId[payload.serverId]
         server.lock = respPostServerLock.data.lock
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 修改server.lock的delete状态 ( free <-> lock-delete )
@@ -2550,19 +2192,7 @@ export const useStore = defineStore('server', {
         const server = table.byId[payload.serverId]
         server.lock = respPostServerLock.data.lock
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 修改server.lock的delete状态为lock-delete ( -> lock-delete )
@@ -2577,19 +2207,7 @@ export const useStore = defineStore('server', {
         const server = table.byId[payload.serverId]
         server.lock = respPostServerLock.data.lock
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     // 操作云主机实例时，向endpoint_url发请求； 进行其他云联邦操作时向每个前端部署对应的后端（例如vms）发请求
@@ -2635,25 +2253,12 @@ export const useStore = defineStore('server', {
           // todo 比对新老状态，发送通知
           // const newStatus = payload.isGroup ? context.state.tables.groupServerTable.byId[payload.serverId]?.status : context.state.tables.personalServerTable.byId[payload.serverId]?.status
         } catch (exception) {
+          exceptionNotifier(exception)
           // 若请求失败则应更新单个server status
           void this.loadSingleServerStatus({
             isGroup: payload.isGroup || false,
             serverId: payload.serverId
           })
-
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
         }
       }
 
@@ -2703,25 +2308,12 @@ export const useStore = defineStore('server', {
               this.$router.back()
             }
           } catch (exception) {
+            exceptionNotifier(exception)
             // 若请求失败则应更新单个server status
             void this.loadSingleServerStatus({
               isGroup: payload.isGroup || false,
               serverId: payload.serverId
             })
-
-            if (exception instanceof AxiosError) {
-              Notify.create({
-                classes: 'notification-negative shadow-15',
-                icon: 'mdi-alert',
-                textColor: 'negative',
-                message: exception?.response?.data.code,
-                caption: exception?.response?.data.message,
-                position: 'bottom',
-                // closeBtn: true,
-                timeout: 5000,
-                multiLine: false
-              })
-            }
           }
         })
       } else if (payload.action === 'start') {
@@ -2788,19 +2380,7 @@ export const useStore = defineStore('server', {
             multiLine: false
           })
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -2883,19 +2463,7 @@ export const useStore = defineStore('server', {
               }
             }, 1000)
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -2945,19 +2513,7 @@ export const useStore = defineStore('server', {
             multiLine: false
           })
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
       // })
@@ -3015,19 +2571,7 @@ export const useStore = defineStore('server', {
             })
           }
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -3075,19 +2619,7 @@ export const useStore = defineStore('server', {
             multiLine: false
           })
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -3142,19 +2674,7 @@ export const useStore = defineStore('server', {
             multiLine: false
           })
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -3193,19 +2713,7 @@ export const useStore = defineStore('server', {
           // 跳转到group list
           navigateToUrl('/my/server/group/list')
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       }
     },
@@ -3267,19 +2775,7 @@ export const useStore = defineStore('server', {
             // jump
             navigateToUrl('/my/server/group/list')
           } catch (exception) {
-            if (exception instanceof AxiosError) {
-              Notify.create({
-                classes: 'notification-negative shadow-15',
-                icon: 'mdi-alert',
-                textColor: 'negative',
-                message: exception?.response?.data.code,
-                caption: exception?.response?.data.message,
-                position: 'bottom',
-                // closeBtn: true,
-                timeout: 5000,
-                multiLine: false
-              })
-            }
+            exceptionNotifier(exception)
           }
         })
       }
@@ -3363,19 +2859,7 @@ export const useStore = defineStore('server', {
           // 跳转到该order详情页面
           navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -3415,19 +2899,7 @@ export const useStore = defineStore('server', {
             // 跳转到该order详情页面
             navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
           } catch (exception) {
-            if (exception instanceof AxiosError) {
-              Notify.create({
-                classes: 'notification-negative shadow-15',
-                icon: 'mdi-alert',
-                textColor: 'negative',
-                message: exception?.response?.data.code,
-                caption: exception?.response?.data.message,
-                position: 'bottom',
-                // closeBtn: true,
-                timeout: 5000,
-                multiLine: false
-              })
-            }
+            exceptionNotifier(exception)
           }
         }
       })
@@ -3467,19 +2939,7 @@ export const useStore = defineStore('server', {
           // 跳转到该order详情页面
           navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
         } catch (exception) {
-          if (exception instanceof AxiosError) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: exception?.response?.data.code,
-              caption: exception?.response?.data.message,
-              position: 'bottom',
-              // closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
+          exceptionNotifier(exception)
         }
       })
     },
@@ -3544,20 +3004,7 @@ export const useStore = defineStore('server', {
         // 跳转到该order详情页面
         navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
       } catch (exception) {
-        if (exception instanceof AxiosError) {
-          console.log(exception)
-          Notify.create({
-            classes: 'notification-negative shadow-15',
-            icon: 'mdi-alert',
-            textColor: 'negative',
-            message: exception?.response?.data.code,
-            caption: exception?.response?.data.message,
-            position: 'bottom',
-            // closeBtn: true,
-            timeout: 5000,
-            multiLine: false
-          })
-        }
+        exceptionNotifier(exception)
       }
     },
     /* 取回资源 */
