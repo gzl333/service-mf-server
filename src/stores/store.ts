@@ -149,7 +149,11 @@ export interface AllocationInterface {
   disk_size_used: number
   creation_time: string
   enable: boolean
-  service: string
+  service: {
+    id: string
+    name: string
+    name_en: string
+  }
 }
 
 export interface FlavorInterface {
@@ -810,9 +814,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.vcpu_total
         dataArr.push(dataObj)
@@ -824,9 +828,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.ram_total
         dataArr.push(dataObj)
@@ -838,9 +842,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.serviceAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.serviceAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.serviceAllocationTable.byId[item]?.disk_size_total
         dataArr.push(dataObj)
@@ -852,9 +856,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.vcpu_total
         dataArr.push(dataObj)
@@ -866,9 +870,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.ram_total
         dataArr.push(dataObj)
@@ -880,9 +884,9 @@ export const useStore = defineStore('server', {
       for (const item of state.tables.fedAllocationTable.allIds) {
         const dataObj: Record<string, string | number> = {}
         if (i18n.global.locale === 'zh') {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name
         } else {
-          dataObj.name = state.tables.serviceTable.byId[item]?.name_en
+          dataObj.name = state.tables.fedAllocationTable.byId[item]?.service.name_en
         }
         dataObj.value = state.tables.fedAllocationTable.byId[item]?.disk_size_total
         dataArr.push(dataObj)
@@ -1676,8 +1680,8 @@ export const useStore = defineStore('server', {
       this.tables.serviceAllocationTable.status = 'loading'
       try {
         const respPQuota = await api.server.vms.getVmsServicePQuota()
-        const service = new schema.Entity('service')
-        const allocation = new schema.Entity('allocation', { service })
+        // const service = new schema.Entity('service')
+        const allocation = new schema.Entity('allocation'/* , { service } */)
         for (const data of respPQuota.data.results) {
           Object.assign(data, { id: data.service.id })
           const normalizedData = normalize(data, allocation)
@@ -1701,8 +1705,8 @@ export const useStore = defineStore('server', {
       this.tables.fedAllocationTable.status = 'loading'
       try {
         const respSQuota = await api.server.vms.getVmsServiceSQuota()
-        const service = new schema.Entity('service')
-        const allocation = new schema.Entity('allocation', { service })
+        // const service = new schema.Entity('service')
+        const allocation = new schema.Entity('allocation' /* { service } */)
         for (const data of respSQuota.data.results) {
           Object.assign(data, { id: data.service.id })
           const normalizedData = normalize(data, allocation)
