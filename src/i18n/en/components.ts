@@ -167,7 +167,7 @@ export default {
       memory: 'Memory', // '内存',
       system_disk: 'System Disk', // '系统磁盘',
       server_id: 'Server ID', // '云主机ID',
-      ip_address: 'Ip Address', // 'IP地址',
+      ip_address: 'IP Address', // 'IP地址',
       network_type: 'Network Type', // 'IP地址类型',
       public_network: 'Public Network', // '公网',
       private_network: ' Private Network', // '私网',

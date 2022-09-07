@@ -96,7 +96,7 @@ const onOKClick = async () => {
     const respPostCashCoupon = await api.server.cashcoupon.postCashCouponExchange({
       query: {
         code: coupon.value,
-        ...(redeemType.value === 'group' && { vo_id: props.groupId })
+        ...(redeemType.value === 'group' && { vo_id: groupSelection.value })
       }
     })
     isLoading.value = false
@@ -115,7 +115,7 @@ const onOKClick = async () => {
     // 关闭dialog
     onDialogOK()
     // 跳转
-    redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
+    redeemType.value === 'group' ? navigateToUrl(`/my/server/group/detail/${groupSelection.value}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
   } catch (exception) {
     exceptionNotifier(exception)
     isLoading.value = false

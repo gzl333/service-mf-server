@@ -56,9 +56,22 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
                 {{ tc('pages.group.GroupCreate.group_name') }}
               </div>
               <div class="col-3">
-                <q-input outlined dense v-model="groupName" maxlength="15" counter>
+                <q-input outlined dense v-model="groupName" maxlength="30" counter>
                   <template v-if="groupName !== ''" v-slot:append>
                     <q-icon name="close" @click="groupName = ''" class="cursor-pointer"/>
+                  </template>
+                </q-input>
+              </div>
+            </div>
+
+            <div class="row items-center q-pb-md">
+              <div class="col-1 text-grey q-pb-md">
+                {{ tc('pages.group.GroupCreate.group_org') }}
+              </div>
+              <div class="col-3">
+                <q-input outlined dense v-model="groupCompany" maxlength="30" counter>
+                  <template v-if="groupCompany !== ''" v-slot:append>
+                    <q-icon name="close" @click="groupCompany = ''" class="cursor-pointer"/>
                   </template>
                 </q-input>
               </div>
@@ -69,22 +82,9 @@ const groupCompany = ref(computed(() => storeMain.items.tokenDecoded?.orgName).v
                 {{ tc('pages.group.GroupCreate.group_desc') }}
               </div>
               <div class="col-3">
-                <q-input outlined dense v-model="groupDesc" maxlength="15" counter>
+                <q-input outlined dense v-model="groupDesc" maxlength="100" counter>
                   <template v-if="groupDesc !== ''" v-slot:append>
                     <q-icon name="close" @click="groupDesc = ''" class="cursor-pointer"/>
-                  </template>
-                </q-input>
-              </div>
-            </div>
-
-            <div class="row items-center q-pb-md">
-              <div class="col-1 text-grey q-pb-md">
-                 {{ tc('pages.group.GroupCreate.group_org') }}
-              </div>
-              <div class="col-3">
-                <q-input outlined dense v-model="groupCompany" maxlength="15" counter>
-                  <template v-if="groupCompany !== ''" v-slot:append>
-                    <q-icon name="close" @click="groupCompany = ''" class="cursor-pointer"/>
                   </template>
                 </q-input>
               </div>
