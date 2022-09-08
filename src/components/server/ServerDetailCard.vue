@@ -77,8 +77,8 @@ const clickToCopy = useCopyToClipboard()
         <div class="row">
 
           <!--todo 区分读取中和读取错误          -->
-          <!--          <div v-if="!server || !service || (service.need_vpn && !vpn) " class="col">-->
-          <div v-if="!server || !service " class="col">
+          <!--          <div v-if="!server || !service || (service?.need_vpn && !vpn) " class="col">-->
+          <div v-if="!server" class="col">
             {{ tc('components.server.ServeDetailCard.notify_loading') }}
           </div>
 
@@ -282,38 +282,39 @@ const clickToCopy = useCopyToClipboard()
                   </div>
                 </div>
 
-                <div class="row q-pb-md items-center ">
+                <div v-if="service" class="row q-pb-md items-center ">
                   <div class="col-4 text-grey ">{{ (tc('vpnInfo')) }}</div>
                   <div class="col-auto">
-                    <q-btn v-if="service.need_vpn" flat dense no-caps color="primary"
+                    <q-btn v-if="service?.need_vpn" flat dense no-caps color="primary"
                            @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service]?.data_center}&service=${server.service}`)">
                       {{ tc('seeVpn') }}
                       <q-tooltip>
                         {{ tc('jumpToVpn') }}
                       </q-tooltip>
                     </q-btn>
-                    <div v-else>{{ tc('vpnNotRequired') }}</div>
+                    <div v-else-if="!service?.need_vpn">{{ tc('vpnNotRequired') }}</div>
+<!--                    <div v-else>{{ tc('vpnNotRequired') }}</div>-->
                   </div>
                 </div>
 
-                <div class="row q-pb-md items-center">
+                <div v-if="service" class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.org') }}</div>
                   <div class="col">
                     {{
-                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service.data_center]?.name : store.tables.dataCenterTable.byId[service.data_center]?.name_en
+                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service?.data_center]?.name : store.tables.dataCenterTable.byId[service?.data_center]?.name_en
                     }}
                   </div>
                 </div>
 
-                <div class="row q-pb-md items-center">
+                <div v-if="service" class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.service_node') }}</div>
-                  <div class="col"> {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}</div>
+                  <div class="col"> {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}</div>
                 </div>
 
-                <div class="row q-pb-md items-center">
+                <div v-if="service" class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('cloudPlatform') }}</div>
                   <div class="col">
-                    <CloudPlatformLogo :platform-name="service.service_type" height="30px" width="155px"/>
+                    <CloudPlatformLogo :platform-name="service?.service_type" height="30px" width="155px"/>
                   </div>
                 </div>
 
