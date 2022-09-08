@@ -2532,52 +2532,6 @@ export const useStore = defineStore('server', {
         componentProps: {
           groupId
         }
-      }).onOk(async (val: { /* groupId: string; */usernames: string[] }) => { // val是onDialogOK调用时传入的实参
-        try {
-          // 发送patch请求
-          const respPostAddMembers = await api.server.vo.postVoAddMembers({
-            path: { id: groupId },
-            body: val
-          })
-          // 此请求可能有多个成功，多个失败混在一起。因此不能用状态码判断。
-          // 把成功的账户member信息存入table
-          for (const member of respPostAddMembers.data.success) {
-            // 存入单个member
-            // 增加成员，修改角色用。为了避免数组有重复，采取以下逻辑：
-            // 删掉已有的同名member
-            this.tables.groupMemberTable.byId[groupId].members = this.tables.groupMemberTable.byId[groupId].members.filter((memberGroup) => {
-              return memberGroup.user.username !== member.user.username
-            })
-            // 增加新拿到的member
-            this.tables.groupMemberTable.byId[groupId].members.unshift(member)
-            // 通知：单个member成功信息
-            Notify.create({
-              classes: 'notification-positive shadow-15',
-              icon: 'mdi-check-circle',
-              textColor: 'positive',
-              message: `${tc('store.notify.add_group_member_success')}: ` + member.user.username,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
-          // 通知：失败账户错误信息
-          for (const member of respPostAddMembers.data.failed) {
-            Notify.create({
-              classes: 'notification-negative shadow-15',
-              icon: 'mdi-alert',
-              textColor: 'negative',
-              message: `${tc('store.notify.add_group_member_fail')}:` + member.username + ' - ' + member.message,
-              position: 'bottom',
-              closeBtn: true,
-              timeout: 5000,
-              multiLine: false
-            })
-          }
-        } catch (exception) {
-          exceptionNotifier(exception)
-        }
       })
     },
     /* 增加group成员 */
