@@ -76,7 +76,7 @@ const icon = computed(() => getPlatformIcon(props.platformName, props.logoStyle)
   </q-icon>
 
   <!--本地没有的icon，使用material的icon，给一个默认颜色-->
-  <q-icon v-else :style="{width, height}" :color="defaultColor" name="cloud"/>
+  <q-icon v-else-if="icon !== ''" :style="{width, height}" :color="defaultColor" name="cloud"/>
 
 </template>
 
