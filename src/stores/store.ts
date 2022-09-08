@@ -257,8 +257,12 @@ export interface ServerInterface {
   default_password: string
   pay_type: 'prepaid' | 'postpaid'
   endpoint_url: string
-  service: string // 简化成serviceId
-  user_quota: string
+  service: {
+    id: string
+    name: string
+    name_en: string
+    service_type: string
+  }
   center_quota: number
   vo_id: string | null
   user: {
@@ -1103,7 +1107,7 @@ export const useStore = defineStore('server', {
       } else {
         const rows: ServerInterface[] = []
         for (const server of Object.values(state.tables.personalServerTable.byId)) {
-          if (server.service === serviceId) {
+          if (server.service.id === serviceId) {
             rows.push(server)
           }
         }
@@ -1284,8 +1288,7 @@ export const useStore = defineStore('server', {
     getPersonalAvailableServiceIds: (state): string[] => {
       let services = [] as string[]
       // todo server + 点 + 券 ？
-      // state.tables.personalQuotaTable.allIds.forEach((id) => services.unshift(state.tables.personalQuotaTable.byId[id].service))
-      state.tables.personalServerTable.allIds.forEach((id) => services.unshift(state.tables.personalServerTable.byId[id].service))
+      state.tables.personalServerTable.allIds.forEach((id) => services.unshift(state.tables.personalServerTable.byId[id].service.id))
       services = [...new Set(services)]
       return services
     },
@@ -1896,12 +1899,8 @@ export const useStore = defineStore('server', {
       try {
         const respServer = await api.server.server.getServer({ query: { page_size: 999 } })
         // 将响应normalize，存入state里的userServerTable
-        const service = new schema.Entity('service')
-        const user_quota = new schema.Entity('user_quota')
-        const server = new schema.Entity('server', {
-          service,
-          user_quota
-        })
+
+        const server = new schema.Entity('server')
         for (const data of respServer.data.servers) {
           const normalizedData = normalize(data, server)
           Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
@@ -1943,12 +1942,7 @@ export const useStore = defineStore('server', {
             }
           })
           // 将响应normalize
-          const service = new schema.Entity('service')
-          const user_quota = new schema.Entity('user_quota')
-          const server = new schema.Entity('server', {
-            service,
-            user_quota
-          })
+          const server = new schema.Entity('server')
           for (const data of respGroupServer.data.servers) {
             const normalizedData = normalize(data, server)
             Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
@@ -2009,12 +2003,7 @@ export const useStore = defineStore('server', {
       try {
         const respSingleServer = await api.server.server.getServerId({ path: { id: payload.serverId } })
         // 将响应normalize，存入state里的userServerTable
-        const service = new schema.Entity('service')
-        const user_quota = new schema.Entity('user_quota')
-        const server = new schema.Entity('server', {
-          service,
-          user_quota
-        })
+        const server = new schema.Entity('server')
         const normalizedData = normalize(respSingleServer.data.server, server)
         if (payload.isGroup) {
           Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)

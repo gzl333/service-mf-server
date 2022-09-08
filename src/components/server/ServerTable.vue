@@ -220,19 +220,18 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service]?.name : store.tables.serviceTable.byId[props.row.service]?.name_en
+                i18n.global.locale === 'zh' ? props.row.service.name : props.row.service.name_en
               }}
             </div>
 
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service]?.data_center]?.name :
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service]?.data_center]?.name_en
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center]?.name_en
               }}
             </div>
 
-            <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[props.row.service]?.service_type"/>
+            <CloudPlatformLogo :platform-name="props.row.service.service_type"/>
 
           </q-td>
 

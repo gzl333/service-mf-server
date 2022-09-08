@@ -214,8 +214,8 @@ const onOKClick = () => {
           </div>
           <div class="col">
             {{
-              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name :
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service]?.data_center]?.name_en
+              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center]?.name :
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center]?.name_en
             }}
           </div>
         </div>
@@ -226,15 +226,15 @@ const onOKClick = () => {
           </div>
           <div class="col row items-center">
             {{
-              i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[server.service]?.name : store.tables.serviceTable.byId[server.service]?.name_en
+              i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[server.service.id]?.name : store.tables.serviceTable.byId[server.service.id]?.name_en
             }}
 
             <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[server.service]?.service_type"/>
+              :platform-name="store.tables.serviceTable.byId[server.service.id]?.service_type"/>
 
             <!--            <span>-->
             <!--              <q-icon-->
-            <!--                v-if="store.tables.serviceTable.byId[server.service]?.service_type.toLowerCase().includes('ev')"-->
+            <!--                v-if="store.tables.serviceTable.byId[server.service.id]?.service_type.toLowerCase().includes('ev')"-->
             <!--                style="width: 100px;height: 20px">-->
             <!--                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>-->
             <!--              </q-icon>-->
@@ -242,7 +242,7 @@ const onOKClick = () => {
 
             <!--            <span>-->
             <!--              <q-icon-->
-            <!--                v-if="store.tables.serviceTable.byId[server.service]?.service_type.toLowerCase().includes('open')"-->
+            <!--                v-if="store.tables.serviceTable.byId[server.service.id]?.service_type.toLowerCase().includes('open')"-->
             <!--                style="width: 100px;height: 20px">-->
             <!--                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>-->
             <!--              </q-icon>-->

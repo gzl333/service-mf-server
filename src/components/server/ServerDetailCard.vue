@@ -38,11 +38,11 @@ const router = useRouter()
 // server info
 const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId[props.serverId] : store.tables.personalServerTable.byId[props.serverId])
 // service info
-const service = computed(() => store.tables.serviceTable.byId[server.value?.service])
+const service = computed(() => store.tables.serviceTable.byId[server.value?.service.id])
 // quota info
 // const quota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[server.value.user_quota] : store.tables.personalQuotaTable.byId[server.value?.user_quota])
 // // vpn info
-// const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service])
+// const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service.id])
 
 // lock toggle
 const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
@@ -281,19 +281,19 @@ const clickToCopy = useCopyToClipboard()
                     </div>
                   </div>
                 </div>
-
+                <!--                以下两项依赖serviceTable-->
                 <div v-if="service" class="row q-pb-md items-center ">
                   <div class="col-4 text-grey ">{{ (tc('vpnInfo')) }}</div>
                   <div class="col-auto">
                     <q-btn v-if="service?.need_vpn" flat dense no-caps color="primary"
-                           @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service]?.data_center}&service=${server.service}`)">
+                           @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service.id]?.data_center}&service=${server.service.id}`)">
                       {{ tc('seeVpn') }}
                       <q-tooltip>
                         {{ tc('jumpToVpn') }}
                       </q-tooltip>
                     </q-btn>
                     <div v-else-if="!service?.need_vpn">{{ tc('vpnNotRequired') }}</div>
-<!--                    <div v-else>{{ tc('vpnNotRequired') }}</div>-->
+                    <!--                    <div v-else>{{ tc('vpnNotRequired') }}</div>-->
                   </div>
                 </div>
 
@@ -306,15 +306,19 @@ const clickToCopy = useCopyToClipboard()
                   </div>
                 </div>
 
-                <div v-if="service" class="row q-pb-md items-center">
+                <!--                以下两项为server保存的信息-->
+                <div class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.service_node') }}</div>
-                  <div class="col"> {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}</div>
+                  <div class="col"> {{
+                      i18n.global.locale === 'zh' ? server.service.name : server.service.name_en
+                    }}
+                  </div>
                 </div>
 
-                <div v-if="service" class="row q-pb-md items-center">
+                <div class="row q-pb-md items-center">
                   <div class="col-4 text-grey">{{ tc('cloudPlatform') }}</div>
                   <div class="col">
-                    <CloudPlatformLogo :platform-name="service?.service_type" height="30px" width="155px"/>
+                    <CloudPlatformLogo :platform-name="server.service.service_type" height="30px" width="155px"/>
                   </div>
                 </div>
 

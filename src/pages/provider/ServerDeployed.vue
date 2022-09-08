@@ -702,7 +702,7 @@ const stopServer = (server: ServerInterface) => {
           <q-td key="serviceNode" :props="props">
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service.id]?.name : store.tables.serviceTable.byId[props.row.service.id]?.name_en
+                i18n.global.locale === 'zh' ? props.row.service.name : props.row.service.name_en
               }}
             </div>
             <div>
@@ -712,7 +712,7 @@ const stopServer = (server: ServerInterface) => {
               }}
             </div>
 
-            <CloudPlatformLogo :platform-name="store.tables.serviceTable.byId[props.row.service.id]?.service_type"/>
+            <CloudPlatformLogo :platform-name="props.row.service.service_type"/>
 
           </q-td>
 
