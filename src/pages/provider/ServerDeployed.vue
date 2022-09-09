@@ -471,6 +471,38 @@ const stopServer = (server: ServerInterface) => {
             <!--                  {{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}-->
             <!--                </span>-->
             <!--          </template>-->
+
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-tooltip>
+                  <div v-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'enable'">
+                    服务单元运行中
+                  </div>
+                  <div v-else-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'disable'">
+                    服务单元暂停服务
+                  </div>
+                  <div v-else-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'deleted'">
+                    服务单元已删除
+                  </div>
+                  <div v-else>
+                    全部服务单元
+                  </div>
+                </q-tooltip>
+                <q-item-section thumbnail>
+                  <q-icon v-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'enable'"
+                          color="light-green" name="play_arrow"/>
+                  <q-icon v-else-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'disable'" color="red"
+                          name="pause"/>
+                  <q-icon v-else-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'deleted'"
+                          color="black" name="clear"/>
+                  <q-icon v-else color="primary" name="done_all"/>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ i18n.global.locale === 'zh' ? scope.opt.label : scope.opt.labelEn }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+
           </q-select>
 
           <q-select class="col-auto"
@@ -616,6 +648,7 @@ const stopServer = (server: ServerInterface) => {
               <!--                </span>-->
               <!--            </template>-->
             </q-select>
+
             <q-input
               style="width: 250px;"
               v-if="creatorSelection !== 'all'"
