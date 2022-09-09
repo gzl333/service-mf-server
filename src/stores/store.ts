@@ -2782,6 +2782,9 @@ export const useStore = defineStore('server', {
           // 更新order交付的server
           const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
           if (serverId) {
+            // 限制最大自动取回次数，避免死循环
+            const MAX_COUNT = 10
+            let count = 0
             // 持续尝试取回交付的server信息
             const timerId = setInterval(
               async () => {
@@ -2790,8 +2793,14 @@ export const useStore = defineStore('server', {
                   isGroup,
                   serverId
                 })
+                // 计数
+                count += 1
                 // 表里存在该server则表示取回成功，消除timer
                 if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
+                  clearInterval(timerId)
+                }
+                // 超过次数取消自动取回
+                if (count === MAX_COUNT) {
                   clearInterval(timerId)
                 }
               }, 1000)
