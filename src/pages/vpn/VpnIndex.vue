@@ -168,8 +168,9 @@ const gotoManualVpn = () => {
                     active-bg-color="grey-2"
                   >
                     <q-tab
-                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
-                      :key="serviceId" :name="serviceId"
+                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services.filter(serviceId => store.tables.serviceTable.byId[serviceId]?.status === 'enable')"
+                      :key="serviceId"
+                      :name="serviceId"
                       class="q-pl-none"
                       style="justify-content:initial; text-align: left; font-weight: bold;"
                       :ripple="false"
@@ -198,15 +199,15 @@ const gotoManualVpn = () => {
                   >
 
                     <q-tab-panel
-                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services"
-                      :key="serviceId" :name="serviceId"
+                      v-for="serviceId in store.tables.dataCenterTable.byId[tabDataCenter]?.services.filter(serviceId => store.tables.serviceTable.byId[serviceId]?.status === 'enable')"
+                      :key="serviceId"
+                      :name="serviceId"
                       class="bg-grey-2 overflow-hidden q-py-none"
                       style="min-height: 192px;"
                     >
 
                       <div
-                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||
-                      !store.tables.serviceTable.byId[tabService].need_vpn"
+                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||     !store.tables.serviceTable.byId[tabService].need_vpn"
                       >
                         <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
                           {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}
@@ -234,7 +235,9 @@ const gotoManualVpn = () => {
                               keep-color
                               @click="store.toggleVpnStatus({serviceId: vpn.id})"
                             >
-                              {{ vpn.active ? tc('pages.vpn.VpnIndex.activated') : tc('pages.vpn.VpnIndex.deactivated') }}
+                              {{
+                                vpn.active ? tc('pages.vpn.VpnIndex.activated') : tc('pages.vpn.VpnIndex.deactivated')
+                              }}
                             </q-toggle>
                           </div>
 

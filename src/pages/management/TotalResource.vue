@@ -178,18 +178,18 @@ const option = computed(() => ({
       }
     }
   }
-  // 地图点击事件 翻译后 事件失效 会影响翻译
-  //   {
-  //   name: (() => tc('pages.management.TotalResource.org_num'))(),
-  //   type: 'map',
-  //   mapType: 'bj',
-  //   geoIndex: 0,
-  //   itemStyle: {
-  //     normal: { label: { show: true } },
-  //     emphasis: { label: { show: true } }
-  //   },
-  //   data: labelData
-  // }
+    // 地图点击事件 翻译后 事件失效 会影响翻译
+    //   {
+    //   name: (() => tc('pages.management.TotalResource.org_num'))(),
+    //   type: 'map',
+    //   mapType: 'bj',
+    //   geoIndex: 0,
+    //   itemStyle: {
+    //     normal: { label: { show: true } },
+    //     emphasis: { label: { show: true } }
+    //   },
+    //   data: labelData
+    // }
   ]
 }))
 
@@ -212,12 +212,17 @@ watch(defaultTicked, () => {
         <div class="row items-center q-gutter-lg text-h6">
           <div class="col-auto row items-end">
             <div class="text-grey">{{ tc('pages.management.TotalResource.current_org_num') }}:</div>
-            <div class="text-primary text-h4">{{ store.tables.dataCenterTable.allIds?.length }}</div>
+            <div class="text-primary text-h4">{{
+                store.tables.dataCenterTable.allIds?.filter(dataCenterId => store.tables.dataCenterTable.byId[dataCenterId]?.status.code === 1).length
+              }}
+            </div>
           </div>
           <div class="col-auto row items-end">
             <div class="text-grey">{{ tc('pages.management.TotalResource.current_service_num') }}:</div>
             <div class="text-primary text-h4">
-              {{ store.tables.serviceTable.allIds?.length }}
+              {{
+                store.tables.serviceTable.allIds?.filter(serviceId => store.tables.serviceTable.byId[serviceId]?.status === 'enable').length
+              }}
             </div>
           </div>
         </div>
@@ -239,14 +244,18 @@ watch(defaultTicked, () => {
     </div>
     <q-separator class="q-my-md"/>
     <div class="row justify-between">
-      <div class="col-auto text-h6 text-grey">{{ tc('pages.management.TotalResource.service_auto_resource_configuration') }}</div>
+      <div class="col-auto text-h6 text-grey">
+        {{ tc('pages.management.TotalResource.service_auto_resource_configuration') }}
+      </div>
       <div class="col-auto row q-gutter-lg">
         <div class="col-auto row">
           <div class="col-auto text-h6 text-grey">
             {{ tc('pages.management.TotalResource.total_cpu') }}:
           </div>
           <div class="col-auto text-h6 text-primary">
-            {{ serviceCpuNum.reduce((accumulator, item) => accumulator + item.value, 0) }}{{ tc('pages.management.TotalResource.cores') }}
+            {{
+              serviceCpuNum.reduce((accumulator, item) => accumulator + item.value, 0)
+            }}{{ tc('pages.management.TotalResource.cores') }}
           </div>
         </div>
         <div class="col-auto row">
@@ -270,18 +279,24 @@ watch(defaultTicked, () => {
     <div class="row q-mt-lg">
       <resource-pie-chart :data="serviceCpuNum" title="CPU"></resource-pie-chart>
       <resource-pie-chart :data="serviceRamNum" :title="tc('pages.management.TotalResource.ram')"></resource-pie-chart>
-      <resource-pie-chart :data="serviceDiskNum" :title="tc('pages.management.TotalResource.disk')"></resource-pie-chart>
+      <resource-pie-chart :data="serviceDiskNum"
+                          :title="tc('pages.management.TotalResource.disk')"></resource-pie-chart>
     </div>
     <q-separator class="q-my-md"/>
     <div class="row justify-between">
-      <div class="col-auto text-h6 text-grey">{{ tc('pages.management.TotalResource.federal_resource_allocation') }}</div>
+      <div class="col-auto text-h6 text-grey">{{
+          tc('pages.management.TotalResource.federal_resource_allocation')
+        }}
+      </div>
       <div class="col-auto row q-gutter-lg">
         <div class="col-auto row">
           <div class="col-auto text-h6 text-grey">
             {{ tc('pages.management.TotalResource.total_cpu') }}:
           </div>
           <div class="col-auto text-h6 text-primary">
-            {{ fedCpuNum.reduce((accumulator, item) => accumulator + item.value, 0) }}{{ tc('pages.management.TotalResource.cores') }}
+            {{
+              fedCpuNum.reduce((accumulator, item) => accumulator + item.value, 0)
+            }}{{ tc('pages.management.TotalResource.cores') }}
           </div>
         </div>
         <div class="col-auto row">

@@ -909,7 +909,7 @@ export const useStore = defineStore('server', {
         }
         treeObj.id = state.tables.dataCenterTable.byId[item]?.id
         const dataArr = []
-        for (const childItem of state.tables.dataCenterTable.byId[item]?.services) {
+        for (const childItem of state.tables.dataCenterTable.byId[item]?.services.filter(serviceId => state.tables.serviceTable.byId[serviceId]?.status === 'enable')) {
           const dataObj: Record<string, string | boolean> = {}
           if (i18n.global.locale === 'zh') {
             dataObj.label = state.tables.serviceTable.byId[childItem]?.name
@@ -925,22 +925,22 @@ export const useStore = defineStore('server', {
       }
       return treeData
     },
-    getServices (state): { value: string; label: string; }[] {
-      const serviceOptions = []
-      for (const group of Object.values(state.tables.serviceTable.byId)) {
-        serviceOptions.push(
-          {
-            value: group.id,
-            label: group.name
-          }
-        )
-      }
-      serviceOptions.unshift({
-        value: '',
-        label: i18n.global.locale === 'zh' ? '全部服务' : 'All Groups'
-      })
-      return serviceOptions
-    },
+    // getServices (state): { value: string; label: string; }[] {
+    //   const serviceOptions = []
+    //   for (const service of Object.values(state.tables.serviceTable.byId)) {
+    //     serviceOptions.push(
+    //       {
+    //         value: service.id,
+    //         label: service.name
+    //       }
+    //     )
+    //   }
+    //   serviceOptions.unshift({
+    //     value: '',
+    //     label: i18n.global.locale === 'zh' ? '全部服务单元' : 'All Groups'
+    //   })
+    //   return serviceOptions
+    // },
     /* join federation使用 */
     getDataCenterOptions (state): { value: string; label: string; }[] {
       const dataCenterOptions = []
@@ -1752,23 +1752,26 @@ export const useStore = defineStore('server', {
       }
       this.tables.serviceNetworkTable.status = 'loading'
       for (const serviceId of this.tables.serviceTable.allIds) {
-        try {
-          const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
-          for (const network of respNetwork.data) {
-            // 将service 和 localId补充进network对象
-            Object.assign(network, {
-              service: serviceId,
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              localId: `${serviceId}-${network.id}`
-            })
-            Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
-            this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
-            this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
+        // service.status 为 enable 时才入表
+        if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
+          try {
+            const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+            for (const network of respNetwork.data) {
+              // 将service 和 localId补充进network对象
+              Object.assign(network, {
+                service: serviceId,
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                localId: `${serviceId}-${network.id}`
+              })
+              Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
+              this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
+              this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
+            }
+          } catch (exception) {
+            exceptionNotifier(exception)
+            // 继续下一个循环
+            continue
           }
-        } catch (exception) {
-          exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
         }
       }
       this.tables.serviceNetworkTable.status = 'total'
@@ -1781,22 +1784,25 @@ export const useStore = defineStore('server', {
       }
       this.tables.serviceImageTable.status = 'loading'
       for (const serviceId of this.tables.serviceTable.allIds) {
-        try {
-          const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
-          for (const image of respImage.data) {
-            // 将service 和 localId补充进image对象
-            Object.assign(image, {
-              service: serviceId,
-              localId: `${serviceId}-${image.id}`
-            })
-            Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
-            this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
-            this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
+        // service.status 为 enable 时才入表
+        if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
+          try {
+            const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+            for (const image of respImage.data) {
+              // 将service 和 localId补充进image对象
+              Object.assign(image, {
+                service: serviceId,
+                localId: `${serviceId}-${image.id}`
+              })
+              Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
+              this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
+              this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
+            }
+          } catch (exception) {
+            exceptionNotifier(exception)
+            // 继续下一个循环
+            continue
           }
-        } catch (exception) {
-          exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
         }
       }
       this.tables.serviceImageTable.status = 'total'
@@ -1809,18 +1815,21 @@ export const useStore = defineStore('server', {
       }
       this.tables.userVpnTable.status = 'loading'
       for (const serviceId of this.tables.serviceTable.allIds) {
-        try {
-          if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
-            const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
-            Object.assign(respVpn.data.vpn, { id: serviceId })
-            Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
-            this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
-            this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+        // service状态为enable时才入表
+        if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
+          try {
+            if (this.tables.serviceTable.byId[serviceId]?.need_vpn) {
+              const respVpn = await api.server.vpn.getVpn({ path: { service_id: serviceId } })
+              Object.assign(respVpn.data.vpn, { id: serviceId })
+              Object.assign(this.tables.userVpnTable.byId, { [serviceId]: respVpn.data.vpn })
+              this.tables.userVpnTable.allIds.unshift(Object.keys({ [serviceId]: respVpn.data.vpn } as Record<string, unknown>)[0])
+              this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
+            }
+          } catch (exception) {
+            exceptionNotifier(exception)
+            // 继续下一个循环
+            continue
           }
-        } catch (exception) {
-          exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
         }
       }
       this.tables.userVpnTable.status = 'total'

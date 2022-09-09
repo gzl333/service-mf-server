@@ -64,8 +64,8 @@ const input = ref<HTMLElement>()
 // // 全局数据
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
-const dataCenters = computed(() => Object.values(store.tables.dataCenterTable.byId))
-const services = computed(() => Object.values(store.tables.serviceTable.byId))
+const dataCenters = computed(() => Object.values(store.tables.dataCenterTable.byId).filter(dataCenter => dataCenter.status.code === 1))
+const services = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.status === 'enable'))
 const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 // selectionService的选项数据根据dataCenters动态生成,此处没有
 // //依赖selectionService Id选择值的数据
@@ -594,7 +594,7 @@ const deployServer = async () => {
                 <q-btn
                   :class="selectionService === service.id ? '' : 'bg-grey-1'"
                   :color="selectionService === service.id ? 'primary' : 'grey-3'"
-                  v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id])"
+                  v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id]).filter(service => service.status === 'enable')"
                   :key="service.id"
                   :val="service.id"
                   outline
