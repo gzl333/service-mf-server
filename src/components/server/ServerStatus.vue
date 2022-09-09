@@ -42,10 +42,16 @@ const tc = i18n.global.tc
     </q-chip>
 
     <q-chip v-if="server.status === 1"
-            class="text-bold" outline ripple="false" color="light-green"
-            :label="tc('components.server.ServerStatus.running')"
+            class="text-bold"
+            outline
+            ripple="false"
+            color="light-green"
             clickable
-            @click="store.loadSingleServerStatus( {isGroup, serverId: server.id}) ">
+            @click="store.loadSingleServerStatus( {isGroup, serverId: server.id}) "
+    >
+      <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
+        {{ tc('components.server.ServerStatus.running') }}
+      </div>
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -103,14 +109,12 @@ const tc = i18n.global.tc
             :ripple="false"
             color="red"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id})">
-
+            @click="store.loadSingleServerStatus({isGroup, serverId: server.id})"
+    >
       <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
         {{ tc('components.server.ServerStatus.communication_fail') }}
       </div>
-
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
-
     </q-chip>
 
     <q-chip v-if="server.status === 10"
@@ -129,12 +133,19 @@ const tc = i18n.global.tc
     </q-chip>
 
     <q-chip v-if="server.status === 12"
-            class="text-bold" outline :ripple="false" color="red"
-            :label="tc('components.server.ServerStatus.deploy_fail')"
+            class="text-bold"
+            outline
+            :ripple="false"
+            color="red"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) "
+    >
+      <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
+        {{ tc('components.server.ServerStatus.deploy_fail') }}
+      </div>
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
+
   </span>
 </template>
 
