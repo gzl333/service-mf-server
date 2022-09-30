@@ -22,6 +22,9 @@ export default {
   orderResourceReclaimSuccess: '成功取回资源',
   orderPayMaxCoupons: '单次支付最多使用代金券数量',
 
+  personalCouponCount: '个人代金券',
+  couponUnit: '张',
+
   // deploy page
   serverNew: '新建云主机',
   serverOwner: '云主机账户',

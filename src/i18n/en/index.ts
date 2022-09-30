@@ -22,6 +22,9 @@ export default {
   orderResourceReclaimSuccess: 'Successfully Reclaimed Resource',
   orderPayMaxCoupons: 'Coupons used in each payment is limited to',
 
+  personalCouponCount: 'Personal Voucher | Personal Vouchers',
+  couponUnit: 'Piece | Pieces',
+
   // deploy page
   serverNew: 'Deploy New Server',
   serverOwner: 'Server Owner',
