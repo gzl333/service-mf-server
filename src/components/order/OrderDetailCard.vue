@@ -367,10 +367,14 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     </div>
                   </div>
 
-                  <div class="row q-pb-md items-center">
+                  <div v-if="store.tables.serviceTable.byId[order.service_id]" class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.service_node') }}</div>
                     <div class="col">
-                      {{ i18n.global.locale === 'zh' ? order.service_name : order.service_name_en }}
+                      {{
+                        i18n.global.locale === 'zh' ?
+                          store.tables.serviceTable.byId[order.service_id].name :
+                          store.tables.serviceTable.byId[order.service_id].name_en
+                      }}
                     </div>
                   </div>
 
