@@ -109,6 +109,15 @@ const columns = computed(() => [
     classes: 'ellipsis',
     headerStyle: 'padding: 0 0 0 1px',
     style: 'max-width: 100px;padding: 15px 0px;white-space: normal;'
+  },
+  {
+    name: 'operation',
+    label: (() => tc('components.server.ServeTable.operation'))(),
+    field: 'operation',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px;width: 150px;',
+    headerStyle: 'padding: 0 2px'
   }])
 
 // 复制信息到剪切板
@@ -274,6 +283,20 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
               </div>
             </div>
 
+          </q-td>
+
+          <q-td key="operation" :props="props" class="non-selectable">
+            <q-btn v-if="(new Date() - new Date(props.row.expiration_time)) < 0"
+                   flat
+                   no-caps
+                   dense
+                   padding="none"
+                   color="primary"
+                   @click="navigateToUrl('/my/server/deploy?service=' + props.row.app_service.service_id + (isGroup ? ('&group=' + props.row.vo?.id) : ''))"
+            >
+              {{ tc('useCoupon') }}
+            </q-btn>
+            <div v-else>{{ tc('unavailable') }}</div>
           </q-td>
 
         </q-tr>

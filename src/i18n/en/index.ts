@@ -76,6 +76,10 @@ export default {
   vpnNotRequired: 'VPN is not required',
   memory: 'Memory',
 
+  // coupon table
+  useCoupon: 'Use Voucher',
+  unavailable: 'N/A',
+
   // specifics
   // 独立翻译点,按照工程文件结构组织
   components,

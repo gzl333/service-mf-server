@@ -76,6 +76,10 @@ export default {
   vpnNotRequired: '无需VPN',
   memory: '内存',
 
+  // coupon table
+  useCoupon: '使用代金券',
+  unavailable: '无',
+
   // specifics
   components,
   layouts,
