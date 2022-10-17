@@ -336,6 +336,7 @@ export interface CouponInterface {
     id: string
     name: string
     name_en: string
+    category: 'vms-server' | 'vms-object' | 'high-cloud' | 'hpc' | 'other'
     service_id?: string
   }
   user?: {
@@ -2053,7 +2054,12 @@ export const useStore = defineStore('server', {
       this.tables.personalCouponTable.status = 'loading'
       try {
         // 发送请求,列举全部personal coupon
-        const respCoupon = await api.server.cashcoupon.getCashCoupon({ query: { page_size: 999 } })
+        const respCoupon = await api.server.cashcoupon.getCashCoupon({
+          query: {
+            page_size: 999,
+            app_service_category: 'vms-server'
+          }
+        })
         // 将响应normalize，存入state里的userServerTable
         const coupon = new schema.Entity('coupon')
         for (const data of respCoupon.data.results) {
@@ -2088,7 +2094,8 @@ export const useStore = defineStore('server', {
           const respCoupon = await api.server.cashcoupon.getCashCoupon({
             query: {
               page_size: 999,
-              vo_id: groupId
+              vo_id: groupId,
+              app_service_category: 'vms-server'
             }
           })
           const coupon = new schema.Entity('coupon')

@@ -240,8 +240,10 @@ export default {
       query?: {
         page?: number,
         page_size?: number,
+        app_service_id?: string,
         vo_id?: string,
-        available?: string
+        available?: string,
+        app_service_category?: 'vms-server' | 'vms-object' | 'high-cloud' | 'hpc' | 'other'
       }
     }) {
       const config = {
