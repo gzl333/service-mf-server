@@ -84,8 +84,9 @@ const selectionDatacenter = computed(() => store.tables.serviceTable.byId[select
 const selectionImage = ref('')
 
 const selectionFlavor = ref('')
-const selectionNetwork = ref('')
+const selectionNetwork = ref<'randomPrivate' | 'randomPublic' | string>('')
 const inputRemarks = ref('')
+
 // // 待实现
 // const selectionSystemDisk = ref(50)
 // const selectionDataDisk = ref(0)
@@ -138,7 +139,17 @@ const chooseService = () => {
   selectionService.value = route.query.service as string || services.value[0]?.id || ''
 }
 const chooseNetwork = () => {
-  selectionNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+  // // 默认选择第一项
+  // selectionNetwork.value = privateNetworks.value[0]?.id || publicNetworks.value[0]?.id || ''
+
+  // 默认选择：'randomPrivate' 随机私网网段/ 'randomPublic' 随机公网网段/''
+  if (privateNetworks.value.length > 0) {
+    selectionNetwork.value = 'randomPrivate'
+  } else if (publicNetworks.value.length > 0) {
+    selectionNetwork.value = 'randomPublic'
+  } else {
+    selectionNetwork.value = ''
+  }
 }
 const chooseImage = () => {
   selectionImage.value = images.value[0]?.id || ''
@@ -159,7 +170,7 @@ chooseFlavor()
 // (4)刷新页面，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table。
 // watch关注的应该是响应式对象，而非某个table。
 // 若关注table写法应为watch(()=> store.tables.xxxTable, action) https://github.com/vuejs/pinia/discussions/1218
-// watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseselectionDefaults)
+// watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseSelectionDefaults)
 // 选择groupId
 watch(groups, chooseGroup)
 // 选择serviceId
@@ -175,7 +186,6 @@ watch(flavors, chooseFlavor)
 watch(selectionService, () => {
   chooseNetwork()
   chooseImage()
-  chooseNetwork()
 })
 /* 在table都加载后，3个selection，随着service变化选择默认项 */
 
@@ -265,7 +275,7 @@ const checkInputs = () => {
 }
 const deployServer = async () => {
   if (checkInputs()) {
-    isDeploying.value = true
+    // 云主机的配置
     const selection = {
       pay_type: selectionPayment.value,
       ...(selectionPayment.value === 'prepaid' ? { period: selectionPeriod.value } : {}),
@@ -277,7 +287,20 @@ const deployServer = async () => {
       remarks: inputRemarks.value
     }
 
+    // 如果需要随机选择网络，则改变网络选择值为随机id
+    if (selection.network_id === 'randomPrivate') {
+      selection.network_id = privateNetworks.value[Math.floor(Math.random() * privateNetworks.value.length)].id
+      // console.log('randomPrivate:', selection.network_id)
+      // console.log(privateNetworks.value)
+    } else if (selection.network_id === 'randomPublic') {
+      selection.network_id = publicNetworks.value[Math.floor(Math.random() * publicNetworks.value.length)].id
+      // console.log('randomPublic:', selection.network_id)
+      // console.log(publicNetworks.value)
+    }
+
     try {
+      isDeploying.value = true
+
       const respPostServer = await api.server.server.postServer({ body: selection })
 
       // 创建后处理方式分两种，预付费和后付费
@@ -735,6 +758,28 @@ const deployServer = async () => {
                 {{ tc('privateNetwork') }}
               </div>
               <div class="row items-center q-gutter-md">
+
+                <!--按钮：随机选择私网网络-->
+                <q-btn
+                  :class="selectionNetwork === 'randomPrivate' ? '' : 'bg-grey-1'"
+                  :color="selectionNetwork === 'randomPrivate' ? 'primary' : 'grey-3'"
+                  outline
+                  dense
+                  no-caps
+                  :ripple="false"
+                  @click="selectionNetwork = 'randomPrivate'"
+                >
+                  <div class="column items-center justify-center"
+                       style="width: 131px;height: 30px;">
+
+                    <div :class="selectionNetwork === 'randomPrivate' ? 'text-primary' : 'text-grey'" class="column"
+                         style="line-height: 1;">
+                      {{ tc('randomPrivateNetwork') }}
+                    </div>
+
+                  </div>
+                </q-btn>
+
                 <q-btn
                   :class="selectionNetwork === network.id ? '' : 'bg-grey-1'"
                   :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
@@ -762,6 +807,7 @@ const deployServer = async () => {
 
                   </div>
                 </q-btn>
+
               </div>
             </div>
 
@@ -771,6 +817,28 @@ const deployServer = async () => {
                 {{ tc('publicNetwork') }}
               </div>
               <div class="row items-center q-gutter-md">
+
+                <!--按钮：随机选择公网网络-->
+                <q-btn
+                  :class="selectionNetwork === 'randomPublic' ? '' : 'bg-grey-1'"
+                  :color="selectionNetwork === 'randomPublic' ? 'primary' : 'grey-3'"
+                  outline
+                  dense
+                  no-caps
+                  :ripple="false"
+                  @click="selectionNetwork = 'randomPublic'"
+                >
+                  <div class="column items-center justify-center"
+                       style="width: 131px;height: 30px;">
+
+                    <div :class="selectionNetwork === 'randomPublic' ? 'text-primary' : 'text-grey'" class="column"
+                         style="line-height: 1;">
+                      {{ tc('randomPublicNetwork') }}
+                    </div>
+
+                  </div>
+                </q-btn>
+
                 <q-btn
                   :class="selectionNetwork === network.id ? '' : 'bg-grey-1'"
                   :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
@@ -942,7 +1010,18 @@ const deployServer = async () => {
                 </div>
 
                 <div
-                  v-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name"
+                  v-if="selectionNetwork.includes('random')"
+                  class="col-auto text-primary"
+                >
+                  <div v-if="selectionNetwork === 'randomPrivate'">
+                    {{ tc('randomPrivateNetwork') }}
+                  </div>
+                  <div v-if="selectionNetwork === 'randomPublic'">
+                    {{ tc('randomPublicNetwork') }}
+                  </div>
+                </div>
+                <div
+                  v-else-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name"
                   class="col-auto text-primary"
                 >
                   {{

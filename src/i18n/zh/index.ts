@@ -68,6 +68,8 @@ export default {
   originalPrice: '原价',
   placeOrder: '新建订单',
   deployServer: '新建云主机',
+  randomPublicNetwork: '随机公网网段',
+  randomPrivateNetwork: '随机私网网段',
 
   // server detail card
   vpnInfo: 'VPN信息',

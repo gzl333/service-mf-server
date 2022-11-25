@@ -185,6 +185,8 @@ const gotoManualVpn = () => {
                   </q-tabs>
                 </div>
 
+                <q-separator vertical/>
+
                 <div v-if="store.tables.dataCenterTable.byId[tabDataCenter]?.services.length === 0">
                   {{ tc('pages.vpn.VpnIndex.no_vpn_service') }}
                 </div>
@@ -301,16 +303,16 @@ const gotoManualVpn = () => {
                             </div>
                           </div>
 
-                          <div class="row items-center" style="height: 48px">
-                            <div class="col-2 text-grey">
-                              VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}
-                            </div>
-                            <div class="col">
-                              <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none"
-                                     dense flat no-caps
-                                     @click="store.fetchCa(tabService)"/>
-                            </div>
-                          </div>
+                          <!--                          <div class="row items-center" style="height: 48px">-->
+                          <!--                            <div class="col-2 text-grey">-->
+                          <!--                              VPN {{ tc('pages.vpn.VpnIndex.ca_certificate') }}-->
+                          <!--                            </div>-->
+                          <!--                            <div class="col">-->
+                          <!--                              <q-btn :label="tc('pages.vpn.VpnIndex.download')" class="" color="primary" padding="none"-->
+                          <!--                                     dense flat no-caps-->
+                          <!--                                     @click="store.fetchCa(tabService)"/>-->
+                          <!--                            </div>-->
+                          <!--                          </div>-->
 
                           <div class="row items-center" style="height: 48px">
                             <div class="col">

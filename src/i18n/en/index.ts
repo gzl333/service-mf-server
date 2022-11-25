@@ -68,6 +68,8 @@ export default {
   originalPrice: 'Original Price',
   placeOrder: 'Place Order',
   deployServer: 'Deploy Server',
+  randomPublicNetwork: 'Random Public Network',
+  randomPrivateNetwork: 'Random Private Network',
 
   // server detail card
   vpnInfo: 'VPN Info',
