@@ -27,7 +27,7 @@ const route = useRoute()
 const filter = ref('')
 
 // 筛选后的datacenter结果
-const datacentersFiltered = computed(() => store.tables.dataCenterTable.allIds.filter(dataCenterId => (store.tables.dataCenterTable.byId[dataCenterId].name.includes(filter.value) || store.tables.dataCenterTable.byId[dataCenterId].name_en.toLowerCase().includes(filter.value.toLowerCase()))).map(a => a).sort((a, b) => a.localeCompare(b)))
+const datacentersFiltered = computed(() => store.tables.dataCenterTable.allIds.filter(dataCenterId => (store.tables.dataCenterTable.byId[dataCenterId]?.status.code === 1) && (store.tables.dataCenterTable.byId[dataCenterId].name.includes(filter.value) || store.tables.dataCenterTable.byId[dataCenterId].name_en.toLowerCase().includes(filter.value.toLowerCase()))).map(a => a).sort((a, b) => a.localeCompare(b)))
 
 // (1)tab初始状态
 const tabDataCenter = ref('') // dataCenterId

@@ -432,7 +432,8 @@ const deployServer = async () => {
             </div>
 
             <div class="col">
-              <div v-if="dataCenter.services.length === 0" class="row items-center q-pb-sm">
+              <!--机构关闭状态则不显示-->
+              <div v-if="dataCenter.status.code === 2" class="row items-center q-pb-sm">
                 {{ tc('components.server.ServerDeployCard.no_available_service') }}
               </div>
 
