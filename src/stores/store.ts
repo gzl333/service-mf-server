@@ -1344,7 +1344,7 @@ export const useStore = defineStore('server', {
         this.items.fedRole = respGetUserPermissionPolicy.data.role
         this.items.adminServiceIds = respGetUserPermissionPolicy.data.vms.service_ids
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
       }
     },
     async loadPersonalBalance () {
@@ -1352,7 +1352,7 @@ export const useStore = defineStore('server', {
         const respGetAccountBalanceUser = await api.server.account.getAccountBalanceUser()
         this.items.personalBalance = respGetAccountBalanceUser.data
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
       }
     },
     /* items */
@@ -1495,7 +1495,7 @@ export const useStore = defineStore('server', {
         // load table的最后再改status
         this.tables.groupTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.groupTable.status = 'error'
       }
     },
@@ -1530,7 +1530,7 @@ export const useStore = defineStore('server', {
             }
           }
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1561,7 +1561,7 @@ export const useStore = defineStore('server', {
           // 给groupTable补充balance字段
           this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1584,7 +1584,7 @@ export const useStore = defineStore('server', {
         this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
         this.tables.groupBalanceTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.groupBalanceTable.status = 'error'
       }
     },
@@ -1611,7 +1611,7 @@ export const useStore = defineStore('server', {
             this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
           }
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -1642,7 +1642,7 @@ export const useStore = defineStore('server', {
         })
         this.tables.dataCenterTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.dataCenterTable.status = 'error'
       }
     },
@@ -1671,7 +1671,7 @@ export const useStore = defineStore('server', {
         })
         this.tables.serviceTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.serviceTable.status = 'error'
       }
     },
@@ -1696,7 +1696,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.serviceAllocationTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.serviceAllocationTable.status = 'error'
       }
     },
@@ -1721,7 +1721,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.fedAllocationTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.fedAllocationTable.status = 'error'
       }
     },
@@ -1741,7 +1741,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.fedFlavorTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.fedFlavorTable.status = 'error'
       }
     },
@@ -1769,7 +1769,7 @@ export const useStore = defineStore('server', {
               this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
             }
           } catch (exception) {
-            exceptionNotifier(exception)
+            // exceptionNotifier(exception)
             // 继续下一个循环
             continue
           }
@@ -1800,7 +1800,7 @@ export const useStore = defineStore('server', {
               this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
             }
           } catch (exception) {
-            exceptionNotifier(exception)
+            // exceptionNotifier(exception)
             // 继续下一个循环
             continue
           }
@@ -1827,7 +1827,7 @@ export const useStore = defineStore('server', {
               this.tables.userVpnTable.allIds = [...new Set(this.tables.userVpnTable.allIds)]
             }
           } catch (exception) {
-            exceptionNotifier(exception)
+            // exceptionNotifier(exception)
             // 继续下一个循环
             continue
           }
@@ -1854,7 +1854,7 @@ export const useStore = defineStore('server', {
           this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
           this.tables.groupOrderTable.status = 'total'
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           this.tables.groupOrderTable.status = 'error'
         }
       } else {
@@ -1869,7 +1869,7 @@ export const useStore = defineStore('server', {
           this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
           this.tables.personalOrderTable.status = 'total'
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           this.tables.personalOrderTable.status = 'error'
         }
       }
@@ -1895,7 +1895,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalOrderTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.personalOrderTable.status = 'error'
       }
     },
@@ -1927,7 +1927,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalServerTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.personalServerTable.status = 'error'
       }
     },
@@ -1961,7 +1961,7 @@ export const useStore = defineStore('server', {
             this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
           }
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }
@@ -2004,7 +2004,7 @@ export const useStore = defineStore('server', {
         const respStatus = await api.server.server.getServerStatus({ path: { id: payload.serverId } })
         table.byId[payload.serverId].status = respStatus.data.status.status_code
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         table.byId[payload.serverId].status = 0
       }
     },
@@ -2036,7 +2036,7 @@ export const useStore = defineStore('server', {
           this.tables.personalServerTable.status = 'total'
         }
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         if (payload.isGroup) {
           this.tables.groupServerTable.status = 'error'
         } else {
@@ -2074,7 +2074,7 @@ export const useStore = defineStore('server', {
         }
         this.tables.personalCouponTable.status = 'total'
       } catch (exception) {
-        exceptionNotifier(exception)
+        // exceptionNotifier(exception)
         this.tables.personalCouponTable.status = 'error'
       }
     },
@@ -2108,7 +2108,7 @@ export const useStore = defineStore('server', {
             this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
           }
         } catch (exception) {
-          exceptionNotifier(exception)
+          // exceptionNotifier(exception)
           // 继续下一个循环
           continue
         }

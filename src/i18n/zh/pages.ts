@@ -64,7 +64,7 @@ export default {
   },
   management: {
     ManagementIndex: {
-      resource_management: '资源管理',
+      resource_management: '资源池',
       resource_stat: '资源统计'
     },
     TotalResource: {
@@ -132,7 +132,7 @@ export default {
   },
   provider: {
     ProviderIndex: {
-      resource_provider: '资源提供者',
+      resource_provider: '管理员',
       server_all: '云主机管理',
       server_expired: '过期云主机'
     },

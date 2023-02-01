@@ -64,7 +64,7 @@ export default {
   },
   management: {
     ManagementIndex: {
-      resource_management: 'Resource Management',
+      resource_management: 'Resource Pool',
       resource_stat: 'Resource Statistics'
     },
     TotalResource: {
@@ -132,7 +132,7 @@ export default {
   },
   provider: {
     ProviderIndex: {
-      resource_provider: 'Resource Provider',
+      resource_provider: 'Manager',
       server_all: 'Server Management',
       server_expired: 'Expired Servers'
     },
