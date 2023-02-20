@@ -715,7 +715,7 @@ export const useStore = defineStore('server', {
       })
       return groupOptions
     },
-    getGroupOptionsWithoutAll (state): { value: string; label: string; }[] {
+    getGroupOptionsWithoutAll (state): { value: string; label: string; labelEn: string;}[] {
       let groupOptions = []
       for (const group of Object.values(state.tables.groupTable.byId)) {
         groupOptions.push(
