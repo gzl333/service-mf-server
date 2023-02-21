@@ -629,7 +629,7 @@ const deployServer = async () => {
                   <div class="column items-center justify-center"
                        style="width: 287px;height: 80px;">
 
-                    <div class="col-auto" :class="selectionService === service.id ? 'text-primary' : 'text-black'">
+                    <div class="col-auto" :class="selectionService === service.id ? 'text-primary' : 'text-black'" style="line-height: 1;">
                       {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
                     </div>
 
