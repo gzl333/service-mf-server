@@ -122,7 +122,7 @@ const releaseTime = process.env.releaseTime
           </q-list>
 
           <div class="row justify-center q-pt-lg">
-            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="store.redeemCouponDialog()">
+            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="navigateToUrl('/my/wallet/account?trigger=redeem')">
               {{ tc('layouts.redeem') }}
             </q-btn>
           </div>
