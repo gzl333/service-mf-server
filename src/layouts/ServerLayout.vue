@@ -26,6 +26,7 @@ void store.loadAllTables()
 
 const activeItem = computed(() => store.items.currentPath[0])
 
+const appVersion = process.env.appVersion
 const releaseTime = process.env.releaseTime
 
 </script>
@@ -122,7 +123,8 @@ const releaseTime = process.env.releaseTime
           </q-list>
 
           <div class="row justify-center q-pt-lg">
-            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense @click="navigateToUrl('/my/wallet/account?trigger=redeem')">
+            <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense
+                   @click="navigateToUrl('/my/wallet/account?trigger=redeem')">
               {{ tc('layouts.redeem') }}
             </q-btn>
           </div>
@@ -130,10 +132,17 @@ const releaseTime = process.env.releaseTime
           <div class="row justify-center q-pt-lg">
             <q-icon class="text-center" name="info" color="grey-5" size="xs">
               <q-tooltip class="bg-grey-3">
-                <div class="text-grey text-caption text-center">{{ tc('layouts.release_time') }}</div>
+
+                <div class="text-grey text-caption text-center">{{ tc('appVersion') }}</div>
+                <div class="text-grey text-caption text-center">
+                  {{ appVersion }}
+                </div>
+
+                <div class="text-grey text-caption text-center">{{ tc('releaseTime') }}</div>
                 <div class="text-grey text-caption text-center">
                   {{ new Date(releaseTime).toLocaleString(i18n.global.locale) }}
                 </div>
+
               </q-tooltip>
             </q-icon>
           </div>

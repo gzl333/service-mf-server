@@ -9,6 +9,9 @@ export default {
   // generals
   name: 'Name',
 
+  releaseTime: 'Release Time',
+  appVersion: 'Application Version',
+
   cloudPlatform: 'Cloud Platform',
 
   orderToPay: 'To be Paid',

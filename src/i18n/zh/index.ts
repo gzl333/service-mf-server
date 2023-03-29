@@ -9,6 +9,9 @@ export default {
   // generals
   name: '名称',
 
+  releaseTime: '发布时间',
+  appVersion: '应用版本',
+
   cloudPlatform: '云管平台',
 
   orderToPay: '待支付',
