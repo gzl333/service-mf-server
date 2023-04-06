@@ -443,115 +443,47 @@ const deployServer = async () => {
 
           <div class="col-auto q-py-sm row items-center">
             <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="lg" @click="router.back()"/>
-            <div class="col-auto text-h6 text-primary">
+            <div class="col-auto text-h6 text-primary ">
               {{ tc('serverNew') }}
             </div>
           </div>
 
-          <div class="col-auto row items-center q-pb-md">
-            <div class="col-2">
+          <div class="col-auto row items-center">
+            <div class="col-1 text-weight-bold">
               {{ tc('serverOwner') }}
             </div>
             <div class="col row items-center q-gutter-md">
+
               <q-btn
-                :class="selectionOwner === 'personal' ? '' : 'bg-grey-1'"
                 :color="selectionOwner === 'personal' ? 'primary' : 'grey-3'"
-                outline
+                :text-color="selectionOwner === 'personal' ? '' : 'black'"
+                unelevated
                 dense
                 no-caps
                 :ripple="false"
-                @click="selectionOwner = 'personal'">
+                @click="selectionOwner = 'personal'"
+              >
                 {{ tc('personalAccount') }}
               </q-btn>
+
               <q-btn
-                :class="selectionOwner === 'group' ? '' : 'bg-grey-1'"
                 :color="selectionOwner === 'group' ? 'primary' : 'grey-3'"
-                outline
+                :text-color="selectionOwner === 'group' ? '' : 'black'"
+                unelevated
                 dense
                 no-caps
                 :ripple="false"
-                @click="selectionOwner = 'group'">
+                @click="selectionOwner = 'group'"
+              >
                 {{ tc('groupAccount') }}
               </q-btn>
             </div>
 
           </div>
 
-<!--          <div class="col-auto q-pb-md">-->
-<!--            <div class="text-body1 text-weight-bold">-->
-<!--              {{ tc('serverOwner') }}-->
-<!--            </div>-->
-<!--            <div class="row items-center q-gutter-md">-->
-<!--              <q-btn-->
-<!--                :class="selectionOwner === 'personal' ? '' : 'bg-grey-1'"-->
-<!--                :color="selectionOwner === 'personal' ? 'primary' : 'grey-3'"-->
-<!--                outline-->
-<!--                dense-->
-<!--                no-caps-->
-<!--                :ripple="false"-->
-<!--                @click="selectionOwner = 'personal'"-->
-<!--              >-->
-
-<!--                <div class="row items-center" style="width: 287px; height: 80px;">-->
-
-<!--                  <q-icon class="col-3" name="las la-user-alt" size="60px"-->
-<!--                          :color="selectionOwner === 'personal' ? 'primary' : 'grey'"/>-->
-
-<!--                  <div class="col-9 column items-center justify-center">-->
-<!--                    <div class="col-4 row items-center justify-center"-->
-<!--                         :class="selectionOwner === 'personal' ? 'text-primary' : 'text-black'"-->
-<!--                    >-->
-<!--                      {{ tc('personalAccount') }}-->
-<!--                    </div>-->
-<!--                    <div class="col-3 row items-center justify-center text-body2 text-grey" style="line-height: 1;">-->
-<!--                      {{ tc('personalAccountDescription') }}-->
-<!--                    </div>-->
-<!--                    <div class="col-1 text-black text-caption">-->
-<!--                      {{ tc('balance') }}: {{ store.items.personalBalance.balance }}-->
-<!--                      {{ tc('points', Number(store.items.personalBalance.balance)) }}-->
-<!--                    </div>-->
-<!--                  </div>-->
-
-<!--                </div>-->
-
-<!--              </q-btn>-->
-
-<!--              <q-btn-->
-<!--                :class="selectionOwner === 'group' ? '' : 'bg-grey-1'"-->
-<!--                :color="selectionOwner === 'group' ? 'primary' : 'grey-3'"-->
-<!--                outline-->
-<!--                dense-->
-<!--                no-caps-->
-<!--                :ripple="false"-->
-<!--                @click="selectionOwner = 'group'"-->
-<!--              >-->
-
-<!--                <div class="row items-center" style="width: 287px; height: 80px;">-->
-
-<!--                  <q-icon class="col-3" name="las la-users" size="60px"-->
-<!--                          :color="selectionOwner === 'group' ? 'primary' : 'grey'"/>-->
-
-<!--                  <div class="col-9 column items-center justify-center">-->
-<!--                    <div class="col-4 row items-center justify-center"-->
-<!--                         :class="selectionOwner === 'group' ? 'text-primary' : 'text-black'"-->
-<!--                    >-->
-<!--                      {{ tc('groupAccount') }}-->
-<!--                    </div>-->
-<!--                    <div class="col-4 row items-center justify-center text-body2 text-grey" style="line-height: 1;">-->
-<!--                      {{ tc('groupAccountDescription') }}-->
-<!--                    </div>-->
-<!--                  </div>-->
-
-<!--                </div>-->
-
-<!--              </q-btn>-->
-
-<!--            </div>-->
-<!--          </div>-->
-
           <Transition>
-            <div v-if="selectionOwner === 'group'" class="col-auto q-pb-md">
-              <div class="text-body1 text-weight-bold">
+            <div v-if="selectionOwner === 'group'" class="col-auto row items-center">
+              <div class="col-1 text-weight-bold">
                 {{ tc('group') }}
               </div>
 
@@ -560,146 +492,86 @@ const deployServer = async () => {
               </div>
 
               <div class="row items-center q-gutter-md">
+
                 <q-btn
-                  :class="selectionGroup === group.id ? '' : 'bg-grey-1'"
                   :color="selectionGroup === group.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionGroup === group.id ? '' : 'black'"
                   v-for="group in groups"
                   :val="group.id"
                   :key="group.id"
-                  outline
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionGroup = group.id"
                 >
-
-                  <div class="row items-center" style="width: 287px; height: 60px;">
-
-                    <q-icon class="col-3" name="las la-users" size="60px"
-                            :color="selectionGroup === group.id ? 'primary' : 'grey'"/>
-
-                    <div class="col-9">
-                      <div class="column items-center justify-center">
-                        <div class="row items-center justify-center"
-                             :class="selectionGroup === group.id ? 'text-primary' : 'text-black'"
-                             style="line-height: 1;">
-                          <div class="col-auto">
-                            {{ group.name }}
-                          </div>
-                        </div>
-                        <div class="row items-center justify-center text-caption text-black">
-                          {{ tc('balance') }}: {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}
-                          {{ tc('points') }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {{ group.name }}
 
                 </q-btn>
               </div>
             </div>
           </Transition>
 
-          <div class="col-auto q-pb-md">
-            <div class="text-body1 text-weight-bold">
+          <div class="col-auto row items-center">
+            <div class="col-1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
             <div class="row items-center q-gutter-md">
               <q-btn
-                :class="selectionPayment === 'prepaid' ? '' : 'bg-grey-1'"
                 :color="selectionPayment === 'prepaid' ? 'primary' : 'grey-3'"
-                outline
+                :text-color="selectionPayment === 'prepaid' ? '' : 'black'"
+                unelevated
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionPayment = 'prepaid'"
               >
-
-                <div class="row items-center" style="width: 287px; height: 80px;">
-
-                  <q-icon class="col-3" name="las la-money-bill-alt" size="60px"
-                          :color="selectionPayment === 'prepaid' ? 'primary' : 'grey'"/>
-
-                  <div class="col-9">
-                    <div class="column items-center justify-center">
-                      <div class="col-4 row items-center justify-center"
-                           :class="selectionPayment === 'prepaid' ? 'text-primary' : 'text-black'">
-                        {{ tc('prepaid') }}
-                      </div>
-                      <div class="col-4 row items-center justify-center text-body2 text-grey" style="line-height: 1;">
-                        {{ tc('prepaidDescription') }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {{ tc('prepaid') }}
               </q-btn>
 
               <q-btn
                 :disable="!isAllowPostpaid"
-                :class="selectionPayment === 'postpaid' ? '' : 'bg-grey-1'"
                 :color="selectionPayment === 'postpaid' ? 'primary' : 'grey-3'"
-                outline
+                :text-color="selectionPayment === 'postpaid' ? '' : 'black'"
+                unelevated
                 dense
                 no-caps
                 :ripple="false"
                 @click="selectionPayment = 'postpaid'"
               >
-                <div class="row items-center" style="width: 287px; height: 80px;">
-
-                  <q-icon class="col-3" name="las la-file-invoice-dollar" size="60px"
-                          :color="selectionPayment === 'postpaid' ? 'primary' : 'grey'"/>
-
-                  <div class="col-9">
-                    <div class="column items-center justify-center ">
-                      <div class="col-4 row items-center justify-center"
-                           :class="selectionPayment === 'postpaid' ? 'text-primary' : 'text-black'">
-                        {{ tc('postpaid') }}
-                      </div>
-                      <div class="row items-center justify-center text-body2 text-grey" style="line-height: 1;">
-                        {{ tc('postpaidDescription') }}
-                      </div>
-                      <q-icon v-if="!isAllowPostpaid" class="col-auto" name="error_outline" color="red" size="xs">
-                      </q-icon>
-                    </div>
-                  </div>
-
-                  <q-tooltip v-if="!isAllowPostpaid">
-                    {{ tc('postpaidNotAllowed') }}
-                  </q-tooltip>
-
-                </div>
+                {{ tc('postpaid') }}
               </q-btn>
 
             </div>
           </div>
 
           <Transition>
-            <div v-if="selectionPayment === 'prepaid'" class="col-auto q-pb-md">
-              <div class="text-body1 text-weight-bold">
+            <div v-if="selectionPayment === 'prepaid'" class="col-auto row items-center">
+              <div class="col-1 text-weight-bold">
                 {{ tc('usagePeriod') }}
               </div>
               <div class="row items-center q-gutter-md">
                 <q-btn
-                  :class="selectionPeriod === month ? '' : 'bg-grey-1'"
                   :color="selectionPeriod === month ? 'primary' : 'grey-3'"
+                  :text-color="selectionPeriod === month ? '' : 'black'"
                   v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
                   :val="month"
                   :key="month"
-                  outline
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionPeriod = month"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 131px;height: 30px;">
+<!--                  <div class="column items-center justify-center"-->
+<!--                       style="width: 131px;height: 30px;">-->
 
-                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-grey'">
+<!--                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-grey'">-->
                       <!--复数i18n-->
                       {{ month }} {{ tc('countMonth', month) }}
-                    </div>
+<!--                    </div>-->
 
-                  </div>
+<!--                  </div>-->
                 </q-btn>
               </div>
             </div>
