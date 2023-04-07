@@ -175,12 +175,14 @@ export interface NetworkInterface {
 
 export interface ImageInterface {
   // 来自image接口
-  id: string // 原始id
+  id: string // 原始id, local
   name: string
-  system: string
-  system_type: string
+  release: string // windows,      Windows Server    ubuntu,    fedora,   centos
+  version: string // max 64字节  win10,win11  2021,2019  2204,2004  36,37  7,8,9
+  architecture: string //  i386,x64,arm64
+  system_type: string // windows/linux
   creation_time: string
-  desc: string
+  desc: string // max 128字节
   default_user: string
   default_password: string
   min_sys_disk_gb: number
@@ -715,7 +717,7 @@ export const useStore = defineStore('server', {
       })
       return groupOptions
     },
-    getGroupOptionsWithoutAll (state): { value: string; label: string; labelEn: string;}[] {
+    getGroupOptionsWithoutAll (state): { value: string; label: string; labelEn: string; }[] {
       let groupOptions = []
       for (const group of Object.values(state.tables.groupTable.byId)) {
         groupOptions.push(
@@ -2591,7 +2593,12 @@ export const useStore = defineStore('server', {
     /* 移除group成员 */
 
     /* 修改group成员角色 */
-    editGroupMemberRoleDialog (payload: { groupId: string; member_id: string; role: 'member' | 'leader'; role_name: string }) {
+    editGroupMemberRoleDialog (payload: {
+      groupId: string;
+      member_id: string;
+      role: 'member' | 'leader';
+      role_name: string
+    }) {
       // 操作的确认提示
       Dialog.create({
         class: 'dialog-primary',

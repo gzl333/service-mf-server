@@ -10,7 +10,8 @@ import { computed, PropType } from 'vue'
 const props = defineProps({
   platformName: {
     type: String,
-    required: true
+    required: false,
+    default: ''
   },
   logoStyle: {
     type: String as PropType<'horizontal' | 'vertical' | 'mark'>,

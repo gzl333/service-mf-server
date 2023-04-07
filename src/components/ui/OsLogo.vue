@@ -8,7 +8,8 @@ import { /* ref,  */computed } from 'vue'
 const props = defineProps({
   osName: {
     type: String,
-    required: true
+    required: false,
+    default: ''
   },
   size: {
     type: String,

@@ -177,7 +177,9 @@ export default {
       const data = payload.body
       return axiosServer.post('/apply/quota/' + payload.path.apply_id + '/reject', data)
     },
-    getApplyService (payload: { query?: { page?: number; page_size?: number; deleted?: boolean; organization?: string; status?: string[] } }) {
+    getApplyService (payload: {
+      query?: { page?: number; page_size?: number; deleted?: boolean; organization?: string; status?: string[] }
+    }) {
       const config = {
         params: payload.query
       }
@@ -216,7 +218,9 @@ export default {
       const data = payload.body
       return axiosServer.post('/apply/service', data)
     },
-    getApplyServiceAdmin (payload: { query?: { page?: number; page_size?: number; deleted?: boolean; organization?: string; status?: string[] } }) {
+    getApplyServiceAdmin (payload: {
+      query?: { page?: number; page_size?: number; deleted?: boolean; organization?: string; status?: string[] }
+    }) {
       const config = {
         params: payload.query
       }
@@ -346,6 +350,32 @@ export default {
         params: payload.query
       }
       return axiosServer.get('/image', config)
+    },
+    getImagePaginate (payload: {
+      query: {
+        page?: number
+        page_size?: number
+        flavor_id?: string
+        service_id: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/image/paginate', config)
+    },
+    getImageId (payload: {
+      query: {
+        service_id: string
+      },
+      path: {
+        id: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.get('/image/' + payload.path.id, config)
     }
   },
   media: {
@@ -698,7 +728,10 @@ export default {
       }
       return axiosServer.get('/server-archive', config)
     },
-    getServerArchiveVo (payload: { query?: { page?: number; page_size?: number; service_id?: string }, path: { vo_id: string } }) {
+    getServerArchiveVo (payload: {
+      query?: { page?: number; page_size?: number; service_id?: string },
+      path: { vo_id: string }
+    }) {
       const config = {
         params: payload.query
       }
@@ -725,7 +758,10 @@ export default {
       }
       return axiosServer.get('/service/admin', config)
     },
-    getServiceVo (payload: { query?: { page?: number; page_size?: number; center_id?: string }, path: { vo_id: string } }) {
+    getServiceVo (payload: {
+      query?: { page?: number; page_size?: number; center_id?: string },
+      path: { vo_id: string }
+    }) {
       const config = {
         params: payload.query
       }

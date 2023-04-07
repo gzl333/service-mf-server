@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch/* , PropType */ } from 'vue'
-import { useStore } from 'stores/store'
+import { ImageInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
@@ -75,6 +75,8 @@ const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 const publicNetworks = computed(() => store.getPublicNetworksByServiceId(selectionService.value))
 const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(selectionService.value))
 const images = computed(() => store.getImagesByServiceId(selectionService.value))
+// 当前service_id对应的image集合，随service_id选择而改变
+// const images = ref<ImageInterface[]>()
 // const systemDisks = computed(() => Array.from({ length: (MAX_SYSTEM_DISK - MIN_SYSTEM_DISK.value) / 50 + 1 }, (item, index) => MIN_SYSTEM_DISK.value + index * 50))
 
 // selection选项 初始状态 (1)
@@ -84,6 +86,9 @@ const selectionGroup = ref('')
 const selectionPeriod = ref(1)
 const selectionService = ref('')
 const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center || '')
+// image的发行版
+const selectionImageRelease = ref('')
+// image的id，来自images, 是local id, 不是拼接的id
 const selectionImage = ref('')
 
 const selectionFlavor = ref('')
@@ -154,7 +159,41 @@ const chooseNetwork = () => {
     selectionNetwork.value = ''
   }
 }
-const chooseImage = () => {
+const chooseImage = async () => {
+  // // 读取当前service_id对应的所有image
+  // try {
+  //   /* 从分页数据中获取全部数据 */
+  //   const PAGE_SIZE = 200 // 单次获取的page size，目前后端支持最大200
+  //   const count = 0 // current count
+  //   let page = 1 // current page
+  //
+  //   // 先执行一次，再检查循环条件
+  //   do {
+  //     // 用当前分页条件获取数据
+  //     const respGetImage = await api.server.image.getImagePaginate({
+  //       query: {
+  //         page,
+  //         page_size: PAGE_SIZE,
+  //         service_id: selectionService.value
+  //       }
+  //     })
+  //
+  //     console.log(respGetImage)
+  //
+  //     // 保存相应包内的数据
+  //     // for (const data of respGetAppService.data.results as AppServiceInterface[]) {
+  //     //   Object.assign(this.tables.appServiceTable.byId, { [data.id]: data })
+  //     //   this.tables.appServiceTable.allIds.unshift(data.id)
+  //     //   this.tables.appServiceTable.allIds = [...new Set(this.tables.appServiceTable.allIds)]
+  //     // }
+  //     // 更新分页数据
+  //     page += 1
+  //   } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+  // } catch (exception) {
+  //   // exceptionNotifier(exception)
+  // }
+
+  // 选择默认项
   selectionImage.value = images.value[0]?.id || ''
 }
 const chooseFlavor = () => {
@@ -448,10 +487,48 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="col-auto row items-center">
+          <div class="col-auto row">
+            <div class="col-1 text-weight-bold">
+              {{ tc('serviceUnit') }}
+            </div>
+
+            <div class="col-auto">
+              <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-md">
+                <div class="row items-center text-weight-bold text-subtitle2"
+                     :class="selectionDatacenter === dataCenter.id ? 'text-primary' : ''">
+                  {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
+                </div>
+
+                <div v-if="dataCenter.services.length === 0" class="row items-center text-grey">
+                  {{ tc('noServiceUnit') }}
+                </div>
+
+                <div v-else class="row items-center q-gutter-md">
+                  <q-btn
+                    :color="selectionService === service.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionService === service.id ? '' : 'black'"
+                    v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id]).filter(service => service.status === 'enable')"
+                    :key="service.id"
+                    :val="service.id"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionService = service.id"
+                  >
+                    {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
+                  </q-btn>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col-shrink row items-center">
             <div class="col-1 text-weight-bold">
               {{ tc('serverOwner') }}
             </div>
+
             <div class="col row items-center q-gutter-md">
 
               <q-btn
@@ -487,11 +564,11 @@ const deployServer = async () => {
                 {{ tc('group') }}
               </div>
 
-              <div v-if="groups.length === 0" class="row items-center">
+              <div v-if="groups.length === 0" class="col-auto row items-center">
                 {{ tc('noGroup') }}
               </div>
 
-              <div class="row items-center q-gutter-md">
+              <div class="col-auto row items-center q-gutter-md">
 
                 <q-btn
                   :color="selectionGroup === group.id ? 'primary' : 'grey-3'"
@@ -516,7 +593,7 @@ const deployServer = async () => {
             <div class="col-1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
-            <div class="row items-center q-gutter-md">
+            <div class="col-auto row items-center q-gutter-md">
               <q-btn
                 :color="selectionPayment === 'prepaid' ? 'primary' : 'grey-3'"
                 :text-color="selectionPayment === 'prepaid' ? '' : 'black'"
@@ -550,7 +627,7 @@ const deployServer = async () => {
               <div class="col-1 text-weight-bold">
                 {{ tc('usagePeriod') }}
               </div>
-              <div class="row items-center q-gutter-md">
+              <div class="col-auto row items-center q-gutter-md">
                 <q-btn
                   :color="selectionPeriod === month ? 'primary' : 'grey-3'"
                   :text-color="selectionPeriod === month ? '' : 'black'"
@@ -563,134 +640,75 @@ const deployServer = async () => {
                   :ripple="false"
                   @click="selectionPeriod = month"
                 >
-<!--                  <div class="column items-center justify-center"-->
-<!--                       style="width: 131px;height: 30px;">-->
-
-<!--                    <div class="col-auto" :class="selectionPeriod === month ? 'text-primary' : 'text-grey'">-->
-                      <!--复数i18n-->
-                      {{ month }} {{ tc('countMonth', month) }}
-<!--                    </div>-->
-
-<!--                  </div>-->
+                  <!--复数i18n-->
+                  {{ month }} {{ tc('countMonth', month) }}
                 </q-btn>
               </div>
             </div>
           </Transition>
 
-          <div class="col-auto q-pb-md">
-            <div class="text-body1 text-weight-bold">
-              {{ tc('serviceUnit') }}
-            </div>
-
-            <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-xs">
-              <div class="row items-center text-subtitle2"
-                   :class="selectionDatacenter === dataCenter.id ? 'text-primary' : 'text-grey'">
-                {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
-              </div>
-
-              <div v-if="dataCenter.services.length === 0" class="row items-center">
-                {{ tc('noServiceUnit') }}
-              </div>
-
-              <div v-else class="row items-center q-gutter-md">
-                <q-btn
-                  :class="selectionService === service.id ? '' : 'bg-grey-1'"
-                  :color="selectionService === service.id ? 'primary' : 'grey-3'"
-                  v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id]).filter(service => service.status === 'enable')"
-                  :key="service.id"
-                  :val="service.id"
-                  outline
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionService = service.id"
-                >
-                  <div class="column items-center justify-center"
-                       style="width: 287px;height: 80px;">
-
-                    <div class="col-auto" :class="selectionService === service.id ? 'text-primary' : 'text-black'"
-                         style="line-height: 1;">
-                      {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
-                    </div>
-
-                    <div class="col-auto">
-                      <CloudPlatformLogo class="col-auto" :platform-name="service.service_type"/>
-                    </div>
-
-                    <div class="col-auto row items-center justify-center text-black">
-                      <div class="col-auto text-grey">
-                        {{ tc('serviceStatus') }}
-                      </div>
-
-                      <q-icon
-                        v-if="store.getImagesByServiceId(service.id).length > 0 && (store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) > 0"
-                        class="col-auto" name="check_circle_outline" color="light-green" size="xs">
-                        <q-tooltip>
-                          {{ tc('serviceStatusGood') }}
-                        </q-tooltip>
-                      </q-icon>
-
-                      <q-icon v-else class="col-auto" name="error_outline" color="red" size="xs">
-                        <q-tooltip>
-                          <div v-if="store.getImagesByServiceId(service.id).length === 0">
-                            {{ tc('noOperatingSystem') }}
-                          </div>
-                          <div
-                            v-if="(store.getPrivateNetworksByServicedId(service.id).length + store.getPublicNetworksByServiceId(service.id).length) === 0">
-                            {{ tc('noNetwork') }}
-                          </div>
-                        </q-tooltip>
-                      </q-icon>
-
-                    </div>
-
-                  </div>
-                </q-btn>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="col-auto q-pb-lg">
-            <div class="text-body1 text-weight-bold">
+          <div class="col-auto row items-center">
+            <div class="col-1 text-weight-bold">
               {{ tc('operatingSystem') }}
             </div>
 
-            <div v-if="images.length === 0" class="row items-center">
-              {{ tc('noOperatingSystem') }}
+            <div class="col-11">
+              <div v-if="images.length === 0" class="row items-center">
+                {{ tc('noOperatingSystem') }}
+              </div>
+
+              <div v-else class="row items-center q-gutter-md">
+
+                <q-select
+                  class="col-2"
+                  v-model="selectionImageRelease"
+                  :options="[...new Set(images.map(image => image.release))]"
+                  outlined
+                  dense
+                  :label="tc('发行版')"
+                />
+
+                <q-select
+                  class="col-2"
+                  v-model="selectionImage"
+                  :options="[...new Set(images.filter(image => image.release === selectionImageRelease).map(image => image.id))]"
+                  outlined
+                  dense
+                  :label="tc('发行版')"
+                />
+
+                <!--                <q-btn-->
+                <!--                  v-for="image in images"-->
+                <!--                  :val="image.id"-->
+                <!--                  :key="image.id"-->
+                <!--                  :color="selectionImage === image.id ? 'primary' : 'grey-3'"-->
+                <!--                  :text-color="selectionImage === image.id ? '' : 'black'"-->
+                <!--                  unelevated-->
+                <!--                  dense-->
+                <!--                  no-caps-->
+                <!--                  :ripple="false"-->
+                <!--                  @click="selectionImage = image.id"-->
+                <!--                >-->
+
+                <!--                  <div class="row items-center" style="width: 287px; height: 60px;">-->
+
+                <!--                    <OsLogo class="col-3" :os-name="image.name" size="60px"/>-->
+
+                <!--                    <div class="col-9 column items-center justify-center">-->
+                <!--                      <div class="col row items-center justify-center"-->
+                <!--                           :class="selectionImage === image.id ? 'text-primary' : 'text-grey'"-->
+                <!--                           style="line-height: 1;"-->
+                <!--                      >-->
+                <!--                        {{ image.name.slice(0, 80) }}-->
+                <!--                      </div>-->
+                <!--                    </div>-->
+
+                <!--                  </div>-->
+
+                <!--                </q-btn>-->
+              </div>
             </div>
 
-            <div v-else class="row items-center q-gutter-md">
-              <q-btn
-                :class="selectionImage === image.id ? '' : 'bg-grey-1'"
-                :color="selectionImage === image.id ? 'primary' : 'grey-3'"
-                v-for="image in images"
-                :val="image.id"
-                :key="image.id"
-                outline
-                dense
-                no-caps
-                :ripple="false"
-                @click="selectionImage = image.id"
-              >
-
-                <div class="row items-center" style="width: 287px; height: 60px;">
-
-                  <OsLogo class="col-3" :os-name="image.name" size="60px"/>
-
-                  <div class="col-9 column items-center justify-center">
-                    <div class="col row items-center justify-center"
-                         :class="selectionImage === image.id ? 'text-primary' : 'text-grey'"
-                         style="line-height: 1;"
-                    >
-                      {{ image.name.slice(0, 80) }}
-                    </div>
-                  </div>
-
-                </div>
-
-              </q-btn>
-            </div>
           </div>
 
           <!--          <div class="col-auto q-py-lg">-->
@@ -723,8 +741,8 @@ const deployServer = async () => {
           <!--            </div>-->
           <!--          </div>-->
 
-          <div class="col-auto q-pb-md">
-            <div class="text-body1 text-weight-bold">
+          <div class="col-auto row">
+            <div class="col-1 text-weight-bold">
               {{ tc('network') }}
             </div>
 
@@ -741,50 +759,37 @@ const deployServer = async () => {
 
                 <!--按钮：随机选择私网网络-->
                 <q-btn
-                  :class="selectionNetwork === 'randomPrivate' ? '' : 'bg-grey-1'"
                   :color="selectionNetwork === 'randomPrivate' ? 'primary' : 'grey-3'"
-                  outline
+                  :text-color="selectionNetwork === 'randomPrivate' ? '' : 'black'"
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionNetwork = 'randomPrivate'"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 131px;height: 30px;">
-
-                    <div :class="selectionNetwork === 'randomPrivate' ? 'text-primary' : 'text-grey'" class="column"
-                         style="line-height: 1;">
-                      {{ tc('randomPrivateNetwork') }}
-                    </div>
-
-                  </div>
+                  {{ tc('randomPrivateNetwork') }}
                 </q-btn>
 
                 <q-btn
-                  :class="selectionNetwork === network.id ? '' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
                   v-for="network in privateNetworks"
                   :val="network.id"
                   :key="network.id"
-                  outline
+                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionNetwork === network.id ? '' : 'black'"
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionNetwork = network.id"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 131px;height: 30px;">
-
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column"
-                         style="line-height: 1;">
-                      <div class="col-auto">
-                        {{ network.name }}
-                      </div>
-                      <div class="col-auto">
-                        {{ network.segment }}
-                      </div>
+                  <div class="column"
+                       style="line-height: 0.9;">
+                    <div class="col-auto">
+                      {{ network.name }}
                     </div>
-
+                    <div class="col-auto">
+                      {{ network.segment }}
+                    </div>
                   </div>
                 </q-btn>
 
@@ -800,50 +805,37 @@ const deployServer = async () => {
 
                 <!--按钮：随机选择公网网络-->
                 <q-btn
-                  :class="selectionNetwork === 'randomPublic' ? '' : 'bg-grey-1'"
                   :color="selectionNetwork === 'randomPublic' ? 'primary' : 'grey-3'"
-                  outline
+                  :text-color="selectionNetwork === 'randomPublic' ? '' : 'black'"
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionNetwork = 'randomPublic'"
                 >
-                  <div class="column items-center justify-center"
-                       style="width: 131px;height: 30px;">
-
-                    <div :class="selectionNetwork === 'randomPublic' ? 'text-primary' : 'text-grey'" class="column"
-                         style="line-height: 1;">
-                      {{ tc('randomPublicNetwork') }}
-                    </div>
-
-                  </div>
+                  {{ tc('randomPublicNetwork') }}
                 </q-btn>
 
                 <q-btn
-                  :class="selectionNetwork === network.id ? '' : 'bg-grey-1'"
-                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
                   v-for="network in publicNetworks"
                   :val="network.id"
                   :key="network.id"
-                  outline
+                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionNetwork === network.id ? '' : 'black'"
+                  unelevated
                   dense
                   no-caps
                   :ripple="false"
                   @click="selectionNetwork = network.id"
                 >
-                  <div class="column items-center justify-center q-pa-sm"
-                       style="width: 131px;height: 30px;">
-
-                    <div :class="selectionNetwork === network.id ? 'text-primary' : 'text-grey'" class="column"
-                         style="line-height: 1;">
-                      <div class="col-auto">
-                        {{ network.name }}
-                      </div>
-                      <div class="col-auto">
-                        {{ network.segment }}
-                      </div>
+                  <div class="column"
+                       style="line-height: 0.9;">
+                    <div class="col-auto">
+                      {{ network.name }}
                     </div>
-
+                    <div class="col-auto">
+                      {{ network.segment }}
+                    </div>
                   </div>
                 </q-btn>
               </div>
@@ -851,45 +843,41 @@ const deployServer = async () => {
 
           </div>
 
-          <div class="col-auto q-pb-md">
-            <div class="text-body1 text-weight-bold">
+          <div class="col-auto row">
+            <div class="col-1 text-weight-bold">
               {{ tc('serverSize') }}
             </div>
 
-            <div v-if="flavors.length === 0" class="row items-center">
-              {{ tc('noServerSize') }}
+            <div class="col-11 row">
+              <div v-if="flavors.length === 0" class="row items-center">
+                {{ tc('noServerSize') }}
+              </div>
+
+              <div v-else class="col-auto row q-gutter-md">
+                <q-btn
+                  v-for="flavor in flavors"
+                  :val="flavor.id"
+                  :key="flavor.id"
+                  :color="selectionFlavor === flavor.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionFlavor === flavor.id ? '' : 'black'"
+                  unelevated
+                  dense
+                  no-caps
+                  :ripple="false"
+                  @click="selectionFlavor = flavor.id"
+                >
+                  {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
+                </q-btn>
+              </div>
             </div>
 
-            <div v-else class="row items-center q-gutter-md">
-              <q-btn
-                :class="selectionFlavor === flavor.id ? '' : 'bg-grey-1'"
-                :color="selectionFlavor === flavor.id ? 'primary' : 'grey-3'"
-                v-for="flavor in flavors"
-                :val="flavor.id"
-                :key="flavor.id"
-                outline
-                dense
-                no-caps
-                :ripple="false"
-                @click="selectionFlavor = flavor.id"
-              >
-                <div class="column items-center justify-center"
-                     style="width: 131px;height: 30px;">
-
-                  <div :class="selectionFlavor === flavor.id ? 'text-primary' : 'text-grey'">
-                    {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
-                  </div>
-
-                </div>
-              </q-btn>
-            </div>
           </div>
 
-          <div class="col-auto q-pb-md">
-            <div class="text-body1 text-weight-bold">
+          <div class="col-auto row">
+            <div class="col-1 text-weight-bold">
               {{ tc('remark') }}
             </div>
-            <div class="row">
+            <div class="col-11 row">
               <q-input class="col-8"
                        ref="input"
                        v-model="inputRemarks"
