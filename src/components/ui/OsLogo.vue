@@ -29,7 +29,7 @@ const props = defineProps({
 // const route = useRoute()
 // const router = useRouter()
 
-const getOsIcon = (osName: string) => {
+const getOsIconSrc = (osName: string) => {
   osName = osName?.toLowerCase()
   if (osName?.includes('alma')) {
     return require('assets/svg/os_alma.svg')
@@ -53,24 +53,24 @@ const getOsIcon = (osName: string) => {
     return require('assets/svg/os_ubuntu.svg')
   } else if (osName?.includes('vz')) {
     return require('assets/svg/os_vz.svg')
-  } else if (osName?.includes('win') && osName.includes('core')) {
+  } else if (osName?.includes('windows') && osName.includes('core')) {
     return require('assets/svg/os_windows_core.svg')
-  } else if (osName?.includes('win')) { // win比windows宽松
+  } else if (osName?.includes('windows')) {
     return require('assets/svg/os_windows.svg')
   } else {
     return ''
   }
 }
 
-const icon = computed(() => getOsIcon(props.osName))
+const iconSrc = computed(() => getOsIconSrc(props.osName))
 
 </script>
 
 <template>
 
   <!--本地存在的svg-->
-  <q-icon v-if="icon" :size="size">
-    <img :src="icon"/>
+  <q-icon v-if="iconSrc" :size="size">
+    <img :src="iconSrc"/>
   </q-icon>
 
   <!--本地没有的icon，使用material的icon，给一个默认颜色-->

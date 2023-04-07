@@ -8,6 +8,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'deploy', // 组列表
+        component: () => import('pages/deploy/ServerDeployV2.vue'),
+        props: true
+      },
+      {
+        path: 'deploy-3', // 组列表
         component: () => import('pages/deploy/ServerDeployV3.vue'),
         props: true
       },

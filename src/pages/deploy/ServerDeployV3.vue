@@ -74,9 +74,61 @@ const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 // //依赖selectionService Id选择值的数据
 const publicNetworks = computed(() => store.getPublicNetworksByServiceId(selectionService.value))
 const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(selectionService.value))
-const images = computed(() => store.getImagesByServiceId(selectionService.value))
+
+// ROD-refactored
+// const images = computed(() => store.getImagesByServiceId(selectionService.value))
 // 当前service_id对应的image集合，随service_id选择而改变
-// const images = ref<ImageInterface[]>()
+const images = ref<ImageInterface[]>([])
+// 当前images里面可供选择的release数组
+const imageReleases = ref<string[]>([])
+
+// 根据当前service_id获取image列表的函数
+const updateImages = async () => {
+  // 清空当前images列表
+  images.value = []
+  imageReleases.value = []
+
+  // 从分页数据中获取全部数据
+  const PAGE_SIZE = 2 // 单次获取的page size
+  let count = 0 // 结果总数，多页项目的数总和
+  let page = 1 // current page
+
+  try {
+    // 先执行一次，再检查循环条件
+    do {
+      // 用当前分页条件获取数据
+      const respGetImage = await api.server.image.getImagePaginate({
+        query: {
+          page,
+          page_size: PAGE_SIZE,
+          service_id: selectionService.value
+        }
+      })
+
+      // 保存数据
+      for (const image of respGetImage.data.results as ImageInterface[]) {
+        // image options
+        images.value.push(image)
+
+        // image release options
+        // const release = image.release.toLowerCase().split(' ').map(word => word[0].toLowerCase() + word.slice(1)).join(' ')
+        if (!imageReleases.value.includes(image.release)) {
+          imageReleases.value.push(image.release)
+        }
+      }
+
+      // 更新分页数据
+      page += 1
+      count = respGetImage.data.count
+    } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+
+    // imageRelease 排序 todo
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+}
+updateImages()
+
 // const systemDisks = computed(() => Array.from({ length: (MAX_SYSTEM_DISK - MIN_SYSTEM_DISK.value) / 50 + 1 }, (item, index) => MIN_SYSTEM_DISK.value + index * 50))
 
 // selection选项 初始状态 (1)
@@ -86,10 +138,11 @@ const selectionGroup = ref('')
 const selectionPeriod = ref(1)
 const selectionService = ref('')
 const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center || '')
-// image的发行版
-const selectionImageRelease = ref('')
+
 // image的id，来自images, 是local id, 不是拼接的id
 const selectionImage = ref('')
+// image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
+const selectionImageRelease = ref('')
 
 const selectionFlavor = ref('')
 const selectionNetwork = ref<'randomPrivate' | 'randomPublic' | string>('')
@@ -160,39 +213,6 @@ const chooseNetwork = () => {
   }
 }
 const chooseImage = async () => {
-  // // 读取当前service_id对应的所有image
-  // try {
-  //   /* 从分页数据中获取全部数据 */
-  //   const PAGE_SIZE = 200 // 单次获取的page size，目前后端支持最大200
-  //   const count = 0 // current count
-  //   let page = 1 // current page
-  //
-  //   // 先执行一次，再检查循环条件
-  //   do {
-  //     // 用当前分页条件获取数据
-  //     const respGetImage = await api.server.image.getImagePaginate({
-  //       query: {
-  //         page,
-  //         page_size: PAGE_SIZE,
-  //         service_id: selectionService.value
-  //       }
-  //     })
-  //
-  //     console.log(respGetImage)
-  //
-  //     // 保存相应包内的数据
-  //     // for (const data of respGetAppService.data.results as AppServiceInterface[]) {
-  //     //   Object.assign(this.tables.appServiceTable.byId, { [data.id]: data })
-  //     //   this.tables.appServiceTable.allIds.unshift(data.id)
-  //     //   this.tables.appServiceTable.allIds = [...new Set(this.tables.appServiceTable.allIds)]
-  //     // }
-  //     // 更新分页数据
-  //     page += 1
-  //   } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
-  // } catch (exception) {
-  //   // exceptionNotifier(exception)
-  // }
-
   // 选择默认项
   selectionImage.value = images.value[0]?.id || ''
 }
@@ -205,7 +225,7 @@ chooseOwner()
 chooseGroup()
 chooseService()
 chooseNetwork()
-chooseImage()
+// chooseImage()
 chooseFlavor()
 /* table 进入页面过程中选择默认项 */
 
@@ -226,8 +246,10 @@ watch(flavors, chooseFlavor)
 
 /* (5) 在table都加载后，3个selection，随着service变化选择默认项 */
 watch(selectionService, () => {
+  // 重要逻辑： 改变service选择后，需要更新options选项池，并选择默认项的参数
   chooseNetwork()
-  chooseImage()
+  updateImages()
+  // chooseImage()
 })
 /* 在table都加载后，3个selection，随着service变化选择默认项 */
 
@@ -662,11 +684,27 @@ const deployServer = async () => {
                 <q-select
                   class="col-2"
                   v-model="selectionImageRelease"
-                  :options="[...new Set(images.map(image => image.release))]"
+                  :options="imageReleases"
                   outlined
                   dense
                   :label="tc('发行版')"
-                />
+                >
+
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps">
+
+                      <q-item-section thumbnail>
+                        <OsLogo class="" :os-name="scope.opt" size="30px"/>
+                      </q-item-section>
+
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt }}</q-item-label>
+                      </q-item-section>
+
+                    </q-item>
+                  </template>
+
+                </q-select>
 
                 <q-select
                   class="col-2"
