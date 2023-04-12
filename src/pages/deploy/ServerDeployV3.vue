@@ -36,7 +36,7 @@ const MAX_MONTHS = 6
 const exceptionNotifier = useExceptionNotifier()
 
 // summary折叠
-const isShow = ref(true)
+// const isShow = ref(true)
 
 // // system disk 限制，单位GiB
 // // 接口限定最大500GiB
@@ -81,53 +81,6 @@ const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(sele
 const images = ref<ImageInterface[]>([])
 // 当前images里面可供选择的release数组
 const imageReleases = ref<string[]>([])
-
-// 根据当前service_id获取image列表的函数
-const updateImages = async () => {
-  // 清空当前images列表
-  images.value = []
-  imageReleases.value = []
-
-  // 从分页数据中获取全部数据
-  const PAGE_SIZE = 2 // 单次获取的page size
-  let count = 0 // 结果总数，多页项目的数总和
-  let page = 1 // current page
-
-  try {
-    // 先执行一次，再检查循环条件
-    do {
-      // 用当前分页条件获取数据
-      const respGetImage = await api.server.image.getImagePaginate({
-        query: {
-          page,
-          page_size: PAGE_SIZE,
-          service_id: selectionService.value
-        }
-      })
-
-      // 保存数据
-      for (const image of respGetImage.data.results as ImageInterface[]) {
-        // image options
-        images.value.push(image)
-
-        // image release options
-        // const release = image.release.toLowerCase().split(' ').map(word => word[0].toLowerCase() + word.slice(1)).join(' ')
-        if (!imageReleases.value.includes(image.release)) {
-          imageReleases.value.push(image.release)
-        }
-      }
-
-      // 更新分页数据
-      page += 1
-      count = respGetImage.data.count
-    } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
-
-    // imageRelease 排序 todo
-  } catch (exception) {
-    // exceptionNotifier(exception)
-  }
-}
-updateImages()
 
 // const systemDisks = computed(() => Array.from({ length: (MAX_SYSTEM_DISK - MIN_SYSTEM_DISK.value) / 50 + 1 }, (item, index) => MIN_SYSTEM_DISK.value + index * 50))
 
@@ -212,10 +165,15 @@ const chooseNetwork = () => {
     selectionNetwork.value = ''
   }
 }
-const chooseImage = async () => {
-  // 选择默认项
-  selectionImage.value = images.value[0]?.id || ''
+
+// selectionImageRelease 选择默认项
+const chooseImageRelease = () => {
+  selectionImageRelease.value = imageReleases.value[0]
 }
+const chooseImage = () => {
+  selectionImage.value = images.value.filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
+}
+
 const chooseFlavor = () => {
   selectionFlavor.value = flavors.value[0]?.id || ''
 }
@@ -228,6 +186,58 @@ chooseNetwork()
 // chooseImage()
 chooseFlavor()
 /* table 进入页面过程中选择默认项 */
+
+// 根据当前service_id获取image列表的函数
+const updateImages = async () => {
+  // 清空当前images列表
+  images.value = []
+  imageReleases.value = []
+
+  // 从分页数据中获取全部数据
+  const PAGE_SIZE = 100 // 单次获取的page size
+  let count = 0 // 结果总数，多页项目的数总和
+  let page = 1 // current page
+
+  try {
+    // 先执行一次，再检查循环条件
+    do {
+      // 用当前分页条件获取数据
+      const respGetImage = await api.server.image.getImagePaginate({
+        query: {
+          page,
+          page_size: PAGE_SIZE,
+          service_id: selectionService.value
+        }
+      })
+
+      // 保存数据
+      for (const image of respGetImage.data.results as ImageInterface[]) {
+        // image options
+        images.value.push(image)
+
+        // image release options
+        // const release = image.release.toLowerCase().split(' ').map(word => word[0].toLowerCase() + word.slice(1)).join(' ')
+        if (!imageReleases.value.includes(image.release)) {
+          imageReleases.value.push(image.release)
+        }
+      }
+
+      // 更新分页数据
+      page += 1
+      count = respGetImage.data.count
+    } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+
+  // imageRelease 排序
+  imageReleases.value.sort((a, b) => a.localeCompare(b, 'en-US'))
+
+  // 选择默认项
+  chooseImageRelease()
+  chooseImage()
+}
+updateImages()
 
 // (4)刷新页面，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table。
 // watch关注的应该是响应式对象，而非某个table。
@@ -252,6 +262,9 @@ watch(selectionService, () => {
   // chooseImage()
 })
 /* 在table都加载后，3个selection，随着service变化选择默认项 */
+
+/* 在selectionImageRelease变化后，选择默认image */
+watch(selectionImageRelease, chooseImage)
 
 /* 新建云主机 */
 const isDeploying = ref(false)
@@ -679,27 +692,45 @@ const deployServer = async () => {
                 {{ tc('noOperatingSystem') }}
               </div>
 
-              <div v-else class="row items-center q-gutter-md">
+              <div v-else class="row items-center full-height q-gutter-md">
 
                 <q-select
-                  class="col-2"
+                  class="col-auto"
+                  style="width: 250px;"
                   v-model="selectionImageRelease"
                   :options="imageReleases"
                   outlined
                   dense
-                  :label="tc('发行版')"
                 >
 
+                  <!--当前选项的内容插槽-->
+                  <template v-slot:selected-item="scope">
+
+                    <div class="row items-center"
+                         :class="selectionImageRelease===scope.opt ? 'text-primary' : 'text-black'"
+                    >
+                      <OsLogo :os-name="scope.opt" size="sm"/>
+                      {{ scope.opt }}
+                    </div>
+
+                  </template>
+
+                  <!--待选项的内容插槽-->
                   <template v-slot:option="scope">
                     <q-item v-bind="scope.itemProps">
 
-                      <q-item-section thumbnail>
-                        <OsLogo class="" :os-name="scope.opt" size="30px"/>
-                      </q-item-section>
-
-                      <q-item-section>
+                      <div class="row items-center">
+                        <OsLogo :os-name="scope.opt" size="sm"/>
                         <q-item-label>{{ scope.opt }}</q-item-label>
-                      </q-item-section>
+                      </div>
+
+                      <!--                      <q-item-section avatar>-->
+                      <!--                        <OsLogo :os-name="scope.opt" size="md"/>-->
+                      <!--                      </q-item-section>-->
+
+                      <!--                      <q-item-section>-->
+                      <!--                        <q-item-label>{{ scope.opt }}</q-item-label>-->
+                      <!--                      </q-item-section>-->
 
                     </q-item>
                   </template>
@@ -707,43 +738,42 @@ const deployServer = async () => {
                 </q-select>
 
                 <q-select
-                  class="col-2"
+                  class="col-auto"
+                  style="width: 500px;"
                   v-model="selectionImage"
                   :options="[...new Set(images.filter(image => image.release === selectionImageRelease).map(image => image.id))]"
                   outlined
                   dense
-                  :label="tc('发行版')"
-                />
+                >
 
-                <!--                <q-btn-->
-                <!--                  v-for="image in images"-->
-                <!--                  :val="image.id"-->
-                <!--                  :key="image.id"-->
-                <!--                  :color="selectionImage === image.id ? 'primary' : 'grey-3'"-->
-                <!--                  :text-color="selectionImage === image.id ? '' : 'black'"-->
-                <!--                  unelevated-->
-                <!--                  dense-->
-                <!--                  no-caps-->
-                <!--                  :ripple="false"-->
-                <!--                  @click="selectionImage = image.id"-->
-                <!--                >-->
+                  <!--当前选项的内容插槽-->
+                  <template v-slot:selected-item="scope">
 
-                <!--                  <div class="row items-center" style="width: 287px; height: 60px;">-->
+                    <div class="row items-center"
+                         :class="selectionImage===scope.opt ? 'text-primary' : 'text-black'"
+                    >
+                      {{
+                        `${images.filter(image => image?.id === scope.opt)[0]?.name}(${images.filter(image => image?.id === scope.opt)[0]?.architecture})`
+                      }}
+                    </div>
 
-                <!--                    <OsLogo class="col-3" :os-name="image.name" size="60px"/>-->
+                  </template>
 
-                <!--                    <div class="col-9 column items-center justify-center">-->
-                <!--                      <div class="col row items-center justify-center"-->
-                <!--                           :class="selectionImage === image.id ? 'text-primary' : 'text-grey'"-->
-                <!--                           style="line-height: 1;"-->
-                <!--                      >-->
-                <!--                        {{ image.name.slice(0, 80) }}-->
-                <!--                      </div>-->
-                <!--                    </div>-->
+                  <!--待选项的内容插槽-->
+                  <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps">
 
-                <!--                  </div>-->
+                      <div class="row items-center">
+                        {{
+                          `${images.filter(image => image?.id === scope.opt)[0]?.name}(${images.filter(image => image?.id === scope.opt)[0]?.architecture})`
+                        }}
+                      </div>
 
-                <!--                </q-btn>-->
+                    </q-item>
+                  </template>
+
+                </q-select>
+
               </div>
             </div>
 

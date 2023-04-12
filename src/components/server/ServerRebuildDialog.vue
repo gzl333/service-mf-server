@@ -205,25 +205,29 @@ const onOKClick = () => {
 
               <!--当前选项的内容插槽-->
               <template v-slot:selected-item="scope">
-                <span :class="select===scope.opt.id ? 'text-primary' : 'text-black'">
-<!--                  <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)"-->
-                  <!--                          class="q-pl-xs q-pr-md" flat size="md"/>-->
+                <div class="row items-center"
+                     :class="select===scope.opt.id ? 'text-primary' : 'text-black'"
+                >
                   <OsLogo :os-name="scope.opt.name" size="md"/>
-                {{ scope.opt.name }}
-                </span>
+                  {{ scope.opt.name }}
+                </div>
               </template>
 
               <!--待选项的内容插槽-->
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar>
+                  <div class="row items-center">
                     <OsLogo :os-name="scope.opt.name" size="md"/>
-                    <!--                    <q-icon v-if="getOsIconName(scope.opt.name)" :name="getOsIconName(scope.opt.name)" flat size="md"/>-->
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.name }}</q-item-label>
-<!--                    <q-item-label caption>{{ scope.opt.description }}</q-item-label>-->
-                  </q-item-section>
+                    {{ scope.opt.name }}
+                  </div>
+<!--                  <q-item-section avatar>-->
+                  <!--                    <OsLogo :os-name="scope.opt.name" size="md"/>-->
+                  <!--                  </q-item-section>-->
+                  <!--                  <q-item-section>-->
+                  <!--                    <q-item-label>-->
+                  <!--                      {{ scope.opt.name }}-->
+                  <!--                    </q-item-label>-->
+                  <!--                  </q-item-section>-->
                 </q-item>
               </template>
 

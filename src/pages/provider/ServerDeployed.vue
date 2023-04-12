@@ -488,7 +488,7 @@ const stopServer = (server: ServerInterface) => {
                     全部服务单元
                   </div>
                 </q-tooltip>
-                <q-item-section thumbnail>
+                <q-item-section avatar>
                   <q-icon v-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'enable'"
                           color="light-green" name="play_arrow"/>
                   <q-icon v-else-if="store.tables.serviceTable.byId[scope.opt.value]?.status === 'disable'" color="red"
