@@ -263,7 +263,7 @@ const gotoManualVpn = () => {
                               {{ vpn?.username }}
                               <q-btn
                                 class="col-shrink q-px-xs text-primary" flat icon="content_copy" size="sm"
-                                @click="clickToCopy(vpn?.username)">
+                                @click="clickToCopy(vpn?.username || '')">
                                 <q-tooltip>
                                   {{ tc('pages.vpn.VpnIndex.copy') }}
                                 </q-tooltip>
@@ -279,10 +279,10 @@ const gotoManualVpn = () => {
                             <div class="col-shrink">
 
                               <div class="row">
-                                <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password"/>
+                                <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="vpn?.password || ''"/>
 
                                 <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                                       @click="clickToCopy(vpn?.password, true)">
+                                       @click="clickToCopy(vpn?.password || '', true)">
                                   <q-tooltip>
                                     {{ tc('pages.vpn.VpnIndex.copy') }}
                                   </q-tooltip>
