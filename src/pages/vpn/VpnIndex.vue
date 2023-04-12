@@ -66,7 +66,7 @@ const clickToCopy = useCopyToClipboard()
 
 const gotoManualVpn = () => {
   // 中文访问/manual 英文访问/manual/en
-  const url = computed(() => location.origin + (i18n.global.locale === 'zh' ? '/manual/vpn' : '/manual/en/vpn'))
+  const url = computed(() => location.origin + (i18n.global.locale === 'zh' ? '/manual/guide/server/vpn/' : '/manual/en/guide/server/vpn/'))
   window.open(url.value)
 }
 </script>
