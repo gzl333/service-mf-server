@@ -113,6 +113,7 @@ export interface DataCenterInterface {
   desc: string
   longitude: number
   latitude: number
+  sort_weight: number // 排序权重, 值越大排序越靠前
 
   // 来自service接口
   services: string[] // 全部services汇总
@@ -133,6 +134,7 @@ export interface ServiceInterface {
   longitude: number
   latitude: number
   pay_app_service_id: string
+  sort_weight: number // 排序权重, 值越大排序越靠前
 }
 
 // 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述
@@ -903,6 +905,7 @@ export const useStore = defineStore('server', {
     },
     getMechanismTree (state): Record<string, string | number | object>[] {
       const treeData = []
+
       for (const item of state.tables.dataCenterTable.allIds) {
         const treeObj: Record<string, string | number | object> = {}
         if (i18n.global.locale === 'zh') {
@@ -911,21 +914,34 @@ export const useStore = defineStore('server', {
           treeObj.label = state.tables.dataCenterTable.byId[item]?.name_en
         }
         treeObj.id = state.tables.dataCenterTable.byId[item]?.id
+        treeObj.sort_weight = state.tables.dataCenterTable.byId[item]?.sort_weight as number
         const dataArr = []
+
         for (const childItem of state.tables.dataCenterTable.byId[item]?.services.filter(serviceId => state.tables.serviceTable.byId[serviceId]?.status === 'enable')) {
-          const dataObj: Record<string, string | boolean> = {}
+          const dataObj: Record<string, string | boolean | number> = {}
           if (i18n.global.locale === 'zh') {
             dataObj.label = state.tables.serviceTable.byId[childItem]?.name
           } else {
             dataObj.label = state.tables.serviceTable.byId[childItem]?.name_en
           }
           dataObj.id = state.tables.serviceTable.byId[childItem]?.id
+          dataObj.sort_weight = state.tables.serviceTable.byId[childItem]?.sort_weight as number
           dataObj.noTick = true
           dataArr.push(dataObj)
         }
+
+        // @ts-ignore
+        dataArr.sort((a, b) => b.sort_weight - a.sort_weight)
+
         treeObj.children = dataArr
         treeData.push(treeObj)
       }
+
+      // @ts-ignore
+      treeData.sort((a, b) => b.sort_weight - a.sort_weight)
+
+      console.log(treeData)
+
       return treeData
     },
     // getServices (state): { value: string; label: string; }[] {
@@ -1647,6 +1663,12 @@ export const useStore = defineStore('server', {
         // exceptionNotifier(exception)
         this.tables.dataCenterTable.status = 'error'
       }
+      // sort
+      this.tables.dataCenterTable.allIds.sort((a, b) => {
+        const datacenterA = this.tables.dataCenterTable.byId[a]
+        const datacenterB = this.tables.dataCenterTable.byId[b]
+        return datacenterB.sort_weight - datacenterA.sort_weight
+      })
     },
     /* serviceTable */
     async loadServiceTable () {
