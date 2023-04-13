@@ -931,14 +931,14 @@ export const useStore = defineStore('server', {
         }
 
         // @ts-ignore
-        dataArr.sort((a, b) => b.sort_weight - a.sort_weight)
+        dataArr.sort((a, b) => a.sort_weight - b.sort_weight)
 
         treeObj.children = dataArr
         treeData.push(treeObj)
       }
 
       // @ts-ignore
-      treeData.sort((a, b) => b.sort_weight - a.sort_weight)
+      treeData.sort((a, b) => a.sort_weight - b.sort_weight)
 
       console.log(treeData)
 
@@ -1667,7 +1667,7 @@ export const useStore = defineStore('server', {
       this.tables.dataCenterTable.allIds.sort((a, b) => {
         const datacenterA = this.tables.dataCenterTable.byId[a]
         const datacenterB = this.tables.dataCenterTable.byId[b]
-        return datacenterB.sort_weight - datacenterA.sort_weight
+        return datacenterA.sort_weight - datacenterB.sort_weight
       })
     },
     /* serviceTable */

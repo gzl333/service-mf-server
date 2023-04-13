@@ -209,7 +209,7 @@ const gotoManualVpn = () => {
                     >
 
                       <div
-                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) ||     !store.tables.serviceTable.byId[tabService].need_vpn"
+                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) || !store.tables.serviceTable.byId[tabService].need_vpn"
                       >
                         <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
                           {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}

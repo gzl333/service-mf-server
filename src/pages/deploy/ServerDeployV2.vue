@@ -64,7 +64,7 @@ const input = ref<HTMLElement>()
 // // 全局数据
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
-const dataCenters = computed(() => Object.values(store.tables.dataCenterTable.byId).filter(dataCenter => dataCenter.status.code === 1))
+const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
 const services = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.status === 'enable'))
 const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
 // selectionService的选项数据根据dataCenters动态生成,此处没有
