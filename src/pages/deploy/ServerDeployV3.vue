@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch/* , PropType */ } from 'vue'
-import { ImageInterface, useStore } from 'stores/store'
+import {
+  DataCenterInterface,
+  FlavorInterface,
+  GroupInterface,
+  ImageInterface, NetworkInterface,
+  ServiceInterface,
+  useStore
+} from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
@@ -63,28 +70,26 @@ const isAllowPostpaid = computed(() => {
 // dom元素
 const input = ref<HTMLElement>()
 
-// 选项数据
-// // 全局数据
-// owner/leader权限才能建立云主机， member不能建立
-const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
-const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
-const services = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.status === 'enable'))
-const flavors = computed(() => Object.values(store.tables.fedFlavorTable.byId))
-// selectionService的选项数据根据dataCenters动态生成,此处没有
-// //依赖selectionService Id选择值的数据
-const publicNetworks = computed(() => store.getPublicNetworksByServiceId(selectionService.value))
-const privateNetworks = computed(() => store.getPrivateNetworksByServicedId(selectionService.value))
+/* 选项数据 */
+// 全局数据，只获取一次
+const dataCenters = ref<DataCenterInterface[]>([])
+const services = ref<ServiceInterface[]>([])
+const groups = ref<GroupInterface[]>([])
 
-// ROD-refactored
-// const images = computed(() => store.getImagesByServiceId(selectionService.value))
+// 依赖selectionService Id选择值的数据
 // 当前service_id对应的image集合，随service_id选择而改变
 const images = ref<ImageInterface[]>([])
-// 当前images里面可供选择的release数组
+// 当前images里面可供选择的release数组， 由images数组归并而来
 const imageReleases = ref<string[]>([])
-
+// 当前service_id对应的flavor/size集合，随service_id选择而改变
+const flavors = ref<FlavorInterface[]>([])
+// Object.assign(flavors.value, { isLoading: false }) // 尝试，添加一个loading的属性
+const publicNetworks = ref<NetworkInterface[]>([])
+const privateNetworks = ref<NetworkInterface[]>([])
 // const systemDisks = computed(() => Array.from({ length: (MAX_SYSTEM_DISK - MIN_SYSTEM_DISK.value) / 50 + 1 }, (item, index) => MIN_SYSTEM_DISK.value + index * 50))
+/* 选项数据 */
 
-// selection选项 初始状态 (1)
+/* selection */
 const selectionOwner = ref<'personal' | 'group'>('personal')
 const selectionPayment = ref<'prepaid' | 'postpaid'>('prepaid')
 const selectionGroup = ref('')
@@ -96,7 +101,7 @@ const selectionDatacenter = computed(() => store.tables.serviceTable.byId[select
 const selectionImage = ref('')
 // image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
 const selectionImageRelease = ref('')
-
+// 当前flavor选择，是local id
 const selectionFlavor = ref('')
 const selectionNetwork = ref<'randomPrivate' | 'randomPublic' | string>('')
 const inputRemarks = ref('')
@@ -105,6 +110,9 @@ const inputRemarks = ref('')
 // const selectionSystemDisk = ref(50)
 // const selectionDataDisk = ref(0)
 
+/* selection */
+
+/* 询价 */
 // 询价对象
 const currentPrice = ref<{ original: string; trade: string } | null>(null)
 // 根据selection进行询价
@@ -135,14 +143,13 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
     currentPrice.value = null
   }
 })
-
-/* table 进入页面过程中选择默认项 */
+/* 询价 */
 
 /* 分为显示和选择动作两部分。
 * 显示部分在标签里进行逻辑判断，哪些显示，哪些不显示
 * 选择动作在ts部分，selection真正选择了哪些值 */
 
-// selection默认选择 (2)
+/* selection默认选择 */
 const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
@@ -165,7 +172,6 @@ const chooseNetwork = () => {
     selectionNetwork.value = ''
   }
 }
-
 // selectionImageRelease 选择默认项
 const chooseImageRelease = () => {
   selectionImageRelease.value = imageReleases.value[0]
@@ -173,19 +179,123 @@ const chooseImageRelease = () => {
 const chooseImage = () => {
   selectionImage.value = images.value.filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
 }
-
 const chooseFlavor = () => {
   selectionFlavor.value = flavors.value[0]?.id || ''
 }
+/* selection默认选择 */
 
-// setup时调用一次 (3) table已加载时，从别的页面进入本页面要选一次默认值
-chooseOwner()
-chooseGroup()
-chooseService()
-chooseNetwork()
-// chooseImage()
-chooseFlavor()
-/* table 进入页面过程中选择默认项 */
+/* 被动变化的watch */
+// 改变service选择后，需要更新options选项池，并选择默认项的参数
+watch(selectionService, () => {
+  updateNetwork()
+  updateImages()
+  updateFlavors()
+})
+// 在selectionImageRelease变化后，选择默认image
+watch(selectionImageRelease, chooseImage)
+/* 被动变化的watch */
+
+/* 获取全部选项的函数 */
+// 获取全部datacenter and services
+const updateDatacentersAndServices = async () => {
+  dataCenters.value = []
+  services.value = []
+
+  try {
+    // datacenter
+    const respGetDatacenters = await api.server.registry.getRegistry()
+
+    // 排序
+    respGetDatacenters.data.registries.sort((a: DataCenterInterface, b: DataCenterInterface) => a.sort_weight - b.sort_weight)
+
+    // 保存数据
+    for (const datacenter of respGetDatacenters.data.registries) {
+      // 只留下enable状态的datacenter
+      if (datacenter.status.code === 1) {
+        // services
+        let datacenterServices: string[] = []
+
+        // 从分页数据中获取全部数据
+        const PAGE_SIZE = 100 // 单次获取的page size
+        let count = 0 // 结果总数，多页项目的数总和
+        let page = 1 // current page
+
+        do {
+          const respGetServices = await api.server.service.getService({
+            query: {
+              page,
+              page_size: PAGE_SIZE,
+              center_id: datacenter.id
+            }
+          })
+
+          // 排序
+          respGetServices.data.results.sort((a: ServiceInterface, b: ServiceInterface) => a.sort_weight - b.sort_weight)
+
+          for (const service of respGetServices.data.results) {
+            if (service.status === 'enable') {
+              services.value.push(service)
+            }
+            // 把当前service_id补充给datacenterServices
+            datacenterServices.push(service.id)
+          }
+
+          // 更新分页数据
+          page += 1
+          count = respGetServices.data.count
+        } while (datacenterServices.length < count)
+
+        datacenterServices = [...new Set(datacenterServices)]
+        Object.assign(datacenter, { services: datacenterServices })
+        dataCenters.value.push(datacenter)
+      }
+    }
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+
+  // 选择默认项
+  chooseService()
+}
+
+// 获取当前用户全部项目组信息
+const updateGroups = async () => {
+  // 清空列表
+  groups.value = []
+
+  // 从分页数据中获取全部数据
+  const PAGE_SIZE = 100 // 单次获取的page size
+  let count = 0 // 结果总数，多页项目的数总和
+  let page = 1 // current page
+
+  try {
+    // 先执行一次，再检查循环条件
+    do {
+      // 用当前分页条件获取数据
+      const respGetGroup = await api.server.vo.getVo({
+        query: {
+          page,
+          page_size: PAGE_SIZE
+        }
+      })
+
+      // 保存数据
+      for (const group of respGetGroup.data.results as GroupInterface[]) {
+        // group options
+        groups.value.push(group)
+      }
+
+      // 更新分页数据
+      page += 1
+      count = respGetGroup.data.count
+    } while (groups.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+
+  // 选择默认项
+  chooseGroup()
+}
 
 // 根据当前service_id获取image列表的函数
 const updateImages = async () => {
@@ -237,34 +347,64 @@ const updateImages = async () => {
   chooseImageRelease()
   chooseImage()
 }
-updateImages()
 
-// (4)刷新页面，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table。
-// watch关注的应该是响应式对象，而非某个table。
-// 若关注table写法应为watch(()=> store.tables.xxxTable, action) https://github.com/vuejs/pinia/discussions/1218
-// watch([store.tables, store.tables.groupTable, store.tables.groupMemberTable], chooseSelectionDefaults)
-// 选择groupId
-watch(groups, chooseGroup)
-// 选择serviceId
-watch(services, chooseService)
-// 根据当前选中的serviceId，选择networkId
-watch([privateNetworks, publicNetworks], chooseNetwork)
-// 根据当前选中的serviceId，选择imageId
-watch(images, chooseImage)
-// 选择flavorId
-watch(flavors, chooseFlavor)
+// 根据当前service_id获取privateNetwork publicNetwork列表的函数
+const updateNetwork = async () => {
+  privateNetworks.value = []
+  publicNetworks.value = []
 
-/* (5) 在table都加载后，3个selection，随着service变化选择默认项 */
-watch(selectionService, () => {
-  // 重要逻辑： 改变service选择后，需要更新options选项池，并选择默认项的参数
+  try {
+    const respGetNetworks = await api.server.network.getNetwork({
+      query: {
+        service_id: selectionService.value
+      }
+    })
+    for (const network of respGetNetworks.data) {
+      if (network.public) {
+        publicNetworks.value.push(network)
+      } else {
+        privateNetworks.value.push(network)
+      }
+    }
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
   chooseNetwork()
-  updateImages()
-  // chooseImage()
-})
-/* 在table都加载后，3个selection，随着service变化选择默认项 */
+}
 
-/* 在selectionImageRelease变化后，选择默认image */
-watch(selectionImageRelease, chooseImage)
+// 根据当前service_id获取flavor列表的函数
+const updateFlavors = async () => {
+  // 清空当前flavor列表
+  flavors.value = []
+  // req
+  try {
+    const respGetFlavor = await api.server.flavor.getFlavor({
+      query: {
+        service_id: selectionService.value
+      }
+    })
+    // 保存数据
+    for (const flavor of respGetFlavor.data.flavors) {
+      flavors.value.push(flavor)
+    }
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+  // 排序
+
+  // 选择默认项
+  chooseFlavor()
+}
+/* 获取全部选项的函数 */
+
+/* setup时调用一次 */
+chooseOwner()
+updateDatacentersAndServices()
+updateGroups()
+updateImages()
+updateNetwork()
+updateFlavors()
+/* setup时调用一次 */
 
 /* 新建云主机 */
 const isDeploying = ref(false)
@@ -528,7 +668,8 @@ const deployServer = async () => {
             </div>
 
             <div class="col-auto">
-              <div v-for="dataCenter in dataCenters" :key="dataCenter.id" class="q-pb-md">
+              <div v-for="dataCenter in dataCenters.filter(datacenter => datacenter.services.length > 0)"
+                   :key="dataCenter.id" class="q-pb-md">
                 <div class="row items-center text-weight-bold text-subtitle2"
                      :class="selectionDatacenter === dataCenter.id ? 'text-primary' : ''">
                   {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
@@ -911,17 +1052,17 @@ const deployServer = async () => {
 
           </div>
 
-          <div class="col-auto row">
-            <div class="col-1 text-weight-bold">
+          <div class="col-auto row  q-py-sm">
+            <div class="col-1 row items-center text-weight-bold">
               {{ tc('serverSize') }}
             </div>
 
             <div class="col-11 row">
-              <div v-if="flavors.length === 0" class="row items-center">
+              <div v-if="flavors.length === 0" class="col-auto row items-center">
                 {{ tc('noServerSize') }}
               </div>
 
-              <div v-else class="col-auto row q-gutter-md">
+              <div v-else class="col-auto row items-center q-gutter-md">
                 <q-btn
                   v-for="flavor in flavors"
                   :val="flavor.id"

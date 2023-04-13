@@ -696,7 +696,7 @@ const deployServer = async () => {
 
                 <div class="row items-center" style="width: 287px; height: 60px;">
 
-                  <OsLogo class="col-3" :os-name="image.name" size="60px"/>
+                  <OsLogo class="col-auto" :os-name="image.name" size="60px"/>
 
                   <div class="col-9 column items-center justify-center">
                     <div class="col row items-center justify-center"

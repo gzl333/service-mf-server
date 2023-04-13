@@ -338,8 +338,15 @@ export default {
     }
   },
   flavor: {
-    getFlavor () {
-      return axiosServer.get('/flavor')
+    getFlavor (payload?: {
+      query?: {
+        service_id?: string
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/flavor', config)
     }
   },
   image: {
