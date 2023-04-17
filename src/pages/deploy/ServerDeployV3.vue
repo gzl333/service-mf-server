@@ -4,7 +4,7 @@ import {
   DataCenterInterface,
   FlavorInterface,
   GroupInterface,
-  ImageInterface, NetworkInterface,
+  ImageInterface, NetworkInterface, NewServiceInterface,
   ServiceInterface,
   useStore
 } from 'stores/store'
@@ -54,6 +54,9 @@ const exceptionNotifier = useExceptionNotifier()
 // 是否禁止使用后付费模式
 // 目前判断个人账户或者项目组账户余额<=0
 const isAllowPostpaid = computed(() => {
+  // // 待向groups内补充balance字段
+  // return true
+
   // 联邦管理员、服务单元管理员不限制
   if (store.items.fedRole === 'federal-admin' || store.items.adminServiceIds.length > 0) {
     return true
@@ -61,7 +64,7 @@ const isAllowPostpaid = computed(() => {
 
   // 普通用户进行判断
   if (selectionOwner.value === 'group') {
-    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
+    return Number(groups.value.find(group => group.id === selectionGroup.value)?.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }
@@ -73,7 +76,7 @@ const input = ref<HTMLElement>()
 /* 选项数据 */
 // 全局数据，只获取一次
 const dataCenters = ref<DataCenterInterface[]>([])
-const services = ref<ServiceInterface[]>([])
+const services = ref<NewServiceInterface[]>([])
 const groups = ref<GroupInterface[]>([])
 
 // 依赖selectionService Id选择值的数据
@@ -95,8 +98,8 @@ const selectionPayment = ref<'prepaid' | 'postpaid'>('prepaid')
 const selectionGroup = ref('')
 const selectionPeriod = ref(1)
 const selectionService = ref('')
-const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center || '')
-
+// const selectionDatacenter = computed(() => dataCenters.value.find(datacenter => datacenter.id === services.value.find(service => service.id === selectionService.value)?.data_center)?.id || '')
+const selectionDatacenter = computed(() => services.value.find(service => service.id === selectionService.value)?.data_center?.id || '')
 // image的id，来自images, 是local id, 不是拼接的id
 const selectionImage = ref('')
 // image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
@@ -281,6 +284,15 @@ const updateGroups = async () => {
 
       // 保存数据
       for (const group of respGetGroup.data.results as GroupInterface[]) {
+        try {
+          // add balance field
+          const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: group.id } })
+          Object.assign(group, { balance: respGroupBalance.data.balance })
+        } catch (exception) {
+          // exceptionNotifier(exception)
+          // 继续下一个循环
+          continue
+        }
         // group options
         groups.value.push(group)
       }
@@ -653,23 +665,26 @@ const deployServer = async () => {
     <q-scroll-area style="height: calc(100vh - 60px);">
 
       <div class="row justify-center" style="padding-bottom: 130px;">
-        <div class="content-fixed-width column">
+        <div class="content-fixed-width">
 
-          <div class="col-auto q-py-sm row items-center">
+          <div class="row items-center q-py-sm">
             <q-btn class="col-auto" flat dense color="primary" icon="arrow_back_ios" size="lg" @click="router.back()"/>
             <div class="col-auto text-h6 text-primary ">
               {{ tc('serverNew') }}
             </div>
           </div>
 
-          <div class="col-auto row">
-            <div class="col-1 text-weight-bold">
-              {{ tc('serviceUnit') }}
+          <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold">
+                {{ tc('serviceUnit') }}
+              </div>
             </div>
 
-            <div class="col-auto">
+            <div class="col-11">
               <div v-for="dataCenter in dataCenters.filter(datacenter => datacenter.services.length > 0)"
-                   :key="dataCenter.id" class="q-pb-md">
+                   :key="dataCenter.id"
+                   class="q-pb-sm">
                 <div class="row items-center text-weight-bold text-subtitle2"
                      :class="selectionDatacenter === dataCenter.id ? 'text-primary' : ''">
                   {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
@@ -700,13 +715,14 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="col-shrink row items-center">
-            <div class="col-1 text-weight-bold">
-              {{ tc('serverOwner') }}
+          <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold">
+                {{ tc('serverOwner') }}
+              </div>
             </div>
 
-            <div class="col row items-center q-gutter-md">
-
+            <div class="col-11 row items-center q-gutter-md">
               <q-btn
                 :color="selectionOwner === 'personal' ? 'primary' : 'grey-3'"
                 :text-color="selectionOwner === 'personal' ? '' : 'black'"
@@ -735,17 +751,19 @@ const deployServer = async () => {
           </div>
 
           <Transition>
-            <div v-if="selectionOwner === 'group'" class="col-auto row items-center">
-              <div class="col-1 text-weight-bold">
-                {{ tc('group') }}
+            <div v-if="selectionOwner === 'group'"
+                 class="row items-center q-py-md">
+              <div class="col-1 row">
+                <div class="text-weight-bold">
+                  {{ tc('group') }}
+                </div>
               </div>
 
-              <div v-if="groups.length === 0" class="col-auto row items-center">
+              <div v-if="groups.length === 0" class="col-11 row items-center">
                 {{ tc('noGroup') }}
               </div>
 
-              <div class="col-auto row items-center q-gutter-md">
-
+              <div v-else class="col-11 row items-center q-gutter-md">
                 <q-btn
                   :color="selectionGroup === group.id ? 'primary' : 'grey-3'"
                   :text-color="selectionGroup === group.id ? '' : 'black'"
@@ -759,13 +777,12 @@ const deployServer = async () => {
                   @click="selectionGroup = group.id"
                 >
                   {{ group.name }}
-
                 </q-btn>
               </div>
             </div>
           </Transition>
 
-          <div class="col-auto row items-center">
+          <div class="row items-center q-py-md">
             <div class="col-1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
@@ -799,11 +816,11 @@ const deployServer = async () => {
           </div>
 
           <Transition>
-            <div v-if="selectionPayment === 'prepaid'" class="col-auto row items-center">
+            <div v-if="selectionPayment === 'prepaid'" class="row items-center q-py-md">
               <div class="col-1 text-weight-bold">
                 {{ tc('usagePeriod') }}
               </div>
-              <div class="col-auto row items-center q-gutter-md">
+              <div class="col-11 row items-center q-gutter-md">
                 <q-btn
                   :color="selectionPeriod === month ? 'primary' : 'grey-3'"
                   :text-color="selectionPeriod === month ? '' : 'black'"
@@ -823,7 +840,7 @@ const deployServer = async () => {
             </div>
           </Transition>
 
-          <div class="col-auto row items-center">
+          <div class="row items-center q-py-md">
             <div class="col-1 text-weight-bold">
               {{ tc('operatingSystem') }}
             </div>
@@ -837,7 +854,7 @@ const deployServer = async () => {
 
                 <q-select
                   class="col-auto"
-                  style="width: 250px;"
+                  style="width: 220px;"
                   v-model="selectionImageRelease"
                   :options="imageReleases"
                   outlined
@@ -880,7 +897,7 @@ const deployServer = async () => {
 
                 <q-select
                   class="col-auto"
-                  style="width: 500px;"
+                  style="min-width: 220px;"
                   v-model="selectionImage"
                   :options="[...new Set(images.filter(image => image.release === selectionImageRelease).map(image => image.id))]"
                   outlined
@@ -950,111 +967,118 @@ const deployServer = async () => {
           <!--            </div>-->
           <!--          </div>-->
 
-          <div class="col-auto row">
-            <div class="col-1 text-weight-bold">
-              {{ tc('network') }}
-            </div>
-
-            <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0" class="row items-center">
-              {{ tc('noNetwork') }}
-            </div>
-
-            <div v-if="privateNetworks.length > 0" class="q-pb-xs">
-              <div class="row"
-                   :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-grey' : 'text-primary'">
-                {{ tc('privateNetwork') }}
-              </div>
-              <div class="row items-center q-gutter-md">
-
-                <!--按钮：随机选择私网网络-->
-                <q-btn
-                  :color="selectionNetwork === 'randomPrivate' ? 'primary' : 'grey-3'"
-                  :text-color="selectionNetwork === 'randomPrivate' ? '' : 'black'"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionNetwork = 'randomPrivate'"
-                >
-                  {{ tc('randomPrivateNetwork') }}
-                </q-btn>
-
-                <q-btn
-                  v-for="network in privateNetworks"
-                  :val="network.id"
-                  :key="network.id"
-                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
-                  :text-color="selectionNetwork === network.id ? '' : 'black'"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionNetwork = network.id"
-                >
-                  <div class="column"
-                       style="line-height: 0.9;">
-                    <div class="col-auto">
-                      {{ network.name }}
-                    </div>
-                    <div class="col-auto">
-                      {{ network.segment }}
-                    </div>
-                  </div>
-                </q-btn>
-
+          <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold">
+                {{ tc('network') }}
               </div>
             </div>
 
-            <div v-if="publicNetworks.length > 0" class="q-pb-xs">
-              <div class="row"
-                   :class="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
-                {{ tc('publicNetwork') }}
-              </div>
-              <div class="row items-center q-gutter-md">
+            <div class="col-11">
 
-                <!--按钮：随机选择公网网络-->
-                <q-btn
-                  :color="selectionNetwork === 'randomPublic' ? 'primary' : 'grey-3'"
-                  :text-color="selectionNetwork === 'randomPublic' ? '' : 'black'"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionNetwork = 'randomPublic'"
-                >
-                  {{ tc('randomPublicNetwork') }}
-                </q-btn>
-
-                <q-btn
-                  v-for="network in publicNetworks"
-                  :val="network.id"
-                  :key="network.id"
-                  :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
-                  :text-color="selectionNetwork === network.id ? '' : 'black'"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionNetwork = network.id"
-                >
-                  <div class="column"
-                       style="line-height: 0.9;">
-                    <div class="col-auto">
-                      {{ network.name }}
-                    </div>
-                    <div class="col-auto">
-                      {{ network.segment }}
-                    </div>
-                  </div>
-                </q-btn>
+              <div v-if="publicNetworks.length === 0 && privateNetworks.length === 0" class="col row items-center">
+                {{ tc('noNetwork') }}
               </div>
+
+              <div v-if="privateNetworks.length > 0" class="col q-pb-md">
+                <div class="row"
+                     :class="selectionNetwork === 'randomPrivate' || !store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
+                  {{ tc('privateNetwork') }}
+                </div>
+                <div class="row items-center q-gutter-md">
+
+                  <!--按钮：随机选择私网网络-->
+                  <q-btn
+                    :color="selectionNetwork === 'randomPrivate' ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetwork === 'randomPrivate' ? '' : 'black'"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionNetwork = 'randomPrivate'"
+                  >
+                    {{ tc('randomPrivateNetwork') }}
+                  </q-btn>
+
+                  <q-btn
+                    v-for="network in privateNetworks"
+                    :val="network.id"
+                    :key="network.id"
+                    :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetwork === network.id ? '' : 'black'"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionNetwork = network.id"
+                  >
+                    <div class="column"
+                         style="line-height: 0.9;">
+                      <div class="col-auto">
+                        {{ network.name }}
+                      </div>
+                      <div class="col-auto">
+                        {{ network.segment }}
+                      </div>
+                    </div>
+                  </q-btn>
+
+                </div>
+              </div>
+
+              <div v-if="publicNetworks.length > 0" class="col q-pb-md ">
+                <div class="row"
+                     :class="selectionNetwork === 'randomPublic' || store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
+                  {{ tc('publicNetwork') }}
+                </div>
+                <div class="row items-center q-gutter-md">
+
+                  <!--按钮：随机选择公网网络-->
+                  <q-btn
+                    :color="selectionNetwork === 'randomPublic' ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetwork === 'randomPublic' ? '' : 'black'"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionNetwork = 'randomPublic'"
+                  >
+                    {{ tc('randomPublicNetwork') }}
+                  </q-btn>
+
+                  <q-btn
+                    v-for="network in publicNetworks"
+                    :val="network.id"
+                    :key="network.id"
+                    :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetwork === network.id ? '' : 'black'"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionNetwork = network.id"
+                  >
+                    <div class="column"
+                         style="line-height: 0.9;">
+                      <div class="col-auto">
+                        {{ network.name }}
+                      </div>
+                      <div class="col-auto">
+                        {{ network.segment }}
+                      </div>
+                    </div>
+                  </q-btn>
+                </div>
+              </div>
+
             </div>
-
           </div>
 
-          <div class="col-auto row  q-py-sm">
-            <div class="col-1 row items-center text-weight-bold">
-              {{ tc('serverSize') }}
+          <div class="row items-center q-py-md">
+            <div class="col-1 row items-center">
+              <div class="text-weight-bold">
+                {{ tc('serverSize') }}
+              </div>
             </div>
 
             <div class="col-11 row">
@@ -1082,11 +1106,13 @@ const deployServer = async () => {
 
           </div>
 
-          <div class="col-auto row">
-            <div class="col-1 text-weight-bold">
-              {{ tc('remark') }}
+          <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold">
+                {{ tc('remark') }}
+              </div>
             </div>
-            <div class="col-11 row">
+            <div class="col-11 row q-pt-md">
               <q-input class="col-8"
                        ref="input"
                        v-model="inputRemarks"

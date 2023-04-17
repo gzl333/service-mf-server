@@ -137,6 +137,28 @@ export interface ServiceInterface {
   sort_weight: number // 排序权重, 值越大排序越靠前
 }
 
+export interface NewServiceInterface {
+  // 来自service接口
+  id: string
+  name: string
+  name_en: string
+  service_type: string
+  cloud_type: string
+  add_time: string
+  need_vpn: boolean
+  status: 'enable' | 'disable' | 'deleted'
+  data_center: {
+    id: string
+    name: string
+    name_en: string
+    sort_weight: number
+  }
+  longitude: number
+  latitude: number
+  pay_app_service_id: string
+  sort_weight: number // 排序权重, 值越大排序越靠前
+}
+
 // 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述
 export interface AllocationInterface {
   private_ip_total: number
