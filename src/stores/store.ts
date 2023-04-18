@@ -1390,7 +1390,7 @@ export const useStore = defineStore('server', {
           void this.loadGroupBalanceTable()
           void this.loadGroupCouponTable()
           // serverTable涉及到很多server status请求，应放在最后
-          void this.loadGroupServerTable()
+          // void this.loadGroupServerTable()
         })
       })
     },
