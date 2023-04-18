@@ -64,7 +64,7 @@ const isAllowPostpaid = computed(() => {
 
   // 普通用户进行判断
   if (selectionOwner.value === 'group') {
-    return Number(groups.value.find(group => group.id === selectionGroup.value)?.balance) > 0
+    return Number(groups.value.find(group => group.id === selectionGroupId.value)?.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }
@@ -95,18 +95,31 @@ const privateNetworks = ref<NetworkInterface[]>([])
 /* selection */
 const selectionOwner = ref<'personal' | 'group'>('personal')
 const selectionPayment = ref<'prepaid' | 'postpaid'>('prepaid')
-const selectionGroup = ref('')
 const selectionPeriod = ref(1)
-const selectionService = ref('')
-// const selectionDatacenter = computed(() => dataCenters.value.find(datacenter => datacenter.id === services.value.find(service => service.id === selectionService.value)?.data_center)?.id || '')
-const selectionDatacenter = computed(() => services.value.find(service => service.id === selectionService.value)?.data_center?.id || '')
+
+const selectionGroupId = ref('')
+const compSelectionGroup = computed(() => groups.value.find(group => group.id === selectionGroupId.value))
+
+const selectionServiceId = ref('')
+const compSelectionService = computed(() => services.value.find(service => service.id === selectionServiceId.value))
+
+const compSelectionDatacenter = computed(() => services.value.find(service => service.id === selectionServiceId.value)?.data_center)
+// const compSelectionDatacenterId = computed(() => services.value.find(service => service.id === selectionServiceId.value)?.data_center?.id || '')
+
 // image的id，来自images, 是local id, 不是拼接的id
-const selectionImage = ref('')
+const selectionImageId = ref('')
+const compSelectionImage = computed(() => images.value.filter(image => image.serviceId === selectionServiceId.value).find(image => image.id === selectionImageId.value))
 // image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
 const selectionImageRelease = ref('')
+
 // 当前flavor选择，是local id
-const selectionFlavor = ref('')
-const selectionNetwork = ref<'randomPrivate' | 'randomPublic' | string>('')
+const selectionFlavorId = ref('')
+const compSelectionFlavor = computed(() => flavors.value.filter(flavor => flavor.service_id === selectionServiceId.value).find(flavor => flavor.id === selectionFlavorId.value))
+
+const selectionNetworkId = ref<'randomPrivate' | 'randomPublic' | string>('')
+const compSelectionNetwork = computed(() => privateNetworks.value.filter(network => network.serviceId === selectionServiceId.value).find(network => network.id === selectionNetworkId.value) ||
+  publicNetworks.value.filter(network => network.serviceId === selectionServiceId.value).find(network => network.id === selectionNetworkId.value))
+
 const inputRemarks = ref('')
 
 // // 待实现
@@ -119,10 +132,10 @@ const inputRemarks = ref('')
 // 询价对象
 const currentPrice = ref<{ original: string; trade: string } | null>(null)
 // 根据selection进行询价
-watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], async () => {
+watch([selectionPayment, selectionPeriod, selectionFlavorId, selectionNetworkId], async () => {
   // prepaid时才询价，其他几个参数都不为空时才询价（其中period初始值为1, 肯定不为空）
   // 初始化过程中有些table未load，此时不该询价。都有有效选择后，则可以询价。
-  if (selectionPayment.value === 'prepaid' && selectionFlavor.value !== '' && selectionNetwork.value !== '') {
+  if (selectionPayment.value === 'prepaid' && selectionFlavorId.value !== '' && selectionNetworkId.value !== '') {
     try {
       // 发出询价请求
       const respGetPrice = await api.server['describe-price'].getDescribePrice({
@@ -130,8 +143,8 @@ watch([selectionPayment, selectionPeriod, selectionFlavor, selectionNetwork], as
           resource_type: 'vm',
           pay_type: selectionPayment.value,
           period: selectionPeriod.value,
-          flavor_id: selectionFlavor.value,
-          external_ip: store.tables.serviceNetworkTable.byLocalId[`${selectionService.value}-${selectionNetwork.value}`]?.public
+          flavor_id: selectionFlavorId.value,
+          external_ip: selectionNetworkId.value === 'randomPublic' || compSelectionNetwork.value?.public
         }
       })
       // 拿到price
@@ -157,10 +170,10 @@ const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
 const chooseGroup = () => {
-  selectionGroup.value = route.query.group as string || groups.value[0]?.id || ''
+  selectionGroupId.value = route.query.group as string || groups.value[0]?.id || ''
 }
 const chooseService = () => {
-  selectionService.value = route.query.service as string || services.value[0]?.id || ''
+  selectionServiceId.value = route.query.service as string || services.value[0]?.id || ''
 }
 const chooseNetwork = () => {
   // // 默认选择第一项
@@ -168,11 +181,11 @@ const chooseNetwork = () => {
 
   // 默认选择：'randomPrivate' 随机私网网段/ 'randomPublic' 随机公网网段/''
   if (privateNetworks.value.length > 0) {
-    selectionNetwork.value = 'randomPrivate'
+    selectionNetworkId.value = 'randomPrivate'
   } else if (publicNetworks.value.length > 0) {
-    selectionNetwork.value = 'randomPublic'
+    selectionNetworkId.value = 'randomPublic'
   } else {
-    selectionNetwork.value = ''
+    selectionNetworkId.value = ''
   }
 }
 // selectionImageRelease 选择默认项
@@ -180,18 +193,21 @@ const chooseImageRelease = () => {
   selectionImageRelease.value = imageReleases.value[0]
 }
 const chooseImage = () => {
-  selectionImage.value = images.value.filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
+  selectionImageId.value =
+    images.value
+      .filter(image => image.serviceId === selectionServiceId.value)
+      .filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
 }
 const chooseFlavor = () => {
-  selectionFlavor.value = flavors.value[0]?.id || ''
+  selectionFlavorId.value = flavors.value.filter(flavor => flavor.service_id === selectionServiceId.value)[0]?.id || ''
 }
 /* selection默认选择 */
 
 /* 被动变化的watch */
 // 改变service选择后，需要更新options选项池，并选择默认项的参数
-watch(selectionService, () => {
-  updateNetwork()
-  updateImages()
+watch(selectionServiceId, () => {
+  updateNetwork(selectionServiceId.value)
+  updateImages(selectionServiceId.value)
   updateFlavors()
 })
 // 在selectionImageRelease变化后，选择默认image
@@ -236,9 +252,7 @@ const updateDatacentersAndServices = async () => {
           respGetServices.data.results.sort((a: ServiceInterface, b: ServiceInterface) => a.sort_weight - b.sort_weight)
 
           for (const service of respGetServices.data.results) {
-            if (service.status === 'enable') {
-              services.value.push(service)
-            }
+            services.value.push(service)
             // 把当前service_id补充给datacenterServices
             datacenterServices.push(service.id)
           }
@@ -310,7 +324,7 @@ const updateGroups = async () => {
 }
 
 // 根据当前service_id获取image列表的函数
-const updateImages = async () => {
+const updateImages = async (serviceId: string) => {
   // 清空当前images列表
   images.value = []
   imageReleases.value = []
@@ -328,12 +342,15 @@ const updateImages = async () => {
         query: {
           page,
           page_size: PAGE_SIZE,
-          service_id: selectionService.value
+          service_id: selectionServiceId.value
         }
       })
 
       // 保存数据
       for (const image of respGetImage.data.results as ImageInterface[]) {
+        // 增加serviceId标识,在读取images过程中，用户可能改变serviceId的选择，多个结果都会存入images容器，这个字段使用的时候方便筛选区分
+        Object.assign(image, { serviceId })
+
         // image options
         images.value.push(image)
 
@@ -347,7 +364,8 @@ const updateImages = async () => {
       // 更新分页数据
       page += 1
       count = respGetImage.data.count
-    } while (images.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+      // 核实容器内含有当前指定serviceId的image数量够不够，不够再去拿
+    } while (images.value.filter(image => image.serviceId === serviceId).length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
   } catch (exception) {
     // exceptionNotifier(exception)
   }
@@ -361,17 +379,21 @@ const updateImages = async () => {
 }
 
 // 根据当前service_id获取privateNetwork publicNetwork列表的函数
-const updateNetwork = async () => {
+const updateNetwork = async (serviceId: string) => {
   privateNetworks.value = []
   publicNetworks.value = []
 
   try {
     const respGetNetworks = await api.server.network.getNetwork({
       query: {
-        service_id: selectionService.value
+        service_id: selectionServiceId.value
       }
     })
     for (const network of respGetNetworks.data) {
+      // 增加serviceId标识
+      Object.assign(network, { serviceId })
+
+      // add to options
       if (network.public) {
         publicNetworks.value.push(network)
       } else {
@@ -392,7 +414,7 @@ const updateFlavors = async () => {
   try {
     const respGetFlavor = await api.server.flavor.getFlavor({
       query: {
-        service_id: selectionService.value
+        service_id: selectionServiceId.value
       }
     })
     // 保存数据
@@ -413,8 +435,9 @@ const updateFlavors = async () => {
 chooseOwner()
 updateDatacentersAndServices()
 updateGroups()
-updateImages()
-updateNetwork()
+// 以下依赖serviceId
+updateImages(selectionServiceId.value)
+updateNetwork(selectionServiceId.value)
 updateFlavors()
 /* setup时调用一次 */
 
@@ -434,7 +457,7 @@ const checkInputs = () => {
       multiLine: false
     })
     return false
-  } else if (selectionOwner.value === 'group' && selectionGroup.value === '') {
+  } else if (selectionOwner.value === 'group' && selectionGroupId.value === '') {
     // 如果要创建项目组云主机，但是没有选中组
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -447,7 +470,7 @@ const checkInputs = () => {
       multiLine: false
     })
     return false
-  } else if (!selectionNetwork.value) {
+  } else if (!selectionNetworkId.value) {
     // 如果selection没有选择全，则弹出通知
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -460,7 +483,7 @@ const checkInputs = () => {
       multiLine: false
     })
     return false
-  } else if (!selectionImage.value) {
+  } else if (!selectionImageId.value) {
     // 如果selection没有选择全，则弹出通知
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -473,7 +496,7 @@ const checkInputs = () => {
       multiLine: false
     })
     return false
-  } else if (!selectionFlavor.value) {
+  } else if (!selectionFlavorId.value) {
     // 如果selection没有选择全，则弹出通知
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -508,21 +531,21 @@ const deployServer = async () => {
     const selection = {
       pay_type: selectionPayment.value,
       ...(selectionPayment.value === 'prepaid' ? { period: selectionPeriod.value } : {}),
-      ...(selectionOwner.value === 'group' ? { vo_id: selectionGroup.value } : {}),
-      service_id: selectionService.value,
-      image_id: selectionImage.value,
-      flavor_id: selectionFlavor.value,
-      network_id: selectionNetwork.value,
+      ...(selectionOwner.value === 'group' ? { vo_id: selectionGroupId.value } : {}),
+      service_id: selectionServiceId.value,
+      image_id: selectionImageId.value,
+      flavor_id: selectionFlavorId.value,
+      network_id: selectionNetworkId.value,
       remarks: inputRemarks.value
     }
 
     // 如果需要随机选择网络，则改变网络选择值为随机id
     if (selection.network_id === 'randomPrivate') {
-      selection.network_id = privateNetworks.value[Math.floor(Math.random() * privateNetworks.value.length)].id
+      selection.network_id = privateNetworks.value.filter(network => network.serviceId === selectionServiceId.value)[Math.floor(Math.random() * privateNetworks.value.length)].id
       // console.log('randomPrivate:', selection.network_id)
       // console.log(privateNetworks.value)
     } else if (selection.network_id === 'randomPublic') {
-      selection.network_id = publicNetworks.value[Math.floor(Math.random() * publicNetworks.value.length)].id
+      selection.network_id = publicNetworks.value.filter(network => network.serviceId === selectionServiceId.value)[Math.floor(Math.random() * publicNetworks.value.length)].id
       // console.log('randomPublic:', selection.network_id)
       // console.log(publicNetworks.value)
     }
@@ -686,7 +709,7 @@ const deployServer = async () => {
                    :key="dataCenter.id"
                    class="q-pb-sm">
                 <div class="row items-center text-weight-bold text-subtitle2"
-                     :class="selectionDatacenter === dataCenter.id ? 'text-primary' : ''">
+                     :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">
                   {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
                 </div>
 
@@ -696,18 +719,18 @@ const deployServer = async () => {
 
                 <div v-else class="row items-center q-gutter-md">
                   <q-btn
-                    :color="selectionService === service.id ? 'primary' : 'grey-3'"
-                    :text-color="selectionService === service.id ? '' : 'black'"
-                    v-for="service in dataCenter.services.map(id => store.tables.serviceTable.byId[id]).filter(service => service.status === 'enable')"
-                    :key="service.id"
-                    :val="service.id"
+                    :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionServiceId === service?.id ? '' : 'black'"
+                    v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"
+                    :key="service?.id"
+                    :val="service?.id"
                     unelevated
                     dense
                     no-caps
                     :ripple="false"
-                    @click="selectionService = service.id"
+                    @click="selectionServiceId = service!.id"
                   >
-                    {{ i18n.global.locale === 'zh' ? service.name : service.name_en }}
+                    {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
                   </q-btn>
                 </div>
 
@@ -765,8 +788,8 @@ const deployServer = async () => {
 
               <div v-else class="col-11 row items-center q-gutter-md">
                 <q-btn
-                  :color="selectionGroup === group.id ? 'primary' : 'grey-3'"
-                  :text-color="selectionGroup === group.id ? '' : 'black'"
+                  :color="selectionGroupId === group.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionGroupId === group.id ? '' : 'black'"
                   v-for="group in groups"
                   :val="group.id"
                   :key="group.id"
@@ -774,7 +797,7 @@ const deployServer = async () => {
                   dense
                   no-caps
                   :ripple="false"
-                  @click="selectionGroup = group.id"
+                  @click="selectionGroupId = group.id"
                 >
                   {{ group.name }}
                 </q-btn>
@@ -846,7 +869,8 @@ const deployServer = async () => {
             </div>
 
             <div class="col-11">
-              <div v-if="images.length === 0" class="row items-center">
+              <div v-if="images.filter(image => image.serviceId === selectionServiceId).length === 0"
+                   class="row items-center">
                 {{ tc('noOperatingSystem') }}
               </div>
 
@@ -898,8 +922,8 @@ const deployServer = async () => {
                 <q-select
                   class="col-auto"
                   style="min-width: 220px;"
-                  v-model="selectionImage"
-                  :options="[...new Set(images.filter(image => image.release === selectionImageRelease).map(image => image.id))]"
+                  v-model="selectionImageId"
+                  :options="[...new Set(images.filter(image => image.serviceId === selectionServiceId).filter(image => image.release === selectionImageRelease).map(image => image.id))]"
                   outlined
                   dense
                 >
@@ -908,10 +932,10 @@ const deployServer = async () => {
                   <template v-slot:selected-item="scope">
 
                     <div class="row items-center"
-                         :class="selectionImage===scope.opt ? 'text-primary' : 'text-black'"
+                         :class="selectionImageId===scope.opt ? 'text-primary' : 'text-black'"
                     >
                       {{
-                        `${images.filter(image => image?.id === scope.opt)[0]?.name}(${images.filter(image => image?.id === scope.opt)[0]?.architecture})`
+                        `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}(${images.find(image => image?.id === scope.opt)?.architecture})`
                       }}
                     </div>
 
@@ -923,7 +947,7 @@ const deployServer = async () => {
 
                       <div class="row items-center">
                         {{
-                          `${images.filter(image => image?.id === scope.opt)[0]?.name}(${images.filter(image => image?.id === scope.opt)[0]?.architecture})`
+                          `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}(${images.find(image => image?.id === scope.opt)?.architecture})`
                         }}
                       </div>
 
@@ -980,37 +1004,38 @@ const deployServer = async () => {
                 {{ tc('noNetwork') }}
               </div>
 
-              <div v-if="privateNetworks.length > 0" class="col q-pb-md">
+              <div v-if="privateNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
+                   class="col q-pb-md">
                 <div class="row"
-                     :class="selectionNetwork === 'randomPrivate' || !store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPrivate' || !store.tables.serviceNetworkTable.byLocalId[`${selectionServiceId}-${selectionNetworkId}`]?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('privateNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-md">
 
                   <!--按钮：随机选择私网网络-->
                   <q-btn
-                    :color="selectionNetwork === 'randomPrivate' ? 'primary' : 'grey-3'"
-                    :text-color="selectionNetwork === 'randomPrivate' ? '' : 'black'"
+                    :color="selectionNetworkId === 'randomPrivate' ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetworkId === 'randomPrivate' ? '' : 'black'"
                     unelevated
                     dense
                     no-caps
                     :ripple="false"
-                    @click="selectionNetwork = 'randomPrivate'"
+                    @click="selectionNetworkId = 'randomPrivate'"
                   >
                     {{ tc('randomPrivateNetwork') }}
                   </q-btn>
 
                   <q-btn
-                    v-for="network in privateNetworks"
+                    v-for="network in privateNetworks.filter(network => network.serviceId === selectionServiceId)"
                     :val="network.id"
                     :key="network.id"
-                    :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
-                    :text-color="selectionNetwork === network.id ? '' : 'black'"
+                    :color="selectionNetworkId === network.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetworkId === network.id ? '' : 'black'"
                     unelevated
                     dense
                     no-caps
                     :ripple="false"
-                    @click="selectionNetwork = network.id"
+                    @click="selectionNetworkId = network.id"
                   >
                     <div class="column"
                          style="line-height: 0.9;">
@@ -1026,37 +1051,38 @@ const deployServer = async () => {
                 </div>
               </div>
 
-              <div v-if="publicNetworks.length > 0" class="col q-pb-md ">
+              <div v-if="publicNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
+                   class="col q-pb-md ">
                 <div class="row"
-                     :class="selectionNetwork === 'randomPublic' || store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPublic' || store.tables.serviceNetworkTable.byLocalId[`${selectionServiceId}-${selectionNetworkId}`]?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('publicNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-md">
 
                   <!--按钮：随机选择公网网络-->
                   <q-btn
-                    :color="selectionNetwork === 'randomPublic' ? 'primary' : 'grey-3'"
-                    :text-color="selectionNetwork === 'randomPublic' ? '' : 'black'"
+                    :color="selectionNetworkId === 'randomPublic' ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetworkId === 'randomPublic' ? '' : 'black'"
                     unelevated
                     dense
                     no-caps
                     :ripple="false"
-                    @click="selectionNetwork = 'randomPublic'"
+                    @click="selectionNetworkId = 'randomPublic'"
                   >
                     {{ tc('randomPublicNetwork') }}
                   </q-btn>
 
                   <q-btn
-                    v-for="network in publicNetworks"
+                    v-for="network in publicNetworks.filter(network => network.serviceId === selectionServiceId)"
                     :val="network.id"
                     :key="network.id"
-                    :color="selectionNetwork === network.id ? 'primary' : 'grey-3'"
-                    :text-color="selectionNetwork === network.id ? '' : 'black'"
+                    :color="selectionNetworkId === network.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionNetworkId === network.id ? '' : 'black'"
                     unelevated
                     dense
                     no-caps
                     :ripple="false"
-                    @click="selectionNetwork = network.id"
+                    @click="selectionNetworkId = network.id"
                   >
                     <div class="column"
                          style="line-height: 0.9;">
@@ -1082,22 +1108,23 @@ const deployServer = async () => {
             </div>
 
             <div class="col-11 row">
-              <div v-if="flavors.length === 0" class="col-auto row items-center">
+              <div v-if="flavors.filter(flavor => flavor.service_id === selectionServiceId).length === 0"
+                   class="col-auto row items-center">
                 {{ tc('noServerSize') }}
               </div>
 
               <div v-else class="col-auto row items-center q-gutter-md">
                 <q-btn
-                  v-for="flavor in flavors"
+                  v-for="flavor in flavors.filter(flavor => flavor.service_id === selectionServiceId)"
                   :val="flavor.id"
                   :key="flavor.id"
-                  :color="selectionFlavor === flavor.id ? 'primary' : 'grey-3'"
-                  :text-color="selectionFlavor === flavor.id ? '' : 'black'"
+                  :color="selectionFlavorId === flavor.id ? 'primary' : 'grey-3'"
+                  :text-color="selectionFlavorId === flavor.id ? '' : 'black'"
                   unelevated
                   dense
                   no-caps
                   :ripple="false"
-                  @click="selectionFlavor = flavor.id"
+                  @click="selectionFlavorId = flavor.id"
                 >
                   {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
                 </q-btn>
@@ -1152,8 +1179,8 @@ const deployServer = async () => {
 
                 <div v-if="selectionOwner === 'group'"
                      class="col-auto"
-                     :class="store.tables.groupTable.byId[selectionGroup]?.name ? 'text-primary' : 'text-red'">
-                  {{ store.tables.groupTable.byId[selectionGroup]?.name || tc('noGroup') }}
+                     :class="compSelectionGroup?.name ? 'text-primary' : 'text-red'">
+                  {{ compSelectionGroup?.name || tc('noGroup') }}
                 </div>
 
               </div>
@@ -1165,19 +1192,19 @@ const deployServer = async () => {
                   {{ tc('serviceUnit') }}
                 </div>
                 <div
-                  v-if="store.tables.dataCenterTable.byId[selectionDatacenter] && store.tables.serviceTable.byId[selectionService]"
+                  v-if="compSelectionDatacenter && compSelectionService"
                   class="col-auto text-primary">
                   <div v-if="i18n.global.locale === 'zh'">
-                    <div>{{ store.tables.serviceTable.byId[selectionService]?.name }}</div>
-                    <div>{{ store.tables.dataCenterTable.byId[selectionDatacenter]?.name }}</div>
+                    <div>{{ compSelectionService?.name }}</div>
+                    <div>{{ compSelectionDatacenter?.name }}</div>
                   </div>
                   <div v-else>
-                    <div>{{ store.tables.serviceTable.byId[selectionService]?.name_en }}</div>
-                    <div>{{ store.tables.dataCenterTable.byId[selectionDatacenter]?.name_en }}</div>
+                    <div>{{ compSelectionService?.name_en }}</div>
+                    <div>{{ compSelectionDatacenter?.name_en }}</div>
                   </div>
                 </div>
                 <CloudPlatformLogo class="col-auto"
-                                   :platform-name="store.tables.serviceTable.byId[selectionService]?.service_type"/>
+                                   :platform-name="compSelectionService?.service_type"/>
 
               </div>
             </div>
@@ -1192,12 +1219,13 @@ const deployServer = async () => {
                   {{ tc('operatingSystem') }}
                 </div>
                 <div class="col-auto text-primary">
-                  <div v-if="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name">
+                  <div
+                    v-if="compSelectionImage?.name">
                     <OsLogo
-                      :os-name="store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name"
+                      :os-name="compSelectionImage?.name"
                       size="sm"
                     />
-                    {{ store.tables.serviceImageTable.byLocalId[`${selectionService}-${selectionImage}`]?.name }}
+                    {{ compSelectionImage?.name }}
                   </div>
                   <div v-else class="text-red">
                     {{ tc('selectOperatingSystem') }}
@@ -1213,25 +1241,23 @@ const deployServer = async () => {
                 </div>
 
                 <div
-                  v-if="selectionNetwork.includes('random')"
+                  v-if="selectionNetworkId.includes('random')"
                   class="col-auto text-primary"
                 >
-                  <div v-if="selectionNetwork === 'randomPrivate'">
+                  <div v-if="selectionNetworkId === 'randomPrivate'">
                     {{ tc('randomPrivateNetwork') }}
                   </div>
-                  <div v-if="selectionNetwork === 'randomPublic'">
+                  <div v-if="selectionNetworkId === 'randomPublic'">
                     {{ tc('randomPublicNetwork') }}
                   </div>
                 </div>
                 <div
-                  v-else-if="store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.name"
+                  v-else-if="compSelectionNetwork?.name"
                   class="col-auto text-primary"
                 >
-                  {{
-                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.public ? tc('publicNetwork') : tc('privateNetwork')
-                  }}: {{
-                    store.tables.serviceNetworkTable.byLocalId[`${selectionService}-${selectionNetwork}`]?.segment
-                  }}
+                  {{ compSelectionNetwork?.public ? tc('publicNetwork') : tc('privateNetwork') }}
+                  :
+                  {{ compSelectionNetwork?.segment }}
                 </div>
                 <div v-else class="text-red">
                   {{ tc('selectNetwork') }}
@@ -1246,10 +1272,10 @@ const deployServer = async () => {
                   {{ tc('serverSize') }}
                 </div>
 
-                <div v-if="store.tables.fedFlavorTable.byId[selectionFlavor]"
+                <div v-if="compSelectionFlavor"
                      class="col-auto text-primary ">
                   {{
-                    `${store.tables.fedFlavorTable.byId[selectionFlavor].vcpus} ${tc('countCore', store.tables.fedFlavorTable.byId[selectionFlavor].vcpus)} / ${store.tables.fedFlavorTable.byId[selectionFlavor].ram / 1024} GB`
+                    `${compSelectionFlavor?.vcpus} ${tc('countCore', compSelectionFlavor?.vcpus)} / ${compSelectionFlavor?.ram / 1024} GB`
                   }}
                 </div>
                 <div v-else class="text-red">
@@ -1294,7 +1320,6 @@ const deployServer = async () => {
             <div class="row items-center justify-center text-primary text-subtitle1 text-weight-bold"
                  style="line-height: 1;">
               <div v-if="selectionPayment === 'prepaid'" class="col-auto">
-                <!--                {{ selectionPeriod }} {{ tc('countMonth', store.tables.fedFlavorTable.byId[selectionPeriod]?.vcpus) }}-->
                 {{ selectionPeriod }} {{ tc('countMonth', selectionPeriod) }}
               </div>
             </div>

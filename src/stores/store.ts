@@ -198,6 +198,9 @@ export interface NetworkInterface {
   // 根据查询时所填的serviceId补充
   service: string
   localId: string
+
+  // new
+  serviceId: string
 }
 
 export interface ImageInterface {
@@ -214,9 +217,13 @@ export interface ImageInterface {
   default_password: string
   min_sys_disk_gb: number
   min_ram_mb: number
+
   // 根据查询时所填的serviceId补充
   service: string
   localId: string
+
+  // new
+  serviceId: string
 }
 
 export interface VpnInterface {
