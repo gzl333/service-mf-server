@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
-import { useStore } from 'stores/store'
+import { ServerInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+import api from 'src/api'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
@@ -35,12 +36,17 @@ const groupId = route.params.groupId as string
 
 // group对象
 const group = computed(() => store.tables.groupTable.byId[groupId])
+
 // groupMember
 const groupMember = computed(() => store.tables.groupMemberTable.byId[groupId])
+
 // groupServer
 const servers = computed(() => store.getGroupServersByGroupId(groupId))
+void store.updateGroupServerTable(groupId)
+
 // groupOrder
 const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
+
 // groupCoupon
 const coupons = computed(() => store.getGroupCouponsByGroupId(groupId))
 

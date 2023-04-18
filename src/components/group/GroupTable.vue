@@ -78,14 +78,14 @@ const columns = computed(() => [
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
   },
-  {
-    name: 'server',
-    label: (() => tc('components.group.GroupTable.server'))(),
-    field: 'server',
-    align: 'center',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 5px'
-  },
+  // {
+  //   name: 'server',
+  //   label: (() => tc('components.group.GroupTable.server'))(),
+  //   field: 'server',
+  //   align: 'center',
+  //   style: 'padding: 15px 0px',
+  //   headerStyle: 'padding: 0 5px'
+  // },
   {
     name: 'order',
     label: (() => tc('components.group.GroupTable.order'))(),
@@ -198,13 +198,13 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             </q-btn>
           </q-td>
 
-          <q-td key="server" :props="props">
-            <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
-              {{ store.getGroupServersByGroupId(props.row.id).length }}
-              {{ tc('components.group.GroupTable.servers') }}
-            </q-btn>
-          </q-td>
+<!--          <q-td key="server" :props="props">-->
+<!--            <q-btn color="primary" flat padding="none" dense no-caps-->
+<!--                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">-->
+<!--              {{ store.getGroupServersByGroupId(props.row.id).length }}-->
+<!--              {{ tc('components.group.GroupTable.servers') }}-->
+<!--            </q-btn>-->
+<!--          </q-td>-->
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps

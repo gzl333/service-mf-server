@@ -65,15 +65,15 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     :ripple="false"
                     @click="activeTab = 'list'; navigateToUrl('/my/server/group/list')"
                   />
-                  <q-tab
-                    no-caps
-                    class="q-px-none q-py-md q-mx-sm"
-                    name="server"
-                    icon="computer"
-                    :label="tc('pages.group.GroupIndex.server_list')"
-                    :ripple="false"
-                    @click="activeTab = 'server'; navigateToUrl('/my/server/group/server/list')"
-                  />
+<!--                  <q-tab-->
+<!--                    no-caps-->
+<!--                    class="q-px-none q-py-md q-mx-sm"-->
+<!--                    name="server"-->
+<!--                    icon="computer"-->
+<!--                    :label="tc('pages.group.GroupIndex.server_list')"-->
+<!--                    :ripple="false"-->
+<!--                    @click="activeTab = 'server'; navigateToUrl('/my/server/group/server/list')"-->
+<!--                  />-->
                   <q-tab
                     no-caps
                     class="q-px-none q-py-md q-mx-sm"

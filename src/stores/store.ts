@@ -621,6 +621,16 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupOrderTableInterface,
+        groupServerTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupServerTableInterface,
+        groupCouponTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupCouponTableInterface,
         dataCenterTable: {
           byId: {},
           allIds: [],
@@ -641,11 +651,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedAllocationTableInterface,
-        // adminQuotaApplicationTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as AdminQuotaApplicationTableInterface,
         adminServerTable: {
           byId: {},
           allIds: [],
@@ -656,11 +661,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedFlavorTableInterface,
-        // fedQuotaActivityTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as FedQuotaActivityTableInterface,
         serviceNetworkTable: {
           byLocalId: {},
           allLocalIds: [],
@@ -676,16 +676,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as UserVpnTableInterface,
-        // personalQuotaApplicationTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as PersonalQuotaApplicationTableInterface,
-        // personalQuotaTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as PersonalQuotaTableInterface,
         personalServerTable: {
           byId: {},
           allIds: [],
@@ -696,31 +686,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as PersonalOrderTableInterface,
-        // groupQuotaApplicationTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as GroupQuotaApplicationTableInterface,
-        // groupQuotaTable: {
-        //   byId: {},
-        //   allIds: [],
-        //   status: 'init'
-        // } as GroupQuotaTableInterface,
-        groupServerTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupServerTableInterface,
         personalCouponTable: {
           byId: {},
           allIds: [],
           status: 'init'
-        } as PersonalCouponTableInterface,
-        groupCouponTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupCouponTableInterface
+        } as PersonalCouponTableInterface
         /* 整体加载表：一旦加载则全部加载 */
 
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
@@ -1494,9 +1464,9 @@ export const useStore = defineStore('server', {
               }
 
               // serverTable涉及到很多server status请求，应放在最后
-              if (this.tables.groupServerTable.status === 'init') {
-                void this.loadGroupServerTable()
-              }
+              // if (this.tables.groupServerTable.status === 'init') {
+              //   void this.loadGroupServerTable()
+              // }
             })
           }
         })
@@ -2022,6 +1992,53 @@ export const useStore = defineStore('server', {
           continue
         }
       }
+      // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
+      for (const serverId of this.tables.groupServerTable.allIds) {
+        this.loadSingleServerStatus({
+          isGroup: true,
+          serverId
+        })
+      }
+      this.tables.groupServerTable.status = 'total'
+    },
+    // 更新groupServerTable，后端分页，只保存一页
+    async updateGroupServerTable (
+      vo_id: string,
+      page?: number,
+      page_size?: number,
+      service_id?: string
+    ) {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.groupServerTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      this.tables.groupServerTable.status = 'loading'
+      // 根据groupTable,建立groupServerTable
+
+      try {
+        // 发送请求
+        const respGroupServer = await api.server.server.getServerVo({
+          path: {
+            vo_id
+          },
+          query: {
+            page,
+            page_size,
+            service_id
+          }
+        })
+        for (const server of respGroupServer.data.servers) {
+          Object.assign(server, { status: 0 })
+          Object.assign(this.tables.groupServerTable.byId, { [server.id]: server })
+          this.tables.groupServerTable.allIds.unshift(server.id)
+          this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
+        }
+      } catch (exception) {
+        // exceptionNotifier(exception)
+      }
+
       // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
       for (const serverId of this.tables.groupServerTable.allIds) {
         this.loadSingleServerStatus({
