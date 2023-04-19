@@ -919,6 +919,13 @@ export default {
     }) {
       const data = payload.body
       return axiosServer.post('/vo/' + payload.path.id + '/remove-members', data)
+    },
+    getVoStatistic (payload: {
+      path: {
+        id: string
+      }
+    }) {
+      return axiosServer.get('/vo/' + payload.path.id + '/statistic')
     }
   },
   vpn: {

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
-import { ServerInterface, useStore } from 'stores/store'
+import { useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import api from 'src/api'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
@@ -41,10 +40,14 @@ const group = computed(() => store.tables.groupTable.byId[groupId])
 const groupMember = computed(() => store.tables.groupMemberTable.byId[groupId])
 
 // groupServer
+// 根据当前页面需求，更新group server
+void store.loadGroupServerTable({ groupId })
+// 这个getter很重要，避免快速切换组列表页面时，table内混入了其他组的server
 const servers = computed(() => store.getGroupServersByGroupId(groupId))
-void store.updateGroupServerTable(groupId)
 
 // groupOrder
+// 根据当前页面需求，更新group order
+void store.loadGroupOrderTable({ groupId })
 const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
 
 // groupCoupon
@@ -92,7 +95,7 @@ const clickToCopy = useCopyToClipboard()
               <div class="col-auto column items-end">
                 <div class="text-grey q-pa-none">{{ tc('pages.group.GroupDetail.group_account_balance') }}</div>
                 <div class="row items-end">
-                  <div class="text-h4">{{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}</div>
+                  <div class="text-h4">{{ group.stats.balance }}</div>
                   <div class="text-h6">{{ tc('pages.group.GroupDetail.points') }}
                   </div>
                 </div>
@@ -159,19 +162,19 @@ const clickToCopy = useCopyToClipboard()
 
                       <div v-if="i18n.global.locale==='zh'" class="column justify-center items-center">
                         <div class="col">
-                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}
+                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}
                         </div>
                         <div class="col">
-                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}
+                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}
                         </div>
                       </div>
 
                       <div v-else class="column justify-center items-center">
                         <div class="col">
-                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}
+                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}
                         </div>
                         <div class="col">
-                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}
+                          {{ new Date(group.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}
                         </div>
                       </div>
 

@@ -42,7 +42,7 @@ const exceptionNotifier = useExceptionNotifier()
 // 目前判断个人账户或者项目组账户余额大于0
 const isAllowPostpaid = computed(() => {
   if (props.isGroup) {
-    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[radioGroup.value]?.balance]?.balance) > 0
+    return Number(store.tables.groupTable.byId[radioGroup.value]?.stats.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }
@@ -325,7 +325,7 @@ const deployServer = async () => {
                   </q-item-label>
                   <q-item-label caption>
                     {{ tc('components.server.ServerDeployCard.balance') }}:
-                    {{ store.tables.groupBalanceTable.byId[scope.opt.balance]?.balance }}
+                    {{ scope.opt.stats.balance }}
                     {{ tc('components.server.ServerDeployCard.points') }}
                   </q-item-label>
                 </q-item-section>
@@ -339,7 +339,7 @@ const deployServer = async () => {
                   <q-item-label>{{ scope.opt.name }}</q-item-label>
                   <q-item-label caption>
                     {{ tc('components.server.ServerDeployCard.balance') }}:
-                    {{ store.tables.groupBalanceTable.byId[scope.opt.balance]?.balance }}
+                    {{ scope.opt.stats.balance }}
                     {{ tc('components.server.ServerDeployCard.points') }}
                   </q-item-label>
                 </q-item-section>

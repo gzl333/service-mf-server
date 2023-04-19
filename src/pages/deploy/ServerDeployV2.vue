@@ -51,7 +51,7 @@ const isAllowPostpaid = computed(() => {
 
   // 普通用户进行判断
   if (selectionOwner.value === 'group') {
-    return Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[selectionGroup.value]?.balance]?.balance) > 0
+    return Number(store.tables.groupTable.byId[selectionGroup.value]?.stats.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }
@@ -481,7 +481,7 @@ const deployServer = async () => {
                           </div>
                         </div>
                         <div class="row items-center justify-center text-caption text-black">
-                          {{ tc('balance') }}: {{ store.tables.groupBalanceTable.byId[group.balance]?.balance }}
+                          {{ tc('balance') }}: {{ group.stats.balance }}
                           {{ tc('points') }}
                         </div>
                       </div>

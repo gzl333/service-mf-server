@@ -58,14 +58,24 @@ export interface GroupInterface {
   status: string // 'active' | 'inactive' ?
 
   // 以下字段自行判断添加
+
   // 当前用户在组内权限  owner > leader > member
   myRole: 'owner' | 'leader' | 'member'
-  // 余额
-  balance: string // groupBalanceTable 内的id值
   // 订单
   order: string[] // orderId
   // coupon
   coupons: string[] // couponId
+  // 余额 to del
+  // balance: string // groupBalanceTable 内的id值
+
+  // group stats接口补充
+  stats: {
+    member_count: number
+    server_count: number
+    order_count: number
+    coupon_count: number
+    balance: string
+  }
 }
 
 export interface SingleMemberInterface {
@@ -502,7 +512,7 @@ export interface GroupBalanceTableInterface extends totalTable, idTable<GroupBal
 }
 
 // 组订单table
-export interface GroupOrderTableInterface extends totalTable, idTable<OrderInterface> {
+export interface GroupOrderTableInterface extends partTable, idTable<OrderInterface> {
 }
 
 // 联邦层级datacenter
@@ -575,7 +585,7 @@ export interface PersonalOrderTableInterface extends totalTable, idTable<OrderIn
 // }
 
 // 项目组云主机
-export interface GroupServerTableInterface extends totalTable, idTable<ServerInterface> {
+export interface GroupServerTableInterface extends partTable, idTable<ServerInterface> {
 }
 
 // 个人coupon
@@ -616,16 +626,6 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupBalanceTableInterface,
-        groupOrderTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupOrderTableInterface,
-        groupServerTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupServerTableInterface,
         groupCouponTable: {
           byId: {},
           allIds: [],
@@ -690,11 +690,20 @@ export const useStore = defineStore('server', {
           byId: {},
           allIds: [],
           status: 'init'
-        } as PersonalCouponTableInterface
+        } as PersonalCouponTableInterface,
         /* 整体加载表：一旦加载则全部加载 */
 
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
-        //
+        groupServerTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupServerTableInterface,
+        groupOrderTable: {
+          byId: {},
+          allIds: [],
+          status: 'init'
+        } as GroupOrderTableInterface
         /* 累积加载表：根据用户操作逐步加载，无法判断是否完全加载 */
 
       }
@@ -1386,8 +1395,8 @@ export const useStore = defineStore('server', {
         void this.loadGroupMemberTable().then(() => {
           // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
           // void this.loadGroupQuotaApplicationTable()
-          void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-          void this.loadGroupBalanceTable()
+          // void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+          // void this.loadGroupBalanceTable()
           void this.loadGroupCouponTable()
           // serverTable涉及到很多server status请求，应放在最后
           // void this.loadGroupServerTable()
@@ -1456,12 +1465,12 @@ export const useStore = defineStore('server', {
                 void this.loadGroupCouponTable()
               }
 
-              if (this.tables.groupOrderTable.status === 'init') {
-                void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-              }
-              if (this.tables.groupBalanceTable.status === 'init') {
-                void this.loadGroupBalanceTable()
-              }
+              // if (this.tables.groupOrderTable.status === 'init') {
+              //   void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+              // }
+              // if (this.tables.groupBalanceTable.status === 'init') {
+              //   void this.loadGroupBalanceTable()
+              // }
 
               // serverTable涉及到很多server status请求，应放在最后
               // if (this.tables.groupServerTable.status === 'init') {
@@ -1503,7 +1512,14 @@ export const useStore = defineStore('server', {
             myRole,
             balance: '',
             order: [],
-            coupons: []
+            coupons: [],
+            stats: {
+              member_count: 0,
+              server_count: 0,
+              order_count: 0,
+              coupon_count: 0,
+              balance: '0'
+            }
           })
           // normalize
           const normalizedData = normalize(data, group)
@@ -1512,7 +1528,15 @@ export const useStore = defineStore('server', {
           this.tables.groupTable.allIds.unshift(Object.keys(normalizedData.entities.group as Record<string, unknown>)[0])
           this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
         }
-        // load table的最后再改status
+
+        // 建立groupTable之后，分别更新每个group stats, 并发更新，无需await
+        for (const groupId of this.tables.groupTable.allIds) {
+          this.loadSingleGroupStats({
+            groupId
+          })
+        }
+
+        // table status
         this.tables.groupTable.status = 'total'
       } catch (exception) {
         // exceptionNotifier(exception)
@@ -1557,86 +1581,133 @@ export const useStore = defineStore('server', {
       }
       this.tables.groupMemberTable.status = 'total'
     },
-    // 根据groupTable, 建立groupBalanceTable
-    async loadGroupBalanceTable () {
-      // 先清空table，避免多次更新时数据累加
-      this.tables.groupBalanceTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-
-      this.tables.groupBalanceTable.status = 'loading'
-
-      for (const groupId of this.tables.groupTable.allIds) {
-        try {
-          const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
-          // normalize
-          const groupBalance = new schema.Entity('groupBalance')
-          const normalizedData = normalize(respGroupBalance.data, groupBalance)
-          // 存入state
-          Object.assign(this.tables.groupBalanceTable.byId, normalizedData.entities.groupBalance)
-          this.tables.groupBalanceTable.allIds.unshift(Object.keys(normalizedData.entities.groupBalance as Record<string, unknown>)[0])
-          this.tables.groupBalanceTable.allIds = [...new Set(this.tables.groupBalanceTable.allIds)]
-          // 给groupTable补充balance字段
-          this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
-        } catch (exception) {
-          // exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
-        }
-      }
-      this.tables.groupBalanceTable.status = 'total'
-    },
-    // 更新单个的groupBalance
-    async loadSingleGroupBalance (groupId: string) {
-      this.tables.groupBalanceTable.status = 'loading'
+    // // 根据groupTable, 建立groupBalanceTable
+    // async loadGroupBalanceTable () {
+    //   // 先清空table，避免多次更新时数据累加
+    //   this.tables.groupBalanceTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //
+    //   this.tables.groupBalanceTable.status = 'loading'
+    //
+    //   for (const groupId of this.tables.groupTable.allIds) {
+    //     try {
+    //       const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
+    //       // normalize
+    //       const groupBalance = new schema.Entity('groupBalance')
+    //       const normalizedData = normalize(respGroupBalance.data, groupBalance)
+    //       // 存入state
+    //       Object.assign(this.tables.groupBalanceTable.byId, normalizedData.entities.groupBalance)
+    //       this.tables.groupBalanceTable.allIds.unshift(Object.keys(normalizedData.entities.groupBalance as Record<string, unknown>)[0])
+    //       this.tables.groupBalanceTable.allIds = [...new Set(this.tables.groupBalanceTable.allIds)]
+    //       // 给groupTable补充balance字段
+    //       this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
+    //     } catch (exception) {
+    //       // exceptionNotifier(exception)
+    //       // 继续下一个循环
+    //       continue
+    //     }
+    //   }
+    //   this.tables.groupBalanceTable.status = 'total'
+    // },
+    // // 更新单个的groupBalance
+    // async loadSingleGroupBalance (groupId: string) {
+    //   this.tables.groupBalanceTable.status = 'loading'
+    //   try {
+    //     const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
+    //     // normalize
+    //     const groupBalance = new schema.Entity('groupBalance')
+    //     const normalizedData = normalize(respGroupBalance.data, groupBalance)
+    //     // 存入state
+    //     Object.assign(this.tables.groupBalanceTable.byId, normalizedData.entities.groupBalance)
+    //     this.tables.groupBalanceTable.allIds.unshift(Object.keys(normalizedData.entities.groupBalance as Record<string, unknown>)[0])
+    //     this.tables.groupBalanceTable.allIds = [...new Set(this.tables.groupBalanceTable.allIds)]
+    //     // 给groupTable补充balance字段
+    //     this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
+    //     this.tables.groupBalanceTable.status = 'total'
+    //   } catch (exception) {
+    //     // exceptionNotifier(exception)
+    //     this.tables.groupBalanceTable.status = 'error'
+    //   }
+    // },
+    // 给group对象补充stats相关字段， 注意调用本函数时，不应await，而是并发更新
+    async loadSingleGroupStats (payload: {
+      groupId: string
+    }) {
       try {
-        const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: groupId } })
-        // normalize
-        const groupBalance = new schema.Entity('groupBalance')
-        const normalizedData = normalize(respGroupBalance.data, groupBalance)
-        // 存入state
-        Object.assign(this.tables.groupBalanceTable.byId, normalizedData.entities.groupBalance)
-        this.tables.groupBalanceTable.allIds.unshift(Object.keys(normalizedData.entities.groupBalance as Record<string, unknown>)[0])
-        this.tables.groupBalanceTable.allIds = [...new Set(this.tables.groupBalanceTable.allIds)]
-        // 给groupTable补充balance字段
-        this.tables.groupTable.byId[groupId].balance = respGroupBalance.data.id
-        this.tables.groupBalanceTable.status = 'total'
+        const respGroupStats = await api.server.vo.getVoStatistic({ path: { id: payload.groupId } })
+        this.tables.groupTable.byId[payload.groupId].stats = {
+          balance: respGroupStats.data.balance,
+          coupon_count: respGroupStats.data.coupon_count,
+          member_count: respGroupStats.data.member_count,
+          order_count: respGroupStats.data.order_count,
+          server_count: respGroupStats.data.server_count
+        }
       } catch (exception) {
         // exceptionNotifier(exception)
-        this.tables.groupBalanceTable.status = 'error'
       }
     },
     // 根据groupTable, 建立groupOrderTable
-    async loadGroupOrderTable () {
+    async loadGroupOrderTable (payload: {
+      page?: number
+      pageSize?: number
+      orderType?: 'new' | 'renewal' | 'upgrade' | 'downgrade'
+      status?: 'paid' | 'unpaid' | 'cancelled' | 'refund'
+      timeStart?: string
+      timeEnd?: string
+      groupId: string
+    }) {
+      // clear
       this.tables.groupOrderTable = {
         byId: {},
         allIds: [],
         status: 'init'
       }
+      // table status
       this.tables.groupOrderTable.status = 'loading'
-      for (const groupId of this.tables.groupTable.allIds) {
-        try {
-          const respGetOrder = await api.server.order.getOrder({ query: { vo_id: groupId } })
-          const order = new schema.Entity('order')
-          for (const data of respGetOrder.data.orders) {
-            // orderId补充进group的order字段
-            this.tables.groupTable.byId[groupId].order.push(data.id)
-            // get order details
-            const respGetOrderId = await api.server.order.getOrderId({ path: { id: data.id } })
-            const normalizedData = normalize(respGetOrderId.data, order)
-            Object.assign(this.tables.groupOrderTable.byId, normalizedData.entities.order)
-            this.tables.groupOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
-            this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
+
+      // load
+      try {
+        const respGetOrder = await api.server.order.getOrder({
+          query: {
+            page: payload.page,
+            page_size: payload.pageSize,
+            resource_type: 'vm',
+            order_type: payload.orderType,
+            status: payload.status,
+            time_start: payload.timeStart,
+            time_end: payload.timeEnd,
+            vo_id: payload.groupId
           }
-        } catch (exception) {
-          // exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
+        })
+
+        for (const order of respGetOrder.data.orders) {
+          try {
+            // get order details
+            const respGetOrderId = await api.server.order.getOrderId({ path: { id: order.id } })
+
+            // store
+            Object.assign(this.tables.groupOrderTable.byId, { [respGetOrderId.data.id]: respGetOrderId.data })
+            this.tables.groupOrderTable.allIds.unshift(respGetOrderId.data.id)
+            this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
+
+            // orderId补充进group的order字段
+            this.tables.groupTable.byId[payload?.groupId].order.push(order.id)
+          } catch (exception) {
+            // exceptionNotifier(exception)
+            this.tables.groupOrderTable.status = 'part'
+            // 继续下一个循环
+            continue
+          }
         }
+      } catch (exception) {
+        // exceptionNotifier(exception)
       }
-      this.tables.groupOrderTable.status = 'total'
+
+      // table status
+      this.tables.groupOrderTable.status = 'part'
     },
 
     /* dataCenterTable */
@@ -1861,24 +1932,27 @@ export const useStore = defineStore('server', {
       }
       this.tables.userVpnTable.status = 'total'
     },
-    // 加载单个order,下单后和交付后更新使用
+    // 加载单个order,下单后和交付后更新使用, orderDetail加载使用
     async loadSingleOrder (payload: {
       isGroup: boolean,
       orderId: string
     }) {
       if (payload.isGroup) {
+        // table status
         this.tables.groupOrderTable.status = 'loading'
+
+        // load
         try {
+          // get data
           const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
           // groupTable补充order字段
           this.tables.groupTable.byId[respGetOrderId.data.vo_id].order.push(payload.orderId)
           // 补充groupOrderTable
-          const order = new schema.Entity('order')
-          const normalizedData = normalize(respGetOrderId.data, order)
-          Object.assign(this.tables.groupOrderTable.byId, normalizedData.entities.order)
-          this.tables.groupOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+          Object.assign(this.tables.groupOrderTable.byId, { [respGetOrderId.data.id]: respGetOrderId.data })
+          this.tables.groupOrderTable.allIds.unshift(respGetOrderId.data.id)
           this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
-          this.tables.groupOrderTable.status = 'total'
+          // table status
+          this.tables.groupOrderTable.status = 'part'
         } catch (exception) {
           // exceptionNotifier(exception)
           this.tables.groupOrderTable.status = 'error'
@@ -1888,10 +1962,8 @@ export const useStore = defineStore('server', {
         try {
           const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
           // 补充personalOrderTable
-          const order = new schema.Entity('order')
-          const normalizedData = normalize(respGetOrderId.data, order)
-          Object.assign(this.tables.personalOrderTable.byId, normalizedData.entities.order)
-          this.tables.personalOrderTable.allIds.unshift(Object.keys(normalizedData.entities.order as Record<string, unknown>)[0])
+          Object.assign(this.tables.personalOrderTable.byId, { [respGetOrderId.data.id]: respGetOrderId.data })
+          this.tables.personalOrderTable.allIds.unshift(respGetOrderId.data.id)
           this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
           this.tables.personalOrderTable.status = 'total'
         } catch (exception) {
@@ -1957,76 +2029,77 @@ export const useStore = defineStore('server', {
         this.tables.personalServerTable.status = 'error'
       }
     },
-    // 更新整个groupServerTable，调用点在group模块里
-    async loadGroupServerTable () {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.groupServerTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      this.tables.groupServerTable.status = 'loading'
-      // 根据groupTable,建立groupServerTable
-      for (const groupId of this.tables.groupTable.allIds) {
-        try {
-          // 发送请求
-          const respGroupServer = await api.server.server.getServerVo({
-            path: {
-              vo_id: groupId
-            },
-            query: {
-              page_size: 999
-            }
-          })
-          // 将响应normalize
-          const server = new schema.Entity('server')
-          for (const data of respGroupServer.data.servers) {
-            const normalizedData = normalize(data, server)
-            Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
-            this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
-            this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
-          }
-        } catch (exception) {
-          // exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
-        }
-      }
-      // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
-      for (const serverId of this.tables.groupServerTable.allIds) {
-        this.loadSingleServerStatus({
-          isGroup: true,
-          serverId
-        })
-      }
-      this.tables.groupServerTable.status = 'total'
-    },
-    // 更新groupServerTable，后端分页，只保存一页
-    async updateGroupServerTable (
-      vo_id: string,
-      page?: number,
-      page_size?: number,
-      service_id?: string
-    ) {
-      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
-      this.tables.groupServerTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      this.tables.groupServerTable.status = 'loading'
-      // 根据groupTable,建立groupServerTable
+    // // 更新整个groupServerTable，调用点在group模块里
+    // async loadGroupServerTable () {
+    //   // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+    //   this.tables.groupServerTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   this.tables.groupServerTable.status = 'loading'
+    //   // 根据groupTable,建立groupServerTable
+    //   for (const groupId of this.tables.groupTable.allIds) {
+    //     try {
+    //       // 发送请求
+    //       const respGroupServer = await api.server.server.getServerVo({
+    //         path: {
+    //           vo_id: groupId
+    //         },
+    //         query: {
+    //           page_size: 999
+    //         }
+    //       })
+    //       // 将响应normalize
+    //       const server = new schema.Entity('server')
+    //       for (const data of respGroupServer.data.servers) {
+    //         const normalizedData = normalize(data, server)
+    //         Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
+    //         this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+    //         this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
+    //       }
+    //     } catch (exception) {
+    //       // exceptionNotifier(exception)
+    //       // 继续下一个循环
+    //       continue
+    //     }
+    //   }
+    //   // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
+    //   for (const serverId of this.tables.groupServerTable.allIds) {
+    //     this.loadSingleServerStatus({
+    //       isGroup: true,
+    //       serverId
+    //     })
+    //   }
+    //   this.tables.groupServerTable.status = 'part'
+    // },
 
+    // 更新groupServerTable，根据分页参数,后端分页，只保存一页
+    async loadGroupServerTable (payload: {
+      groupId: string,
+      page?: number,
+      pageSize?: number,
+      serviceId?: string
+    }) {
+      // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
+      this.tables.groupServerTable = {
+        byId: {},
+        allIds: [],
+        status: 'init'
+      }
+      this.tables.groupServerTable.status = 'loading'
+
+      // 根据groupTable,建立groupServerTable
       try {
         // 发送请求
         const respGroupServer = await api.server.server.getServerVo({
           path: {
-            vo_id
+            vo_id: payload.groupId
           },
           query: {
-            page,
-            page_size,
-            service_id
+            page: payload.page,
+            page_size: payload.pageSize,
+            service_id: payload.serviceId
           }
         })
         for (const server of respGroupServer.data.servers) {
@@ -2037,6 +2110,7 @@ export const useStore = defineStore('server', {
         }
       } catch (exception) {
         // exceptionNotifier(exception)
+        this.tables.groupServerTable.status = 'error'
       }
 
       // 建立groupServerTable之后，分别更新每个server status, 并发更新，无需await
@@ -2046,7 +2120,9 @@ export const useStore = defineStore('server', {
           serverId
         })
       }
-      this.tables.groupServerTable.status = 'total'
+
+      // table status
+      this.tables.groupServerTable.status = 'part'
     },
     // 获取并保存单个server的status
     /* *
@@ -2066,6 +2142,7 @@ export const useStore = defineStore('server', {
     12      # Failed to build the domain
     13      # An error occurred in the domain.
     *  */
+    // 注意调用本函数时，不应await，而是并发更新
     async loadSingleServerStatus (payload: {
       isGroup: boolean
       serverId: string
@@ -2090,6 +2167,7 @@ export const useStore = defineStore('server', {
         const server = new schema.Entity('server')
         const normalizedData = normalize(respSingleServer.data.server, server)
         if (payload.isGroup) {
+          // 更新table
           Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
           this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
           this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
@@ -2097,7 +2175,7 @@ export const useStore = defineStore('server', {
             isGroup: true,
             serverId: payload.serverId
           })
-          this.tables.groupServerTable.status = 'total'
+          this.tables.groupServerTable.status = 'part'
         } else {
           Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
           this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
@@ -2330,7 +2408,7 @@ export const useStore = defineStore('server', {
             setTimeout(resolve, 5000)
           ))
           // 更新单个server status
-          void this.loadSingleServerStatus({
+          this.loadSingleServerStatus({
             isGroup: payload.isGroup || false,
             serverId: payload.serverId
           })
@@ -2339,7 +2417,7 @@ export const useStore = defineStore('server', {
         } catch (exception) {
           exceptionNotifier(exception)
           // 若请求失败则应更新单个server status
-          void this.loadSingleServerStatus({
+          this.loadSingleServerStatus({
             isGroup: payload.isGroup || false,
             serverId: payload.serverId
           })
@@ -2383,8 +2461,11 @@ export const useStore = defineStore('server', {
               multiLine: false
             })
 
-            // 更新userServerTable或groupServerTable // 可以优化成直接删除
-            payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
+            // 更新userServerTable或groupServerTable // todo 可以优化成直接删除
+            // payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
+            if (!payload.isGroup) {
+              void this.loadPersonalServerTable()
+            }
 
             // 是否跳转
             if (payload.isJump) {
@@ -2394,7 +2475,7 @@ export const useStore = defineStore('server', {
           } catch (exception) {
             exceptionNotifier(exception)
             // 若请求失败则应更新单个server status
-            void this.loadSingleServerStatus({
+            this.loadSingleServerStatus({
               isGroup: payload.isGroup || false,
               serverId: payload.serverId
             })
@@ -2902,7 +2983,7 @@ export const useStore = defineStore('server', {
           // 更新order影响的余额
           if (isGroup) {
             const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
-            void await this.loadSingleGroupBalance(groupId)
+            void await this.loadSingleGroupStats({ groupId })
           } else {
             void await this.loadPersonalBalance()
           }
@@ -3047,7 +3128,7 @@ export const useStore = defineStore('server', {
         // 更新order影响的余额
         if (isGroup) {
           const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
-          void await this.loadSingleGroupBalance(groupId)
+          void await this.loadSingleGroupStats({ groupId })
         } else {
           void await this.loadPersonalBalance()
         }

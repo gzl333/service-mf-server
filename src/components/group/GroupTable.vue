@@ -78,14 +78,14 @@ const columns = computed(() => [
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
   },
-  // {
-  //   name: 'server',
-  //   label: (() => tc('components.group.GroupTable.server'))(),
-  //   field: 'server',
-  //   align: 'center',
-  //   style: 'padding: 15px 0px',
-  //   headerStyle: 'padding: 0 5px'
-  // },
+  {
+    name: 'server',
+    label: (() => tc('components.group.GroupTable.server'))(),
+    field: 'server',
+    align: 'center',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 5px'
+  },
   {
     name: 'order',
     label: (() => tc('components.group.GroupTable.order'))(),
@@ -173,43 +173,55 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="desc" :props="props">
             {{ props.row.description }}
-<!--            <q-tooltip>-->
-<!--              {{ props.row.description }}-->
-<!--            </q-tooltip>-->
+            <!--            <q-tooltip>-->
+            <!--              {{ props.row.description }}-->
+            <!--            </q-tooltip>-->
           </q-td>
 
           <q-td key="creation_time" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                }}
+              </div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                }}
+              </div>
             </div>
           </q-td>
 
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ store.tables.groupMemberTable.byId[props.row.id]?.members.length + 1 }}
+              {{ props.row.stats.member_count }}
               {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
 
-<!--          <q-td key="server" :props="props">-->
-<!--            <q-btn color="primary" flat padding="none" dense no-caps-->
-<!--                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">-->
-<!--              {{ store.getGroupServersByGroupId(props.row.id).length }}-->
-<!--              {{ tc('components.group.GroupTable.servers') }}-->
-<!--            </q-btn>-->
-<!--          </q-td>-->
+          <q-td key="server" :props="props">
+            <q-btn color="primary" flat padding="none" dense no-caps
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
+              {{ props.row.stats.server_count }}
+              {{ tc('components.group.GroupTable.servers') }}
+            </q-btn>
+          </q-td>
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
-              {{ store.getGroupOrdersByGroupId(props.row.id).length }}
+              {{ props.row.stats.order_count }}
               {{ tc('components.group.GroupTable.orders') }}
             </q-btn>
           </q-td>
@@ -217,15 +229,15 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           <q-td key="coupon" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
                    @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
-              {{ store.tables.groupTable.byId[props.row.id].coupons.length }}
+              {{ props.row.stats.coupon_count }}
               {{ tc('components.group.GroupTable.coupons') }}
             </q-btn>
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
-                 :class="Number(store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance) >= 0 ? 'text-black':'text-red'">
-              {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[props.row.id].balance]?.balance }}
+                 :class="Number(props.row.stats.balance) >= 0 ? 'text-black':'text-red'">
+              {{ props.row.stats.balance }}
               {{ tc('components.group.GroupTable.points') }}
             </div>
           </q-td>
@@ -239,13 +251,13 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
                 {{ tc('components.group.GroupTable.check_details') }}
               </q-btn>
 
-              <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole !== 'member'"
+              <q-btn v-if="props.row.myRole !== 'member'"
                      icon="edit" flat no-caps padding="none" color="primary" size="md" dense
                      @click="store.editGroupDialog(props.row.id)">
                 {{ tc('components.group.GroupTable.edit_group_info') }}
               </q-btn>
 
-              <q-btn v-if="store.tables.groupTable.byId[props.row.id]?.myRole ==='owner'"
+              <q-btn v-if="props.row.myRole ==='owner'"
                      icon="group_off" flat no-caps padding="none" dense
                      color="primary" size="md"
                      @click="store.deleteGroupDialog(props.row.id)">
