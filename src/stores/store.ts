@@ -1392,15 +1392,16 @@ export const useStore = defineStore('server', {
     forceLoadGroupModuleTable () {
       void this.loadGroupTable().then(() => {
         // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
-        void this.loadGroupMemberTable().then(() => {
-          // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-          // void this.loadGroupQuotaApplicationTable()
-          // void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-          // void this.loadGroupBalanceTable()
-          void this.loadGroupCouponTable()
-          // serverTable涉及到很多server status请求，应放在最后
-          // void this.loadGroupServerTable()
-        })
+        void this.loadGroupMemberTable()
+        // .then(() => {
+        // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+        // void this.loadGroupQuotaApplicationTable()
+        // void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+        // void this.loadGroupBalanceTable()
+        // void this.loadGroupCouponTable()
+        // serverTable涉及到很多server status请求，应放在最后
+        // void this.loadGroupServerTable()
+        // })
       })
     },
     loadAllTables () {
@@ -1455,28 +1456,29 @@ export const useStore = defineStore('server', {
         void this.loadGroupTable().then(() => {
           // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
           if (this.tables.groupMemberTable.status === 'init') {
-            void this.loadGroupMemberTable().then(() => {
-              // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-              // if (this.tables.groupQuotaApplicationTable.status === 'init') {
-              //   void this.loadGroupQuotaApplicationTable()
-              // }
+            void this.loadGroupMemberTable()
+            // .then(() => {
+            // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+            // if (this.tables.groupQuotaApplicationTable.status === 'init') {
+            //   void this.loadGroupQuotaApplicationTable()
+            // }
 
-              if (this.tables.groupCouponTable.status === 'init') {
-                void this.loadGroupCouponTable()
-              }
+            // if (this.tables.groupCouponTable.status === 'init') {
+            // void this.loadGroupCouponTable()
+            // }
 
-              // if (this.tables.groupOrderTable.status === 'init') {
-              //   void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-              // }
-              // if (this.tables.groupBalanceTable.status === 'init') {
-              //   void this.loadGroupBalanceTable()
-              // }
+            // if (this.tables.groupOrderTable.status === 'init') {
+            //   void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+            // }
+            // if (this.tables.groupBalanceTable.status === 'init') {
+            //   void this.loadGroupBalanceTable()
+            // }
 
-              // serverTable涉及到很多server status请求，应放在最后
-              // if (this.tables.groupServerTable.status === 'init') {
-              //   void this.loadGroupServerTable()
-              // }
-            })
+            // serverTable涉及到很多server status请求，应放在最后
+            // if (this.tables.groupServerTable.status === 'init') {
+            //   void this.loadGroupServerTable()
+            // }
+            // })
           }
         })
       }
@@ -2229,41 +2231,50 @@ export const useStore = defineStore('server', {
         this.tables.personalCouponTable.status = 'error'
       }
     },
-    async loadGroupCouponTable () {
+    async loadGroupCouponTable (payload: {
+      page?: number
+      pageSize?: number
+      serviceId?: string // 要去service查询apy_app_service_id, 再发送请求
+      groupId: string
+      valid?: 'notyet' | 'valid' | 'expired'
+      serviceCategory?: 'vms-server' | 'vms-object' | 'high-cloud' | 'hpc' | 'other'
+    }) {
+      // clear
       this.tables.groupCouponTable = {
         byId: {},
         allIds: [],
         status: 'init'
       }
+      // table status
       this.tables.groupCouponTable.status = 'loading'
-      for (const groupId of this.tables.groupTable.allIds) {
-        try {
-          // 校验用户角色，依赖role字段，因此必须在groupMemberTable之后加载
-          if (this.tables.groupTable.byId[groupId].myRole === 'member') { // 只有owner和leader才能拿到coupon list
-            continue
+      // load
+      try {
+        // req
+        const respGetCoupon = await api.server.cashcoupon.getCashCoupon({
+          query: {
+            page: payload?.page,
+            page_size: payload?.pageSize,
+            ...(payload?.serviceId && { app_service_id: this.tables.serviceTable.byId[payload.serviceId]?.pay_app_service_id }),
+            vo_id: payload.groupId,
+            valid: payload?.valid,
+            app_service_category: payload?.serviceCategory
           }
-          const respCoupon = await api.server.cashcoupon.getCashCoupon({
-            query: {
-              page_size: 999,
-              vo_id: groupId,
-              app_service_category: 'vms-server'
-            }
-          })
-          const coupon = new schema.Entity('coupon')
-          for (const data of respCoupon.data.results) {
-            const normalizedData = normalize(data, coupon)
-            Object.assign(this.tables.groupCouponTable.byId, normalizedData.entities.coupon)
-            this.tables.groupCouponTable.allIds.unshift(Object.keys(normalizedData.entities.coupon as Record<string, unknown>)[0])
-            this.tables.groupCouponTable.allIds = [...new Set(this.tables.groupCouponTable.allIds)]
-            // 把couponId补充到groupTable里
-            this.tables.groupTable.byId[data.vo.id].coupons.push(data.id)
-          }
-        } catch (exception) {
-          // exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
+        })
+        // store
+        for (const coupon of respGetCoupon.data.results) {
+          Object.assign(this.tables.groupCouponTable.byId, { [coupon.id]: coupon })
+          this.tables.groupCouponTable.allIds.unshift(coupon.id)
+          this.tables.groupCouponTable.allIds = [...new Set(this.tables.groupCouponTable.allIds)]
+
+          // 把couponId补充到groupTable里
+          this.tables.groupTable.byId[coupon.vo.id]?.coupons.push(coupon.id)
         }
+      } catch (exception) {
+        // exceptionNotifier(exception)
+        this.tables.groupCouponTable.status = 'error'
       }
+
+      // table status
       this.tables.groupCouponTable.status = 'total'
     },
     /* tables */
@@ -2948,14 +2959,19 @@ export const useStore = defineStore('server', {
             timeout: 5000,
             multiLine: false
           })
+
           // 成功交付后，应更新多个table
           // 更新orderId对应order
           void await this.loadSingleOrder({
             isGroup,
             orderId
           })
+
+          // 拿到更新后的order对象
+          const orderNew = isGroup ? this.tables.groupOrderTable.byId[orderId] : this.tables.personalOrderTable.byId[orderId]
+
           // 更新order交付的server
-          const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
+          const serverId = orderNew?.resources[0]?.instance_id
           if (serverId) {
             // 限制最大自动取回次数，避免死循环
             const MAX_COUNT = 10
@@ -2980,15 +2996,16 @@ export const useStore = defineStore('server', {
                 }
               }, 1000)
           }
+
+          // 当前订单所属的group
+          const groupId = orderNew?.vo_id
+
           // 更新order影响的余额
-          if (isGroup) {
-            const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
-            void await this.loadSingleGroupStats({ groupId })
-          } else {
-            void await this.loadPersonalBalance()
-          }
-          // order影响的coupon
-          isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+          isGroup ? await this.loadSingleGroupStats({ groupId }) : await this.loadPersonalBalance()
+
+          // 更新order影响的coupon， 暂时为整体更新table，可以细化为singleGroupCoupon/singlePersonalCoupon
+          isGroup ? await this.loadGroupCouponTable({ groupId }) : await this.loadPersonalCouponTable()
+
           // 跳转到该order详情页面
           navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
         } catch (exception) {
@@ -3103,14 +3120,22 @@ export const useStore = defineStore('server', {
           timeout: 5000,
           multiLine: false
         })
+
         // 更新orderId对应order
         void await this.loadSingleOrder({
           isGroup,
           orderId
         })
+
+        // 拿到更新后的order对象
+        const orderNew = isGroup ? this.tables.groupOrderTable.byId[orderId] : this.tables.personalOrderTable.byId[orderId]
+
         // 更新order交付的server
-        const serverId = isGroup ? this.tables.groupOrderTable.byId[orderId]?.resources[0]?.instance_id : this.tables.personalOrderTable.byId[orderId]?.resources[0]?.instance_id
+        const serverId = orderNew?.resources[0]?.instance_id
         if (serverId) {
+          // 限制最大自动取回次数，避免死循环
+          const MAX_COUNT = 10
+          let count = 0
           // 持续尝试取回交付的server信息
           const timerId = setInterval(
             async () => {
@@ -3119,21 +3144,28 @@ export const useStore = defineStore('server', {
                 isGroup,
                 serverId
               })
+              // 计数
+              count += 1
               // 表里存在该server则表示取回成功，消除timer
               if (isGroup ? this.tables.groupServerTable.byId[serverId] : this.tables.personalServerTable.byId[serverId]) {
                 clearInterval(timerId)
               }
+              // 超过次数取消自动取回
+              if (count === MAX_COUNT) {
+                clearInterval(timerId)
+              }
             }, 1000)
         }
+
+        // 当前订单所属的group
+        const groupId = orderNew?.vo_id
+
         // 更新order影响的余额
-        if (isGroup) {
-          const groupId = this.tables.groupOrderTable.byId[orderId]?.vo_id
-          void await this.loadSingleGroupStats({ groupId })
-        } else {
-          void await this.loadPersonalBalance()
-        }
-        // order影响的coupon
-        isGroup ? await this.loadGroupCouponTable() : await this.loadPersonalCouponTable()
+        isGroup ? await this.loadSingleGroupStats({ groupId }) : await this.loadPersonalBalance()
+
+        // 更新order影响的coupon， 暂时为整体更新table，可以细化为singleGroupCoupon/singlePersonalCoupon
+        isGroup ? await this.loadGroupCouponTable({ groupId }) : await this.loadPersonalCouponTable()
+
         // 跳转到该order详情页面
         navigateToUrl(isGroup ? `/my/server/group/order/detail/${orderId}` : `/my/server/personal/order/detail/${orderId}`)
       } catch (exception) {

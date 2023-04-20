@@ -246,7 +246,7 @@ export default {
         page_size?: number,
         app_service_id?: string,
         vo_id?: string,
-        available?: string,
+        valid?: 'notyet' | 'valid' | 'expired'
         app_service_category?: 'vms-server' | 'vms-object' | 'high-cloud' | 'hpc' | 'other'
       }
     }) {

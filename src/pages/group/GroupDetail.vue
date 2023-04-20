@@ -51,6 +51,7 @@ void store.loadGroupOrderTable({ groupId })
 const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
 
 // groupCoupon
+void store.loadGroupCouponTable({ groupId })
 const coupons = computed(() => store.getGroupCouponsByGroupId(groupId))
 
 const tab = ref(show ?? 'server')
