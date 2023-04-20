@@ -40,6 +40,12 @@ const {
 const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId[props.serverId] : store.tables.personalServerTable.byId[props.serverId])
 
 const keepServerDeleteLock = () => {
+  // 如果本地table内找不到该记录了，则server已经删除成功，无需保持lock状态，直接return
+  if (!server.value?.id) {
+    return
+  }
+
+  // 如果本地table内还能找到server，则没有执行删除，或者删除失败，需保持lock状态
   if (server.value.lock === 'free') {
     // 把lock状态改为lock-delete
     void store.toggleDeleteLockToLock({
@@ -212,10 +218,10 @@ const onOKClick = () => {
             {{ tc('components.server.ServerDeleteDialog.available_period') }}
           </div>
           <div class="col">
-            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
+            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale as string) }} -
             {{
-              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.server.ServerDeleteDialog.permanently_valid')
-            }}
+              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : tc('components.server.ServerDeleteDialog.permanently_valid')
+              }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->

@@ -42,6 +42,9 @@ const MAX_MONTHS = 6
 
 const exceptionNotifier = useExceptionNotifier()
 
+// deploy时需要项目组相关数据，应加载group的基础table(groupTable & groupMemberTable)
+store.softLoadGroupBasicTables()
+
 // summary折叠
 // const isShow = ref(true)
 
@@ -64,7 +67,7 @@ const isAllowPostpaid = computed(() => {
 
   // 普通用户进行判断
   if (selectionOwner.value === 'group') {
-    return Number(groups.value.find(group => group.id === selectionGroupId.value)?.balance) > 0
+    return Number(compSelectionGroup.value?.stats.balance) > 0
   } else {
     return Number(store.items?.personalBalance) > 0
   }

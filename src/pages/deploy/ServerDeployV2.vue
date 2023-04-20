@@ -35,6 +35,9 @@ const MAX_MONTHS = 6
 
 const exceptionNotifier = useExceptionNotifier()
 
+// deploy时需要项目组相关数据，应加载group的基础table(groupTable & groupMemberTable)
+store.softLoadGroupBasicTables()
+
 // // system disk 限制，单位GiB
 // // 接口限定最大500GiB
 // const MAX_SYSTEM_DISK = 500

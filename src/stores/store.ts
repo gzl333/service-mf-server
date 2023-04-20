@@ -1270,7 +1270,7 @@ export const useStore = defineStore('server', {
         }
         return coupons.sort(sortFn)
       }
-    },
+    }
     // 有四种状态：all -> 全部, valid -> 可用， expired -> 过期, exhausted -> 用尽
     // getGroupQuotasByGroupIdByStatus: (state) => (groupId: string, status: string): QuotaInterface[] => {
     //   const sortFn = (a: QuotaInterface, b: QuotaInterface) => new Date(b.expiration_time).getTime() - new Date(a.expiration_time).getTime()
@@ -1315,50 +1315,50 @@ export const useStore = defineStore('server', {
     //     return rows.sort(sortFn)
     //   }
     // },
-    // 个人有quota(全部quota,包括过期和不可用)和server的serviceId
-    getPersonalAvailableServiceIds: (state): string[] => {
-      let services = [] as string[]
-      // todo server + 点 + 券 ？
-      state.tables.personalServerTable.allIds.forEach((id) => services.unshift(state.tables.personalServerTable.byId[id].service.id))
-      services = [...new Set(services)]
-      return services
-    },
+    // // 个人有quota(全部quota,包括过期和不可用)和server的serviceId
+    // getPersonalAvailableServiceIds: (state): string[] => {
+    //   let services = [] as string[]
+    //   // todo server + 点 + 券 ？
+    //   state.tables.personalServerTable.allIds.forEach((id) => services.unshift(state.tables.personalServerTable.byId[id].service.id))
+    //   services = [...new Set(services)]
+    //   return services
+    // },
     // 全部quota和server对应的services
-    getPersonalAvailableServices (state): { value: string; label: string; }[] {
-      /*    数据结构如下
-      const serviceOptions = [
-        {        value: '0',
-          label: '全部节点',
-          labelEn: 'All Service Units'
-        }
-      ]
-  */
-      const serviceIds = this.getPersonalAvailableServiceIds as string[]
-
-      let serviceOptions = serviceIds.map((serviceId) => ({
-        value: serviceId,
-        label: state.tables.dataCenterTable.byId[state.tables.serviceTable.byId[serviceId]?.data_center]?.name + ' - ' + state.tables.serviceTable.byId[serviceId]?.name,
-        labelEn: state.tables.dataCenterTable.byId[state.tables.serviceTable.byId[serviceId]?.data_center]?.name_en + ' - ' + state.tables.serviceTable.byId[serviceId]?.name_en
-      }))
-
-      // 排序
-      serviceOptions = serviceOptions.sort((a, b) => -a.label.localeCompare(b.label, 'zh-CN'))
-      // vue组件外取i18n中locale字段的方法
-      // i18n.global.locale === 'zh'
-      serviceOptions.unshift({
-        value: '0',
-        label: '全部服务单元',
-        labelEn: 'All Service Units'
-      })
-      return serviceOptions
-    },
-    // 获取个人有quota/server的vpn对象
-    getPersonalAvailableVpns (state): VpnInterface[] {
-      // service.need_vpn才加入
-      const serviceIds = this.getPersonalAvailableServiceIds.filter((serviceId: string) => state.tables.serviceTable.byId[serviceId]?.need_vpn) as string[]
-      // serviceId -> service对象
-      return serviceIds.map((serviceId) => state.tables.userVpnTable.byId[serviceId])
-    }
+    //   getPersonalAvailableServices (state): { value: string; label: string; }[] {
+    //     /*    数据结构如下
+    //     const serviceOptions = [
+    //       {        value: '0',
+    //         label: '全部节点',
+    //         labelEn: 'All Service Units'
+    //       }
+    //     ]
+    // */
+    //     const serviceIds = this.getPersonalAvailableServiceIds as string[]
+    //
+    //     let serviceOptions = serviceIds.map((serviceId) => ({
+    //       value: serviceId,
+    //       label: state.tables.dataCenterTable.byId[state.tables.serviceTable.byId[serviceId]?.data_center]?.name + ' - ' + state.tables.serviceTable.byId[serviceId]?.name,
+    //       labelEn: state.tables.dataCenterTable.byId[state.tables.serviceTable.byId[serviceId]?.data_center]?.name_en + ' - ' + state.tables.serviceTable.byId[serviceId]?.name_en
+    //     }))
+    //
+    //     // 排序
+    //     serviceOptions = serviceOptions.sort((a, b) => -a.label.localeCompare(b.label, 'zh-CN'))
+    //     // vue组件外取i18n中locale字段的方法
+    //     // i18n.global.locale === 'zh'
+    //     serviceOptions.unshift({
+    //       value: '0',
+    //       label: '全部服务单元',
+    //       labelEn: 'All Service Units'
+    //     })
+    //     return serviceOptions
+    //   },
+    // // 获取个人有quota/server的vpn对象
+    // getPersonalAvailableVpns (state): VpnInterface[] {
+    //   // service.need_vpn才加入
+    //   const serviceIds = this.getPersonalAvailableServiceIds.filter((serviceId: string) => state.tables.serviceTable.byId[serviceId]?.need_vpn) as string[]
+    //   // serviceId -> service对象
+    //   return serviceIds.map((serviceId) => state.tables.userVpnTable.byId[serviceId])
+    // }
   },
   actions: {
 
@@ -1388,22 +1388,41 @@ export const useStore = defineStore('server', {
 
     /* load tables */
 
-    // 强制加载group相关table
-    forceLoadGroupModuleTable () {
+    // 软加载group基础table，其它table例如groupServer, groupOrder, groupCoupon按具体页面需求加载
+    softLoadGroupBasicTables () {
+      if (this.tables.groupTable.status === 'init') {
+        void this.loadGroupTable().then(() => {
+          // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+          if (this.tables.groupMemberTable.status === 'init') {
+            void this.loadGroupMemberTable()
+          }
+        })
+      }
+    },
+    // 硬加载group基础table
+    hardLoadGroupBasicTables () {
       void this.loadGroupTable().then(() => {
         // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
         void this.loadGroupMemberTable()
-        // .then(() => {
-        // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-        // void this.loadGroupQuotaApplicationTable()
-        // void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-        // void this.loadGroupBalanceTable()
-        // void this.loadGroupCouponTable()
-        // serverTable涉及到很多server status请求，应放在最后
-        // void this.loadGroupServerTable()
-        // })
       })
     },
+
+    // 强制加载group相关table
+    // forceLoadGroupModuleTable () {
+    //   void this.loadGroupTable().then(() => {
+    //     // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+    //     void this.loadGroupMemberTable()
+    //     // .then(() => {
+    //     // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+    //     // void this.loadGroupQuotaApplicationTable()
+    //     // void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+    //     // void this.loadGroupBalanceTable()
+    //     // void this.loadGroupCouponTable()
+    //     // serverTable涉及到很多server status请求，应放在最后
+    //     // void this.loadGroupServerTable()
+    //     // })
+    //   })
+    // },
     loadAllTables () {
       if (this.tables.dataCenterTable.status === 'init') {
         void this.loadDataCenterTable().then(() => { // 1. 基础依赖
@@ -1452,36 +1471,36 @@ export const useStore = defineStore('server', {
       //   void this.loadFedQuotaActivityTable()
       // }
 
-      if (this.tables.groupTable.status === 'init') {
-        void this.loadGroupTable().then(() => {
-          // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
-          if (this.tables.groupMemberTable.status === 'init') {
-            void this.loadGroupMemberTable()
-            // .then(() => {
-            // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
-            // if (this.tables.groupQuotaApplicationTable.status === 'init') {
-            //   void this.loadGroupQuotaApplicationTable()
-            // }
+      // if (this.tables.groupTable.status === 'init') {
+      //   void this.loadGroupTable().then(() => {
+      //     // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+      //     if (this.tables.groupMemberTable.status === 'init') {
+      //       void this.loadGroupMemberTable()
+      // .then(() => {
+      // 注意：此表依赖groupTable中的myRole字段，而该字段是loadGroupMemberTableFromGroup副产品，所以产生依赖
+      // if (this.tables.groupQuotaApplicationTable.status === 'init') {
+      //   void this.loadGroupQuotaApplicationTable()
+      // }
 
-            // if (this.tables.groupCouponTable.status === 'init') {
-            // void this.loadGroupCouponTable()
-            // }
+      // if (this.tables.groupCouponTable.status === 'init') {
+      // void this.loadGroupCouponTable()
+      // }
 
-            // if (this.tables.groupOrderTable.status === 'init') {
-            //   void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
-            // }
-            // if (this.tables.groupBalanceTable.status === 'init') {
-            //   void this.loadGroupBalanceTable()
-            // }
+      // if (this.tables.groupOrderTable.status === 'init') {
+      //   void this.loadGroupOrderTable() // 如果要把orderId补充进server实例里，则应在groupServerTable加载后加载
+      // }
+      // if (this.tables.groupBalanceTable.status === 'init') {
+      //   void this.loadGroupBalanceTable()
+      // }
 
-            // serverTable涉及到很多server status请求，应放在最后
-            // if (this.tables.groupServerTable.status === 'init') {
-            //   void this.loadGroupServerTable()
-            // }
-            // })
-          }
-        })
-      }
+      // serverTable涉及到很多server status请求，应放在最后
+      // if (this.tables.groupServerTable.status === 'init') {
+      //   void this.loadGroupServerTable()
+      // }
+      // })
+      //     }
+      //   })
+      // }
 
       // 以下表格为分页，在页面自身加载时load
       // if (!context.rootState.provider.tables.adminQuotaApplicationTable.isLoaded) {
@@ -2146,7 +2165,7 @@ export const useStore = defineStore('server', {
     *  */
     // 注意调用本函数时，不应await，而是并发更新
     async loadSingleServerStatus (payload: {
-      isGroup: boolean
+      isGroup?: boolean
       serverId: string
     }) {
       const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
@@ -2196,6 +2215,24 @@ export const useStore = defineStore('server', {
           this.tables.personalServerTable.status = 'error'
         }
       }
+    },
+    // 从personalServer或groupServer里直接删除某个server的记录
+    async deleteSingleServerFromTable (payload: {
+      isGroup?: boolean
+      serverId: string
+    }) {
+      // get table
+      const table = payload.isGroup ? this.tables.groupServerTable : this.tables.personalServerTable
+
+      // table status
+      table.status = 'loading'
+
+      // delete from table
+      table.allIds.filter(id => id !== payload.serverId)
+      delete table.byId[payload.serverId]
+
+      // table status
+      table.status = 'part'
     },
     async loadPersonalCouponTable () {
       // 先清空table，避免多次更新时数据累加（凡是需要强制刷新的table，都要先清空再更新）
@@ -2454,7 +2491,7 @@ export const useStore = defineStore('server', {
           try {
             // 发送请求
             // void await axios.post(apiURL, data)
-            void await api.server.server.postServerAction({
+            await api.server.server.postServerAction({
               path: { id: payload.serverId },
               body: { action: payload.action }
             })
@@ -2472,11 +2509,11 @@ export const useStore = defineStore('server', {
               multiLine: false
             })
 
-            // 更新userServerTable或groupServerTable // todo 可以优化成直接删除
-            // payload.isGroup ? void this.loadGroupServerTable() : void this.loadPersonalServerTable()
-            if (!payload.isGroup) {
-              void this.loadPersonalServerTable()
-            }
+            // 更新userServerTable或groupServerTable
+            this.deleteSingleServerFromTable({
+              isGroup: payload.isGroup,
+              serverId: payload.serverId
+            })
 
             // 是否跳转
             if (payload.isJump) {
@@ -2487,7 +2524,7 @@ export const useStore = defineStore('server', {
             exceptionNotifier(exception)
             // 若请求失败则应更新单个server status
             this.loadSingleServerStatus({
-              isGroup: payload.isGroup || false,
+              isGroup: payload.isGroup,
               serverId: payload.serverId
             })
           }
@@ -2675,7 +2712,7 @@ export const useStore = defineStore('server', {
           // this.tables.groupTable.allIds = [...new Set(this.tables.groupTable.allIds)]
 
           // 以上更新方式丢失了balance字段。所有group相关都强制更新组的表。在产品稳定后可以更细化。
-          this.forceLoadGroupModuleTable()
+          this.hardLoadGroupBasicTables()
 
           // 弹出通知
           Notify.create({
@@ -2833,7 +2870,7 @@ export const useStore = defineStore('server', {
         try {
           void await api.server.vo.postVo({ body: payload })
           // 重要：更新table，因为group是个根依赖，新增一个组，要牵涉数据非常多，不如直接全部重读组相关数
-          void await this.forceLoadGroupModuleTable()
+          this.hardLoadGroupBasicTables()
           // 通知
           Notify.create({
             classes: 'notification-positive shadow-15',
@@ -2895,7 +2932,7 @@ export const useStore = defineStore('server', {
             void await api.server.vo.deleteVo({ path: { id: groupId } })
 
             // 更新table，因为group是个根依赖，删除一个组，要牵涉数据非常多，不如直接全部重读组相关数据
-            void await this.forceLoadGroupModuleTable()
+            this.hardLoadGroupBasicTables()
             // notify
             Notify.create({
               classes: 'notification-positive shadow-15',
