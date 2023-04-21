@@ -26,6 +26,8 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
+// trigger这个dialog的地方负责load table, 此处不load相关table
+
 const {
   dialogRef,
   onDialogHide,

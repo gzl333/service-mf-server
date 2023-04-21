@@ -61,18 +61,18 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     </div>
                   </div>
 
-                  <div class="col-auto column items-end">
-                    <div class="text-grey q-pa-none">
-                      {{ tc('personalCouponCount') }}
-                    </div>
-                    <div class="row items-end text-primary cursor-pointer"
-                         @click="navigateToUrl('/my/server/personal/coupon')">
-                      <div class="text-h4">
-                        {{ store.tables.personalCouponTable.allIds.length }}
-                      </div>
-                      <div class="text-h6">{{ tc('couponUnit', store.tables.personalCouponTable.allIds.length) }}</div>
-                    </div>
-                  </div>
+<!--                  <div class="col-auto column items-end">-->
+<!--                    <div class="text-grey q-pa-none">-->
+<!--                      {{ tc('personalCouponCount') }}-->
+<!--                    </div>-->
+<!--                    <div class="row items-end text-primary cursor-pointer"-->
+<!--                         @click="navigateToUrl('/my/server/personal/coupon')">-->
+<!--                      <div class="text-h4">-->
+<!--                        {{ store.tables.personalCouponTable.allIds.length }}-->
+<!--                      </div>-->
+<!--                      <div class="text-h6">{{ tc('couponUnit', store.tables.personalCouponTable.allIds.length) }}</div>-->
+<!--                    </div>-->
+<!--                  </div>-->
 
                 </div>
 

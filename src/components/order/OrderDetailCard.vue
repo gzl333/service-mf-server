@@ -29,9 +29,11 @@ const store = useStore()
 // const route = useRoute()
 const router = useRouter()
 
+// 不在component内加载table
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 
 // 判断订单中涉及的云主机是否已经存在personal/group server table中。在的话可以展示相关信息。
+// 此处读到就显示，读不到就不显示，无需load table
 const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerTable.allIds.includes(order.value.resources[0].instance_id) : store.tables.personalServerTable.allIds.includes(order.value.resources[0].instance_id))
 
 // 复制信息到剪切板
@@ -139,7 +141,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   <q-step
                     name="placed"
                     :title="tc('components.order.OrderDetailCard.submit_order')"
-                    :caption="new Date(order.creation_time).toLocaleString(i18n.global.locale)"
+                    :caption="new Date(order.creation_time).toLocaleString(i18n.global.locale as string)"
                     icon="list_alt"
                     :done="true"
                   >
@@ -152,7 +154,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     v-if="order.status === 'cancelled'"
                     name="cancelled"
                     :title="tc('orderCancelled')"
-                    :caption="new Date(order.cancelled_time).toLocaleString(i18n.global.locale)"
+                    :caption="new Date(order.cancelled_time).toLocaleString(i18n.global.locale as string)"
                     icon="close"
                     :done="order.status === 'cancelled'"
                     done-icon="close"
@@ -166,7 +168,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     :disable="order.pay_type === 'postpaid'"
                     name="paid"
                     :title="tc('components.order.OrderDetailCard.pay_order')"
-                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.no_prepayment_required'): order.status === 'unpaid' ? tc('orderToPay') :  new Date(order.payment_time).toLocaleString(i18n.global.locale)"
+                    :caption="order.pay_type === 'postpaid' ? tc('components.order.OrderDetailCard.no_prepayment_required'): order.status === 'unpaid' ? tc('orderToPay') :  new Date(order.payment_time).toLocaleString(i18n.global.locale  as string)"
                     icon="currency_yen"
                     :done="order.status === 'paid'"
                   >
@@ -179,7 +181,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     v-if="order.status !== 'cancelled' && order.resources[0].instance_status !== 'failed'"
                     name="delivered"
                     :title="order.resources[0].instance_status === 'wait' ? tc('components.order.OrderDetailCard.resource_delivery') : tc('orderResourceDelivered')"
-                    :caption="order.resources[0].instance_status === 'wait' ? tc('components.order.OrderDetailCard.to_be_delivered') : new Date(order.resources[0].delivered_time).toLocaleString(i18n.global.locale)"
+                    :caption="order.resources[0].instance_status === 'wait' ? tc('components.order.OrderDetailCard.to_be_delivered') : new Date(order.resources[0].delivered_time).toLocaleString(i18n.global.locale  as string)"
                     icon="task_alt"
                     :done="order.resources[0].instance_status === 'success'"
                   >

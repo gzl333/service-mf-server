@@ -20,9 +20,9 @@ const tc = i18n.global.tc
 
 // the root layout of @cnic/server, load @cnic/server's  store here
 console.log('@cnic/server store:', store.$state)
-void store.loadAllItems()
-void store.loadAllTables()
-// void store.forceLoadAccountTable()
+store.loadAllItems()
+store.softLoadGlobalBasicTables()
+// void store.loadAllTables()
 
 const activeItem = computed(() => store.items.currentPath[0])
 

@@ -21,8 +21,13 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
+// load table
+if (store.tables.personalOrderTable.status === 'init') {
+  void store.loadPersonalOrderTable()
+}
+
 // service_id下拉列表
-const serviceOptions = computed(() => store.getPersonalAvailableServices)
+const serviceOptions = computed(() => store.getAllServiceOptions)
 const serviceSelection = ref('0')
 
 // 获取order列表数据
@@ -55,7 +60,8 @@ const search = ref('')
       <div class="col-3">
         <div class="row justify-end">
           <div class="col">
-            <q-select outlined dense stack-label :label="tc('pages.personal.PersonalOrder.service_node_filter')" v-model="serviceSelection"
+            <q-select outlined dense stack-label :label="tc('pages.personal.PersonalOrder.service_node_filter')"
+                      v-model="serviceSelection"
                       :options="serviceOptions" emit-value map-options option-value="value"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->

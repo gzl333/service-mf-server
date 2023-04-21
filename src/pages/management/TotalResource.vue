@@ -28,6 +28,14 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
+// 加载两个配额相关的table
+if (store.tables.serviceAllocationTable.status === 'init') {
+  store.loadServiceAllocationTable()
+}
+if (store.tables.fedAllocationTable.status === 'init') {
+  store.loadFedAllocationTable()
+}
+
 const treeData = computed(() => store.getMechanismTree)
 const fedCpuNum = computed(() => store.getFedCpuPie)
 const fedRamNum = computed(() => store.getFedRamPie)

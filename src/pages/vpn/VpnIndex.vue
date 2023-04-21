@@ -23,6 +23,11 @@ const store = useStore()
 const route = useRoute()
 // const router = useRouter()
 
+// 加载vpnTable
+if (store.tables.userVpnTable.status === 'init') {
+  store.loadUserVpnTable()
+}
+
 // 筛选datacenter的关键字
 const filter = ref('')
 

@@ -20,8 +20,13 @@ const store = useStore()
 // const route = userRoute()
 const tc = i18n.global.tc
 
+// load table
+if (store.tables.personalServerTable.status === 'init') {
+  store.loadPersonalServerTable()
+}
+
 // service_id下拉列表
-const serviceOptions = computed(() => store.getPersonalAvailableServices)
+const serviceOptions = computed(() => store.getAllServiceOptions)
 const serviceSelection = ref('0')
 
 // 获取云主机列表数据
@@ -54,7 +59,8 @@ const search = ref('')
       <div class="col-3">
         <div class="row justify-end">
           <div class="col">
-            <q-select outlined dense stack-label :label="tc('pages.personal.ServerList.service_node_filter')" v-model="serviceSelection"
+            <q-select outlined dense stack-label :label="tc('pages.personal.ServerList.service_node_filter')"
+                      v-model="serviceSelection"
                       :options="serviceOptions" emit-value map-options option-value="value"
                       :option-label="i18n.global.locale ==='zh'? 'label':'labelEn'">
               <!--当前选项的内容插槽-->

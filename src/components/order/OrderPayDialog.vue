@@ -33,7 +33,9 @@ const {
   onDialogCancel
 } = useDialogPluginComponent()
 
+// 不在component内加载table
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
+
 const coupons = computed(() => {
   const coupons = props.isGroup ? Object.values(store.tables.groupCouponTable.byId).filter(coupon => coupon?.vo?.id === order.value.vo_id) : Object.values(store.tables.personalCouponTable.byId)
   return coupons

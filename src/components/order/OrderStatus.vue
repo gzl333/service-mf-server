@@ -22,6 +22,7 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
+// 不在component内加载table
 const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[props.orderId] : store.tables.personalOrderTable.byId[props.orderId])
 
 </script>
