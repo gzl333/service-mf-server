@@ -13,8 +13,8 @@ export default function () {
         message: exception?.response?.status + ' - ' + exception?.response?.data.code,
         caption: exception?.response?.data.message,
         position: 'bottom',
-        // closeBtn: true,
-        timeout: 5000,
+        closeBtn: true,
+        timeout: 0,
         multiLine: false
       })
     }

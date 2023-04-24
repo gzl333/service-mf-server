@@ -236,7 +236,7 @@ const onOKClick = () => {
 
           <div v-if="isGroup" class="col"
                :class="store.tables.groupTable.byId[order.vo_id].stats.balance.startsWith('-')?'text-red':''">
-            {{ store.tables.groupBalanceTable.byId[store.tables.groupTable.byId[order.vo_id].balance].balance }}
+            {{ store.tables.groupTable.byId[order.vo_id].stats.balance }}
           </div>
 
           <div v-else class="col" :class="store.items.personalBalance.balance.startsWith('-')?'text-red':''">

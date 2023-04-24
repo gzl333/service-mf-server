@@ -1,15 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch/* , PropType */ } from 'vue'
-import {
-  // DataCenterInterface,
-  FlavorInterface,
-  // GroupInterface,
-  ImageInterface,
-  NetworkInterface,
-  // NewServiceInterface,
-  // ServiceInterface,
-  useStore
-} from 'stores/store'
+import { ref, computed, watch /* , PropType */ } from 'vue'
+import { FlavorInterface, ImageInterface, NetworkInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
@@ -87,7 +78,7 @@ const input = ref<HTMLElement>()
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
 const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
-const services = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.status === 'enable'))
+const services = computed(() => Object.values(store.tables.serviceTable.byId))
 
 // 依赖selectionService Id选择值的数据
 // 当前service_id对应的image集合，随service_id选择而改变
@@ -447,11 +438,30 @@ chooseService()
 chooseGroup()
 // updateDatacentersAndServices()
 // updateGroups()
+
 // 以下依赖serviceId
 updateImages(selectionServiceId.value)
 updateNetwork(selectionServiceId.value)
 updateFlavors()
 /* setup时调用一次 */
+
+/* 对于从table获取的数据，刷新页面时，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table */
+// 选择groupId
+if (store.tables.groupTable.status !== 'total') {
+  watch(groups, () => {
+    if (store.tables.groupTable.status !== 'loading') {
+      chooseGroup()
+    }
+  })
+}
+// 选择serviceId
+if (store.tables.serviceTable.status !== 'total') {
+  watch(services, () => {
+    if (store.tables.serviceTable.status !== 'loading') {
+      chooseService()
+    }
+  })
+}
 
 /* 新建云主机 */
 const isDeploying = ref(false)
@@ -729,7 +739,7 @@ const deployServer = async () => {
                   {{ tc('noServiceUnit') }}
                 </div>
 
-                <div v-else class="row items-center q-gutter-md">
+                <div v-else class="row items-center q-gutter-x-md q-gutter-y-xs">
                   <q-btn
                     :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"
                     :text-color="selectionServiceId === service?.id ? '' : 'black'"

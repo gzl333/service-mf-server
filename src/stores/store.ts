@@ -1402,17 +1402,17 @@ export const useStore = defineStore('server', {
             this.loadServiceTable()
               // todo temp： 使用server deploy v3 后应删除
               .then(() => {
-                if (this.tables.serviceNetworkTable.status === 'init') {
-                  void this.loadServiceNetworkTable()
-                }
-
-                if (this.tables.serviceImageTable.status === 'init') {
-                  void this.loadServiceImageTable()
-                }
-
-                if (this.tables.fedFlavorTable.status === 'init') {
-                  void this.loadFedFlavorTable()
-                }
+                // if (this.tables.serviceNetworkTable.status === 'init') {
+                //   void this.loadServiceNetworkTable()
+                // }
+                //
+                // if (this.tables.serviceImageTable.status === 'init') {
+                //   void this.loadServiceImageTable()
+                // }
+                //
+                // if (this.tables.fedFlavorTable.status === 'init') {
+                //   void this.loadFedFlavorTable()
+                // }
               })
           }
         })
