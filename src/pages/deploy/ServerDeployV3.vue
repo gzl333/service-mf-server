@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch/* , PropType */ } from 'vue'
 import {
-  DataCenterInterface,
+  // DataCenterInterface,
   FlavorInterface,
-  GroupInterface,
-  ImageInterface, NetworkInterface, NewServiceInterface,
-  ServiceInterface,
+  // GroupInterface,
+  ImageInterface,
+  NetworkInterface,
+  // NewServiceInterface,
+  // ServiceInterface,
   useStore
 } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
@@ -78,9 +80,14 @@ const input = ref<HTMLElement>()
 
 /* 选项数据 */
 // 全局数据，只获取一次
-const dataCenters = ref<DataCenterInterface[]>([])
-const services = ref<NewServiceInterface[]>([])
-const groups = ref<GroupInterface[]>([])
+// const dataCenters = ref<DataCenterInterface[]>([])
+// const services = ref<NewServiceInterface[]>([])
+// const groups = ref<GroupInterface[]>([])
+
+// owner/leader权限才能建立云主机， member不能建立
+const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
+const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
+const services = computed(() => Object.values(store.tables.serviceTable.byId).filter(service => service.status === 'enable'))
 
 // 依赖selectionService Id选择值的数据
 // 当前service_id对应的image集合，随service_id选择而改变
@@ -169,14 +176,14 @@ watch([selectionPayment, selectionPeriod, selectionFlavorId, selectionNetworkId]
 * 选择动作在ts部分，selection真正选择了哪些值 */
 
 /* selection默认选择 */
+const chooseService = () => {
+  selectionServiceId.value = route.query.service as string || services.value[0]?.id || ''
+}
 const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
 const chooseGroup = () => {
   selectionGroupId.value = route.query.group as string || groups.value[0]?.id || ''
-}
-const chooseService = () => {
-  selectionServiceId.value = route.query.service as string || services.value[0]?.id || ''
 }
 const chooseNetwork = () => {
   // // 默认选择第一项
@@ -218,113 +225,113 @@ watch(selectionImageRelease, chooseImage)
 /* 被动变化的watch */
 
 /* 获取全部选项的函数 */
-// 获取全部datacenter and services
-const updateDatacentersAndServices = async () => {
-  dataCenters.value = []
-  services.value = []
-
-  try {
-    // datacenter
-    const respGetDatacenters = await api.server.registry.getRegistry()
-
-    // 排序
-    respGetDatacenters.data.registries.sort((a: DataCenterInterface, b: DataCenterInterface) => a.sort_weight - b.sort_weight)
-
-    // 保存数据
-    for (const datacenter of respGetDatacenters.data.registries) {
-      // 只留下enable状态的datacenter
-      if (datacenter.status.code === 1) {
-        // services
-        let datacenterServices: string[] = []
-
-        // 从分页数据中获取全部数据
-        const PAGE_SIZE = 100 // 单次获取的page size
-        let count = 0 // 结果总数，多页项目的数总和
-        let page = 1 // current page
-
-        do {
-          const respGetServices = await api.server.service.getService({
-            query: {
-              page,
-              page_size: PAGE_SIZE,
-              center_id: datacenter.id
-            }
-          })
-
-          // 排序
-          respGetServices.data.results.sort((a: ServiceInterface, b: ServiceInterface) => a.sort_weight - b.sort_weight)
-
-          for (const service of respGetServices.data.results) {
-            services.value.push(service)
-            // 把当前service_id补充给datacenterServices
-            datacenterServices.push(service.id)
-          }
-
-          // 更新分页数据
-          page += 1
-          count = respGetServices.data.count
-        } while (datacenterServices.length < count)
-
-        datacenterServices = [...new Set(datacenterServices)]
-        Object.assign(datacenter, { services: datacenterServices })
-        dataCenters.value.push(datacenter)
-      }
-    }
-  } catch (exception) {
-    // exceptionNotifier(exception)
-  }
-
-  // 选择默认项
-  chooseService()
-}
-
-// 获取当前用户全部项目组信息
-const updateGroups = async () => {
-  // 清空列表
-  groups.value = []
-
-  // 从分页数据中获取全部数据
-  const PAGE_SIZE = 100 // 单次获取的page size
-  let count = 0 // 结果总数，多页项目的数总和
-  let page = 1 // current page
-
-  try {
-    // 先执行一次，再检查循环条件
-    do {
-      // 用当前分页条件获取数据
-      const respGetGroup = await api.server.vo.getVo({
-        query: {
-          page,
-          page_size: PAGE_SIZE
-        }
-      })
-
-      // 保存数据
-      for (const group of respGetGroup.data.results as GroupInterface[]) {
-        try {
-          // add balance field
-          const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: group.id } })
-          Object.assign(group, { balance: respGroupBalance.data.balance })
-        } catch (exception) {
-          // exceptionNotifier(exception)
-          // 继续下一个循环
-          continue
-        }
-        // group options
-        groups.value.push(group)
-      }
-
-      // 更新分页数据
-      page += 1
-      count = respGetGroup.data.count
-    } while (groups.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
-  } catch (exception) {
-    // exceptionNotifier(exception)
-  }
-
-  // 选择默认项
-  chooseGroup()
-}
+// // 获取全部datacenter and services
+// const updateDatacentersAndServices = async () => {
+//   dataCenters.value = []
+//   services.value = []
+//
+//   try {
+//     // datacenter
+//     const respGetDatacenters = await api.server.registry.getRegistry()
+//
+//     // 排序
+//     respGetDatacenters.data.registries.sort((a: DataCenterInterface, b: DataCenterInterface) => a.sort_weight - b.sort_weight)
+//
+//     // 保存数据
+//     for (const datacenter of respGetDatacenters.data.registries) {
+//       // 只留下enable状态的datacenter
+//       if (datacenter.status.code === 1) {
+//         // services
+//         let datacenterServices: string[] = []
+//
+//         // 从分页数据中获取全部数据
+//         const PAGE_SIZE = 100 // 单次获取的page size
+//         let count = 0 // 结果总数，多页项目的数总和
+//         let page = 1 // current page
+//
+//         do {
+//           const respGetServices = await api.server.service.getService({
+//             query: {
+//               page,
+//               page_size: PAGE_SIZE,
+//               center_id: datacenter.id
+//             }
+//           })
+//
+//           // 排序
+//           respGetServices.data.results.sort((a: ServiceInterface, b: ServiceInterface) => a.sort_weight - b.sort_weight)
+//
+//           for (const service of respGetServices.data.results) {
+//             services.value.push(service)
+//             // 把当前service_id补充给datacenterServices
+//             datacenterServices.push(service.id)
+//           }
+//
+//           // 更新分页数据
+//           page += 1
+//           count = respGetServices.data.count
+//         } while (datacenterServices.length < count)
+//
+//         datacenterServices = [...new Set(datacenterServices)]
+//         Object.assign(datacenter, { services: datacenterServices })
+//         dataCenters.value.push(datacenter)
+//       }
+//     }
+//   } catch (exception) {
+//     // exceptionNotifier(exception)
+//   }
+//
+//   // 选择默认项
+//   chooseService()
+// }
+//
+// // 获取当前用户全部项目组信息
+// const updateGroups = async () => {
+//   // 清空列表
+//   groups.value = []
+//
+//   // 从分页数据中获取全部数据
+//   const PAGE_SIZE = 100 // 单次获取的page size
+//   let count = 0 // 结果总数，多页项目的数总和
+//   let page = 1 // current page
+//
+//   try {
+//     // 先执行一次，再检查循环条件
+//     do {
+//       // 用当前分页条件获取数据
+//       const respGetGroup = await api.server.vo.getVo({
+//         query: {
+//           page,
+//           page_size: PAGE_SIZE
+//         }
+//       })
+//
+//       // 保存数据
+//       for (const group of respGetGroup.data.results as GroupInterface[]) {
+//         try {
+//           // add balance field
+//           const respGroupBalance = await api.server.account.getAccountBalanceVo({ path: { vo_id: group.id } })
+//           Object.assign(group, { balance: respGroupBalance.data.balance })
+//         } catch (exception) {
+//           // exceptionNotifier(exception)
+//           // 继续下一个循环
+//           continue
+//         }
+//         // group options
+//         groups.value.push(group)
+//       }
+//
+//       // 更新分页数据
+//       page += 1
+//       count = respGetGroup.data.count
+//     } while (groups.value!.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+//   } catch (exception) {
+//     // exceptionNotifier(exception)
+//   }
+//
+//   // 选择默认项
+//   chooseGroup()
+// }
 
 // 根据当前service_id获取image列表的函数
 const updateImages = async (serviceId: string) => {
@@ -436,8 +443,10 @@ const updateFlavors = async () => {
 
 /* setup时调用一次 */
 chooseOwner()
-updateDatacentersAndServices()
-updateGroups()
+chooseService()
+chooseGroup()
+// updateDatacentersAndServices()
+// updateGroups()
 // 以下依赖serviceId
 updateImages(selectionServiceId.value)
 updateNetwork(selectionServiceId.value)

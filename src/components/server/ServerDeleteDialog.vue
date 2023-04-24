@@ -148,8 +148,8 @@ const onOKClick = () => {
           <div class="col">
             {{
               i18n.global.locale === 'zh' ?
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center]?.name :
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center]?.name_en
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center.id]?.name :
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[server.service.id]?.data_center.id]?.name_en
             }}
           </div>
         </div>

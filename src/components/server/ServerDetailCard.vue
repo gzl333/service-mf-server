@@ -286,7 +286,7 @@ const clickToCopy = useCopyToClipboard()
                   <div class="col-4 text-grey ">{{ (tc('vpnInfo')) }}</div>
                   <div class="col-auto">
                     <q-btn v-if="service?.need_vpn" flat dense no-caps color="primary"
-                           @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service.id]?.data_center}&service=${server.service.id}`)">
+                           @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service.id]?.data_center.id}&service=${server.service.id}`)">
                       {{ tc('seeVpn') }}
                       <q-tooltip>
                         {{ tc('jumpToVpn') }}
@@ -301,7 +301,7 @@ const clickToCopy = useCopyToClipboard()
                   <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.org') }}</div>
                   <div class="col">
                     {{
-                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service?.data_center]?.name : store.tables.dataCenterTable.byId[service?.data_center]?.name_en
+                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service?.data_center.id]?.name : store.tables.dataCenterTable.byId[service?.data_center.id]?.name_en
                     }}
                   </div>
                 </div>

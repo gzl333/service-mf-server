@@ -83,7 +83,7 @@ const selectionPayment = ref<'prepaid' | 'postpaid'>('prepaid')
 const selectionGroup = ref('')
 const selectionPeriod = ref(1)
 const selectionService = ref('')
-const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center || '')
+const selectionDatacenter = computed(() => store.tables.serviceTable.byId[selectionService.value]?.data_center.id || '')
 const selectionImage = ref('')
 
 const selectionFlavor = ref('')

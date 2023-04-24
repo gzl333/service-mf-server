@@ -363,8 +363,8 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                     <div class="col">
                       {{
                         i18n.global.locale === 'zh' ?
-                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name :
-                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center]?.name_en
+                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center.id]?.name :
+                          store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center.id]?.name_en
                       }}
                     </div>
                   </div>

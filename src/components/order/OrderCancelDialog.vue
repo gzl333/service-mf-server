@@ -76,7 +76,7 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
             {{ tc('components.order.OrderCancelDialog.order_creation_time') }}
           </div>
           <div class="col">
-            {{ new Date(order.creation_time).toLocaleString(i18n.global.locale) }}
+            {{ new Date(order.creation_time).toLocaleString(i18n.global.locale as string) }}
           </div>
         </div>
 
@@ -87,8 +87,8 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
           <div class="col">
             {{
               i18n.global.locale === 'zh' ?
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name :
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center].name_en
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center.id].name :
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[order.service_id].data_center.id].name_en
             }}
           </div>
         </div>

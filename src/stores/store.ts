@@ -130,24 +130,24 @@ export interface DataCenterInterface {
   // personalServices: string[] // 用户可用services汇总
 }
 
-export interface ServiceInterface {
-  // 来自service接口
-  id: string
-  name: string
-  name_en: string
-  service_type: string
-  cloud_type: string
-  add_time: string
-  need_vpn: boolean
-  status: 'enable' | 'disable' | 'deleted'
-  data_center: string // 接口原生数据为对象，整理为dataCenterId
-  longitude: number
-  latitude: number
-  pay_app_service_id: string
-  sort_weight: number // 排序权重, 值越大排序越靠前
-}
+// export interface ServiceInterface {
+//   // 来自service接口
+//   id: string
+//   name: string
+//   name_en: string
+//   service_type: string
+//   cloud_type: string
+//   add_time: string
+//   need_vpn: boolean
+//   status: 'enable' | 'disable' | 'deleted'
+//   data_center: string // 接口原生数据为对象，整理为dataCenterId
+//   longitude: number
+//   latitude: number
+//   pay_app_service_id: string
+//   sort_weight: number // 排序权重, 值越大排序越靠前
+// }
 
-export interface NewServiceInterface {
+export interface ServiceInterface {
   // 来自service接口
   id: string
   name: string
@@ -950,8 +950,6 @@ export const useStore = defineStore('server', {
 
       // @ts-ignore
       treeData.sort((a, b) => a.sort_weight - b.sort_weight)
-
-      console.log(treeData)
 
       return treeData
     },
@@ -1817,19 +1815,17 @@ export const useStore = defineStore('server', {
       this.tables.serviceTable.status = 'loading'
       try {
         const respService = await api.server.service.getService()
-        // 将响应normalize，存入state里的serviceTable
-        const data_center = new schema.Entity('data_center')
-        const service = new schema.Entity('service', { data_center })
-        respService.data.results.forEach((data: Record<string, never>) => {
-          const normalizedData = normalize(data, service)
-          Object.assign(this.tables.serviceTable.byId, normalizedData.entities.service)
-          this.tables.serviceTable.allIds.unshift(Object.keys(normalizedData.entities.service as Record<string, unknown>)[0])
+
+        respService.data.results.forEach((service: ServiceInterface) => {
+          Object.assign(this.tables.serviceTable.byId, { [service.id]: service })
+          this.tables.serviceTable.allIds.unshift(service.id)
           this.tables.serviceTable.allIds = [...new Set(this.tables.serviceTable.allIds)]
 
           // 将本serviceId补充进对应dataCenter的services字段
-          const datacenter = this.tables.dataCenterTable.byId[Object.values(normalizedData.entities.service!)[0].data_center]
-          datacenter.services.unshift(Object.values(normalizedData.entities.service!)[0].id)
+          const datacenter = this.tables.dataCenterTable.byId[service.data_center.id]
+          datacenter.services.unshift(service.id)
           datacenter.services = [...new Set(datacenter.services)]
+
           // sort services
           datacenter.services.sort((a, b) => {
             const serviceA = this.tables.serviceTable.byId[a]
