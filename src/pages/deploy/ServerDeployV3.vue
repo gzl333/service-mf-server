@@ -85,6 +85,8 @@ const services = computed(() => Object.values(store.tables.serviceTable.byId))
 const images = ref<ImageInterface[]>([])
 // 当前images里面可供选择的release数组， 由images数组归并而来
 const imageReleases = ref<string[]>([])
+// const imageReleases = computed(() => images.value.reduce((prev, curr) =>)) // todo 由images自动归并，去重，整理格式
+
 // 当前service_id对应的flavor/size集合，随service_id选择而改变
 const flavors = ref<FlavorInterface[]>([])
 // Object.assign(flavors.value, { isLoading: false }) // 尝试，添加一个loading的属性
@@ -193,26 +195,30 @@ const chooseNetwork = () => {
 const chooseImageRelease = () => {
   selectionImageRelease.value = imageReleases.value[0]
 }
-const chooseImage = () => {
+const chooseImage = (serviceId: string) => {
   selectionImageId.value =
     images.value
-      .filter(image => image.serviceId === selectionServiceId.value)
+      .filter(image => image.serviceId === serviceId)
       .filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
 }
-const chooseFlavor = () => {
-  selectionFlavorId.value = flavors.value.filter(flavor => flavor.service_id === selectionServiceId.value)[0]?.id || ''
+const chooseFlavor = (serviceId: string) => {
+  selectionFlavorId.value = flavors.value.filter(flavor => flavor.service_id === serviceId)[0]?.id || ''
 }
 /* selection默认选择 */
 
 /* 被动变化的watch */
 // 改变service选择后，需要更新options选项池，并选择默认项的参数
 watch(selectionServiceId, () => {
-  updateNetwork(selectionServiceId.value)
-  updateImages(selectionServiceId.value)
-  updateFlavors()
+  if (selectionServiceId.value !== '') {
+    updateNetwork(selectionServiceId.value)
+    updateImages(selectionServiceId.value)
+    updateFlavors(selectionServiceId.value)
+  }
 })
 // 在selectionImageRelease变化后，选择默认image
-watch(selectionImageRelease, chooseImage)
+watch(selectionImageRelease, () => {
+  chooseImage(selectionServiceId.value)
+})
 /* 被动变化的watch */
 
 /* 获取全部选项的函数 */
@@ -343,7 +349,7 @@ const updateImages = async (serviceId: string) => {
         query: {
           page,
           page_size: PAGE_SIZE,
-          service_id: selectionServiceId.value
+          service_id: serviceId
         }
       })
 
@@ -357,9 +363,9 @@ const updateImages = async (serviceId: string) => {
 
         // image release options
         // const release = image.release.toLowerCase().split(' ').map(word => word[0].toLowerCase() + word.slice(1)).join(' ')
-        if (!imageReleases.value.includes(image.release)) {
-          imageReleases.value.push(image.release)
-        }
+        // if (!imageReleases.value.includes(image.release)) {
+        //   imageReleases.value.push(image.release)
+        // }
       }
 
       // 更新分页数据
@@ -376,10 +382,10 @@ const updateImages = async (serviceId: string) => {
 
   // 选择默认项
   chooseImageRelease()
-  chooseImage()
+  chooseImage(selectionServiceId.value)
 }
 
-// 根据当前service_id获取privateNetwork publicNetwork列表的函数
+// 根据当前service_id获取privateNetwork / publicNetwork列表的函数
 const updateNetwork = async (serviceId: string) => {
   privateNetworks.value = []
   publicNetworks.value = []
@@ -387,7 +393,7 @@ const updateNetwork = async (serviceId: string) => {
   try {
     const respGetNetworks = await api.server.network.getNetwork({
       query: {
-        service_id: selectionServiceId.value
+        service_id: serviceId
       }
     })
     for (const network of respGetNetworks.data) {
@@ -408,14 +414,14 @@ const updateNetwork = async (serviceId: string) => {
 }
 
 // 根据当前service_id获取flavor列表的函数
-const updateFlavors = async () => {
+const updateFlavors = async (serviceId: string) => {
   // 清空当前flavor列表
   flavors.value = []
   // req
   try {
     const respGetFlavor = await api.server.flavor.getFlavor({
       query: {
-        service_id: selectionServiceId.value
+        service_id: serviceId
       }
     })
     // 保存数据
@@ -426,39 +432,44 @@ const updateFlavors = async () => {
     // exceptionNotifier(exception)
   }
   // 排序
+  flavors.value.sort((a: FlavorInterface, b: FlavorInterface) => a.vcpus - b.vcpus)
 
   // 选择默认项
-  chooseFlavor()
+  chooseFlavor(selectionServiceId.value)
 }
 /* 获取全部选项的函数 */
 
-/* setup时调用一次 */
+/* 非table获取数据，setup时调用一次 */
 chooseOwner()
-chooseService()
-chooseGroup()
 // updateDatacentersAndServices()
 // updateGroups()
-
-// 以下依赖serviceId
-updateImages(selectionServiceId.value)
-updateNetwork(selectionServiceId.value)
-updateFlavors()
 /* setup时调用一次 */
 
-/* 对于从table获取的数据，刷新页面时，table未加载时进入页面，根据table的加载状态变化一次都要选一次默认值。细分到每个table */
-// 选择groupId
-if (store.tables.groupTable.status !== 'total') {
-  watch(groups, () => {
-    if (store.tables.groupTable.status !== 'loading') {
-      chooseGroup()
+/* 从table获取的数据
+   1. table已加载完毕时进入，选择默认项
+   2. table未加载完毕时进入，要设置watcher，待加载完毕时选择默认项
+   细分到每个table */
+
+// 选择默认serviceId
+if (store.tables.serviceTable.status === 'total') {
+  // console.log('setup choose service')
+  chooseService()
+} else {
+  watch(services, () => {
+    if (store.tables.serviceTable.status !== 'loading') {
+      // console.log('update table choose service')
+      chooseService()
     }
   })
 }
-// 选择serviceId
-if (store.tables.serviceTable.status !== 'total') {
-  watch(services, () => {
-    if (store.tables.serviceTable.status !== 'loading') {
-      chooseService()
+
+// 选择默认groupId
+if (store.tables.groupTable.status === 'total') {
+  chooseGroup()
+} else {
+  watch(groups, () => {
+    if (store.tables.groupTable.status !== 'loading') {
+      chooseGroup()
     }
   })
 }
@@ -1171,6 +1182,19 @@ const deployServer = async () => {
                        clear-icon="close"
                        outlined
                        counter/>
+            </div>
+          </div>
+
+          <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold">
+                test area
+              </div>
+            </div>
+            <div class="col-11 row q-pt-md">
+                       <pre>
+                          {{ images }}
+                       </pre>
             </div>
           </div>
 

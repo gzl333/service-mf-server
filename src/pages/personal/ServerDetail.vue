@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { ref, computed } from "vue"
 // import { navigateToUrl } from 'single-spa'
-// import { useStore } from 'stores/store'
+import { useStore } from 'stores/store'
 import { useRoute/* , useRouter */ } from 'vue-router'
 // import { i18n } from 'boot/i18n'
 
@@ -16,10 +16,15 @@ import ServerDetailCard from 'components/server/ServerDetailCard.vue'
 // })
 // const emits = defineEmits(['change', 'delete'])
 
-// const store = useStore()
+const store = useStore()
 const route = useRoute()
 // const router = useRouter()
 // const tc = i18n.global.tc
+
+// load table
+if (store.tables.personalServerTable.status === 'init') {
+  store.loadPersonalServerTable()
+}
 
 // 从route对象中读取id参数
 const serverId = route.params.serverId as string
