@@ -71,7 +71,7 @@ const icon = computed(() => getPlatformIcon(props.platformName, props.logoStyle)
 
 <template>
 
-  <div class="row items-center">
+  <div class="row items-center justify-center">
     <!--本地存在的svg-->
     <q-icon v-if="icon" :style="{width, height}">
       <img :src="icon" :style="{width, height}"/>
