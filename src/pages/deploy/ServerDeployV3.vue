@@ -121,6 +121,7 @@ const compSelectionDatacenter = computed(() => services.value.find(service => se
 // image的id，来自images, 是local id, 不是拼接的id
 const selectionImageId = ref('')
 const compSelectionImage = computed(() => images.value.filter(image => image.serviceId === selectionServiceId.value).find(image => image.id === selectionImageId.value))
+
 // image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
 const selectionImageRelease = ref('')
 
@@ -204,11 +205,11 @@ const chooseNetwork = () => {
 const chooseImageRelease = () => {
   selectionImageRelease.value = imageReleases.value[0]
 }
-const chooseImage = (serviceId: string) => {
+const chooseImage = (serviceId: string, release: string) => {
   selectionImageId.value =
     images.value
       .filter(image => image.serviceId === serviceId)
-      .filter(image => image.release === selectionImageRelease.value)[0]?.id || ''
+      .filter(image => image.release === release)[0]?.id || ''
 }
 const chooseFlavor = (serviceId: string) => {
   selectionFlavorId.value = flavors.value.filter(flavor => flavor.service_id === serviceId)[0]?.id || ''
@@ -226,7 +227,7 @@ watch(selectionServiceId, () => {
 })
 // 在selectionImageRelease变化后，选择默认image
 watch(selectionImageRelease, () => {
-  chooseImage(selectionServiceId.value)
+  chooseImage(selectionServiceId.value, selectionImageRelease.value)
 })
 /* 被动变化的watch */
 
@@ -381,7 +382,7 @@ const updateImages = async (serviceId: string) => {
 
   // 选择默认项
   chooseImageRelease()
-  chooseImage(selectionServiceId.value)
+  chooseImage(selectionServiceId.value, selectionImageRelease.value)
 }
 
 // 根据当前service_id获取privateNetwork / publicNetwork列表的函数
@@ -1039,7 +1040,7 @@ const deployServer = async () => {
               <div v-if="privateNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
                    class="col q-pb-md">
                 <div class="row"
-                     :class="selectionNetworkId === 'randomPrivate' || !store.tables.serviceNetworkTable.byLocalId[`${selectionServiceId}-${selectionNetworkId}`]?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPrivate' || !compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('privateNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-md">
@@ -1058,7 +1059,7 @@ const deployServer = async () => {
                   </q-btn>
 
                   <q-btn
-                    v-for="network in privateNetworks.filter(network => network.serviceId === selectionServiceId)"
+                    v-for="network in privateNetworks.filter(item => item.serviceId === selectionServiceId)"
                     :val="network.id"
                     :key="network.id"
                     :color="selectionNetworkId === network.id ? 'primary' : 'grey-3'"
@@ -1086,7 +1087,7 @@ const deployServer = async () => {
               <div v-if="publicNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
                    class="col q-pb-md ">
                 <div class="row"
-                     :class="selectionNetworkId === 'randomPublic' || store.tables.serviceNetworkTable.byLocalId[`${selectionServiceId}-${selectionNetworkId}`]?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPublic' || compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('publicNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-md">
@@ -1105,7 +1106,7 @@ const deployServer = async () => {
                   </q-btn>
 
                   <q-btn
-                    v-for="network in publicNetworks.filter(network => network.serviceId === selectionServiceId)"
+                    v-for="network in publicNetworks.filter(item => item.serviceId === selectionServiceId)"
                     :val="network.id"
                     :key="network.id"
                     :color="selectionNetworkId === network.id ? 'primary' : 'grey-3'"
@@ -1147,7 +1148,7 @@ const deployServer = async () => {
 
               <div v-else class="col-auto row items-center q-gutter-md">
                 <q-btn
-                  v-for="flavor in flavors.filter(flavor => flavor.service_id === selectionServiceId)"
+                  v-for="flavor in flavors.filter(item => item.service_id === selectionServiceId)"
                   :val="flavor.id"
                   :key="flavor.id"
                   :color="selectionFlavorId === flavor.id ? 'primary' : 'grey-3'"
