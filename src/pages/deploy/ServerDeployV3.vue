@@ -768,7 +768,7 @@ const deployServer = async () => {
                         {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
                       </div>
                       <div class="col-auto row items-center">
-                        <CloudPlatformLogo class="col-auto" height="15px" :platform-name="service.service_type"/>
+                        <CloudPlatformLogo class="col-auto" width="80px" height="15px" :platform-name="service.service_type"/>
                       </div>
                     </div>
 

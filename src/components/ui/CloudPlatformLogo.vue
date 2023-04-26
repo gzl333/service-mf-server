@@ -18,11 +18,6 @@ const props = defineProps({
     required: false,
     default: 'horizontal'
   },
-  size: {
-    type: String,
-    required: false,
-    default: 'lg'
-  },
   width: {
     type: String,
     required: false,
@@ -65,6 +60,8 @@ const getPlatformIcon = (platformName: string, style: 'horizontal' | 'vertical' 
     } else if (style === 'mark') {
       return require('assets/svg/OpenStack-Logo-Mark.svg')
     }
+  } else if (platformName?.includes('ali')) {
+    return require('assets/png/aliyun-logo.png')
   } else {
     return ''
   }
@@ -75,13 +72,13 @@ const iconSrc = computed(() => getPlatformIcon(props.platformName, props.logoSty
 </script>
 
 <template>
-    <!--本地存在的svg-->
-    <q-icon v-if="iconSrc" :style="{width, height}">
-      <img :src="iconSrc" :style="{width, height}" alt=""/>
-    </q-icon>
+  <!--本地存在的svg-->
+  <q-icon v-if="iconSrc" :style="{width, height}">
+    <img :src="iconSrc" :style="{width, height}" alt=""/>
+  </q-icon>
 
-    <!--本地没有的icon，使用material的icon，给一个默认颜色-->
-    <q-icon v-else-if="iconSrc !== ''"  :style="{width, height}" :color="defaultColor" name="cloud"/>
+  <!--本地没有的icon，使用material的icon，给一个默认颜色-->
+  <q-icon v-else-if="iconSrc !== ''" :style="{width, height}" :color="defaultColor" name="cloud"/>
 
 </template>
 

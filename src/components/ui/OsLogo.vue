@@ -71,7 +71,7 @@ const iconSrc = computed(() => getOsIconSrc(props.osName))
   <!--本地存在的svg-->
   <q-icon v-if="iconSrc" :size="size">
     <!--    <img :src="iconSrc" :style="`height: ${size}; width: ${size};`" />-->
-    <img :src="iconSrc" />
+    <img :src="iconSrc" alt=""/>
   </q-icon>
 
   <!--本地没有的icon，使用material的icon，给一个默认颜色-->
