@@ -71,13 +71,15 @@ const icon = computed(() => getPlatformIcon(props.platformName, props.logoStyle)
 
 <template>
 
-  <!--本地存在的svg-->
-  <q-icon v-if="icon" :style="{width, height}">
-    <img :src="icon" :style="{width, height}"/>
-  </q-icon>
+  <div class="row items-center">
+    <!--本地存在的svg-->
+    <q-icon v-if="icon" :style="{width, height}">
+      <img :src="icon" :style="{width, height}"/>
+    </q-icon>
 
-  <!--本地没有的icon，使用material的icon，给一个默认颜色-->
-  <q-icon v-else-if="icon !== ''" :style="{width, height}" :color="defaultColor" name="cloud"/>
+    <!--本地没有的icon，使用material的icon，给一个默认颜色-->
+    <q-icon v-else-if="icon !== ''" :style="{width, height}" :color="defaultColor" name="cloud"/>
+  </div>
 
 </template>
 

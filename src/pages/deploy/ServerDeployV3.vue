@@ -740,7 +740,7 @@ const deployServer = async () => {
             <div class="col-11">
               <div v-for="dataCenter in dataCenters.filter(datacenter => datacenter.services.length > 0)"
                    :key="dataCenter.id"
-                   class="q-pb-sm">
+                   class="q-pb-md">
                 <div class="row items-center text-weight-bold text-subtitle2"
                      :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">
                   {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
@@ -763,7 +763,15 @@ const deployServer = async () => {
                     :ripple="false"
                     @click="selectionServiceId = service!.id"
                   >
-                    {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
+                    <div class="row items-center">
+                      <div class="col-auto">
+                        {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
+                      </div>
+                      <div class="col-auto">
+                        <CloudPlatformLogo class="col-auto" height="15px" :platform-name="service.service_type"/>
+                      </div>
+                    </div>
+
                   </q-btn>
                 </div>
 
@@ -778,7 +786,7 @@ const deployServer = async () => {
               </div>
             </div>
 
-            <div class="col-11 row items-center q-gutter-md">
+            <div class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
               <q-btn
                 :color="selectionOwner === 'personal' ? 'primary' : 'grey-3'"
                 :text-color="selectionOwner === 'personal' ? '' : 'black'"
@@ -819,7 +827,7 @@ const deployServer = async () => {
                 {{ tc('noGroup') }}
               </div>
 
-              <div v-else class="col-11 row items-center q-gutter-md">
+              <div v-else class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
                 <q-btn
                   :color="selectionGroupId === group.id ? 'primary' : 'grey-3'"
                   :text-color="selectionGroupId === group.id ? '' : 'black'"
@@ -842,7 +850,7 @@ const deployServer = async () => {
             <div class="col-1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
-            <div class="col-auto row items-center q-gutter-md">
+            <div class="col-auto row items-center q-gutter-x-md q-gutter-y-xs">
               <q-btn
                 :color="selectionPayment === 'prepaid' ? 'primary' : 'grey-3'"
                 :text-color="selectionPayment === 'prepaid' ? '' : 'black'"
@@ -876,7 +884,7 @@ const deployServer = async () => {
               <div class="col-1 text-weight-bold">
                 {{ tc('usagePeriod') }}
               </div>
-              <div class="col-11 row items-center q-gutter-md">
+              <div class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
                 <q-btn
                   :color="selectionPeriod === month ? 'primary' : 'grey-3'"
                   :text-color="selectionPeriod === month ? '' : 'black'"
@@ -911,7 +919,7 @@ const deployServer = async () => {
 
                 <q-select
                   class="col-auto"
-                  style="width: 220px;"
+                  style="min-width: 220px;"
                   v-model="selectionImageRelease"
                   :options="imageReleases"
                   outlined
@@ -968,7 +976,7 @@ const deployServer = async () => {
                          :class="selectionImageId===scope.opt ? 'text-primary' : 'text-black'"
                     >
                       {{
-                        `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}(${images.find(image => image?.id === scope.opt)?.architecture})`
+                        `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}`
                       }}
                     </div>
 
@@ -980,7 +988,7 @@ const deployServer = async () => {
 
                       <div class="row items-center">
                         {{
-                          `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}(${images.find(image => image?.id === scope.opt)?.architecture})`
+                          `${images.filter(image => image.serviceId === selectionServiceId).find(image => image?.id === scope.opt)?.name}`
                         }}
                       </div>
 
@@ -1039,11 +1047,11 @@ const deployServer = async () => {
 
               <div v-if="privateNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
                    class="col q-pb-md">
-                <div class="row"
+                <div class="row text-weight-bold"
                      :class="selectionNetworkId === 'randomPrivate' || !compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('privateNetwork') }}
                 </div>
-                <div class="row items-center q-gutter-md">
+                <div class="row items-center q-gutter-x-md q-gutter-y-xs">
 
                   <!--按钮：随机选择私网网络-->
                   <q-btn
@@ -1086,11 +1094,11 @@ const deployServer = async () => {
 
               <div v-if="publicNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
                    class="col q-pb-md ">
-                <div class="row"
+                <div class="row text-weight-bold"
                      :class="selectionNetworkId === 'randomPublic' || compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
                   {{ tc('publicNetwork') }}
                 </div>
-                <div class="row items-center q-gutter-md">
+                <div class="row items-center q-gutter-x-md q-gutter-y-xs">
 
                   <!--按钮：随机选择公网网络-->
                   <q-btn
@@ -1146,7 +1154,7 @@ const deployServer = async () => {
                 {{ tc('noServerSize') }}
               </div>
 
-              <div v-else class="col-auto row items-center q-gutter-md">
+              <div v-else class="col-auto row items-center q-gutter-x-md q-gutter-y-xs">
                 <q-btn
                   v-for="flavor in flavors.filter(item => item.service_id === selectionServiceId)"
                   :val="flavor.id"
@@ -1226,7 +1234,14 @@ const deployServer = async () => {
                 <div v-if="selectionOwner === 'group'"
                      class="col-auto"
                      :class="compSelectionGroup?.name ? 'text-primary' : 'text-red'">
-                  {{ compSelectionGroup?.name || tc('noGroup') }}
+                  <div class="row items-center">
+                    <div class="col-auto">
+                      {{ tc('group') }}:
+                    </div>
+                    <div class="col-auto">
+                      {{ compSelectionGroup?.name || tc('noGroup') }}
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -1265,13 +1280,16 @@ const deployServer = async () => {
                   {{ tc('operatingSystem') }}
                 </div>
                 <div class="col-auto text-primary">
-                  <div
-                    v-if="compSelectionImage?.name">
+                  <div class="row items-center"
+                       v-if="compSelectionImage?.name">
                     <OsLogo
+                      class="col-auto"
                       :os-name="compSelectionImage?.name"
                       size="sm"
                     />
-                    {{ compSelectionImage?.name }}
+                    <div class="col-auto">
+                      {{ compSelectionImage?.name }}
+                    </div>
                   </div>
                   <div v-else class="text-red">
                     {{ tc('selectOperatingSystem') }}
@@ -1301,8 +1319,7 @@ const deployServer = async () => {
                   v-else-if="compSelectionNetwork?.name"
                   class="col-auto text-primary"
                 >
-                  {{ compSelectionNetwork?.public ? tc('publicNetwork') : tc('privateNetwork') }}
-                  :
+                  {{ compSelectionNetwork?.public ? tc('publicNetwork') : tc('privateNetwork') }}:
                   {{ compSelectionNetwork?.segment }}
                 </div>
                 <div v-else class="text-red">
