@@ -767,7 +767,7 @@ const deployServer = async () => {
                       <div class="col-auto">
                         {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
                       </div>
-                      <div class="col-auto">
+                      <div class="col-auto row items-center">
                         <CloudPlatformLogo class="col-auto" height="15px" :platform-name="service.service_type"/>
                       </div>
                     </div>
@@ -1284,7 +1284,7 @@ const deployServer = async () => {
                        v-if="compSelectionImage?.name">
                     <OsLogo
                       class="col-auto"
-                      :os-name="compSelectionImage?.name"
+                      :os-name="compSelectionImage?.name as string"
                       size="sm"
                     />
                     <div class="col-auto">

@@ -18,6 +18,11 @@ const props = defineProps({
     required: false,
     default: 'horizontal'
   },
+  size: {
+    type: String,
+    required: false,
+    default: 'lg'
+  },
   width: {
     type: String,
     required: false,
@@ -65,21 +70,18 @@ const getPlatformIcon = (platformName: string, style: 'horizontal' | 'vertical' 
   }
 }
 
-const icon = computed(() => getPlatformIcon(props.platformName, props.logoStyle))
+const iconSrc = computed(() => getPlatformIcon(props.platformName, props.logoStyle))
 
 </script>
 
 <template>
-
-  <div class="row items-center justify-center">
     <!--本地存在的svg-->
-    <q-icon v-if="icon" :style="{width, height}">
-      <img :src="icon" :style="{width, height}"/>
+    <q-icon v-if="iconSrc" :style="{width, height}">
+      <img :src="iconSrc" :style="{width, height}"/>
     </q-icon>
 
     <!--本地没有的icon，使用material的icon，给一个默认颜色-->
-    <q-icon v-else-if="icon !== ''" :style="{width, height}" :color="defaultColor" name="cloud"/>
-  </div>
+    <q-icon v-else-if="iconSrc !== ''"  :style="{width, height}" :color="defaultColor" name="cloud"/>
 
 </template>
 
