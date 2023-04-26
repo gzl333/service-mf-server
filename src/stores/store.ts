@@ -510,9 +510,9 @@ export interface GroupTableInterface extends totalTable, idTable<GroupInterface>
 export interface GroupMemberTableInterface extends totalTable, idTable<GroupMemberInterface> {
 }
 
-// 组的余额table: balanceId -> balance
-export interface GroupBalanceTableInterface extends totalTable, idTable<GroupBalanceInterface> {
-}
+// // 组的余额table: balanceId -> balance
+// export interface GroupBalanceTableInterface extends totalTable, idTable<GroupBalanceInterface> {
+// }
 
 // 组订单table
 export interface GroupOrderTableInterface extends partTable, idTable<OrderInterface> {
@@ -538,25 +538,25 @@ export interface FedAllocationTableInterface extends totalTable, idTable<Allocat
 // export interface AdminQuotaApplicationTableInterface extends totalTable, idTable<QuotaApplicationInterface> {
 // }
 
-// 服务管理员能看到的，当前服务下创建的所有云主机
-export interface AdminServerTableInterface extends totalTable, idTable<ServerInterface> {
-}
+// // 服务管理员能看到的，当前服务下创建的所有云主机
+// export interface AdminServerTableInterface extends totalTable, idTable<ServerInterface> {
+// }
 
-// 所有人一样的云主机配置选项
-export interface FedFlavorTableInterface extends totalTable, idTable<FlavorInterface> {
-}
+// // 所有人一样的云主机配置选项
+// export interface FedFlavorTableInterface extends totalTable, idTable<FlavorInterface> {
+// }
 
 // 联邦配额赠送活动
 // export interface FedQuotaActivityTableInterface extends totalTable, idTable<QuotaActivity> {
 // }
 
-// 服务内通行的网络配置
-export interface ServiceNetworkTableInterface extends totalTable, localIdTable<NetworkInterface> {
-}
+// // 服务内通行的网络配置
+// export interface ServiceNetworkTableInterface extends totalTable, localIdTable<NetworkInterface> {
+// }
 
-// 服务内通行的镜像配置
-export interface ServiceImageTableInterface extends totalTable, localIdTable<ImageInterface> {
-}
+// // 服务内通行的镜像配置
+// export interface ServiceImageTableInterface extends totalTable, localIdTable<ImageInterface> {
+// }
 
 // 用户全部的Vpn -> 依赖fed/serviceTable
 export interface UserVpnTableInterface extends totalTable, idTable<VpnInterface> {
@@ -624,11 +624,11 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as GroupMemberTableInterface,
-        groupBalanceTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as GroupBalanceTableInterface,
+        // groupBalanceTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as GroupBalanceTableInterface,
         groupCouponTable: {
           byId: {},
           allIds: [],
@@ -654,26 +654,26 @@ export const useStore = defineStore('server', {
           allIds: [],
           status: 'init'
         } as FedAllocationTableInterface,
-        adminServerTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as AdminServerTableInterface,
-        fedFlavorTable: {
-          byId: {},
-          allIds: [],
-          status: 'init'
-        } as FedFlavorTableInterface,
-        serviceNetworkTable: {
-          byLocalId: {},
-          allLocalIds: [],
-          status: 'init'
-        } as ServiceNetworkTableInterface,
-        serviceImageTable: {
-          byLocalId: {},
-          allLocalIds: [],
-          status: 'init'
-        } as ServiceImageTableInterface,
+        // adminServerTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as AdminServerTableInterface,
+        // fedFlavorTable: {
+        //   byId: {},
+        //   allIds: [],
+        //   status: 'init'
+        // } as FedFlavorTableInterface,
+        // serviceNetworkTable: {
+        //   byLocalId: {},
+        //   allLocalIds: [],
+        //   status: 'init'
+        // } as ServiceNetworkTableInterface,
+        // serviceImageTable: {
+        //   byLocalId: {},
+        //   allLocalIds: [],
+        //   status: 'init'
+        // } as ServiceImageTableInterface,
         userVpnTable: {
           byId: {},
           allIds: [],
@@ -1040,15 +1040,15 @@ export const useStore = defineStore('server', {
       })
       return services
     },
-    getAdminServers (state): ServerInterface[] {
-      // 排序函数，根据申请时间降序排列
-      const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
-      const rows: ServerInterface[] = []
-      for (const application of Object.values(state.tables.adminServerTable.byId)) {
-        rows.push(application)
-      }
-      return rows.sort(sortFn)
-    },
+    // getAdminServers (state): ServerInterface[] {
+    //   // 排序函数，根据申请时间降序排列
+    //   const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const rows: ServerInterface[] = []
+    //   for (const application of Object.values(state.tables.adminServerTable.byId)) {
+    //     rows.push(application)
+    //   }
+    //   return rows.sort(sortFn)
+    // },
     // 根据用户选择的filter来返回application数组
     // getPersonalApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
     //   // 排序函数，根据申请时间降序排列
@@ -1085,15 +1085,15 @@ export const useStore = defineStore('server', {
     // },
 
     /* server deploy card使用 */
-    getPublicNetworksByServiceId: (state) => (serviceId: string): NetworkInterface[] => {
-      return Object.values(state.tables.serviceNetworkTable.byLocalId).filter(network => network.public && network.service === serviceId)
-    },
-    getPrivateNetworksByServicedId: (state) => (serviceId: string): NetworkInterface[] => {
-      return Object.values(state.tables.serviceNetworkTable.byLocalId).filter(network => !network.public && network.service === serviceId)
-    },
-    getImagesByServiceId: (state) => (serviceId: string): ImageInterface[] => {
-      return Object.values(state.tables.serviceImageTable.byLocalId).filter(image => image.service === serviceId).sort((a, b) => a.name.localeCompare(b.name, 'en'))
-    },
+    // getPublicNetworksByServiceId: (state) => (serviceId: string): NetworkInterface[] => {
+    //   return Object.values(state.tables.serviceNetworkTable.byLocalId).filter(network => network.public && network.service === serviceId)
+    // },
+    // getPrivateNetworksByServicedId: (state) => (serviceId: string): NetworkInterface[] => {
+    //   return Object.values(state.tables.serviceNetworkTable.byLocalId).filter(network => !network.public && network.service === serviceId)
+    // },
+    // getImagesByServiceId: (state) => (serviceId: string): ImageInterface[] => {
+    //   return Object.values(state.tables.serviceImageTable.byLocalId).filter(image => image.service === serviceId).sort((a, b) => a.name.localeCompare(b.name, 'en'))
+    // },
     // 只返回未删除guota
     // getPersonalValidQuotasByServiceId: (state) => (serviceId: string): QuotaInterface[] => {
     //   // expirtation_time字段为null时为长期配额，应视为最大时间
@@ -1402,21 +1402,7 @@ export const useStore = defineStore('server', {
       if (this.tables.dataCenterTable.status === 'init') {
         this.loadDataCenterTable().then(() => {
           if (this.tables.serviceTable.status === 'init') {
-            this.loadServiceTable()
-              // todo temp： 使用server deploy v3 后应删除
-              .then(() => {
-                // if (this.tables.serviceNetworkTable.status === 'init') {
-                //   void this.loadServiceNetworkTable()
-                // }
-                //
-                // if (this.tables.serviceImageTable.status === 'init') {
-                //   void this.loadServiceImageTable()
-                // }
-                //
-                // if (this.tables.fedFlavorTable.status === 'init') {
-                //   void this.loadFedFlavorTable()
-                // }
-              })
+            void this.loadServiceTable()
           }
         })
       }
@@ -1892,89 +1878,89 @@ export const useStore = defineStore('server', {
         this.tables.fedAllocationTable.status = 'error'
       }
     },
-    async loadFedFlavorTable () {
-      this.tables.fedFlavorTable = {
-        byId: {},
-        allIds: [],
-        status: 'init'
-      }
-      this.tables.fedFlavorTable.status = 'loading'
-      try {
-        const respFlavor = await api.server.flavor.getFlavor()
-        for (const flavor of respFlavor.data.flavors) {
-          Object.assign(this.tables.fedFlavorTable.byId, { [flavor.id]: flavor })
-          this.tables.fedFlavorTable.allIds.unshift(Object.keys({ [flavor.id]: flavor } as Record<string, unknown>)[0])
-          this.tables.fedFlavorTable.allIds = [...new Set(this.tables.fedFlavorTable.allIds)]
-        }
-        this.tables.fedFlavorTable.status = 'total'
-      } catch (exception) {
-        // exceptionNotifier(exception)
-        this.tables.fedFlavorTable.status = 'error'
-      }
-    },
-    async loadServiceNetworkTable () {
-      this.tables.serviceNetworkTable = {
-        byLocalId: {},
-        allLocalIds: [],
-        status: 'init'
-      }
-      this.tables.serviceNetworkTable.status = 'loading'
-      for (const serviceId of this.tables.serviceTable.allIds) {
-        // service.status 为 enable 时才入表
-        if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
-          try {
-            const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
-            for (const network of respNetwork.data) {
-              // 将service 和 localId补充进network对象
-              Object.assign(network, {
-                service: serviceId,
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                localId: `${serviceId}-${network.id}`
-              })
-              Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
-              this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
-              this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
-            }
-          } catch (exception) {
-            // exceptionNotifier(exception)
-            // 继续下一个循环
-            continue
-          }
-        }
-      }
-      this.tables.serviceNetworkTable.status = 'total'
-    },
-    async loadServiceImageTable () {
-      this.tables.serviceImageTable = {
-        byLocalId: {},
-        allLocalIds: [],
-        status: 'init'
-      }
-      this.tables.serviceImageTable.status = 'loading'
-      for (const serviceId of this.tables.serviceTable.allIds) {
-        // service.status 为 enable 时才入表
-        if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
-          try {
-            const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
-            for (const image of respImage.data) {
-              // 将service 和 localId补充进image对象
-              Object.assign(image, {
-                service: serviceId,
-                localId: `${serviceId}-${image.id}`
-              })
-              Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
-              this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
-              this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
-            }
-          } catch (exception) {
-            // exceptionNotifier(exception)
-            // 继续下一个循环
-            continue
-          }
-        }
-      }
-      this.tables.serviceImageTable.status = 'total'
-    },
+    // async loadFedFlavorTable () {
+    //   this.tables.fedFlavorTable = {
+    //     byId: {},
+    //     allIds: [],
+    //     status: 'init'
+    //   }
+    //   this.tables.fedFlavorTable.status = 'loading'
+    //   try {
+    //     const respFlavor = await api.server.flavor.getFlavor()
+    //     for (const flavor of respFlavor.data.flavors) {
+    //       Object.assign(this.tables.fedFlavorTable.byId, { [flavor.id]: flavor })
+    //       this.tables.fedFlavorTable.allIds.unshift(Object.keys({ [flavor.id]: flavor } as Record<string, unknown>)[0])
+    //       this.tables.fedFlavorTable.allIds = [...new Set(this.tables.fedFlavorTable.allIds)]
+    //     }
+    //     this.tables.fedFlavorTable.status = 'total'
+    //   } catch (exception) {
+    //     // exceptionNotifier(exception)
+    //     this.tables.fedFlavorTable.status = 'error'
+    //   }
+    // },
+    // async loadServiceNetworkTable () {
+    //   this.tables.serviceNetworkTable = {
+    //     byLocalId: {},
+    //     allLocalIds: [],
+    //     status: 'init'
+    //   }
+    //   this.tables.serviceNetworkTable.status = 'loading'
+    //   for (const serviceId of this.tables.serviceTable.allIds) {
+    //     // service.status 为 enable 时才入表
+    //     if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
+    //       try {
+    //         const respNetwork = await api.server.network.getNetwork({ query: { service_id: serviceId } })
+    //         for (const network of respNetwork.data) {
+    //           // 将service 和 localId补充进network对象
+    //           Object.assign(network, {
+    //             service: serviceId,
+    //             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    //             localId: `${serviceId}-${network.id}`
+    //           })
+    //           Object.assign(this.tables.serviceNetworkTable.byLocalId, { [network.localId]: network })
+    //           this.tables.serviceNetworkTable.allLocalIds.unshift(Object.keys({ [network.localId]: network } as Record<string, unknown>)[0])
+    //           this.tables.serviceNetworkTable.allLocalIds = [...new Set(this.tables.serviceNetworkTable.allLocalIds)]
+    //         }
+    //       } catch (exception) {
+    //         // exceptionNotifier(exception)
+    //         // 继续下一个循环
+    //         continue
+    //       }
+    //     }
+    //   }
+    //   this.tables.serviceNetworkTable.status = 'total'
+    // },
+    // async loadServiceImageTable () {
+    //   this.tables.serviceImageTable = {
+    //     byLocalId: {},
+    //     allLocalIds: [],
+    //     status: 'init'
+    //   }
+    //   this.tables.serviceImageTable.status = 'loading'
+    //   for (const serviceId of this.tables.serviceTable.allIds) {
+    //     // service.status 为 enable 时才入表
+    //     if (this.tables.serviceTable.byId[serviceId]?.status === 'enable') {
+    //       try {
+    //         const respImage = await api.server.image.getImage({ query: { service_id: serviceId } })
+    //         for (const image of respImage.data) {
+    //           // 将service 和 localId补充进image对象
+    //           Object.assign(image, {
+    //             service: serviceId,
+    //             localId: `${serviceId}-${image.id}`
+    //           })
+    //           Object.assign(this.tables.serviceImageTable.byLocalId, { [image.localId]: image })
+    //           this.tables.serviceImageTable.allLocalIds.unshift(Object.keys({ [image.localId]: image } as Record<string, unknown>)[0])
+    //           this.tables.serviceImageTable.allLocalIds = [...new Set(this.tables.serviceImageTable.allLocalIds)]
+    //         }
+    //       } catch (exception) {
+    //         // exceptionNotifier(exception)
+    //         // 继续下一个循环
+    //         continue
+    //       }
+    //     }
+    //   }
+    //   this.tables.serviceImageTable.status = 'total'
+    // },
     async loadUserVpnTable () {
       this.tables.userVpnTable = {
         byId: {},
