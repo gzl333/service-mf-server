@@ -83,9 +83,18 @@ const services = computed(() => Object.values(store.tables.serviceTable.byId))
 // 依赖selectionService Id选择值的数据
 // 当前service_id对应的image集合，随service_id选择而改变
 const images = ref<ImageInterface[]>([])
-// 当前images里面可供选择的release数组， 由images数组归并而来
-const imageReleases = ref<string[]>([])
-// const imageReleases = computed(() => images.value.reduce((prev, curr) =>)) // todo 由images自动归并，去重，整理格式
+// 当前images里面可供选择的release数组， 由images数组归并而来, 由images自动筛选、归并、去重、排序、整理格式
+const imageReleases = computed(() =>
+  images.value
+    .filter(image => image.serviceId === selectionServiceId.value)
+    .reduce((accumulator: string[], item) => {
+      if (!accumulator.includes(item.release)) {
+        accumulator.push(item.release)
+      }
+      return accumulator
+    }, [])
+    .sort((a, b) => a.localeCompare(b, 'en-US'))
+)
 
 // 当前service_id对应的flavor/size集合，随service_id选择而改变
 const flavors = ref<FlavorInterface[]>([])
@@ -334,7 +343,6 @@ watch(selectionImageRelease, () => {
 const updateImages = async (serviceId: string) => {
   // 清空当前images列表
   images.value = []
-  imageReleases.value = []
 
   // 从分页数据中获取全部数据
   const PAGE_SIZE = 100 // 单次获取的page size
@@ -360,12 +368,6 @@ const updateImages = async (serviceId: string) => {
 
         // image options
         images.value.push(image)
-
-        // image release options
-        // const release = image.release.toLowerCase().split(' ').map(word => word[0].toLowerCase() + word.slice(1)).join(' ')
-        // if (!imageReleases.value.includes(image.release)) {
-        //   imageReleases.value.push(image.release)
-        // }
       }
 
       // 更新分页数据
@@ -376,9 +378,6 @@ const updateImages = async (serviceId: string) => {
   } catch (exception) {
     // exceptionNotifier(exception)
   }
-
-  // imageRelease 排序
-  imageReleases.value.sort((a, b) => a.localeCompare(b, 'en-US'))
 
   // 选择默认项
   chooseImageRelease()
@@ -1185,18 +1184,18 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="row items-center q-py-md">
-            <div class="col-1 row">
-              <div class="text-weight-bold">
-                test area
-              </div>
-            </div>
-            <div class="col-11 row q-pt-md">
-                       <pre>
-                          {{ images }}
-                       </pre>
-            </div>
-          </div>
+          <!--          <div class="row items-center q-py-md">-->
+          <!--            <div class="col-1 row">-->
+          <!--              <div class="text-weight-bold">-->
+          <!--                test area-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--            <div class="col-11 row q-pt-md">-->
+          <!--                       <pre>-->
+          <!--                          {{ images }}-->
+          <!--                       </pre>-->
+          <!--            </div>-->
+          <!--          </div>-->
 
         </div>
       </div>
