@@ -21,13 +21,19 @@ const store = useStore()
 const route = useRoute()
 // const router = useRouter()
 
-// load table
-if (store.tables.personalOrderTable.status === 'init') {
-  void store.loadPersonalOrderTable()
-}
-
 // 从route对象中读取id参数
 const orderId = route.params.orderId as string
+
+// // load table
+// if (store.tables.personalOrderTable.status === 'init') {
+//   void store.loadPersonalOrderTable()
+// }
+
+// load single order
+void store.loadSingleOrder({
+  isGroup: false,
+  orderId
+})
 
 </script>
 

@@ -26,8 +26,8 @@ const orderId = route.params.orderId as string
 
 // load single order
 void store.loadSingleOrder({
-  orderId,
-  isGroup: true
+  isGroup: true,
+  orderId
 })
 </script>
 

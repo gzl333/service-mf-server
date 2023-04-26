@@ -12,7 +12,8 @@ const props = defineProps({
   },
   isGroup: {
     type: Boolean,
-    required: true
+    required: false,
+    default: false
   }
 })
 // const emits = defineEmits(['change', 'delete'])

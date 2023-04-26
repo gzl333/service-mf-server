@@ -77,7 +77,7 @@ const iconSrc = computed(() => getPlatformIcon(props.platformName, props.logoSty
 <template>
     <!--本地存在的svg-->
     <q-icon v-if="iconSrc" :style="{width, height}">
-      <img :src="iconSrc" :style="{width, height}"/>
+      <img :src="iconSrc" :style="{width, height}" alt=""/>
     </q-icon>
 
     <!--本地没有的icon，使用material的icon，给一个默认颜色-->

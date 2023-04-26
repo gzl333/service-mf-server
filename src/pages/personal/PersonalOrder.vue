@@ -22,9 +22,7 @@ const store = useStore()
 // const router = useRouter()
 
 // load table
-if (store.tables.personalOrderTable.status === 'init') {
-  void store.loadPersonalOrderTable()
-}
+void store.loadPersonalOrderTable()
 
 // service_id下拉列表
 const serviceOptions = computed(() => store.getAllServiceOptions)

@@ -62,9 +62,9 @@ export interface GroupInterface {
   // 当前用户在组内权限  owner > leader > member
   myRole: 'owner' | 'leader' | 'member'
   // 订单
-  order: string[] // orderId
+  // order: string[] // orderId
   // coupon
-  coupons: string[] // couponId
+  // coupons: string[] // couponId
   // 余额 to del
   // balance: string // groupBalanceTable 内的id值
 
@@ -348,11 +348,14 @@ export interface OrderInterface {
     vm_cpu: number
     vm_ram: number
     vm_systemdisk_size: number
-    vm_public_ip: boolean
+    vm_public_ip: true,
     vm_image_id: string
+    vm_image_name: string
     vm_network_id: number
+    vm_network_name: string
     vm_azone_id: string
     vm_azone_name: string
+    vm_flavor_id: string
   },
   period: number
   payment_time: string
@@ -1754,8 +1757,8 @@ export const useStore = defineStore('server', {
             this.tables.groupOrderTable.allIds.unshift(respGetOrderId.data.id)
             this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
 
-            // orderId补充进group的order字段
-            this.tables.groupTable.byId[payload?.groupId].order.push(order.id)
+            // // orderId补充进group的order字段
+            // this.tables.groupTable.byId[payload?.groupId].order.push(order.id)
           } catch (exception) {
             // exceptionNotifier(exception)
             this.tables.groupOrderTable.status = 'part'
@@ -2012,9 +2015,11 @@ export const useStore = defineStore('server', {
         try {
           // get data
           const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
+
           // groupTable补充order字段
-          this.tables.groupTable.byId[respGetOrderId.data.vo_id].order.push(payload.orderId)
-          // 补充groupOrderTable
+          // this.tables.groupTable.byId[respGetOrderId.data.vo_id].order.push(payload.orderId)
+
+          // 填入groupOrderTable
           Object.assign(this.tables.groupOrderTable.byId, { [respGetOrderId.data.id]: respGetOrderId.data })
           this.tables.groupOrderTable.allIds.unshift(respGetOrderId.data.id)
           this.tables.groupOrderTable.allIds = [...new Set(this.tables.groupOrderTable.allIds)]
@@ -2028,7 +2033,7 @@ export const useStore = defineStore('server', {
         this.tables.personalOrderTable.status = 'loading'
         try {
           const respGetOrderId = await api.server.order.getOrderId({ path: { id: payload.orderId } })
-          // 补充personalOrderTable
+          // 填入personalOrderTable
           Object.assign(this.tables.personalOrderTable.byId, { [respGetOrderId.data.id]: respGetOrderId.data })
           this.tables.personalOrderTable.allIds.unshift(respGetOrderId.data.id)
           this.tables.personalOrderTable.allIds = [...new Set(this.tables.personalOrderTable.allIds)]
@@ -2349,8 +2354,8 @@ export const useStore = defineStore('server', {
           this.tables.groupCouponTable.allIds.unshift(coupon.id)
           this.tables.groupCouponTable.allIds = [...new Set(this.tables.groupCouponTable.allIds)]
 
-          // 把couponId补充到groupTable里
-          this.tables.groupTable.byId[coupon.vo.id]?.coupons.push(coupon.id)
+          // // 把couponId补充到groupTable里
+          // this.tables.groupTable.byId[coupon.vo.id]?.coupons.push(coupon.id)
         }
       } catch (exception) {
         // exceptionNotifier(exception)

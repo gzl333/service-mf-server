@@ -129,7 +129,7 @@ const onOKClick = () => {
               <q-icon
                 v-if="store.tables.serviceTable.byId[server.service.id]?.service_type.toLowerCase().includes('ev')"
                 style="width: 100px;height: 20px">
-                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+                      <img src="~assets/svg/EVCloud-Logo-Horizontal.svg" style="width: 100px;height: 20px" alt=""/>
               </q-icon>
             </span>
 
@@ -137,7 +137,7 @@ const onOKClick = () => {
               <q-icon
                 v-if="store.tables.serviceTable.byId[server.service.id]?.service_type.toLowerCase().includes('open')"
                 style="width: 100px;height: 20px">
-                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px"/>
+                      <img src="~assets/svg/OpenStack-Logo-Horizontal.svg" style="width: 100px;height: 20px" alt=""/>
               </q-icon>
             </span>
 
@@ -169,9 +169,9 @@ const onOKClick = () => {
             {{ tc('components.server.ServerRebuildDialog.available_period') }}
           </div>
           <div class="col">
-            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} -
+            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale as string) }} -
             {{
-              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : '永久有效'
+              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : '永久有效'
             }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
@@ -210,8 +210,8 @@ const onOKClick = () => {
                 <div class="row items-center"
                      :class="select===scope.opt.id ? 'text-primary' : 'text-black'"
                 >
-                  <OsLogo :os-name="scope.opt.name" size="md"/>
-                  {{ scope.opt.name }}
+                  <OsLogo :os-name="scope.opt.release" size="md"/>
+                  {{ scope.opt.release }}
                 </div>
               </template>
 
@@ -219,8 +219,8 @@ const onOKClick = () => {
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
                   <div class="row items-center">
-                    <OsLogo :os-name="scope.opt.name" size="md"/>
-                    {{ scope.opt.name }}
+                    <OsLogo :os-name="scope.opt.release" size="md"/>
+                    {{ scope.opt.release }}
                   </div>
 <!--                  <q-item-section avatar>-->
                   <!--                    <OsLogo :os-name="scope.opt.name" size="md"/>-->

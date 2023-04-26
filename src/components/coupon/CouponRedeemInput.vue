@@ -71,7 +71,7 @@ const redeemCoupon = async () => {
       multiLine: false
     })
     // 更新对应表
-    props.isGroup ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
+    props.isGroup ? await store.loadGroupCouponTable({ groupId: props.groupId as string }) : await store.loadPersonalCouponTable()
     // 跳转
     props.isGroup ? navigateToUrl(`/my/server/group/detail/${props.groupId}?show=coupon`) : navigateToUrl('/my/server/personal/coupon')
   } catch (exception) {
@@ -83,10 +83,15 @@ const redeemCoupon = async () => {
 <template>
   <q-input class="col-auto" v-model="coupon" outlined dense>
     <template v-slot:append>
-      <q-btn color="primary" flat dense @click="redeemCoupon">{{ tc('components.coupon.CouponRedeemInput.redeem') }}</q-btn>
+      <q-btn color="primary" flat dense @click="redeemCoupon">{{
+          tc('components.coupon.CouponRedeemInput.redeem')
+        }}
+      </q-btn>
     </template>
     <q-tooltip>
-      {{ isGroup ? tc('components.coupon.CouponRedeemInput.redeem_group') + ': ' + store.tables.groupTable.byId[groupId]?.name : tc('components.coupon.CouponRedeemInput.redeem_personal') }}
+      {{
+        isGroup ? tc('components.coupon.CouponRedeemInput.redeem_group') + ': ' + store.tables.groupTable.byId[groupId]?.name : tc('components.coupon.CouponRedeemInput.redeem_personal')
+      }}
     </q-tooltip>
   </q-input>
 </template>

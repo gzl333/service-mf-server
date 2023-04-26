@@ -323,34 +323,24 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   </div>
 
                   <div
-                    v-if="store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]"
+                    v-if="order.instance_config.vm_network_name"
                     class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_segment') }}</div>
                     <div class="col">
-                      {{
-                        store.tables.serviceNetworkTable.byLocalId[`${order.service_id}-${order.instance_config.vm_network_id}`]?.name
-                      }}
+                      {{ order.instance_config.vm_network_name }}
                     </div>
                   </div>
 
                   <!--image可能会在创建order后删除，localId失效，失效则不显示这一栏-->
                   <div
-                    v-if="store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]"
+                    v-if="order.instance_config.vm_image_name"
                     class="row items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
                     <div class="col">
-                      <!--                      <q-icon-->
-                      <!--                        v-if="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
-                      <!--                        :name="getOsIconName(store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name)"-->
-                      <!--                        flat size="md"/>-->
-
                       <OsLogo
-                        :os-name="store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name"
+                        :os-name="order.instance_config.vm_image_name"
                         size="md"/>
-                      {{
-                        store.tables.serviceImageTable.byLocalId[`${order.service_id}-${order.instance_config.vm_image_id}`]?.name
-                      }}
-
+                      {{ order.instance_config.vm_image_name }}
                     </div>
                   </div>
 

@@ -1281,10 +1281,10 @@ const deployServer = async () => {
                 </div>
                 <div class="col-auto text-primary">
                   <div class="row items-center"
-                       v-if="compSelectionImage?.name">
+                       v-if="selectionImageRelease">
                     <OsLogo
                       class="col-auto"
-                      :os-name="compSelectionImage?.name as string"
+                      :os-name="selectionImageRelease"
                       size="sm"
                     />
                     <div class="col-auto">
