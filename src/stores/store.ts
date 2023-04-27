@@ -1428,6 +1428,20 @@ export const useStore = defineStore('server', {
       })
     },
 
+    // deploy tables
+    loadDeployTables () {
+      void this.loadPersonalCouponTable()
+
+      this.loadGroupTable().then(() => {
+        // groupMemberTable 依赖 groupTable, 根据每个groupId建立一个groupMember对象
+        void this.loadGroupMemberTable().then(() => {
+          for (const groupId of this.tables.groupTable.allIds) {
+            void this.loadGroupCouponTable({ groupId })
+          }
+        })
+      })
+    },
+
     // 强制加载group相关table
     // forceLoadGroupModuleTable () {
     //   void this.loadGroupTable().then(() => {

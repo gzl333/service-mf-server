@@ -36,7 +36,12 @@ const MAX_MONTHS = 6
 const exceptionNotifier = useExceptionNotifier()
 
 // deploy时需要项目组相关数据，应加载group的基础table(groupTable & groupMemberTable)
-store.softLoadGroupBasicTables()
+store.loadDeployTables()
+
+// await store.loadPersonalCouponTable()
+// for (const groupId of store.tables.groupTable.allIds) {
+//   store.loadGroupCouponTable({ groupId })
+// }
 
 // summary折叠
 // const isShow = ref(true)
@@ -76,9 +81,16 @@ const input = ref<HTMLElement>()
 // const groups = ref<GroupInterface[]>([])
 
 // owner/leader权限才能建立云主机， member不能建立
-const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader']))
+const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader', 'member']))
 const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
 const services = computed(() => Object.values(store.tables.serviceTable.byId))
+const currAccountCoupons = computed(() => {
+  if (selectionOwner.value === 'personal') {
+    return Object.values(store.tables.personalCouponTable.byId)
+  } else {
+    return Object.values(store.tables.groupCouponTable.byId).filter(coupon => coupon?.vo?.id === selectionGroupId.value)
+  }
+})
 
 // 依赖selectionService Id选择值的数据
 // 当前service_id对应的image集合，随service_id选择而改变
@@ -186,7 +198,15 @@ const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
 const chooseGroup = () => {
-  selectionGroupId.value = route.query.group as string || groups.value[0]?.id || ''
+  // best strategy but been denied by moron
+  // selectionGroupId.value = route.query.group as string || groups.value[0]?.id || ''
+
+  // stupid
+  if (route.query.group as string) {
+    selectionGroupId.value = route.query.group as string
+  } else if (groups.value.length === 1) {
+    selectionGroupId.value = groups.value[0]?.id
+  }
 }
 const chooseNetwork = () => {
   // // 默认选择第一项
@@ -496,7 +516,7 @@ const checkInputs = () => {
       classes: 'notification-negative shadow-15',
       icon: 'error',
       textColor: 'negative',
-      message: `${tc('noGroup')}`,
+      message: `${tc('toChooseGroup')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -730,56 +750,7 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <div class="row items-center q-py-md">
-            <div class="col-1 row">
-              <div class="text-weight-bold">
-                {{ tc('serviceUnit') }}
-              </div>
-            </div>
-
-            <div class="col-11">
-              <div v-for="dataCenter in dataCenters.filter(datacenter => datacenter.services.length > 0)"
-                   :key="dataCenter.id"
-                   class="q-pb-md">
-                <div class="row items-center text-weight-bold text-subtitle2"
-                     :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">
-                  {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
-                </div>
-
-                <div v-if="dataCenter.services.length === 0" class="row items-center text-grey">
-                  {{ tc('noServiceUnit') }}
-                </div>
-
-                <div v-else class="row items-center q-gutter-x-md q-gutter-y-xs">
-                  <q-btn
-                    :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"
-                    :text-color="selectionServiceId === service?.id ? '' : 'black'"
-                    v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"
-                    :key="service?.id"
-                    :val="service?.id"
-                    unelevated
-                    dense
-                    no-caps
-                    :ripple="false"
-                    @click="selectionServiceId = service!.id"
-                  >
-                    <div class="row items-center">
-                      <div class="col-auto">
-                        {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
-                      </div>
-                      <div class="col-auto row items-center">
-                        <CloudPlatformLogo class="col-auto" width="80px" height="15px" :platform-name="service.service_type"/>
-                      </div>
-                    </div>
-
-                  </q-btn>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <div class="row items-center q-py-md">
+          <div class="row items-center q-pt-md q-pb-xs">
             <div class="col-1 row">
               <div class="text-weight-bold">
                 {{ tc('serverOwner') }}
@@ -814,39 +785,93 @@ const deployServer = async () => {
 
           </div>
 
-          <Transition>
-            <div v-if="selectionOwner === 'group'"
-                 class="row items-center q-py-md">
-              <div class="col-1 row">
-                <div class="text-weight-bold">
-                  {{ tc('group') }}
-                </div>
-              </div>
-
-              <div v-if="groups.length === 0" class="col-11 row items-center">
-                {{ tc('noGroup') }}
-              </div>
-
-              <div v-else class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
-                <q-btn
-                  :color="selectionGroupId === group.id ? 'primary' : 'grey-3'"
-                  :text-color="selectionGroupId === group.id ? '' : 'black'"
-                  v-for="group in groups"
-                  :val="group.id"
-                  :key="group.id"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionGroupId = group.id"
-                >
-                  {{ group.name }}
-                </q-btn>
+          <!--          <Transition>-->
+          <div v-if="selectionOwner === 'group'"
+               class="row items-center q-pb-md q-pt-xs">
+            <div class="col-1 row ">
+              <div class="text-weight-bold invisible">
+                {{ tc('group') }}
               </div>
             </div>
-          </Transition>
+
+            <div v-if="groups.length === 0" class="col-10 row items-center">
+              {{ tc('noGroup') }}
+            </div>
+
+            <div v-else class="col-9 row items-center q-gutter-x-md q-gutter-y-xs" style="padding-left: 80px;">
+              <q-btn
+                :color="selectionGroupId === group.id ? 'primary' : 'grey-3'"
+                :text-color="selectionGroupId === group.id ? '' : 'black'"
+                v-for="group in groups"
+                :val="group.id"
+                :key="group.id"
+                unelevated
+                dense
+                no-caps
+                :ripple="false"
+                @click="selectionGroupId = group.id"
+              >
+                {{ group.name }}
+              </q-btn>
+            </div>
+          </div>
+          <!--          </Transition>-->
 
           <div class="row items-center q-py-md">
+            <div class="col-1 row">
+              <div class="text-weight-bold in">
+                {{ tc('serviceUnit') }}
+              </div>
+            </div>
+
+            <div class="col-11">
+              <div v-for="dataCenter in dataCenters.filter(datacenter => datacenter.services.length > 0)"
+                   :key="dataCenter.id"
+                   class="q-pb-md">
+                <div class="row items-center text-weight-bold text-subtitle2"
+                     :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">
+                  {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
+                </div>
+
+                <div v-if="dataCenter.services.length === 0" class="row items-center text-grey">
+                  {{ tc('noServiceUnit') }}
+                </div>
+
+                <div v-else class="row items-center q-gutter-x-md q-gutter-y-xs">
+                  <q-btn
+                    :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"
+                    :text-color="selectionServiceId === service?.id ? '' : 'black'"
+                    v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"
+                    :key="service?.id"
+                    :val="service?.id"
+                    unelevated
+                    dense
+                    no-caps
+                    :ripple="false"
+                    @click="selectionServiceId = service!.id"
+                  >
+                    <div class="row items-center">
+                      <div class="col-auto row items-center">
+                        <CloudPlatformLogo class="col-auto" logo-style="mark" width="15px" height="15px"
+                                           :platform-name="service.service_type"/>
+                      </div>
+                      <div class="col-auto">
+                        {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
+                      </div>
+                      <div v-if="currAccountCoupons.find(coupon => coupon?.app_service?.service_id === service?.id)"
+                           class="col-auto text-green"
+                           style="font-size: 12px; zoom: 0.8;">
+                        {{ tc('有券') }}
+                      </div>
+                    </div>
+                  </q-btn>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row items-center q-pt-md q-pb-xs">
             <div class="col-1 text-weight-bold">
               {{ tc('paymentMethod') }}
             </div>
@@ -879,30 +904,30 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <Transition>
-            <div v-if="selectionPayment === 'prepaid'" class="row items-center q-py-md">
-              <div class="col-1 text-weight-bold">
-                {{ tc('usagePeriod') }}
-              </div>
-              <div class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
-                <q-btn
-                  :color="selectionPeriod === month ? 'primary' : 'grey-3'"
-                  :text-color="selectionPeriod === month ? '' : 'black'"
-                  v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
-                  :val="month"
-                  :key="month"
-                  unelevated
-                  dense
-                  no-caps
-                  :ripple="false"
-                  @click="selectionPeriod = month"
-                >
-                  <!--复数i18n-->
-                  {{ month }} {{ tc('countMonth', month) }}
-                </q-btn>
-              </div>
+          <!--          <Transition>-->
+          <div v-if="selectionPayment === 'prepaid'" class="row items-center q-pb-md q-pt-xs">
+            <div class="col-1 text-weight-bold invisible">
+              {{ tc('usagePeriod') }}
             </div>
-          </Transition>
+            <div class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
+              <q-btn
+                :color="selectionPeriod === month ? 'primary' : 'grey-3'"
+                :text-color="selectionPeriod === month ? '' : 'black'"
+                v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
+                :val="month"
+                :key="month"
+                unelevated
+                dense
+                no-caps
+                :ripple="false"
+                @click="selectionPeriod = month"
+              >
+                <!--复数i18n-->
+                {{ month }} {{ tc('countMonth', month) }}
+              </q-btn>
+            </div>
+          </div>
+          <!--          </Transition>-->
 
           <div class="row items-center q-py-md">
             <div class="col-1 text-weight-bold">
@@ -1239,7 +1264,7 @@ const deployServer = async () => {
                       {{ tc('group') }}:
                     </div>
                     <div class="col-auto">
-                      {{ compSelectionGroup?.name || tc('noGroup') }}
+                      {{ compSelectionGroup?.name || tc('toChooseGroup') }}
                     </div>
                   </div>
                 </div>

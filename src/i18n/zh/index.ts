@@ -38,6 +38,7 @@ export default {
   balance: '余额',
   points: '点', // 复数
   group: '项目组',
+  toChooseGroup: '请选择项目组',
   noGroup: '暂无可用项目组，请首先新建或加入项目组。',
   paymentMethod: '计费方式',
   prepaid: '包年包月',

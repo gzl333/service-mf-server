@@ -39,6 +39,7 @@ export default {
   points: 'Point | Points', // 复数
   group: 'Group',
   noGroup: 'No groups available. Please create a group or join a group before using it.',
+  toChooseGroup: 'Please choose a group',
   paymentMethod: 'Payment Method',
   prepaid: 'Monthly/Yearly Prepaid',
   prepaidDescription: 'An order will be placed. New server will be deployed after payment.',

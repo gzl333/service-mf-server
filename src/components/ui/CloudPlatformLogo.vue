@@ -61,7 +61,17 @@ const getPlatformIcon = (platformName: string, style: 'horizontal' | 'vertical' 
       return require('assets/svg/OpenStack-Logo-Mark.svg')
     }
   } else if (platformName?.includes('ali')) {
-    return require('assets/png/aliyun-logo.png')
+    if (style === 'horizontal') {
+      return require('assets/png/aliyun-logo.png')
+    } else if (style === 'mark') {
+      return require('assets/png/aliyun-mark.png')
+    }
+  } else if (platformName?.includes('vmware')) {
+    if (style === 'horizontal') {
+      return require('assets/png/vmware-horizontal.png')
+    } else if (style === 'mark') {
+      return require('assets/png/vmware-mark.png')
+    }
   } else {
     return ''
   }
