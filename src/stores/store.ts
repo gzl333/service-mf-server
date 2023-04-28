@@ -1402,7 +1402,9 @@ export const useStore = defineStore('server', {
       if (this.tables.dataCenterTable.status === 'init') {
         this.loadDataCenterTable().then(() => {
           if (this.tables.serviceTable.status === 'init') {
-            void this.loadServiceTable()
+            void this.loadServiceTable().then(() => {
+              void this.loadUserVpnTable()
+            })
           }
         })
       }

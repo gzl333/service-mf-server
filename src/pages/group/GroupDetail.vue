@@ -41,17 +41,26 @@ const groupMember = computed(() => store.tables.groupMemberTable.byId[groupId])
 
 // groupServer
 // 根据当前页面需求，更新group server
-void store.loadGroupServerTable({ groupId })
+void store.loadGroupServerTable({
+  groupId,
+  pageSize: 999
+})
 // 这个getter很重要，避免快速切换组列表页面时，table内混入了其他组的server
 const servers = computed(() => store.getGroupServersByGroupId(groupId))
 
 // groupOrder
 // 根据当前页面需求，更新group order
-void store.loadGroupOrderTable({ groupId })
+void store.loadGroupOrderTable({
+  groupId,
+  pageSize: 999
+})
 const orders = computed(() => store.getGroupOrdersByGroupId(groupId))
 
 // groupCoupon
-void store.loadGroupCouponTable({ groupId })
+void store.loadGroupCouponTable({
+  groupId,
+  pageSize: 999
+})
 const coupons = computed(() => store.getGroupCouponsByGroupId(groupId))
 
 const tab = ref(show ?? 'server')

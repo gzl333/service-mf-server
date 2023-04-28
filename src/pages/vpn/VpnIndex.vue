@@ -23,10 +23,11 @@ const store = useStore()
 const route = useRoute()
 // const router = useRouter()
 
-// 加载vpnTable
-if (store.tables.userVpnTable.status === 'init') {
-  store.loadUserVpnTable()
-}
+// // 加载vpnTable
+// if (store.tables.userVpnTable.status === 'init') {
+//   console.log('!')
+//   store.loadUserVpnTable()
+// }
 
 // 筛选datacenter的关键字
 const filter = ref('')
@@ -138,19 +139,19 @@ const gotoManualVpn = () => {
                   </q-tabs>
                 </div>
 
-                <div class="col-2">
-                  <div class="row full-height items-center">
-                    <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')"
-                             stack-label>
-                      <template v-slot:prepend>
-                        <q-icon name="search"/>
-                      </template>
-                      <template v-slot:append v-if="filter">
-                        <q-icon name="close" @click="filter = ''" class="cursor-pointer"/>
-                      </template>
-                    </q-input>
-                  </div>
-                </div>
+<!--                <div class="col-2">-->
+<!--                  <div class="row full-height items-center">-->
+<!--                    <q-input class="col" dense outlined v-model="filter" :label="tc('pages.vpn.VpnIndex.org_filter')"-->
+<!--                             stack-label>-->
+<!--                      <template v-slot:prepend>-->
+<!--                        <q-icon name="search"/>-->
+<!--                      </template>-->
+<!--                      <template v-slot:append v-if="filter">-->
+<!--                        <q-icon name="close" @click="filter = ''" class="cursor-pointer"/>-->
+<!--                      </template>-->
+<!--                    </q-input>-->
+<!--                  </div>-->
+<!--                </div>-->
 
               </div>
             </div>
@@ -214,7 +215,7 @@ const gotoManualVpn = () => {
                     >
 
                       <div
-                        v-if="!store.tables.userVpnTable.allIds.includes(tabService) || !store.tables.serviceTable.byId[tabService].need_vpn"
+                        v-if="!store.tables.userVpnTable.byId[tabService] || !store.tables.serviceTable.byId[tabService].need_vpn"
                       >
                         <div v-if="!store.tables.serviceTable.byId[tabService].need_vpn">
                           {{ tc('pages.vpn.VpnIndex.no_need_vpn') }}

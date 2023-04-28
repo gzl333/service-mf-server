@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-import { useStore } from 'stores/store'
+import { ImageInterface, useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 import { Notify, useDialogPluginComponent } from 'quasar'
 
 import OsLogo from 'components/ui/OsLogo.vue'
+import api from 'src/api'
 
 const props = defineProps({
   serverId: {
@@ -36,10 +37,74 @@ const {
 } = useDialogPluginComponent()
 
 const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId[props.serverId] : store.tables.personalServerTable.byId[props.serverId])
-const images = computed(() => store.getImagesByServiceId(server.value.service.id))
+const images = ref<ImageInterface[]>([])
+// // 当前images里面可供选择的release数组， 由images数组归并而来, 由images自动筛选、归并、去重、排序、整理格式
+// const imageReleases = computed(() =>
+//   images.value
+//     .filter(image => image.serviceId === server.value.service.id)
+//     .reduce((accumulator: string[], item) => {
+//       if (!accumulator.includes(item.release)) {
+//         accumulator.push(item.release)
+//       }
+//       return accumulator
+//     }, [])
+//     .sort((a, b) => a.localeCompare(b, 'en-US'))
+// )
+//
+// // selectionImageRelease 选择默认项
+// const chooseImageRelease = () => {
+//   selectionImageRelease.value = imageReleases.value[0]
+// }
+
+const updateImages = async (serviceId: string) => {
+  // 清空当前images列表
+  images.value = []
+
+  // 从分页数据中获取全部数据
+  const PAGE_SIZE = 100 // 单次获取的page size
+  let count = 0 // 结果总数，多页项目的数总和
+  let page = 1 // current page
+
+  try {
+    // 先执行一次，再检查循环条件
+    do {
+      // 用当前分页条件获取数据
+      const respGetImage = await api.server.image.getImagePaginate({
+        query: {
+          page,
+          page_size: PAGE_SIZE,
+          service_id: serviceId
+        }
+      })
+
+      // 保存数据
+      for (const image of respGetImage.data.results as ImageInterface[]) {
+        // 增加serviceId标识,在读取images过程中，用户可能改变serviceId的选择，多个结果都会存入images容器，这个字段使用的时候方便筛选区分
+        Object.assign(image, { serviceId })
+
+        // image options
+        images.value.push(image)
+      }
+
+      // 更新分页数据
+      page += 1
+      count = respGetImage.data.count
+      // 核实容器内含有当前指定serviceId的image数量够不够，不够再去拿
+    } while (images.value.filter(image => image.serviceId === serviceId).length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+
+  // chooseImageRelease()
+}
+
+updateImages(server.value.service.id)
 
 const selectDom = ref<HTMLElement>()
 const select = ref(server.value.image_id)
+// image的发行版, 不是image的最终选择，只用来筛选image第二个selection的显示选项
+// const selectionImageRelease = ref('')
+
 const check = ref(false)
 
 // 确定时
@@ -171,7 +236,7 @@ const onOKClick = () => {
           <div class="col">
             {{ new Date(server.creation_time).toLocaleString(i18n.global.locale as string) }} -
             {{
-              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : '永久有效'
+              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : tc('永久有效')
             }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
@@ -202,6 +267,49 @@ const onOKClick = () => {
             {{ tc('components.server.ServerRebuildDialog.target_operating_system') }}
           </div>
           <div class="col-8">
+<!--            <q-select-->
+<!--              class="col-auto"-->
+<!--              style="min-width: 220px;"-->
+<!--              v-model="selectionImageRelease"-->
+<!--              :options="imageReleases"-->
+<!--              outlined-->
+<!--              dense-->
+<!--            >-->
+
+<!--              &lt;!&ndash;当前选项的内容插槽&ndash;&gt;-->
+<!--              <template v-slot:selected-item="scope">-->
+
+<!--                <div class="row items-center"-->
+<!--                     :class="selectionImageRelease===scope.opt ? 'text-primary' : 'text-black'"-->
+<!--                >-->
+<!--                  <OsLogo :os-name="scope.opt" size="sm"/>-->
+<!--                  {{ scope.opt }}-->
+<!--                </div>-->
+
+<!--              </template>-->
+
+<!--              &lt;!&ndash;待选项的内容插槽&ndash;&gt;-->
+<!--              <template v-slot:option="scope">-->
+<!--                <q-item v-bind="scope.itemProps">-->
+
+<!--                  <div class="row items-center">-->
+<!--                    <OsLogo :os-name="scope.opt" size="sm"/>-->
+<!--                    <q-item-label>{{ scope.opt }}</q-item-label>-->
+<!--                  </div>-->
+
+<!--                  &lt;!&ndash;                      <q-item-section avatar>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                        <OsLogo :os-name="scope.opt" size="md"/>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                      </q-item-section>&ndash;&gt;-->
+
+<!--                  &lt;!&ndash;                      <q-item-section>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                        <q-item-label>{{ scope.opt }}</q-item-label>&ndash;&gt;-->
+<!--                  &lt;!&ndash;                      </q-item-section>&ndash;&gt;-->
+
+<!--                </q-item>-->
+<!--              </template>-->
+
+<!--            </q-select>-->
+
             <q-select ref="selectDom" v-if="images.length !== 0" outlined v-model="select" dense
                       :options="images" map-options emit-value option-label="name" option-value="id">
 
@@ -210,8 +318,8 @@ const onOKClick = () => {
                 <div class="row items-center"
                      :class="select===scope.opt.id ? 'text-primary' : 'text-black'"
                 >
-                  <OsLogo :os-name="scope.opt.release" size="md"/>
-                  {{ scope.opt.release }}
+                  <OsLogo :os-name="scope.opt.name" size="md"/>
+                  {{ scope.opt.name }}
                 </div>
               </template>
 
@@ -219,10 +327,10 @@ const onOKClick = () => {
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
                   <div class="row items-center">
-                    <OsLogo :os-name="scope.opt.release" size="md"/>
-                    {{ scope.opt.release }}
+                    <OsLogo :os-name="scope.opt.name" size="md"/>
+                    {{ scope.opt.name }}
                   </div>
-<!--                  <q-item-section avatar>-->
+                  <!--                  <q-item-section avatar>-->
                   <!--                    <OsLogo :os-name="scope.opt.name" size="md"/>-->
                   <!--                  </q-item-section>-->
                   <!--                  <q-item-section>-->

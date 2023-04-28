@@ -817,9 +817,9 @@ const deployServer = async () => {
           </div>
           <!--          </Transition>-->
 
-          <div class="row items-center q-py-md">
+          <div class="row items-start q-py-md">
             <div class="col-1 row">
-              <div class="text-weight-bold in">
+              <div class="text-weight-bold">
                 {{ tc('serviceUnit') }}
               </div>
             </div>
