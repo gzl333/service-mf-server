@@ -1192,7 +1192,7 @@ const deployServer = async () => {
                   :ripple="false"
                   @click="selectionFlavorId = flavor.id"
                 >
-                  {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram / 1024} GB` }}
+                  {{ `${flavor.vcpus} ${tc('countCore', flavor.vcpus)} / ${flavor.ram} GB` }}
                 </q-btn>
               </div>
             </div>
@@ -1363,7 +1363,7 @@ const deployServer = async () => {
                 <div v-if="compSelectionFlavor"
                      class="col-auto text-primary ">
                   {{
-                    `${compSelectionFlavor?.vcpus} ${tc('countCore', compSelectionFlavor?.vcpus)} / ${compSelectionFlavor?.ram / 1024} GB`
+                    `${compSelectionFlavor?.vcpus} ${tc('countCore', compSelectionFlavor?.vcpus)} / ${compSelectionFlavor?.ram} GB`
                   }}
                 </div>
                 <div v-else class="text-red">
