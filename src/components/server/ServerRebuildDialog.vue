@@ -214,7 +214,7 @@ const onOKClick = () => {
             {{ tc('components.server.ServerRebuildDialog.hardware_configuration') }}
           </div>
           <div class="col">
-            {{ server.vcpus }} {{ tc('components.server.ServerRebuildDialog.cores') }}/ {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{ tc('components.server.ServerRebuildDialog.cores') }}/ {{ server.ram }}GB
           </div>
         </div>
 

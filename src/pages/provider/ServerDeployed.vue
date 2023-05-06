@@ -11,6 +11,9 @@ import type { ServerInterface } from 'stores/store'
 
 import OsLogo from 'components/ui/OsLogo.vue'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
+import ServerStatusLocal from 'components/provider/ServerStatusLocal.vue'
+
+import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 // const props = defineProps({
@@ -28,6 +31,8 @@ const store = useStore()
 // const router = useRouter()
 
 const exceptionNotifier = useExceptionNotifier()
+// 复制信息到剪切板
+const clickToCopy = useCopyToClipboard()
 
 // 筛选服务单元
 const serviceOptions = computed(() => store.getServiceOptionsByRole(store.items.fedRole === 'federal-admin'))
@@ -117,7 +122,35 @@ const remarkInput = ref('')
 
 const isLoading = ref(false)
 
-const rows = ref<ServerInterface[]>()
+const rows = ref<ServerInterface[]>([])
+
+// 根据serverId，用管理员身份查询server status
+const loadSingleServerStatus = async (serverId: string) => {
+  try {
+    const respStatus = await api.server.server.getServerStatus({
+      path: { id: serverId },
+      query: { 'as-admin': true }
+    })
+    return respStatus.data.status.status_code
+  } catch (exception) {
+    // 在异常发生处进行提示
+    exceptionNotifier(exception)
+    // 向更高层抛出异常，供上层按需处理
+    throw (exception)
+  }
+}
+
+// 更新在rows里面当前server的status
+const updateSingleSeverStatusInRows = async (serverId: string) => {
+  const server = rows.value.find((server: ServerInterface) => server.id === serverId)
+  server!.status = -1
+  try {
+    const status = await loadSingleServerStatus(serverId)
+    server!.status = status
+  } catch (exception) {
+    server!.status = 0
+  }
+}
 
 // 根据当前搜索条件，更新rows，并更新count值
 const loadAdminServers = async () => {
@@ -146,6 +179,21 @@ const loadAdminServers = async () => {
     rows.value = respGetAdminServer.data.servers
     // pagination count
     pagination.value.count = respGetAdminServer.data.count
+
+    // 更新每个server status
+    for (const server of rows.value) {
+      // status -> -1，UI则显示为获取中
+      server.status = -1
+
+      // 异步获取status
+      new Promise((resolve) => resolve(loadSingleServerStatus(server.id)))
+        .then(value => {
+          server.status = value as number
+        })
+        .catch(() => {
+          server.status = 0
+        })
+    }
   } catch (exception) {
     exceptionNotifier(exception)
   }
@@ -257,14 +305,6 @@ const columns = computed(() => [
   //   style: 'padding: 15px 0px',
   //   headerStyle: 'padding: 0 2px'
   // },
-  // {
-  //   name: 'status',
-  //   label: (() => tc('components.server.ServeTable.status'))(),
-  //   field: 'status',
-  //   align: 'center',
-  //   style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
-  //   headerStyle: 'padding: 0 2px'
-  // },
   {
     name: 'creation',
     label: (() => tc('CREATION'))(),
@@ -284,12 +324,20 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
+    name: 'status',
+    label: (() => tc('components.server.ServeTable.status'))(),
+    field: 'status',
+    align: 'center',
+    style: 'padding: 15px 0px; width: 100px', // 固定宽度防止更新状态时抖动
+    headerStyle: 'padding: 0 2px'
+  },
+  {
     name: 'operation',
     label: (() => tc('components.server.ServeTable.operation'))(),
     field: 'operation',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px;width: 150px;',
+    style: 'padding: 15px 0px;width: 100px;',
     headerStyle: 'padding: 0 2px'
   }])
 
@@ -729,7 +777,39 @@ const stopServer = (server: ServerInterface) => {
           </q-td>
 
           <q-td key="ip" :props="props">
-            {{ props.row.ipv4 }}
+
+            <div class="column">
+              {{ props.row.ipv4 }}
+
+              <div class="row justify-center">
+
+                <q-btn
+                  class="text-caption"
+                  flat
+                  dense
+                  color="primary"
+                  @click="clickToCopy(props.row.ipv4)">
+                  {{ tc('复制IP') }}
+                </q-btn>
+
+                <q-btn
+                  class="text-caption"
+                  flat
+                  dense
+                  color="primary"
+                  @click="clickToCopy(props.row.id)"
+                >
+
+                  {{ tc('复制ID') }}
+
+                  <q-tooltip>{{ props.row.id }}</q-tooltip>
+
+                </q-btn>
+
+              </div>
+
+            </div>
+
           </q-td>
 
           <q-td key="serviceNode" :props="props">
@@ -759,7 +839,7 @@ const stopServer = (server: ServerInterface) => {
                 i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
-            <div>{{ props.row.ram / 1024 }}GB</div>
+            <div>{{ props.row.ram }}GB</div>
           </q-td>
 
           <q-td key="group" :props="props">
@@ -779,23 +859,31 @@ const stopServer = (server: ServerInterface) => {
             {{ props.row.remarks }}
           </q-td>
 
-          <q-td key="vnc" :props="props">
-            vnc
-          </q-td>
-
-          <q-td key="status" :props="props">
-            status
-          </q-td>
-
+          <!--          <q-td key="vnc" :props="props">-->
+          <!--            vnc-->
+          <!--          </q-td>-->
+          <!--          -->
           <q-td key="creation" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                }}
+              </div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                }}
+              </div>
             </div>
           </q-td>
 
@@ -805,8 +893,14 @@ const stopServer = (server: ServerInterface) => {
                 长期
               </div>
               <div v-else>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+                <div>{{
+                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                  }}
+                </div>
+                <div>{{
+                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                  }}
+                </div>
               </div>
             </div>
 
@@ -815,20 +909,32 @@ const stopServer = (server: ServerInterface) => {
                 长期
               </div>
               <div v-else>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-                <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+                <div>{{
+                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                  }}
+                </div>
+                <div>{{
+                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                  }}
+                </div>
               </div>
             </div>
           </q-td>
 
-          <q-td key="operation" :props="props">
-            <q-btn flat dense no-caps color="primary" @click="deleteServer(props.row)">
-              删除
-            </q-btn>
+          <q-td key="status" :props="props" class="non-selectable">
+            <ServerStatusLocal :server="props.row" @click="updateSingleSeverStatusInRows(props.row.id)"/>
+          </q-td>
 
-            <q-btn flat dense no-caps color="primary" @click="stopServer(props.row)">
-              关机
-            </q-btn>
+          <q-td key="operation" :props="props">
+            <div class="column">
+              <q-btn flat dense no-caps color="primary" @click="deleteServer(props.row)">
+                删除
+              </q-btn>
+
+              <q-btn flat dense no-caps color="primary" @click="stopServer(props.row)">
+                关机
+              </q-btn>
+            </div>
           </q-td>
 
         </q-tr>

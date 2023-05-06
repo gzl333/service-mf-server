@@ -133,7 +133,7 @@ const clickToCopy = useCopyToClipboard()
                   unchecked-icon="lock_open"
                   color="light-green"
                   size="lg"
-                  @click="store.toggleOperationLock( {isGroup:isGroup, serverId: serverId })"
+                  @click="store.toggleOperationLock( {isGroup:isGroup || false, serverId: serverId })"
                 >
                   <q-tooltip v-if="server.lock === 'lock-operation'">
                     {{ tc('components.server.ServeDetailCard.server_operation_locked') }}
@@ -346,18 +346,8 @@ const clickToCopy = useCopyToClipboard()
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('memory') }}</div>
-                  <div class="col"> {{ (server.ram / 1024).toFixed(0) }}GB</div>
+                  <div class="col"> {{ server.ram }}GB</div>
                 </div>
-
-                <!--                <div class="row q-pb-md items-center">-->
-                <!--                  <div class="col-3 text-grey">{{-->
-                <!--                      tc('components.server.ServeDetailCard.hardware_configuration')-->
-                <!--                    }}-->
-                <!--                  </div>-->
-                <!--                  <div class="col"> {{ server.vcpus }} {{ tc('components.server.ServeDetailCard.cores') }} CPU /-->
-                <!--                    {{ server.ram / 1024 }}GB {{ tc('components.server.ServeDetailCard.memory') }}-->
-                <!--                  </div>-->
-                <!--                </div>-->
 
                 <div class="row q-pb-md items-center">
                   <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.network_type') }}</div>

@@ -451,7 +451,7 @@ export default {
       crashed: '已崩溃',
       suspended: '被挂起',
       communication_fail: '通讯失败',
-      lost: '已丢失',
+      lost: '未查到',
       deploying: '创建中',
       deploy_fail: '创建失败'
     },

@@ -189,7 +189,7 @@ const onOKClick = () => {
             {{ tc('components.server.ServerDeleteDialog.configuration') }}
           </div>
           <div class="col">
-            {{ server.vcpus }}{{ tc('components.server.ServerDeleteDialog.cores') }} / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }}{{ tc('components.server.ServerDeleteDialog.cores') }} / {{ server.ram }}GB
           </div>
         </div>
 

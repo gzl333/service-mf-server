@@ -256,7 +256,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                 i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
-            <div>{{ props.row.ram / 1024 }} GB</div>
+            <div>{{ props.row.ram }} GB</div>
           </q-td>
 
           <q-td key="billing" :props="props">
@@ -276,22 +276,22 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                     <!--              日期时间格式根据locale值变化-->
                     <div v-if="i18n.global.locale==='zh'">
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[0]
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                         }}
                       </div>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(' ')[1]
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                         }}
                       </div>
                     </div>
 
                     <div v-else>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[0]
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                         }}
                       </div>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale).split(',')[1]
+                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                         }}
                       </div>
                     </div>

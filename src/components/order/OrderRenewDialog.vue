@@ -256,7 +256,7 @@ const onOKClick = () => {
             {{ tc('components.order.OrderRenewDialog.configuration') }}
           </div>
           <div class="col">
-            {{ server.vcpus }} {{ tc('components.order.OrderRenewDialog.cores') }} / {{ server.ram / 1024 }}GB
+            {{ server.vcpus }} {{ tc('components.order.OrderRenewDialog.cores') }} / {{ server.ram }}GB
           </div>
         </div>
 
@@ -279,7 +279,7 @@ const onOKClick = () => {
           <div class="col">
             <!--            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }} - -->
             {{
-              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.order.OrderRenewDialog.long_term')
+              server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : tc('components.order.OrderRenewDialog.long_term')
             }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->

@@ -241,7 +241,7 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
           <q-td key="config" :props="props">
             <div> {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}</div>
-            <div> {{ props.row.instance_config.vm_ram / 1024 }}GB</div>
+            <div> {{ props.row.instance_config.vm_ram }}GB</div>
 
           </q-td>
 
@@ -255,12 +255,12 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           <q-td key="time" :props="props">
             <!--              日期时间格式根据locale值变化-->
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
             </div>
             <div v-else>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
+              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
             </div>
           </q-td>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PropType /* , ref, computed */ } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-import { useStore, ServerInterface } from 'stores/store'
+import { /* useStore, */ ServerInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -9,16 +9,11 @@ defineProps({
   server: {
     type: Object as PropType<ServerInterface>,
     required: true
-  },
-  isGroup: {
-    type: Boolean,
-    required: false,
-    default: false
   }
 })
 // const emits = defineEmits(['change', 'delete'])
 
-const store = useStore()
+// const store = useStore()
 // const route = userRoute()
 const tc = i18n.global.tc
 
@@ -26,11 +21,11 @@ const tc = i18n.global.tc
 
 <template>
   <span class="ServerStatus">
+
      <q-chip v-if="server.status === -1"
              class="text-bold" outline ripple="false" color="grey-5"
              :label="tc('components.server.ServerStatus.loading')"
-             clickable
-             @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+             clickable>
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -38,7 +33,7 @@ const tc = i18n.global.tc
             class="text-bold" outline ripple="false" color="red"
             :label="tc('components.server.ServerStatus.no_acquire')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -48,7 +43,6 @@ const tc = i18n.global.tc
             ripple="false"
             color="light-green"
             clickable
-            @click="store.loadSingleServerStatus( {isGroup, serverId: server.id}) "
     >
       <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
         {{ tc('components.server.ServerStatus.running') }}
@@ -60,7 +54,7 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="grey-9"
             :label="tc('components.server.ServerStatus.blocked')"
             clickable
-            @click="store.loadSingleServerStatus( {isGroup, serverId: server.id}) ">
+    >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -68,7 +62,7 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="grey-9"
             :label="tc('components.server.ServerStatus.paused')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -76,7 +70,7 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="blue-5"
             :label="tc('components.server.ServerStatus.shutting_down')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -84,14 +78,14 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="grey-9"
             :label="tc('components.server.ServerStatus.stopped')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
     <q-chip v-if="server.status === 6"
             class="text-bold" outline :ripple="false" color="red" :label="tc('components.server.ServerStatus.crashed')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -99,7 +93,7 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="grey-9"
             :label="tc('components.server.ServerStatus.suspended')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -110,7 +104,6 @@ const tc = i18n.global.tc
             :ripple="false"
             color="red"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id})"
     >
       <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
         {{ tc('components.server.ServerStatus.communication_fail') }}
@@ -121,7 +114,7 @@ const tc = i18n.global.tc
     <q-chip v-if="server.status === 10"
             class="text-bold" outline :ripple="false" color="red" :label="tc('components.server.ServerStatus.lost')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -129,7 +122,7 @@ const tc = i18n.global.tc
             class="text-bold" outline :ripple="false" color="blue-5"
             :label="tc('components.server.ServerStatus.deploying')"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) ">
+            >
       <q-tooltip>{{ tc('components.server.ServerStatus.refresh_server_status') }}</q-tooltip>
     </q-chip>
 
@@ -139,7 +132,6 @@ const tc = i18n.global.tc
             :ripple="false"
             color="red"
             clickable
-            @click="store.loadSingleServerStatus({isGroup, serverId: server.id}) "
     >
       <div style="max-width: 150px; word-break: normal; word-wrap: normal; white-space: normal;">
         {{ tc('components.server.ServerStatus.deploy_fail') }}

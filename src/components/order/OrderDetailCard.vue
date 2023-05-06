@@ -274,7 +274,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   <div class="row q-pb-md items-center">
                     <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.memory') }}</div>
                     <div class="col">
-                      {{ order.instance_config.vm_ram / 1024 }}GB
+                      {{ order.instance_config.vm_ram }}GB
                     </div>
                   </div>
 

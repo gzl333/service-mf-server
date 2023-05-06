@@ -717,7 +717,7 @@ export default {
     },
     getServerStatus (payload: {
       path: { id: string },
-      query?: { 'as-admin'?: string }
+      query?: { 'as-admin'?: boolean }
     }) {
       const config = {
         params: payload?.query
