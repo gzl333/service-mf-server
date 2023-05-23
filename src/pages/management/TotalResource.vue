@@ -271,7 +271,7 @@ watch(defaultTicked, () => {
             {{ tc('pages.management.TotalResource.total_ram') }}:
           </div>
           <div class="col-auto text-h6 text-primary">
-            {{ serviceRamNum.reduce((accumulator, item) => accumulator + item.value, 0) / 1024 }}GB
+            {{ serviceRamNum.reduce((accumulator, item) => accumulator + item.value, 0) }}GB
           </div>
         </div>
         <div class="col-auto row">
@@ -312,7 +312,7 @@ watch(defaultTicked, () => {
             {{ tc('pages.management.TotalResource.total_ram') }}:
           </div>
           <div class="col-auto text-h6 text-primary">
-            {{ fedRamNum.reduce((accumulator, item) => accumulator + item.value, 0) / 1024 }}GB
+            {{ fedRamNum.reduce((accumulator, item) => accumulator + item.value, 0) }}GB
           </div>
         </div>
         <div class="col-auto row">

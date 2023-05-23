@@ -50,7 +50,7 @@ onMounted(() => {
       /* eslint-disable  @typescript-eslint/no-explicit-any */
       formatter: function (data: Record<string, any>) {
         if (props.title === '内存') {
-          return data.seriesName + '<br/>' + data.name + ': ' + data.value / 1024 + ' GB'
+          return data.seriesName + '<br/>' + data.name + ': ' + data.value + ' GB'
         } else if (props.title === 'CPU') {
           return data.seriesName + '<br/>' + data.name + ': ' + data.value + ` ${tc('components.chart.ResourcePieChart.core')}`
         } else {
