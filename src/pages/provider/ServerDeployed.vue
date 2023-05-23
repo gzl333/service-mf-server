@@ -927,13 +927,19 @@ const stopServer = (server: ServerInterface) => {
 
           <q-td key="operation" :props="props">
             <div class="column">
-              <q-btn flat dense no-caps color="primary" @click="deleteServer(props.row)">
-                删除
+
+              <q-btn flat dense no-caps color="primary" @click="store.gotoVNC(props.row.id)">
+                远程控制
               </q-btn>
 
               <q-btn flat dense no-caps color="primary" @click="stopServer(props.row)">
                 关机
               </q-btn>
+
+              <q-btn flat dense no-caps color="negative" @click="deleteServer(props.row)">
+                删除
+              </q-btn>
+
             </div>
           </q-td>
 
