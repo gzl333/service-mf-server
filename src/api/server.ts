@@ -822,6 +822,21 @@ export default {
     }
   },
   user: {
+    getUser (
+      payload?: {
+        query?: {
+          page?: number
+          page_size?: number
+          search?: string
+          federal_admin?: boolean
+        }
+      }
+    ) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/user', config)
+    },
     getUserAccount (payload?: {
       query?: {
         page?: number;

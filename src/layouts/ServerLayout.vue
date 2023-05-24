@@ -124,7 +124,7 @@ const releaseTime = process.env.releaseTime
 
           <div class="row justify-center q-pt-lg">
             <q-btn flat no-caps no-wrap color="primary" :ripple="false" dense
-                   @click="navigateToUrl('/my/wallet/account?trigger=redeem')">
+                   @click="store.redeemCouponDialog()">
               {{ tc('layouts.redeem') }}
             </q-btn>
           </div>
@@ -140,7 +140,7 @@ const releaseTime = process.env.releaseTime
 
                 <div class="text-grey text-caption text-center">{{ tc('releaseTime') }}</div>
                 <div class="text-grey text-caption text-center">
-                  {{ new Date(releaseTime).toLocaleString(i18n.global.locale) }}
+                  {{ new Date(releaseTime as string).toLocaleString(i18n.global.locale as string) }}
                 </div>
 
               </q-tooltip>

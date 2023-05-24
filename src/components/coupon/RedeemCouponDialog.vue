@@ -111,7 +111,7 @@ const onOKClick = async () => {
       multiLine: false
     })
     // 更新对应表
-    redeemType.value === 'group' ? await store.loadGroupCouponTable() : await store.loadPersonalCouponTable()
+    redeemType.value === 'group' ? await store.loadGroupCouponTable({ groupId: groupSelection.value }) : await store.loadPersonalCouponTable()
     // 关闭dialog
     onDialogOK()
     // 跳转
@@ -217,19 +217,18 @@ const onOKClick = async () => {
 
         <q-btn class="q-ma-sm"
                color="primary"
-               unelevated
+               outline
                no-caps
-               :label="tc('components.coupon.RedeemCouponDialog.redeem')"
-               @click="onOKClick"
-               :loading="isLoading"
-        />
+               :label="tc('components.coupon.RedeemCouponDialog.cancel')"
+               @click="onDialogCancel"/>
 
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
                no-caps
-               :label="tc('components.coupon.RedeemCouponDialog.cancel')"
-               @click="onDialogCancel"/>
+               :label="tc('components.coupon.RedeemCouponDialog.redeem')"
+               @click="onOKClick"
+               :loading="isLoading"/>
 
       </q-card-actions>
     </q-card>
