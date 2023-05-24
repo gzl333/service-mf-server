@@ -928,7 +928,7 @@ const stopServer = (server: ServerInterface) => {
           <q-td key="operation" :props="props">
             <div class="column">
 
-              <q-btn flat dense no-caps color="primary" @click="store.gotoVNC(props.row.id)">
+              <q-btn flat dense no-caps color="primary" @click="store.gotoVNC(props.row.id, true)">
                 远程控制
               </q-btn>
 

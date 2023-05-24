@@ -716,16 +716,30 @@ export default {
       return axiosServer.post('/server/' + payload.path.id + '/renew', null, config)
     },
     getServerStatus (payload: {
-      path: { id: string },
-      query?: { 'as-admin'?: boolean }
+      path: {
+        id: string
+      },
+      query?: {
+        'as-admin'?: boolean
+      }
     }) {
       const config = {
         params: payload?.query
       }
       return axiosServer.get('/server/' + payload.path.id + '/status', config)
     },
-    getServerVnc (payload: { path: { id: string } }) {
-      return axiosServer.get('/server/' + payload.path.id + '/vnc')
+    getServerVnc (payload: {
+      path: {
+        id: string
+      },
+      query?: {
+        'as-admin'?: boolean
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/server/' + payload.path.id + '/vnc', config)
     }
   },
   server_archive: {

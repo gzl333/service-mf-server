@@ -2398,9 +2398,14 @@ export const useStore = defineStore('server', {
 
     /* server */
     // 打开vnc
-    async gotoVNC (id: string) {
+    async gotoVNC (id: string, asAdmin = false) {
+      console.log(asAdmin)
       try {
-        const response = await api.server.server.getServerVnc({ path: { id } })
+        const response = await api.server.server.getServerVnc({
+          path: { id },
+          query: { 'as-admin': asAdmin }
+        })
+        console.log(response.data)
         const url = response.data.vnc.url
         // window.open(url, 'new', 'height=900, width=1400, top=150, left=150, title=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no')
         window.open(url, '_blank')
