@@ -157,7 +157,7 @@ const inputRemarks = ref('')
 // 询价对象
 const currentPrice = ref<{ original: string; trade: string } | null>(null)
 // 根据selection进行询价
-watch([selectionPayment, selectionPeriod, selectionFlavorId, selectionNetworkId], async () => {
+watch([selectionPayment, selectionPeriod, selectionFlavorId, selectionNetworkId, selectionImageId], async () => {
   // prepaid时才询价，其他几个参数都不为空时才询价（其中period初始值为1, 肯定不为空）
   // 初始化过程中有些table未load，此时不该询价。都有有效选择后，则可以询价。
   if (selectionPayment.value === 'prepaid' && selectionFlavorId.value !== '' && selectionNetworkId.value !== '') {
@@ -169,7 +169,8 @@ watch([selectionPayment, selectionPeriod, selectionFlavorId, selectionNetworkId]
           pay_type: selectionPayment.value,
           period: selectionPeriod.value,
           flavor_id: selectionFlavorId.value,
-          external_ip: selectionNetworkId.value === 'randomPublic' || compSelectionNetwork.value?.public
+          external_ip: selectionNetworkId.value === 'randomPublic' || compSelectionNetwork.value?.public,
+          system_disk_size: compSelectionImage.value?.min_sys_disk_gb || 50 // 按照镜像要求来，没有就默认50
         }
       })
       // 拿到price
