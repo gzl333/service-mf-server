@@ -22,7 +22,12 @@ const store = useStore()
 // const router = useRouter()
 
 // load table
-void store.loadPersonalOrderTable()
+if (store.tables.personalOrderTable.status !== 'total') {
+  void store.loadPersonalOrderTable()
+}
+if (store.tables.personalCouponTable.status !== 'total') {
+  void store.loadPersonalCouponTable()
+}
 
 // service_id下拉列表
 const serviceOptions = computed(() => store.getAllServiceOptions)
