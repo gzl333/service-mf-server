@@ -401,6 +401,9 @@ const updateImages = async (serviceId: string) => {
     // exceptionNotifier(exception)
   }
 
+  // image排序
+  images.value.sort((a: ImageInterface, b: ImageInterface) => a.name.localeCompare(b.name, 'en'))
+
   // 选择默认项
   chooseImageRelease()
   chooseImage(selectionServiceId.value, selectionImageRelease.value)
