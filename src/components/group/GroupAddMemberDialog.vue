@@ -4,13 +4,11 @@ import { ref, reactive/* , computed */ } from 'vue'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import { useDialogPluginComponent, Notify, QSelect } from 'quasar'
+import { useDialogPluginComponent, Notify } from 'quasar'
 import api from 'src/api'
 import { navigateToUrl } from 'single-spa'
 
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
-
-import type { UserInterface } from 'stores/store'
 
 /* const props =  */
 const props = defineProps({
@@ -35,42 +33,8 @@ const {
   onDialogCancel
 } = useDialogPluginComponent()
 
-// old inputs
-// const usernames = reactive<Record<string, string>>({ 1: '' })
-
-// count
+const usernames = reactive<Record<string, string>>({ 1: '' })
 const userCount = ref(1)
-// user select 选择结果
-const userModels = reactive<Record<string, UserInterface | null>>({ 1: null })
-// user options
-const userOptions = ref<UserInterface[]>()
-
-// q-select的筛选函数
-const userFilter = async (
-  val: string,
-  update: (arg0: () => Promise<void>, arg1: (ref: QSelect) => void) => void, abort: () => void
-) => {
-  // 从第几位输入开始获取列表
-  if (val.length < 1) {
-    abort()
-    return
-  }
-  // update是回调函数注册器：参数为在select的输入有变化时调用的回调函数
-  update(async () => {
-    const respUsers = await api.server.user.getUser({ query: { search: val } })
-    userOptions.value = respUsers.data.results
-  },
-  // "ref" is the Vue reference to the QSelect
-  ref => {
-    if (val !== '' && ref.options!.length > 0 && ref.getOptionIndex() === -1) {
-      ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-      ref.toggleOption(ref.options![ref.getOptionIndex()], true) // toggle the focused option
-    }
-  }
-  )
-}
-
-// 账户数量变化
 const addCount = () => {
   if (userCount.value >= 10) {
     Notify.create({
@@ -79,39 +43,20 @@ const addCount = () => {
       textColor: 'negative',
       message: `${tc('components.group.GroupAddMemberDialog.notify_max_members')}`,
       position: 'bottom',
-      closeBtn: true,
+      // closeBtn: true,
       timeout: 5000,
       multiLine: false
     })
     return
   }
   userCount.value += 1
-  Object.assign(userModels, { [userCount.value]: null })
-  // userModels[userCount.value.toString()] = null
-}
-
-const subCount = () => {
-  if (userCount.value === 1) {
-    Notify.create({
-      classes: 'notification-negative shadow-15',
-      icon: 'mdi-alert',
-      textColor: 'negative',
-      message: `${tc('最少增加1个成员')}`,
-      position: 'bottom',
-      closeBtn: true,
-      timeout: 5000,
-      multiLine: false
-    })
-    return
-  }
-  delete userModels[userCount.value.toString()]
-  userCount.value -= 1
+  usernames[userCount.value.toString()] = ''
 }
 
 // 点击ok的事件函数
 const onOKClick = async () => {
   // 去除空白填写
-  const usernameArray = [...new Set(Object.values(userModels).filter(user => user !== null).map(user => user!.username))]
+  const usernameArray = Object.values(usernames).filter(username => username !== '')
 
   // 检查数据，空数组不发送请求
   if (usernameArray.length === 0) {
@@ -127,7 +72,7 @@ const onOKClick = async () => {
     })
     return
   }
-  // 正则检查email格式
+  // todo 正则检查email格式
 
   try {
     // 发送patch请求
@@ -204,51 +149,22 @@ const onOKClick = async () => {
         <div v-for="index in userCount" :key="index" class="row items-center q-pb-md">
           <div class="col-3 text-grey">{{ tc('components.group.GroupAddMemberDialog.user_account') }} {{ index }}</div>
           <div class="col">
-
-            <!--            <q-input outlined dense v-model.trim="usernames[index.toString()]" autofocus>-->
-            <!--              <template v-slot:append>-->
-            <!--                <q-icon v-if="usernames[index.toString()] !== ''" name="close" @click="usernames[index.toString()] = ''"-->
-            <!--                        class="cursor-pointer"/>-->
-            <!--              </template>-->
-            <!--            </q-input>-->
-
-            <q-select
-              v-model="userModels[index.toString()]"
-              :options="userOptions"
-              @filter="userFilter"
-              label-color="grey"
-              :label="tc('请输入关键字，并选择用户名')"
-              outlined
-              dense
-              use-input
-              fill-input
-              hide-selected
-              clearable
-              input-debounce="0"
-              option-value="id"
-              option-label="username"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ tc('暂无筛选结果') }}
-                  </q-item-section>
-                </q-item>
+            <q-input outlined dense v-model.trim="usernames[index.toString()]" autofocus>
+              <template v-slot:append>
+                <q-icon v-if="usernames[index.toString()] !== ''" name="close" @click="usernames[index.toString()] = ''"
+                        class="cursor-pointer"/>
               </template>
-            </q-select>
-
+            </q-input>
           </div>
         </div>
 
-        <div class="row justify-center items-center q-gutter-md">
-          <q-btn class="text-center col-auto" flat no-caps padding="none" icon="add" color="primary"
-                 @click="addCount">
-            {{ tc('components.group.GroupAddMemberDialog.more_accounts') }}
-          </q-btn>
-          <q-btn class="text-center col-auto" flat no-caps padding="none" icon="remove" color="primary"
-                 @click="subCount">
-            {{ tc('更少账户') }}
-          </q-btn>
+        <div class="row justify-center items-center">
+          <div class="col-auto">
+            <q-btn class="text-center" flat no-caps padding="none" icon="add" color="primary"
+                   @click="addCount">
+              {{ tc('components.group.GroupAddMemberDialog.more_accounts') }}
+            </q-btn>
+          </div>
         </div>
 
       </q-card-section>
