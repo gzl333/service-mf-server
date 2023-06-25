@@ -594,6 +594,20 @@ export default {
   //   }
   // },
   'payment-history': {},
+  period: {
+    getPeriod (payload: {
+      query: {
+        page?: number
+        page_size?: number
+        service_id: string
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/period', config)
+    }
+  },
   registry: {
     getRegistry () {
       return axiosServer.get('/registry')

@@ -36,6 +36,14 @@ const exceptionNotifier = useExceptionNotifier()
 //   ]
 // )
 
+export interface PeriodInterface {
+  id: string
+  period: number
+  enable: boolean
+  creation_time: string
+  service_id: string
+}
+
 export interface UserInterface {
   id: string
   username: string

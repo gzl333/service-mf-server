@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch /* , PropType */ } from 'vue'
-import { FlavorInterface, ImageInterface, NetworkInterface, useStore } from 'stores/store'
+import { FlavorInterface, ImageInterface, NetworkInterface, PeriodInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
@@ -30,8 +30,8 @@ const route = useRoute()
 const router = useRouter()
 // const storeMain = useStoreMain()
 
-// 预付最大月份
-const MAX_MONTHS = 6
+// // 预付最大月份
+// const MAX_MONTHS = 6
 
 const exceptionNotifier = useExceptionNotifier()
 
@@ -108,6 +108,8 @@ const imageReleases = computed(() =>
     .sort((a, b) => a.localeCompare(b, 'en-US'))
 )
 
+// 预付费时长, 随serviceId选择而变化
+const periods = ref<PeriodInterface[]>([])
 // 当前service_id对应的flavor/size集合，随service_id选择而改变
 const flavors = ref<FlavorInterface[]>([])
 // Object.assign(flavors.value, { isLoading: false }) // 尝试，添加一个loading的属性
@@ -119,6 +121,7 @@ const privateNetworks = ref<NetworkInterface[]>([])
 /* selection */
 const selectionOwner = ref<'personal' | 'group'>('personal')
 const selectionPayment = ref<'prepaid' | 'postpaid'>('prepaid')
+
 const selectionPeriod = ref(1)
 
 const selectionGroupId = ref('')
@@ -198,6 +201,9 @@ const chooseService = () => {
 const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
 }
+const choosePeriod = () => {
+  selectionPeriod.value = periods.value[0].period || 1
+}
 const chooseGroup = () => {
   // best strategy but been denied by moron
   // selectionGroupId.value = route.query.group as string || groups.value[0]?.id || ''
@@ -244,6 +250,7 @@ watch(selectionServiceId, () => {
     updateNetwork(selectionServiceId.value)
     updateImages(selectionServiceId.value)
     updateFlavors(selectionServiceId.value)
+    updatePeriod(selectionServiceId.value)
   }
 })
 // 在selectionImageRelease变化后，选择默认image
@@ -360,6 +367,50 @@ watch(selectionImageRelease, () => {
 //   // 选择默认项
 //   chooseGroup()
 // }
+
+// 根据当前service_id获取period列表的函数
+const updatePeriod = async (serviceId: string) => {
+  // 清空当前images列表
+  periods.value = []
+
+  // 从分页数据中获取全部数据
+  const PAGE_SIZE = 100 // 单次获取的page size
+  let count = 0 // 结果总数，多页项目的数总和
+  let page = 1 // current page
+
+  try {
+    // 先执行一次，再检查循环条件
+    do {
+      // 用当前分页条件获取数据
+      const respGetPeriod = await api.server.period.getPeriod({
+        query: {
+          page,
+          page_size: PAGE_SIZE,
+          service_id: serviceId
+        }
+      })
+
+      // 保存数据
+      for (const period of respGetPeriod.data.results as PeriodInterface[]) {
+        // period options
+        periods.value.push(period)
+      }
+
+      // 更新分页数据
+      page += 1
+      count = respGetPeriod.data.count
+      // 核实容器内含有当前指定serviceId的image数量够不够，不够再去拿
+    } while (periods.value.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
+  } catch (exception) {
+    // exceptionNotifier(exception)
+  }
+
+  // 排序
+  periods.value.sort((a: PeriodInterface, b: PeriodInterface) => a.period - b.period)
+
+  // 选择默认项
+  choosePeriod()
+}
 
 // 根据当前service_id获取image列表的函数
 const updateImages = async (serviceId: string) => {
@@ -502,19 +553,21 @@ if (store.tables.groupTable.status === 'total') {
 const isDeploying = ref(false)
 // check inputs
 const checkInputs = () => {
-  if (selectionPayment.value === 'prepaid' && (selectionPeriod.value <= 0 || selectionPeriod.value > MAX_MONTHS)) {
-    Notify.create({
-      classes: 'notification-negative shadow-15',
-      icon: 'error',
-      textColor: 'negative',
-      message: `${tc('components.server.ServerDeployCard.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.server.ServerDeployCard.prepaid_time_months')}`,
-      position: 'bottom',
-      closeBtn: true,
-      timeout: 5000,
-      multiLine: false
-    })
-    return false
-  } else if (selectionOwner.value === 'group' && selectionGroupId.value === '') {
+  // if (selectionPayment.value === 'prepaid' && (selectionPeriod.value <= 0 || selectionPeriod.value > MAX_MONTHS)) {
+  //   Notify.create({
+  //     classes: 'notification-negative shadow-15',
+  //     icon: 'error',
+  //     textColor: 'negative',
+  //     message: `${tc('components.server.ServerDeployCard.prepaid_time_warning')}1-${MAX_MONTHS}${tc('components.server.ServerDeployCard.prepaid_time_months')}`,
+  //     position: 'bottom',
+  //     closeBtn: true,
+  //     timeout: 5000,
+  //     multiLine: false
+  //   })
+  //   return false
+  // } else
+
+  if (selectionOwner.value === 'group' && selectionGroupId.value === '') {
     // 如果要创建项目组云主机，但是没有选中组
     Notify.create({
       classes: 'notification-negative shadow-15',
@@ -914,21 +967,38 @@ const deployServer = async () => {
               {{ tc('usagePeriod') }}
             </div>
             <div class="col-11 row items-center q-gutter-x-md q-gutter-y-xs">
+              <!--              <q-btn-->
+              <!--                :color="selectionPeriod === month ? 'primary' : 'grey-3'"-->
+              <!--                :text-color="selectionPeriod === month ? '' : 'black'"-->
+              <!--                v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"-->
+              <!--                :val="month"-->
+              <!--                :key="month"-->
+              <!--                unelevated-->
+              <!--                dense-->
+              <!--                no-caps-->
+              <!--                :ripple="false"-->
+              <!--                @click="selectionPeriod = month"-->
+              <!--              >-->
+              <!--                &lt;!&ndash;复数i18n&ndash;&gt;-->
+              <!--                {{ month }} {{ tc('countMonth', month) }}-->
+              <!--              </q-btn>-->
+
               <q-btn
-                :color="selectionPeriod === month ? 'primary' : 'grey-3'"
-                :text-color="selectionPeriod === month ? '' : 'black'"
-                v-for="month in Array.from({length: MAX_MONTHS}, (item, index) => index + 1)"
-                :val="month"
-                :key="month"
+                :color="selectionPeriod === period.period ? 'primary' : 'grey-3'"
+                :text-color="selectionPeriod === period.period ? '' : 'black'"
+                v-for="period in periods"
+                :val="period.period"
+                :key="period.id"
                 unelevated
                 dense
                 no-caps
                 :ripple="false"
-                @click="selectionPeriod = month"
+                @click="selectionPeriod = period.period"
               >
                 <!--复数i18n-->
-                {{ month }} {{ tc('countMonth', month) }}
+                {{ period.period }} {{ tc('countMonth', period.period) }}
               </q-btn>
+
             </div>
           </div>
           <!--          </Transition>-->
