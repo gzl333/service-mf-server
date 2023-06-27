@@ -49,13 +49,17 @@ const treeData = computed(() => store.getMechanismTree)
 
 // tree中机构的toggle model
 const toggleDatacenter = reactive({})
-watch(store.tables.dataCenterTable, () => {
+const buildToggleModel = () => {
   if (store.tables.dataCenterTable.status === 'total') {
     for (const datacenterId of store.tables.dataCenterTable.allIds) {
       Object.assign(toggleDatacenter, { [datacenterId]: true })
     }
   }
-})
+}
+// setup时运行一次
+buildToggleModel()
+// 异步更新table时运行
+watch(store.tables.dataCenterTable, buildToggleModel)
 
 watch(treeData, () => {
   void nextTick(() => {
