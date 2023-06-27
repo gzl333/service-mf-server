@@ -164,6 +164,14 @@ module.exports = configure(function (ctx) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+      },
+      client: {
+        webSocketURL: {
+          hostname: 'localhost',
+          pathname: '/ws',
+          port: 9200,
+          protocol: 'http'
+        }
       }
     },
 

@@ -87,7 +87,7 @@ export default {
       org: '机构',
       org_num: '机构数',
       current_org_num: '当前机构数量',
-      current_service_num: '当前服务数量',
+      current_service_num: '当前服务单元数量',
       service_auto_resource_configuration: '服务自主资源配置',
       total_cpu: '总计CPU:',
       cores: '核',

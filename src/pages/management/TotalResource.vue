@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, watch, Ref } from 'vue'
+import { computed, ref, reactive, nextTick, watch } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 import ResourcePieChart from 'components/chart/ResourcePieChart.vue'
-import BeijingMap from 'components/chart/BeijingMap.vue'
+import { QTree } from 'quasar'
+// import BeijingMap from 'components/chart/BeijingMap.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -16,12 +17,6 @@ import BeijingMap from 'components/chart/BeijingMap.vue'
 //   }
 // })
 // const emits = defineEmits(['change', 'delete'])
-
-interface PointInterface {
-  name: string
-  value: number
-  LngAndLat: number[]
-}
 
 const { tc } = i18n.global
 const store = useStore()
@@ -36,187 +31,213 @@ if (store.tables.fedAllocationTable.status === 'init') {
   store.loadFedAllocationTable()
 }
 
-const treeData = computed(() => store.getMechanismTree)
+// 饼图
 const fedCpuNum = computed(() => store.getFedCpuPie)
 const fedRamNum = computed(() => store.getFedRamPie)
 const fedDiskNum = computed(() => store.getFedDiskPie)
 const serviceCpuNum = computed(() => store.getServiceCpuPie)
 const serviceRamNum = computed(() => store.getServiceRamPie)
 const serviceDiskNum = computed(() => store.getServiceDiskPie)
-const defaultTicked = computed(() => store.getDefaultTicked)
-const ticked = ref([])
-const tree: Ref = ref(null)
-const mapData: Ref = ref([])
 
-const translationMapping = {
-  怀柔区: 'Huairou District',
-  密云区: 'Miyun District',
-  昌平区: 'Changping District',
-  顺义区: 'Shunyi District',
-  平谷区: 'Pinggu District',
-  门头沟区: 'Mentougou District',
-  海淀区: 'Haidian District',
-  石景山区: 'Shijingshan District',
-  西城区: 'Xicheng District',
-  东城区: 'Dongcheng District',
-  朝阳区: 'Chaoyang District',
-  大兴区: 'Daxing District',
-  房山区: 'Fangshan District',
-  丰台区: 'Fengtai District',
-  通州区: 'Tongzhou District',
-  延庆区: 'Yanqing District'
-}
+// tree
+const tree = ref<QTree>()
+const treeData = computed(() => store.getMechanismTree)
 
-void nextTick(() => {
-  tree.value.setTicked(defaultTicked.value, true)
+// const defaultTicked = computed(() => store.getDefaultTicked)
+// const ticked = ref([])
+// const mapData = ref<Record<string, unknown>[]>([])
+
+// tree中机构的toggle model
+const toggleDatacenter = reactive({})
+watch(store.tables.dataCenterTable, () => {
+  if (store.tables.dataCenterTable.status === 'total') {
+    for (const datacenterId of store.tables.dataCenterTable.allIds) {
+      Object.assign(toggleDatacenter, { [datacenterId]: true })
+    }
+  }
 })
-
-// 地图上的点
-const mapPoints = (target: string[]) => {
-  const coordinateArr = []
-  // 页面第一次进来 默认全选 target为选中的值
-  for (const item of target) {
-    const coordinateObj: Record<string, string | number | number[]> = {}
-    coordinateObj.name = item
-    coordinateObj.value = 12
-    coordinateObj.LngAndLat = []
-    for (const dataCenter of Object.values(store.tables.dataCenterTable.byId)) {
-      if (i18n.global.locale === 'zh') {
-        if (dataCenter.name === item) {
-          coordinateObj.LngAndLat.push(dataCenter.longitude)
-          coordinateObj.LngAndLat.push(dataCenter.latitude)
-          coordinateArr.push(coordinateObj)
-        }
-      } else {
-        if (dataCenter.name_en === item) {
-          coordinateObj.LngAndLat.push(dataCenter.longitude)
-          coordinateObj.LngAndLat.push(dataCenter.latitude)
-          coordinateArr.push(coordinateObj)
-        }
-      }
-    }
-  }
-  mapData.value = coordinateArr
-}
-
-// 地图上初始的点
-const convertData = function (data: PointInterface[]) {
-  const res = []
-  for (let i = 0; i < data.length; i++) {
-    const geoCoord = data[i].LngAndLat
-    if (geoCoord) {
-      res.push({
-        name: data[i].name,
-        value: geoCoord.concat(data[i].value)
-      })
-    }
-  }
-  return res
-}
-const option = computed(() => ({
-  tooltip: {
-    show: true,
-    trigger: 'item',
-    formatter: '{b}'
-  },
-  // geo属性渲染地图 通过json文件
-  geo: {
-    map: 'bj',
-    label: {
-      normal: {
-        show: false
-      },
-      emphasis: {
-        show: false
-      }
-    },
-    roam: false,
-    itemStyle: {
-      normal: {
-        areaColor: '#ECEFF4',
-        borderColor: '#4C566A'
-      },
-      emphasis: {
-        areaColor: '#2B91B7'
-      }
-    },
-    zoom: 1.2,
-    // 通过nameMap属性进行映射翻译
-    nameMap: i18n.global.locale === 'en' ? translationMapping : ''
-  },
-  series: [{
-    name: (() => tc('pages.management.TotalResource.org'))(),
-    type: 'effectScatter',
-    coordinateSystem: 'geo',
-    data: convertData(mapData.value),
-    symbolSize: function (val: number[]) {
-      return val[2]
-    },
-    showEffectOn: 'emphasis',
-    rippleEffect: {
-      number: 4,
-      scale: 4,
-      brushType: 'stroke'
-    },
-    hoverAnimation: true,
-    label: {
-      normal: {
-        show: true,
-        position: 'top',
-        formatter: function (params: Record<string, never>) {
-          return params.name
-        },
-        lineHeight: 15,
-        backgroundColor: '#fafafa',
-        borderColor: '#31CCEC',
-        borderWidth: '1',
-        borderRadius: 5,
-        padding: [8, 10, 5],
-        color: '#1d1d1d',
-        fontSize: 14,
-        fontWeight: 'normal'
-      },
-      emphasis: {
-        show: true
-      }
-    },
-    itemStyle: {
-      normal: {
-        color: '#027BE3'
-      }
-    }
-  }
-    // 地图点击事件 翻译后 事件失效 会影响翻译
-    //   {
-    //   name: (() => tc('pages.management.TotalResource.org_num'))(),
-    //   type: 'map',
-    //   mapType: 'bj',
-    //   geoIndex: 0,
-    //   itemStyle: {
-    //     normal: { label: { show: true } },
-    //     emphasis: { label: { show: true } }
-    //   },
-    //   data: labelData
-    // }
-  ]
-}))
 
 watch(treeData, () => {
   void nextTick(() => {
-    tree.value.expandAll()
+    tree.value?.expandAll()
   })
 })
-watch(defaultTicked, () => {
-  void nextTick(() => {
-    tree.value.setTicked(defaultTicked.value, true)
-  })
-})
+
+// void nextTick(() => {
+//   tree.value?.setTicked(defaultTicked.value, true)
+// })
+
+// watch(defaultTicked, () => {
+//   void nextTick(() => {
+//     tree.value?.setTicked(defaultTicked.value, true)
+//   })
+// })
+
+// // 地图上的点
+// const mapPoints = (target: string[]) => {
+//   const coordinateArr = []
+//   // 页面第一次进来 默认全选 target为选中的值
+//   for (const item of target) {
+//     const coordinateObj: Record<string, string | number | number[]> = {}
+//     coordinateObj.name = item
+//     coordinateObj.value = 12
+//     coordinateObj.LngAndLat = []
+//     for (const dataCenter of Object.values(store.tables.dataCenterTable.byId)) {
+//       if (i18n.global.locale === 'zh') {
+//         if (dataCenter.name === item) {
+//           coordinateObj.LngAndLat.push(dataCenter.longitude)
+//           coordinateObj.LngAndLat.push(dataCenter.latitude)
+//           coordinateArr.push(coordinateObj)
+//         }
+//       } else {
+//         if (dataCenter.name_en === item) {
+//           coordinateObj.LngAndLat.push(dataCenter.longitude)
+//           coordinateObj.LngAndLat.push(dataCenter.latitude)
+//           coordinateArr.push(coordinateObj)
+//         }
+//       }
+//     }
+//   }
+//   mapData.value = coordinateArr
+// }
+
+// interface PointInterface {
+//   name: string
+//   value: number
+//   LngAndLat: number[]
+// }
+
+// const translationMapping = {
+//   怀柔区: 'Huairou District',
+//   密云区: 'Miyun District',
+//   昌平区: 'Changping District',
+//   顺义区: 'Shunyi District',
+//   平谷区: 'Pinggu District',
+//   门头沟区: 'Mentougou District',
+//   海淀区: 'Haidian District',
+//   石景山区: 'Shijingshan District',
+//   西城区: 'Xicheng District',
+//   东城区: 'Dongcheng District',
+//   朝阳区: 'Chaoyang District',
+//   大兴区: 'Daxing District',
+//   房山区: 'Fangshan District',
+//   丰台区: 'Fengtai District',
+//   通州区: 'Tongzhou District',
+//   延庆区: 'Yanqing District'
+// }
+// 地图上初始的点
+// const convertData = function (data: PointInterface[]) {
+//   const res = []
+//   for (let i = 0; i < data.length; i++) {
+//     const geoCoord = data[i].LngAndLat
+//     if (geoCoord) {
+//       res.push({
+//         name: data[i].name,
+//         value: geoCoord.concat(data[i].value)
+//       })
+//     }
+//   }
+//   return res
+// }
+// const option = computed(() => ({
+//   tooltip: {
+//     show: true,
+//     trigger: 'item',
+//     formatter: '{b}'
+//   },
+//   // geo属性渲染地图 通过json文件
+//   geo: {
+//     map: 'bj',
+//     label: {
+//       normal: {
+//         show: false
+//       },
+//       emphasis: {
+//         show: false
+//       }
+//     },
+//     roam: false,
+//     itemStyle: {
+//       normal: {
+//         areaColor: '#ECEFF4',
+//         borderColor: '#4C566A'
+//       },
+//       emphasis: {
+//         areaColor: '#2B91B7'
+//       }
+//     },
+//     zoom: 1.2,
+//     // 通过nameMap属性进行映射翻译
+//     nameMap: i18n.global.locale === 'en' ? translationMapping : ''
+//   },
+//   series: [{
+//     name: (() => tc('pages.management.TotalResource.org'))(),
+//     type: 'effectScatter',
+//     coordinateSystem: 'geo',
+//     data: convertData(mapData.value),
+//     symbolSize: function (val: number[]) {
+//       return val[2]
+//     },
+//     showEffectOn: 'emphasis',
+//     rippleEffect: {
+//       number: 4,
+//       scale: 4,
+//       brushType: 'stroke'
+//     },
+//     hoverAnimation: true,
+//     label: {
+//       normal: {
+//         show: true,
+//         position: 'top',
+//         formatter: function (params: Record<string, never>) {
+//           return params.name
+//         },
+//         lineHeight: 15,
+//         backgroundColor: '#fafafa',
+//         borderColor: '#31CCEC',
+//         borderWidth: '1',
+//         borderRadius: 5,
+//         padding: [8, 10, 5],
+//         color: '#1d1d1d',
+//         fontSize: 14,
+//         fontWeight: 'normal'
+//       },
+//       emphasis: {
+//         show: true
+//       }
+//     },
+//     itemStyle: {
+//       normal: {
+//         color: '#027BE3'
+//       }
+//     }
+//   }
+//     // 地图点击事件 翻译后 事件失效 会影响翻译
+//     //   {
+//     //   name: (() => tc('pages.management.TotalResource.org_num'))(),
+//     //   type: 'map',
+//     //   mapType: 'bj',
+//     //   geoIndex: 0,
+//     //   itemStyle: {
+//     //     normal: { label: { show: true } },
+//     //     emphasis: { label: { show: true } }
+//     //   },
+//     //   data: labelData
+//     // }
+//   ]
+// }))
+
 </script>
 
 <template>
   <div class="TotalResource">
+
+    <!--    <pre>{{ treeData }}</pre>-->
+
     <div class="row">
-      <div class="col-5 column">
+
+      <div class="col-4 column">
+
         <div class="row items-center q-gutter-lg text-h6">
           <div class="col-auto row items-end">
             <div class="text-grey">{{ tc('pages.management.TotalResource.current_org_num') }}:</div>
@@ -234,21 +255,71 @@ watch(defaultTicked, () => {
             </div>
           </div>
         </div>
-        <div class="q-pa-md text-subtitle1">
-          <q-tree
-            ref="tree"
-            :nodes="treeData"
-            default-expand-all
-            node-key="label"
-            tick-strategy="strict"
-            v-model:ticked="ticked"
-            @update:ticked="mapPoints"
-          />
+
+        <div class="q-py-md text-subtitle1">
+
+          <q-scroll-area class="bg-grey-2 q-pa-sm" style="height: 500px;" visible>
+            <!--            <q-tree-->
+            <!--              ref="tree"-->
+            <!--              :nodes="treeData"-->
+            <!--              default-expand-all-->
+            <!--              node-key="label"-->
+            <!--              tick-strategy="strict"-->
+            <!--              v-model:ticked="ticked"-->
+            <!--              @update:ticked="mapPoints"-->
+            <!--            />            -->
+            <q-tree
+              ref="tree"
+              :nodes="treeData"
+              default-expand-all
+              node-key="label"
+              dense
+            >
+
+              <template v-slot:header-datacenter="prop">
+                <div class="row items-center">
+
+                  <div class="col-auto text-weight-bold text-primary">{{ prop.node.label }}</div>
+
+                  <q-toggle
+                    class="col-auto"
+                    v-model="toggleDatacenter[prop.node.id]"
+                    color="green-3"
+                    dense
+                    size="30px"
+                  >
+                    <q-tooltip>
+                      {{ tc('在地图上显示') }}
+                    </q-tooltip>
+                  </q-toggle>
+
+                  <!--                  <q-icon name="info">-->
+                  <!--                    <q-popup-proxy>-->
+                  <!--                      <q-banner>-->
+                  <!--                        <template v-slot:avatar>-->
+                  <!--                          <q-icon name="signal_wifi_off" color="primary"/>-->
+                  <!--                        </template>-->
+                  <!--                        You have lost connection to the internet. This app is offline.-->
+                  <!--                      </q-banner>-->
+                  <!--                    </q-popup-proxy>-->
+                  <!--                  </q-icon>-->
+
+                </div>
+              </template>
+
+            </q-tree>
+          </q-scroll-area>
+
         </div>
+
       </div>
-      <div class="col-7">
-        <BeijingMap :option="option" style="width: 600px; height: 450px"></BeijingMap>
+
+      <div class="col-8">
+
+        <!--        <BeijingMap :option="option" style="width: 600px; height: 450px"></BeijingMap>-->
+
       </div>
+
     </div>
     <q-separator class="q-my-md"/>
     <div class="row justify-between">

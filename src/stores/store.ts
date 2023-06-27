@@ -946,6 +946,7 @@ export const useStore = defineStore('server', {
         }
         treeObj.id = state.tables.dataCenterTable.byId[item]?.id
         treeObj.sort_weight = state.tables.dataCenterTable.byId[item]?.sort_weight as number
+        treeObj.header = 'datacenter'
         const dataArr = []
 
         for (const childItem of state.tables.dataCenterTable.byId[item]?.services.filter(serviceId => state.tables.serviceTable.byId[serviceId]?.status === 'enable')) {
