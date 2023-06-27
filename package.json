@@ -10,6 +10,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@antv/l7": "^2.16.1",
     "@quasar/extras": "^1.15.10",
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
@@ -32,9 +33,9 @@
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "eslint": "^8.10.0",
-    "eslint-config-standard": "^17.0.0-1",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-n": "^14.0.0",
+    "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^8.5.0",
     "file-replace-loader": "^1.4.0",
