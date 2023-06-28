@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
-import { /* useRoute,  */useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
@@ -12,6 +12,7 @@ import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import PasswordToggle from 'components/ui/PasswordToggle.vue'
 import OsLogo from 'components/ui/OsLogo.vue'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
+import DiskTable from 'components/disk/DiskTable.vue'
 
 const props = defineProps({
   serverId: {
@@ -27,10 +28,15 @@ const props = defineProps({
 
 const { tc } = i18n.global
 const store = useStore()
-// const route = useRoute()
+const route = useRoute()
 const router = useRouter()
 
-// todo 未传参id时，跳转处理
+// url传参
+const show = route.query.show as 'server' | 'disk' | undefined
+// 子tab展示哪个部分
+const tab = ref(show ?? 'server')
+
+// 未传参id时，跳转处理
 // if (!props.serverId) {
 //   void $router.push({ path: '/my/personal/server' })
 // }
@@ -48,7 +54,7 @@ const service = computed(() => store.tables.serviceTable.byId[server.value?.serv
 const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
 
 // 当前用户在group内的角色
-const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id || '']?.myRole)
+const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id || '']?.myRole || 'member')
 
 // 复制信息到剪切板
 const clickToCopy = useCopyToClipboard()
@@ -76,7 +82,7 @@ const clickToCopy = useCopyToClipboard()
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row">
 
-          <!--todo 区分读取中和读取错误          -->
+          <!--区分读取中和读取错误          -->
           <!--          <div v-if="!server || !service || (service?.need_vpn && !vpn) " class="col">-->
           <div v-if="!server" class="col">
             {{ tc('components.server.ServeDetailCard.notify_loading') }}
@@ -240,203 +246,299 @@ const clickToCopy = useCopyToClipboard()
               </div>
             </div>
 
-            <div class="row justify-center q-pt-xl ">
-              <div class="col-4">
+            <!--云主机概览结束-->
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_username') }}</div>
-                  <div class="col-shrink">
-                    <div v-if="server?.default_user === null || server?.default_user===''">
-                      {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
-                    </div>
-                    <div v-else>
-                      {{ server.default_user }}
-                      <q-btn
-                        class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                        @click="clickToCopy(server.default_user)">
-                        <q-tooltip>
-                          {{ tc('components.server.ServeDetailCard.copy') }}
-                        </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </div>
-                </div>
+            <div class="column items-start q-py-none q-px-none">
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.initial_os_password') }}</div>
-                  <div class="col-shrink">
-                    <div v-if="server?.default_password === null || server?.default_password===''">
-                      {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
-                    </div>
+              <div class="col-auto">
+                <div class="row no-wrap justify-between items-center q-pt-lg  content-area">
 
-                    <div v-else class="row">
-                      <PasswordToggle style="max-width: 200px; min-width: 32px;" :text="server?.default_password"/>
+                  <q-tabs
+                    class="col-auto"
+                    v-model="tab"
+                    active-color="primary"
+                    align="left"
+                    inline-label
+                  >
 
-                      <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                             @click="clickToCopy(server?.default_password, true)">
-                        <q-tooltip>
-                          {{ tc('components.server.ServeDetailCard.copy') }}
-                        </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </div>
-                </div>
-                <!--                以下两项依赖serviceTable-->
-                <div v-if="service" class="row q-pb-md items-center ">
-                  <div class="col-4 text-grey ">{{ (tc('vpnInfo')) }}</div>
-                  <div class="col-auto">
-                    <q-btn v-if="service?.need_vpn" flat dense no-caps color="primary"
-                           @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service.id]?.data_center.id}&service=${server.service.id}`)">
-                      {{ tc('seeVpn') }}
-                      <q-tooltip>
-                        {{ tc('jumpToVpn') }}
-                      </q-tooltip>
+                    <q-tab class="q-px-none q-py-none q-mr-md"
+                           no-caps
+                           :ripple="false"
+                           name="server"
+                           icon="computer"
+                           :label="tc('云主机信息')"/>
+
+                    <q-tab class="q-px-none q-py-none q-mr-md"
+                           no-caps
+                           :ripple="false"
+                           name="disk"
+                           icon="mdi-harddisk"
+                           :label="tc('已挂载云硬盘列表')"/>
+
+                  </q-tabs>
+
+                  <div class="row justify-center items-end q-gutter-md">
+                    <q-btn v-show="tab==='disk'"
+                           class="col-shrink"
+                           icon="add"
+                           size="md"
+                           unelevated
+                           dense
+                           no-caps
+                           padding="xs"
+                           color="primary"
+                           @click="navigateToUrl(`/my/server/deploy/disk`)">
+                      {{ tc('新建云硬盘') }}
                     </q-btn>
-                    <div v-else-if="!service?.need_vpn">{{ tc('vpnNotRequired') }}</div>
-                    <!--                    <div v-else>{{ tc('vpnNotRequired') }}</div>-->
-                  </div>
-                </div>
 
-                <div v-if="service" class="row q-pb-md items-center">
-                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.org') }}</div>
-                  <div class="col">
-                    {{
-                      i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service?.data_center.id]?.name : store.tables.dataCenterTable.byId[service?.data_center.id]?.name_en
-                    }}
-                  </div>
-                </div>
-
-                <!--                以下两项为server保存的信息-->
-                <div class="row q-pb-md items-center">
-                  <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.service_node') }}</div>
-                  <div class="col"> {{
-                      i18n.global.locale === 'zh' ? server.service.name : server.service.name_en
-                    }}
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-4 text-grey">{{ tc('cloudPlatform') }}</div>
-                  <div class="col">
-                    <CloudPlatformLogo :platform-name="server.service.service_type" height="30px" width="155px"/>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="col-4">
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.server_id') }}</div>
-                  <div class="col">
-                    {{ server.id }}
-                    <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
-                           @click="clickToCopy(server.id)">
-                      <q-tooltip>
-                        复制
-                      </q-tooltip>
+                    <q-btn v-show="tab==='disk'"
+                           class="col-shrink"
+                           icon="mdi-shape-square-plus"
+                           size="md"
+                           unelevated
+                           dense
+                           no-caps
+                           padding="xs"
+                           color="primary">
+                      {{ tc('挂载云硬盘') }}
                     </q-btn>
                   </div>
+
                 </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">CPU</div>
-                  <div class="col"> {{ server.vcpus }} {{ tc('countCore', server.vcpus) }}</div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('memory') }}</div>
-                  <div class="col"> {{ server.ram }}GB</div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.network_type') }}</div>
-                  <div class="col"> {{
-                      server.public_ip ? tc('components.server.ServeDetailCard.public_network') : tc('components.server.ServeDetailCard.private_network')
-                    }}
-                  </div>
-                </div>
-
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.operating_system') }}</div>
-                  <div class="col">
-                    <OsLogo :os-name="server.image"/>
-                    {{ server.image }}
-                  </div>
-                </div>
-
-                <div v-if="server.image_desc" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.system_specification') }}</div>
-                  <div class="col"> {{ server.image_desc }}</div>
-                </div>
+                <q-separator/>
 
               </div>
+              <div class="col-auto content-area">
+                <q-tab-panels v-model="tab">
 
-              <div class="col-4">
+                  <q-tab-panel class="q-pa-none overflow-hidden" name="server">
 
-                <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.group') }}</div>
-                  <div class="col-8">
-                    <q-btn flat dense color="primary" padding="none"
-                           :to="{path:  `/my/server/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
-                      {{ store.tables.groupTable.byId[server.vo_id].name }}
-                      <q-tooltip>
-                        {{ tc('components.server.ServeDetailCard.group_detail') }}
-                      </q-tooltip>
-                    </q-btn>
-                  </div>
-                </div>
+                    <div class="row justify-center q-py-lg">
+                      <div class="col-4">
 
-                <div v-if="isGroup" class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.my_role') }}</div>
-                  <div class="col-shrink">
-                    <group-role-chip :role="myRole"/>
-                  </div>
-                </div>
+                        <div class="row q-pb-md items-center">
+                          <div class="col-4 text-grey">{{
+                              tc('components.server.ServeDetailCard.initial_os_username')
+                            }}
+                          </div>
+                          <div class="col-shrink">
+                            <div v-if="server?.default_user === null || server?.default_user===''">
+                              {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
+                            </div>
+                            <div v-else>
+                              {{ server.default_user }}
+                              <q-btn
+                                class="col-shrink q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                @click="clickToCopy(server.default_user)">
+                                <q-tooltip>
+                                  {{ tc('components.server.ServeDetailCard.copy') }}
+                                </q-tooltip>
+                              </q-btn>
+                            </div>
+                          </div>
+                        </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.creator') }}</div>
-                  <div class="col-shrink">
-                    {{ server.user.username }}
-                  </div>
-                </div>
+                        <div class="row q-pb-md items-center">
+                          <div class="col-4 text-grey">{{
+                              tc('components.server.ServeDetailCard.initial_os_password')
+                            }}
+                          </div>
+                          <div class="col-shrink">
+                            <div v-if="server?.default_password === null || server?.default_password===''">
+                              {{ tc('components.server.ServeDetailCard.unavailable_from_service') }}
+                            </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.billing_type') }}</div>
-                  <div v-if="server.pay_type === 'prepaid'" class="col">
-                    {{ tc('components.server.ServeDetailCard.monthly_prepaid') }}
-                  </div>
-                  <div v-if="server.pay_type === 'postpaid'" class="col">
-                    {{ tc('components.server.ServeDetailCard.pay_as_go') }}
-                  </div>
-                </div>
+                            <div v-else class="row">
+                              <PasswordToggle style="max-width: 200px; min-width: 32px;"
+                                              :text="server?.default_password as string"/>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.create_time') }}</div>
-                  <div class="col">
-                    {{ new Date(server.creation_time).toLocaleString(i18n.global.locale) }}
-                  </div>
-                </div>
+                              <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                     @click="clickToCopy(server?.default_password as string, true)">
+                                <q-tooltip>
+                                  {{ tc('components.server.ServeDetailCard.copy') }}
+                                </q-tooltip>
+                              </q-btn>
+                            </div>
+                          </div>
+                        </div>
+                        <!--                以下两项依赖serviceTable-->
+                        <div v-if="service" class="row q-pb-md items-center ">
+                          <div class="col-4 text-grey ">{{ (tc('vpnInfo')) }}</div>
+                          <div class="col-auto">
+                            <q-btn v-if="service?.need_vpn" flat dense no-caps color="primary"
+                                   @click="navigateToUrl(`/my/server/vpn?datacenter=${store.tables.serviceTable.byId[server.service.id]?.data_center.id}&service=${server.service.id}`)">
+                              {{ tc('seeVpn') }}
+                              <q-tooltip>
+                                {{ tc('jumpToVpn') }}
+                              </q-tooltip>
+                            </q-btn>
+                            <div v-else-if="!service?.need_vpn">{{ tc('vpnNotRequired') }}</div>
+                            <!--                    <div v-else>{{ tc('vpnNotRequired') }}</div>-->
+                          </div>
+                        </div>
 
-                <div class="row q-pb-md items-center">
-                  <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.expiration_time') }}</div>
-                  <div class="col row items-center">
-                    <div class="col-auto">
-                      {{
-                        server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale) : tc('components.server.ServeDetailCard.long_term')
-                      }}
+                        <div v-if="service" class="row q-pb-md items-center">
+                          <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.org') }}</div>
+                          <div class="col">
+                            {{
+                              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[service?.data_center.id]?.name : store.tables.dataCenterTable.byId[service?.data_center.id]?.name_en
+                            }}
+                          </div>
+                        </div>
+
+                        <!--                以下两项为server保存的信息-->
+                        <div class="row q-pb-md items-center">
+                          <div class="col-4 text-grey">{{ tc('components.server.ServeDetailCard.service_node') }}</div>
+                          <div class="col"> {{
+                              i18n.global.locale === 'zh' ? server.service.name : server.service.name_en
+                            }}
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-4 text-grey">{{ tc('cloudPlatform') }}</div>
+                          <div class="col">
+                            <CloudPlatformLogo :platform-name="server.service.service_type" height="30px"
+                                               width="155px"/>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div class="col-4">
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.server_id') }}</div>
+                          <div class="col">
+                            {{ server.id }}
+                            <q-btn class="q-px-xs" flat color="primary" icon="content_copy" size="sm"
+                                   @click="clickToCopy(server.id)">
+                              <q-tooltip>
+                                复制
+                              </q-tooltip>
+                            </q-btn>
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">CPU</div>
+                          <div class="col"> {{ server.vcpus }} {{ tc('countCore', server.vcpus) }}</div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('memory') }}</div>
+                          <div class="col"> {{ server.ram }}GB</div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.network_type') }}</div>
+                          <div class="col"> {{
+                              server.public_ip ? tc('components.server.ServeDetailCard.public_network') : tc('components.server.ServeDetailCard.private_network')
+                            }}
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{
+                              tc('components.server.ServeDetailCard.operating_system')
+                            }}
+                          </div>
+                          <div class="col">
+                            <OsLogo :os-name="server.image"/>
+                            {{ server.image }}
+                          </div>
+                        </div>
+
+                        <div v-if="server.image_desc" class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{
+                              tc('components.server.ServeDetailCard.system_specification')
+                            }}
+                          </div>
+                          <div class="col"> {{ server.image_desc }}</div>
+                        </div>
+
+                      </div>
+
+                      <div class="col-4">
+
+                        <div v-if="isGroup" class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.group') }}</div>
+                          <div class="col-8">
+                            <q-btn flat dense color="primary" padding="none"
+                                   :to="{path:  `/my/server/group/detail/${store.tables.groupTable.byId[server.vo_id].id}`}">
+                              {{ store.tables.groupTable.byId[server.vo_id].name }}
+                              <q-tooltip>
+                                {{ tc('components.server.ServeDetailCard.group_detail') }}
+                              </q-tooltip>
+                            </q-btn>
+                          </div>
+                        </div>
+
+                        <div v-if="isGroup" class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.my_role') }}</div>
+                          <div class="col-shrink">
+                            <group-role-chip :role="myRole"/>
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.creator') }}</div>
+                          <div class="col-shrink">
+                            {{ server.user.username }}
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.billing_type') }}</div>
+                          <div v-if="server.pay_type === 'prepaid'" class="col">
+                            {{ tc('components.server.ServeDetailCard.monthly_prepaid') }}
+                          </div>
+                          <div v-if="server.pay_type === 'postpaid'" class="col">
+                            {{ tc('components.server.ServeDetailCard.pay_as_go') }}
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{ tc('components.server.ServeDetailCard.create_time') }}</div>
+                          <div class="col">
+                            {{ new Date(server.creation_time).toLocaleString(i18n.global.locale as string) }}
+                          </div>
+                        </div>
+
+                        <div class="row q-pb-md items-center">
+                          <div class="col-3 text-grey">{{
+                              tc('components.server.ServeDetailCard.expiration_time')
+                            }}
+                          </div>
+                          <div class="col row items-center">
+                            <div class="col-auto">
+                              {{
+                                server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : tc('components.server.ServeDetailCard.long_term')
+                              }}
+                            </div>
+                            <div v-if="server.pay_type === 'prepaid'" class="col-auto">
+                              <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
+                                     color="primary" padding="none" icon="autorenew" :ripple="false" dense flat no-caps
+                                     @click="store.renewOrderDialog(server.id, isGroup)">
+                                {{ tc('components.server.ServeDetailCard.renewal') }}
+                              </q-btn>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
                     </div>
-                    <div v-if="server.pay_type === 'prepaid'" class="col-auto">
-                      <q-btn v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"
-                             color="primary" padding="none" icon="autorenew" :ripple="false" dense flat no-caps
-                             @click="store.renewOrderDialog(server.id, isGroup)">
-                        {{ tc('components.server.ServeDetailCard.renewal') }}
-                      </q-btn>
-                    </div>
-                  </div>
-                </div>
 
+                  </q-tab-panel>
+
+                  <q-tab-panel class="q-pa-none overflow-hidden" name="disk">
+                    <disk-table/>
+                  </q-tab-panel>
+
+                </q-tab-panels>
               </div>
+
             </div>
 
           </div>

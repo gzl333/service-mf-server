@@ -5,8 +5,6 @@ import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
-import ButtonAdd from 'components/group/ButtonAdd.vue'
-
 // const props = defineProps({
 //   foo: {
 //     type: String,
@@ -20,6 +18,8 @@ const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
+
+const fabButton = ref(false)
 
 const activeTab = ref(store.items.currentPath[1]) // keep selection when reloading
 
@@ -98,7 +98,25 @@ store.softLoadGroupBasicTables()
                   </q-tabs>
                 </div>
                 <div class="col-1">
-                  <ButtonAdd/>
+                  <q-fab
+                    style="float: right; transform: translate(0, 65%);"
+                    v-model="fabButton"
+                    vertical-actions-align="right"
+                    color="primary"
+                    icon="add"
+                    :label="tc('components.group.ButtonAdd.create')"
+                    direction="down"
+                  >
+                    <q-fab-action :label="tc('components.group.ButtonAdd.create_group')" unelevated color="primary"
+                                  icon="group"
+                                  @click="navigateToUrl('/my/server/group/create')"/>
+                    <q-fab-action :label="tc('components.group.ButtonAdd.create_server')" unelevated color="primary"
+                                  icon="computer"
+                                  @click="navigateToUrl('/my/server/deploy?isgroup=true')"/>
+                    <q-fab-action :label="tc('新建组云硬盘')" unelevated color="primary"
+                                  icon="mdi-harddisk"
+                                  @click="navigateToUrl('/my/server/deploy/disk?isgroup=true')"/>
+                  </q-fab>
                 </div>
               </div>
             </div>

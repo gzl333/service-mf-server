@@ -21,6 +21,8 @@ const store = useStore()
 const tc = i18n.global.tc
 // const route = useRoute()
 
+const fabButton = ref(false)
+
 const activeTab = ref(store.items.currentPath[1]) // keep selection when reloading
 
 </script>
@@ -99,6 +101,15 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                     <q-tab
                       no-caps
                       class="q-px-none q-py-md q-mr-md text-bold"
+                      name="disk"
+                      icon="mdi-harddisk"
+                      :label="tc('云硬盘列表')"
+                      :ripple="false"
+                      @click="activeTab = 'disk'; navigateToUrl('/my/server/personal/disk')"
+                    />
+                    <q-tab
+                      no-caps
+                      class="q-px-none q-py-md q-mr-md text-bold"
                       name="order"
                       icon="list_alt"
                       :label="tc('pages.personal.PersonalIndex.order_list')"
@@ -117,22 +128,38 @@ const activeTab = ref(store.items.currentPath[1]) // keep selection when reloadi
                   </q-tabs>
                 </div>
                 <div class="col-1">
-                  <q-btn style="float: right;
-                              transform: translate(0, 65%);
-                              padding: 16px;
-                              border-radius: 28px;
-                              min-height: 56px;
-                              min-width: 56px;"
-                         no-caps
-                         no-wrap
-                         rounded
-                         color="primary"
-                         icon="add"
-                         @click="navigateToUrl('/my/server/deploy')"
+
+                  <q-fab
+                    style="float: right; transform: translate(0, 65%);"
+                    v-model="fabButton"
+                    vertical-actions-align="right"
+                    color="primary"
+                    icon="add"
+                    :label="tc('components.group.ButtonAdd.create')"
+                    direction="down"
                   >
-                    {{ tc('pages.personal.PersonalIndex.create') }}
-                  </q-btn>
-                  <!--                <ButtonAdd/>-->
+                    <q-fab-action :label="tc('新建个人云主机')" unelevated color="primary" icon="computer"
+                                  @click="navigateToUrl('/my/server/deploy')"/>
+                    <q-fab-action :label="tc('新建个人云硬盘')" unelevated color="primary" icon="mdi-harddisk"
+                                  @click="navigateToUrl('/my/server/deploy/disk')"/>
+                  </q-fab>
+
+                  <!--                  <q-btn style="float: right;-->
+                  <!--                              transform: translate(0, 65%);-->
+                  <!--                              padding: 16px;-->
+                  <!--                              border-radius: 28px;-->
+                  <!--                              min-height: 56px;-->
+                  <!--                              min-width: 56px;"-->
+                  <!--                         no-caps-->
+                  <!--                         no-wrap-->
+                  <!--                         rounded-->
+                  <!--                         color="primary"-->
+                  <!--                         icon="add"-->
+                  <!--                         @click="navigateToUrl('/my/server/deploy')"-->
+                  <!--                  >-->
+                  <!--                    {{ tc('pages.personal.PersonalIndex.create') }}-->
+                  <!--                  </q-btn>-->
+
                 </div>
               </div>
             </div>

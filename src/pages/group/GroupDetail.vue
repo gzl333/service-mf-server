@@ -12,6 +12,7 @@ import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
 import OrderTable from 'components/order/OrderTable.vue'
 import CouponTable from 'components/coupon/CouponTable.vue'
+import DiskTable from 'components/disk/DiskTable.vue'
 // import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
 
 // const props = defineProps({
@@ -278,30 +279,42 @@ const clickToCopy = useCopyToClipboard()
                     align="left"
                     inline-label
                   >
+
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="server"
                            icon="computer"
                            :label="tc('pages.group.GroupDetail.server')"/>
+
+                    <q-tab class="q-px-none q-py-none q-mr-md"
+                           no-caps
+                           :ripple="false"
+                           name="disk"
+                           icon="mdi-harddisk"
+                           :label="tc('云硬盘')"/>
+
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="member"
                            icon="group"
                            :label="tc('pages.group.GroupDetail.member')"/>
+
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="order"
                            icon="list_alt"
                            :label="tc('pages.group.GroupDetail.order')"/>
+
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="coupon"
                            icon="currency_yuan"
                            :label="tc('pages.group.GroupDetail.coupon')"/>
+
                   </q-tabs>
 
                   <q-btn v-show="tab==='member' && group.myRole !== 'member' " class="col-shrink" icon="add" size="md"
@@ -315,6 +328,13 @@ const clickToCopy = useCopyToClipboard()
                          color="primary"
                          @click="navigateToUrl(`/my/server/deploy?group=${groupId}`)">
                     {{ tc('pages.group.GroupDetail.create_server') }}
+                  </q-btn>
+
+                  <q-btn v-show="tab==='disk' && group.myRole !== 'member'" class="col-shrink" icon="add" size="md"
+                         unelevated dense no-caps padding="xs"
+                         color="primary"
+                         @click="navigateToUrl(`/my/server/deploy/disk?group=${groupId}`)">
+                    {{ tc('新建云硬盘') }}
                   </q-btn>
 
                   <q-btn v-show="tab==='coupon'" class="col-shrink" icon="currency_yuan" size="md"
@@ -334,6 +354,10 @@ const clickToCopy = useCopyToClipboard()
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="server">
                     <server-table :servers="servers" is-group is-hide-group/>
+                  </q-tab-panel>
+
+                  <q-tab-panel class="q-pa-none overflow-hidden" name="disk">
+                    <disk-table/>
                   </q-tab-panel>
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="member">

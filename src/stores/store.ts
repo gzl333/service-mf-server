@@ -3168,7 +3168,7 @@ export const useStore = defineStore('server', {
     /* 取消订单 */
 
     /* 续费下订单 */
-    renewOrderDialog (serverId: string, isGroup: boolean) {
+    renewOrderDialog (serverId: string, isGroup = false) {
       Dialog.create({
         component: OrderRenewDialog,
         componentProps: {
