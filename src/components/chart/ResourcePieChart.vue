@@ -6,7 +6,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { i18n } from 'boot/i18n'
 
 import * as echarts from 'echarts/core'
-import { TooltipComponent, LegendComponent } from 'echarts/components'
+import { TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components'
 import { PieChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -31,6 +31,7 @@ const { tc } = i18n.global
 echarts.use([
   TooltipComponent,
   LegendComponent,
+  TitleComponent,
   PieChart,
   CanvasRenderer,
   LabelLayout
