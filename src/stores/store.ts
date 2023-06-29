@@ -185,7 +185,8 @@ export interface ServiceInterface {
   longitude: number
   latitude: number
   pay_app_service_id: string
-  sort_weight: number // 排序权重, 值越大排序越靠前
+  sort_weight: number // 排序权重
+  disk_available: boolean // 是否提供云硬盘
 }
 
 // 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述

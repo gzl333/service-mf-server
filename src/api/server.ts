@@ -337,6 +337,75 @@ export default {
       return axiosServer.get('/describe-price/renewal', config)
     }
   },
+  disk: {
+    getDisk (payload?: {
+      query?: {
+        page?: number
+        page_size?: number
+        service_id?: string
+        vo_id?: string
+      }
+    }) {
+      const config = {
+        params: payload?.query
+      }
+      return axiosServer.get('/disk', config)
+    },
+    postDisk (payload: {
+      body: {
+        pay_type: string // 'prepaid' | 'postpaid' | 'quota';
+        service_id: string
+        azone_id?: string
+        size: number // 云硬盘大小， Gib
+        period?: number // 时常 月
+        remarks?: string
+        vo_id?: string
+      }
+    }) {
+      const data = payload.body
+      return axiosServer.post('/disk', data)
+    },
+    getDiskId (payload: {
+      path: {
+        id: string
+      }
+    }) {
+      return axiosServer.get('/disk/' + payload.path.id)
+    },
+    deleteDiskId (payload: {
+      path: {
+        id: string
+      }
+    }) {
+      return axiosServer.delete('/disk/' + payload.path.id)
+    },
+    postDiskIdAttach (payload: {
+      query: {
+        server_id: string
+      },
+      path: {
+        id: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/disk/' + payload.path.id + '/attach', config)
+    },
+    postDiskIdDetach (payload: {
+      query: {
+        server_id: string
+      },
+      path: {
+        id: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/disk/' + payload.path.id + '/detach', config)
+    }
+  },
   flavor: {
     getFlavor (payload?: {
       query?: {
