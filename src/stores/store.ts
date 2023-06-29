@@ -21,6 +21,8 @@ import OrderRenewDialog from 'components/order/OrderRenewDialog.vue'
 import RedeemCouponDialog from 'components/coupon/RedeemCouponDialog.vue'
 
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
+import MountDiskDialog from 'components/disk/MountDiskDialog.vue'
+import UnmountDiskDialog from 'components/disk/UnmountDiskDialog.vue'
 
 const { tc } = i18n.global
 const exceptionNotifier = useExceptionNotifier()
@@ -3298,8 +3300,34 @@ export const useStore = defineStore('server', {
           groupId
         }
       })
-    }
+    },
     /* coupon */
+
+    /* disk */
+    // 挂载云硬盘。云主机和云硬盘的入口都在这里。
+    mountDiskDialog (isGroup = false, diskId?: string, serverId?: string) {
+      // dialog
+      Dialog.create({
+        component: MountDiskDialog,
+        componentProps: {
+          isGroup,
+          diskId,
+          serverId
+        }
+      })
+    },
+    // 卸载云硬盘。云主机和云硬盘的入口都在这里。
+    unmountDiskDialog (diskIds?: string[]) {
+      // dialog
+      Dialog.create({
+        component: UnmountDiskDialog,
+        componentProps: {
+          diskIds
+        }
+      })
+    }
+
+    /* disk */
 
     /* dialogs */
   }
