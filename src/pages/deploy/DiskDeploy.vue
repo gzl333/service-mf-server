@@ -77,13 +77,21 @@ const input = ref<HTMLElement>()
 
 // owner/leader权限才能建立云主机， member不能建立
 const groups = computed(() => store.getGroupsByMyRole(['owner', 'leader', 'member']))
-const dataCenters = computed(() => store.tables.dataCenterTable.allIds.map(id => store.tables.dataCenterTable.byId[id]).filter(dataCenter => dataCenter.status.code === 1))
+
+const dataCenters = computed(() =>
+  store.tables.dataCenterTable.allIds
+    .map(id => store.tables.dataCenterTable.byId[id])
+    .filter(dataCenter => dataCenter.status.code === 1)
+)
+
 const services = computed(() => Object.values(store.tables.serviceTable.byId))
+
 const currAccountCoupons = computed(() => {
   if (selectionOwner.value === 'personal') {
     return Object.values(store.tables.personalCouponTable.byId)
   } else {
-    return Object.values(store.tables.groupCouponTable.byId).filter(coupon => coupon?.vo?.id === selectionGroupId.value)
+    return Object.values(store.tables.groupCouponTable.byId)
+      .filter(coupon => coupon?.vo?.id === selectionGroupId.value)
   }
 })
 
@@ -501,6 +509,7 @@ const deploy = async () => {
                     v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"
                     :key="service?.id"
                     :val="service?.id"
+                    :disable="!service.disk_available"
                     unelevated
                     dense
                     no-caps
@@ -508,6 +517,7 @@ const deploy = async () => {
                     @click="selectionServiceId = service!.id"
                   >
                     <div class="row items-center">
+                      <q-tooltip v-if="!service.disk_available">{{ tc('此服务单元未提供云硬盘')}}</q-tooltip>
                       <div class="col-auto row items-center">
                         <CloudPlatformLogo class="col-auto" logo-style="mark" width="15px" height="15px"
                                            :platform-name="service.service_type"/>
