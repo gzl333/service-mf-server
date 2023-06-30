@@ -189,6 +189,41 @@ export interface ServiceInterface {
   disk_available: boolean // 是否提供云硬盘
 }
 
+export interface DiskInterface {
+  id: string
+  name: string
+  size: string
+  service: ServiceInterface
+  azone_id: string
+  azone_name: string
+  creation_time: string
+  remarks: string
+  task_status: string /*   # 创建状态，ok: 成功；creating：正在创建中；failed：创建失败 */
+  expiration_time: string | null
+  pay_type: 'postpaid' | 'prepaid' /* # prepaid: 包年包月; postpaid:按量计费 */
+  classification: 'vo' | 'personal' /* # personal：硬盘归属用户个人 */
+  user: { /*  # 硬盘创建人 */
+    id: string
+    username: string
+  }
+  vo: {
+    id: string
+    name: string
+  }
+  lock: 'free' | 'lock-delete' | 'lock-operation', /* # 'free': 无锁；'lock-delete': 锁定删除，防止删除；'lock-operation', '锁定所有操作，只允许读' */
+  deleted: boolean /* # true: 已删除；false: 正常；只有管理员可查询到已删除云硬盘； */
+  server: { /* # 挂载的云主机，未挂载时为 null */
+    id: string
+    ipv4: string
+    vcpus: number
+    ram: number /* # GiB */
+    image: string
+  }
+  mountpoint: string, /* # 挂载的设备名/挂载点, 未挂载时为空字符串 */
+  attached_time: string | null /* # 上次挂载时间 */
+  detached_time: string | null /*  # 上次卸载时间 */
+}
+
 // 资源配置接口： 服务提供给联邦的配额用 资源配置 来描述
 export interface AllocationInterface {
   private_ip_total: number
@@ -344,18 +379,38 @@ export interface ServerInterface {
 }
 
 export interface OrderResourceInterface {
-  delivered_time: string
   id: string
   order_id: string
-  resource_type: string
+  resource_type: 'vm' | 'disk'
   instance_id: string
-  instance_status: string
+  instance_status: string // to specify
+  delivered_time: string
+}
+
+export interface OrderVmInterface {
+  vm_cpu: number
+  vm_ram: number
+  vm_systemdisk_size: number
+  vm_public_ip: true,
+  vm_image_id: string
+  vm_image_name: string
+  vm_network_id: number
+  vm_network_name: string
+  vm_azone_id: string
+  vm_azone_name: string
+  vm_flavor_id: string
+}
+
+export interface OrderDiskInterface {
+  disk_size: number // GB
+  disk_azone_id: string
+  disk_azone_name: string
 }
 
 export interface OrderInterface {
   id: string
-  order_type: string
-  status: string
+  order_type: string // to specify
+  status: string // to specify
   total_amount: string
   pay_amount: string
   payable_amount: string
@@ -363,20 +418,8 @@ export interface OrderInterface {
   coupon_amount: string
   service_id: string
   service_name: string
-  resource_type: string
-  instance_config: {
-    vm_cpu: number
-    vm_ram: number
-    vm_systemdisk_size: number
-    vm_public_ip: true,
-    vm_image_id: string
-    vm_image_name: string
-    vm_network_id: number
-    vm_network_name: string
-    vm_azone_id: string
-    vm_azone_name: string
-    vm_flavor_id: string
-  },
+  resource_type: 'vm' | 'disk'
+  instance_config: OrderVmInterface | OrderDiskInterface
   period: number
   payment_time: string
   pay_type: 'prepaid' | 'postpaid'
@@ -385,7 +428,7 @@ export interface OrderInterface {
   username: string
   vo_id: string
   vo_name: string
-  owner_type: string
+  owner_type: string // to specify
   cancelled_time: string
   app_service_id: string
   resources: OrderResourceInterface[]

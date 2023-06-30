@@ -65,6 +65,15 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px; '
   },
   {
+    name: 'type',
+    label: (() => tc('资源类型'))(),
+    field: 'type',
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
     name: 'config',
     label: (() => tc('components.order.OrderTable.hardware_configuration'))(),
     field: 'config',
@@ -73,15 +82,15 @@ const columns = computed(() => [
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 2px'
   },
-  {
-    name: 'network',
-    label: (() => tc('components.order.OrderTable.network_type'))(),
-    field: 'network',
-    align: 'center',
-    classes: 'ellipsis',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 2px'
-  },
+  // {
+  //   name: 'network',
+  //   label: (() => tc('components.order.OrderTable.network_type'))(),
+  //   field: 'network',
+  //   align: 'center',
+  //   classes: 'ellipsis',
+  //   style: 'padding: 15px 0px',
+  //   headerStyle: 'padding: 0 2px'
+  // },
   {
     name: 'time',
     label: (() => tc('components.order.OrderTable.place_time'))(),
@@ -175,6 +184,9 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
     >
 
       <template v-slot:body="props">
+
+        <!--        <pre>{{ props.row}}</pre>-->
+
         <q-tr :props="props"
               @mouseenter="onMouseEnterRow(props.row.id)"
               @mouseleave="onMouseLeaveRow"
@@ -235,32 +247,61 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             </div>
 
             <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[props.row.service_id]?.service_type" />
+              :platform-name="store.tables.serviceTable.byId[props.row.service_id]?.service_type"/>
 
+          </q-td>
+
+          <q-td key="type" :props="props">
+            <div v-if="props.row.resource_type === 'vm'">
+              <q-icon name="computer" color="primary" size="md"/>
+              <div>{{ tc('云主机') }}</div>
+            </div>
+            <div v-else-if="props.row.resource_type === 'disk'">
+              <q-icon name="mdi-harddisk" color="primary" size="md"/>
+              <div>{{ tc('云硬盘') }}</div>
+            </div>
           </q-td>
 
           <q-td key="config" :props="props">
-            <div> {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }}</div>
-            <div> {{ props.row.instance_config.vm_ram }}GB</div>
 
-          </q-td>
+            <div v-if="props.row.resource_type === 'vm'">
+              <div> {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }} CPU</div>
+              <div> {{ props.row.instance_config.vm_ram }}GB {{ tc('内存') }}</div>
+              <div> {{
+                  props.row.instance_config.vm_public_ip
+                    ? tc('components.order.OrderTable.public_network')
+                    : tc('components.order.OrderTable.private_network')
+                }} IP
+              </div>
+            </div>
 
-          <q-td key="network" :props="props">
-            <!--            {{ props.row.instance_config }}-->
-            {{
-              props.row.instance_config.vm_public_ip ? tc('components.order.OrderTable.public_network') : tc('components.order.OrderTable.private_network')
-            }}
+            <div v-else-if="props.row.resource_type === 'disk'">
+              <div>{{ props.row.instance_config.disk_size }}GB {{ tc('存储') }}</div>
+            </div>
+
           </q-td>
 
           <q-td key="time" :props="props">
             <!--              日期时间格式根据locale值变化-->
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                }}
+              </div>
             </div>
             <div v-else>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                }}
+              </div>
+              <div>{{
+                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                }}
+              </div>
             </div>
           </q-td>
 

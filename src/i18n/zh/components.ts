@@ -239,7 +239,7 @@ export default {
       order_id: '订单ID',
       group: '所属组',
       service_node: '服务单元',
-      hardware_configuration: '硬件配置',
+      hardware_configuration: '资源配置',
       network_type: '网络类型',
       place_time: '下单时间',
       order_type: '订单类型',
