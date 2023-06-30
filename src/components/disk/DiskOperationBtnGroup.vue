@@ -31,184 +31,112 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
   <div class="ServerOperationBtnGroup">
     <q-btn-group unelevated>
 
-      <!--      <q-btn color="grey-3" padding="none">-->
-      <!--        <q-toggle-->
-      <!--          :model-value="toggleValue"-->
-      <!--          checked-icon="lock"-->
-      <!--          unchecked-icon="lock_open"-->
-      <!--          color="light-green"-->
-      <!--          size="md"-->
-      <!--          @click="store.toggleOperationLock({isGroup, serverId: server.id })"-->
-      <!--        >-->
-      <!--          <q-tooltip v-if="server.lock === 'lock-operation'">-->
-      <!--            {{ tc('components.server.ServerOperationBtnGroup.server_operation_locked') }}-->
-      <!--          </q-tooltip>-->
-      <!--          <q-tooltip v-else>-->
-      <!--            {{ tc('components.server.ServerOperationBtnGroup.server_operation_unlocked') }}-->
-      <!--          </q-tooltip>-->
-      <!--        </q-toggle>-->
-      <!--      </q-btn>-->
+      <q-btn color="grey-3" padding="none">
+        <q-toggle
+          :model-value="toggleValue"
+          checked-icon="lock"
+          unchecked-icon="lock_open"
+          color="light-green"
+          size="md"
+        >
+          <q-tooltip v-if="disk.lock === 'lock-operation'">
+            {{ tc('components.server.ServerOperationBtnGroup.server_operation_locked') }}
+          </q-tooltip>
+          <q-tooltip v-else>
+            {{ tc('components.server.ServerOperationBtnGroup.server_operation_unlocked') }}
+          </q-tooltip>
+        </q-toggle>
+      </q-btn>
 
-      <!--      <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps-->
-      <!--                      :disable-main-btn="server.lock === 'lock-operation'"-->
-      <!--                      :loading="server?.status===-1"-->
-      <!--                      :icon="server?.status===5?'play_arrow':server?.status==1?'power_settings_new':'refresh'"-->
-      <!--                      @click="server?.status===5 ? store.serverOperationDialog({serverId: server.id, action: 'start', isGroup})-->
-      <!--                      : server?.status==1?store.serverOperationDialog({serverId: server.id, action: 'shutdown', isGroup})-->
-      <!--                      : store.loadSingleServerStatus({isGroup, serverId: server.id})">-->
+      <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
+                      :disable-main-btn="disk.lock === 'lock-operation'"
+                      :icon="disk.server === null ? 'mdi-harddisk-plus' : 'mdi-harddisk-remove'"
+                      @click="disk.server === null ? store.mountDiskDialog() : store.unmountDiskDialog()">
 
-      <!--        <q-list style="text-align:center">-->
-      <!--          <q-item clickable v-close-popup class="bg-white text-primary"-->
-      <!--                  @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}` : `/my/server/personal/detail/${server.id}`)">-->
-      <!--            <div class="row">-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-icon name="info" size="sm"/>-->
-      <!--              </q-item-section>-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-item-label>-->
-      <!--                  {{ tc('components.server.ServerOperationBtnGroup.server_detail') }}-->
-      <!--                </q-item-label>-->
-      <!--              </q-item-section>-->
-      <!--            </div>-->
-      <!--          </q-item>-->
+        <q-list style="text-align:center">
 
-      <!--          <div v-if="server.pay_type === 'prepaid'">-->
-      <!--            <q-item v-if="!isGroup || store.tables.groupTable.byId[server.vo_id].myRole !== 'member'"-->
-      <!--                    clickable v-close-popup class="bg-white text-primary"-->
-      <!--                    @click="store.renewOrderDialog(server.id, isGroup)">-->
-      <!--              <div class="row">-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-icon name="autorenew" size="sm"/>-->
-      <!--                </q-item-section>-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-item-label>-->
-      <!--                    {{ tc('components.server.ServerOperationBtnGroup.server_renewal') }}-->
-      <!--                  </q-item-label>-->
-      <!--                </q-item-section>-->
-      <!--              </div>-->
-      <!--            </q-item>-->
-      <!--          </div>-->
+          <q-item clickable v-close-popup class="bg-white text-primary"
+                  @click="navigateToUrl(isGroup ? `/my/server/group/disk/detail/${disk.id}` : `/my/server/personal/disk/detail/${disk.id}`)">
+            <div class="row">
+              <q-item-section class="col-auto">
+                <q-icon name="info" size="sm"/>
+              </q-item-section>
+              <q-item-section class="col-auto">
+                <q-item-label>
+                  {{ tc('云硬盘详情') }}
+                </q-item-label>
+              </q-item-section>
+            </div>
+          </q-item>
 
-      <!--          <q-separator/>-->
+          <div v-if="disk.pay_type === 'prepaid'">
+            <q-item v-if="!isGroup || store.tables.groupTable.byId[disk.vo.id].myRole !== 'member'"
+                    clickable v-close-popup class="bg-white text-primary"
+            >
+              <div class="row">
+                <q-item-section class="col-auto">
+                  <q-icon name="autorenew" size="sm"/>
+                </q-item-section>
+                <q-item-section class="col-auto">
+                  <q-item-label>
+                    {{ tc('云硬盘续期') }}
+                  </q-item-label>
+                </q-item-section>
+              </div>
+            </q-item>
+          </div>
 
-      <!--          <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-primary"-->
-      <!--                  :disable="server.lock === 'lock-operation'"-->
-      <!--                  @click="store.serverOperationDialog({ serverId: server.id, action: 'start', isGroup})">-->
-      <!--            <div class="row">-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-icon name="play_arrow" size="sm"/>-->
-      <!--              </q-item-section>-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-item-section>-->
-      <!--                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.power_on') }}</q-item-label>-->
-      <!--                </q-item-section>-->
-      <!--              </q-item-section>-->
-      <!--            </div>-->
-      <!--          </q-item>-->
+          <q-separator/>
 
-      <!--          <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"-->
-      <!--                  :disable="server.lock === 'lock-operation'"-->
-      <!--                  @click="store.serverOperationDialog({serverId: server.id, action: 'reboot', isGroup})">-->
-      <!--            <div class="row">-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-icon name="restart_alt" size="sm"/>-->
-      <!--              </q-item-section>-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-item-section>-->
-      <!--                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.restart') }}</q-item-label>-->
-      <!--                </q-item-section>-->
-      <!--              </q-item-section>-->
-      <!--            </div>-->
-      <!--          </q-item>-->
+          <q-item v-if="disk.server === null" clickable v-close-popup class="bg-white text-primary"
+                  :disable="disk.lock === 'lock-operation'"
+          >
+            <div class="row">
+              <q-item-section class="col-auto">
+                <q-icon name="mdi-harddisk-plus" size="sm"/>
+              </q-item-section>
+              <q-item-section class="col-auto">
+                <q-item-section>
+                  <q-item-label>{{ tc('挂载') }}</q-item-label>
+                </q-item-section>
+              </q-item-section>
+            </div>
+          </q-item>
 
-      <!--          <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"-->
-      <!--                  :disable="server.lock === 'lock-operation'"-->
-      <!--                  @click="store.serverOperationDialog({serverId: server.id, action: 'shutdown', isGroup})">-->
-      <!--            <div class="row">-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-icon name="power_settings_new" size="sm"/>-->
-      <!--              </q-item-section>-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-item-section>-->
-      <!--                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.power_off') }}</q-item-label>-->
-      <!--                </q-item-section>-->
-      <!--              </q-item-section>-->
-      <!--            </div>-->
-      <!--          </q-item>-->
+          <q-item v-if="disk.server !== null" clickable v-close-popup class="bg-white text-primary"
+                  :disable="disk.lock === 'lock-operation'"
+          >
+            <div class="row">
+              <q-item-section class="col-auto">
+                <q-icon name="mdi-harddisk-remove" size="sm"/>
+              </q-item-section>
+              <q-item-section class="col-auto">
+                <q-item-section>
+                  <q-item-label>{{ tc('卸载') }}</q-item-label>
+                </q-item-section>
+              </q-item-section>
+            </div>
+          </q-item>
 
-      <!--          <q-item v-if="server.status!==5" clickable v-close-popup class="bg-white text-primary"-->
-      <!--                  :disable="server.lock === 'lock-operation'"-->
-      <!--                  @click="store.serverOperationDialog({serverId: server.id, action: 'poweroff', isGroup})">-->
-      <!--            <div class="row">-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-icon name="power_off" size="sm"/>-->
-      <!--              </q-item-section>-->
-      <!--              <q-item-section class="col-auto">-->
-      <!--                <q-item-section>-->
-      <!--                  <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.force_power_off') }}</q-item-label>-->
-      <!--                </q-item-section>-->
-      <!--              </q-item-section>-->
-      <!--            </div>-->
-      <!--          </q-item>-->
+          <q-separator/>
 
-      <!--          &lt;!&ndash;personal显示 || group不是member时显示&ndash;&gt;-->
-      <!--          <div v-if="!isGroup || isGroup && myRole!=='member'">-->
+          <q-item v-if="disk.server !== null" clickable v-close-popup class="bg-white text-primary"
+                  :disable="disk.lock === 'lock-operation'"
+          >
+            <div class="row">
+              <q-item-section class="col-auto text-red">
+                <q-icon name="power_settings_new" size="sm"/>
+              </q-item-section>
+              <q-item-section class="col-auto">
+                <q-item-section>
+                  <q-item-label>{{ tc('删除云硬盘') }}</q-item-label>
+                </q-item-section>
+              </q-item-section>
+            </div>
+          </q-item>
 
-      <!--            <q-separator/>-->
-
-      <!--            <q-item clickable v-close-popup class="bg-white text-primary"-->
-      <!--                    :disable="server.lock === 'lock-operation'"-->
-      <!--                    @click="store.triggerServerRebuildDialog({serverId: server.id, isGroup})">-->
-      <!--              <div class="row">-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-icon name="build" size="sm"/>-->
-      <!--                </q-item-section>-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-item-section>-->
-      <!--                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.rebuild_server') }}</q-item-label>-->
-      <!--                  </q-item-section>-->
-      <!--                </q-item-section>-->
-      <!--              </div>-->
-      <!--            </q-item>-->
-
-      <!--            <q-separator/>-->
-
-      <!--            &lt;!&ndash;            <q-item v-if="server.status!==1" clickable v-close-popup class="bg-white text-red"&ndash;&gt;-->
-      <!--            &lt;!&ndash;                    :disable="server.lock === 'lock-operation'"&ndash;&gt;-->
-      <!--            &lt;!&ndash;                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete', isGroup})">&ndash;&gt;-->
-      <!--            &lt;!&ndash;              <div class="row">&ndash;&gt;-->
-      <!--            &lt;!&ndash;                <q-item-section class="col-auto">&ndash;&gt;-->
-      <!--            &lt;!&ndash;                  <q-icon name="delete" size="sm"/>&ndash;&gt;-->
-      <!--            &lt;!&ndash;                </q-item-section>&ndash;&gt;-->
-      <!--            &lt;!&ndash;                <q-item-section class="col-auto">&ndash;&gt;-->
-      <!--            &lt;!&ndash;                  <q-item-section>&ndash;&gt;-->
-      <!--            &lt;!&ndash;                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>&ndash;&gt;-->
-      <!--            &lt;!&ndash;                  </q-item-section>&ndash;&gt;-->
-      <!--            &lt;!&ndash;                </q-item-section>&ndash;&gt;-->
-      <!--            &lt;!&ndash;              </div>&ndash;&gt;-->
-      <!--            &lt;!&ndash;            </q-item>&ndash;&gt;-->
-
-      <!--            <q-item clickable v-close-popup class="bg-white text-red"-->
-      <!--                    :disable="server.lock === 'lock-operation'"-->
-      <!--                    @click="store.serverOperationDialog({serverId: server.id, action: 'delete_force', isGroup})">-->
-      <!--              <div class="row">-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-icon name="delete_forever" size="sm"/>-->
-      <!--                </q-item-section>-->
-      <!--                <q-item-section class="col-auto">-->
-      <!--                  <q-item-section>-->
-      <!--                    <q-item-label>{{ tc('components.server.ServerOperationBtnGroup.delete') }}</q-item-label>-->
-      <!--                  </q-item-section>-->
-      <!--                </q-item-section>-->
-      <!--              </div>-->
-      <!--            </q-item>-->
-
-      <!--          </div>-->
-
-      <!--        </q-list>-->
-      <!--      </q-btn-dropdown>-->
-
-      Operations
+        </q-list>
+      </q-btn-dropdown>
 
     </q-btn-group>
   </div>

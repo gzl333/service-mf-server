@@ -23,6 +23,7 @@ import RedeemCouponDialog from 'components/coupon/RedeemCouponDialog.vue'
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 import MountDiskDialog from 'components/disk/MountDiskDialog.vue'
 import UnmountDiskDialog from 'components/disk/UnmountDiskDialog.vue'
+import DeleteDiskDialog from 'components/disk/DeleteDiskDialog.vue'
 
 const { tc } = i18n.global
 const exceptionNotifier = useExceptionNotifier()
@@ -222,7 +223,7 @@ export interface DiskInterface {
     vcpus: number
     ram: number /* # GiB */
     image: string
-  }
+  } | null
   mountpoint: string, /* # 挂载的设备名/挂载点, 未挂载时为空字符串 */
   attached_time: string | null /* # 上次挂载时间 */
   detached_time: string | null /*  # 上次卸载时间 */
@@ -3371,6 +3372,16 @@ export const useStore = defineStore('server', {
         component: UnmountDiskDialog,
         componentProps: {
           diskIds
+        }
+      })
+    },
+    // 删除云硬盘
+    deleteDiskDialog (diskId: string) {
+      // dialog
+      Dialog.create({
+        component: DeleteDiskDialog,
+        componentProps: {
+          diskId
         }
       })
     }

@@ -44,7 +44,7 @@ const resetPageSelection = () => {
 }
 
 // 存储disk对象数组
-const rows = ref<DiskInterface[]>()
+const rows = ref<DiskInterface[]>([])
 
 // loadRows是否再loading
 const isLoading = ref(false)
@@ -121,7 +121,10 @@ watch(serviceSelection, loadRows)
       </div>
     </div>
 
-    <DiskTable :rows="rows as DiskInterface[]" :is-loading="isLoading"/>
+    <DiskTable
+      :rows="rows.filter(disk => disk.remarks.includes(search) || disk.mountpoint.includes(search))"
+      :is-loading="isLoading"
+    />
 
     <div class="row full-width items-center justify-end">
       <div class="col row items-center justify-end text-grey">

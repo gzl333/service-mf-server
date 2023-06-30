@@ -96,8 +96,16 @@ const columns = computed(() => [
     headerStyle: 'padding: 0 2px'
   },
   {
-    name: 'mountpoint',
-    label: (() => tc('挂载点'))(),
+    name: 'server',
+    label: (() => tc('所在主机'))(),
+    align: 'center',
+    classes: 'ellipsis',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 2px'
+  },
+  {
+    name: 'status',
+    label: (() => tc('状态'))(),
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -292,48 +300,22 @@ const columns = computed(() => [
 
         </q-td>
 
-        <q-td key="redeemer" :props="props">
-          {{ props.row.user?.username || tc('未知') }}
-        </q-td>
-
-        <q-td key="redeemTime" :props="props">
-
-          <div v-if="props.row.granted_time === null">
-            {{ tc('尚未兑换') }}
-          </div>
-
-          <div v-else>
-            <div v-if="i18n.global.locale==='zh'">
-              <div>{{
-                  new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
-                }}
-              </div>
-              <div>{{
-                  new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
-                }}
-              </div>
-            </div>
-
-            <div v-else>
-              <div>{{
-                  new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(',')[0]
-                }}
-              </div>
-              <div>{{
-                  new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(',')[1]
-                }}
-              </div>
-            </div>
-          </div>
-
-        </q-td>
-
         <q-td key="remarks" :props="props">
           {{ props.row.remarks }}
         </q-td>
 
-        <q-td key="mountpoint" :props="props">
-          {{ props.row.mountpoint }}
+        <q-td key="server" :props="props">
+          <div v-if="props.row.server === null">
+            {{ tc('未挂载')}}
+          </div>
+
+          <div v-else>
+            {{ props.row.server?.ipv4 }}
+          </div>
+        </q-td>
+
+        <q-td key="status" :props="props">
+          {{ props.row.server !== null}}
         </q-td>
 
         <q-td key="operation" :props="props">
