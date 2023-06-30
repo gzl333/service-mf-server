@@ -53,6 +53,8 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
           <span v-else>{{ tc('components.order.OrderDetailCard.personal_order_details') }}</span>
         </div>
 
+        <!--        <pre>{{ order}}</pre>-->
+
         <!--直接从url进入本页面时，tables尚未载入，应显示loading界面。对取属性进行缓冲，不出现undefined错误-->
         <div class="row">
           <!--todo 区分读取中和读取错误          -->
@@ -64,11 +66,14 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto">{{ tc('components.order.OrderDetailCard.order_id') }} {{ order.id }}</div>
+              <div class="col-auto text-black">
+                {{ tc('components.order.OrderDetailCard.order_id') }}
+                {{ order.id }}
+              </div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
-                <div v-if="isGroup" class="col-auto">
+                <div v-if="isGroup" class="col-auto text-black">
                   {{ tc('components.order.OrderDetailCard.group') }}
                   <q-btn
                     color="primary"
@@ -81,7 +86,7 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   </q-btn>
                 </div>
 
-                <div class="col-auto">
+                <div class="col-auto text-black">
                   {{ tc('components.order.OrderDetailCard.order_place_user') }}
                   {{ order.username }}
                 </div>
@@ -240,7 +245,8 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
 
             <div class="row justify-between items-end q-mt-lg text-grey">
 
-              <div class="col-auto"> {{ tc('components.order.OrderDetailCard.resource_information') }}</div>
+              <div v-if="order.resource_type === 'vm'" class="col-auto text-black"> {{ tc('云主机信息') }}</div>
+              <div v-else-if="order.resource_type === 'disk'" class="col-auto text-black"> {{ tc('云硬盘信息') }}</div>
 
               <div class="col-auto text-right row justify-end items-center q-gutter-x-md">
 
@@ -262,90 +268,6 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
             <div class="justify-center section">
 
               <div class="row">
-                <div class="col-4">
-
-                  <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">CPU</div>
-                    <div class="col">
-                      {{ order.instance_config.vm_cpu }} {{ tc('components.order.OrderDetailCard.cores') }}
-                    </div>
-                  </div>
-
-                  <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.memory') }}</div>
-                    <div class="col">
-                      {{ order.instance_config.vm_ram }}GB
-                    </div>
-                  </div>
-
-                  <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.system_disk') }}</div>
-                    <div class="col">
-                      {{ order.instance_config.vm_systemdisk_size }}GB
-                    </div>
-                  </div>
-
-                  <div v-if="isServerExisted" class="row  items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.server_id') }}</div>
-                    <div class="col">
-                      <div v-for="server in order.resources" :key="server.id">
-                        {{ server.id }}
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="col-4">
-
-                  <div v-if="isServerExisted" class="row q-pb-md items-center">
-
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address') }}</div>
-                    <div class="col">
-                      <q-btn flat color="primary" no-caps
-                             padding="none"
-                             @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
-                        {{
-                          isGroup ? store.tables.groupServerTable.byId[order.resources[0].instance_id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].instance_id]?.ipv4
-                        }}
-                      </q-btn>
-                    </div>
-
-                  </div>
-
-                  <div class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_type') }}</div>
-                    <div class="col">
-                      {{
-                        order.instance_config.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network')
-                      }}
-                    </div>
-                  </div>
-
-                  <div
-                    v-if="order.instance_config.vm_network_name"
-                    class="row q-pb-md items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_segment') }}</div>
-                    <div class="col">
-                      {{ order.instance_config.vm_network_name }}
-                    </div>
-                  </div>
-
-                  <!--image可能会在创建order后删除，localId失效，失效则不显示这一栏-->
-                  <div
-                    v-if="order.instance_config.vm_image_name"
-                    class="row items-center">
-                    <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
-                    <div class="col">
-                      <OsLogo
-                        :os-name="order.instance_config.vm_image_name"
-                        size="md"/>
-                      {{ order.instance_config.vm_image_name }}
-                    </div>
-                  </div>
-
-                </div>
-
                 <div class="col-4">
 
                   <div v-if="store.tables.serviceTable.byId[order.service_id]" class="row q-pb-md items-center">
@@ -380,6 +302,105 @@ const isServerExisted = computed(() => props.isGroup ? store.tables.groupServerT
                   </div>
 
                 </div>
+
+                <div class="col-4">
+
+                  <div v-if="order.resource_type === 'vm'">
+                    <div class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">CPU</div>
+                      <div class="col">
+                        {{ order.instance_config?.vm_cpu }} {{ tc('components.order.OrderDetailCard.cores') }}
+                      </div>
+                    </div>
+
+                    <div class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.memory') }}</div>
+                      <div class="col">
+                        {{ order.instance_config?.vm_ram }}GB
+                      </div>
+                    </div>
+
+                    <div class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.system_disk') }}</div>
+                      <div class="col">
+                        {{ order.instance_config?.vm_systemdisk_size }}GB
+                      </div>
+                    </div>
+
+                    <div v-if="isServerExisted" class="row  items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.server_id') }}</div>
+                      <div class="col">
+                        <div v-for="server in order.resources" :key="server.id">
+                          {{ server.id }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-else-if="order.resource_type === 'disk'">
+                    <div class="row q-pb-md items-center">
+                      <div class="col-3 text-grey"> {{ tc('容量') }}</div>
+                      <div class="col">
+                        {{ order.instance_config?.disk_size }}GB
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="col-4">
+
+                  <div v-if="order.resource_type === 'vm'">
+
+                    <div v-if="isServerExisted" class="row q-pb-md items-center">
+
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.ip_address') }}</div>
+                      <div class="col">
+                        <q-btn flat color="primary" no-caps
+                               padding="none"
+                               @click="navigateToUrl(isGroup?`/my/server/group/server/detail/${order.resources[0].instance_id}`:`/my/server/personal/detail/${order.resources[0].instance_id}`)">
+                          {{
+                            isGroup ? store.tables.groupServerTable.byId[order.resources[0].instance_id]?.ipv4 : store.tables.personalServerTable.byId[order.resources[0].instance_id]?.ipv4
+                          }}
+                        </q-btn>
+                      </div>
+
+                    </div>
+
+                    <div class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_type') }}</div>
+                      <div class="col">
+                        {{
+                          order.instance_config?.vm_public_ip ? tc('components.order.OrderDetailCard.public_network') : tc('components.order.OrderDetailCard.private_network')
+                        }}
+                      </div>
+                    </div>
+
+                    <div
+                      v-if="order.instance_config?.vm_network_name"
+                      class="row q-pb-md items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.network_segment') }}</div>
+                      <div class="col">
+                        {{ order.instance_config?.vm_network_name }}
+                      </div>
+                    </div>
+
+                    <!--image可能会在创建order后删除，localId失效，失效则不显示这一栏-->
+                    <div
+                      v-if="order.instance_config?.vm_image_name"
+                      class="row items-center">
+                      <div class="col-3 text-grey">{{ tc('components.order.OrderDetailCard.operating_system') }}</div>
+                      <div class="col">
+                        <OsLogo
+                          :os-name="order.instance_config?.vm_image_name"
+                          size="md"/>
+                        {{ order.instance_config?.vm_image_name }}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
               </div>
 
               <q-separator class="q-mb-lg q-mt-md"/>
