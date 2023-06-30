@@ -193,7 +193,11 @@ export interface DiskInterface {
   id: string
   name: string
   size: string
-  service: ServiceInterface
+  service: {
+    id: string
+    name: string
+    name_en: string
+  }
   azone_id: string
   azone_name: string
   creation_time: string

@@ -35,6 +35,10 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/personal/PersonalDisk.vue')
           },
           {
+            path: 'disk/detail/:diskId',
+            component: () => import('pages/personal/PersonalDiskDetail.vue')
+          },
+          {
             path: 'order',
             component: () => import('pages/personal/PersonalOrder.vue')
           },
