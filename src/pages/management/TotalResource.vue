@@ -225,8 +225,6 @@ const option = computed(() => ({
           <template v-slot:header-datacenter="prop">
             <div class="row items-center">
 
-              <div class="col-auto text-weight-bold text-primary">{{ prop.node.label }}</div>
-
               <q-toggle
                 class="col-auto"
                 v-model="toggleDatacenter[prop.node.id]"
@@ -238,6 +236,8 @@ const option = computed(() => ({
                   {{ tc('在地图上显示') }}
                 </q-tooltip>
               </q-toggle>
+
+              <div class="col-auto text-weight-bold text-primary">{{ prop.node.label }}</div>
 
             </div>
           </template>
