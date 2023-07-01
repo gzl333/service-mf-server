@@ -390,7 +390,7 @@ export default {
       const config = {
         params: payload.query
       }
-      return axiosServer.post('/disk/' + payload.path.id + '/attach', config)
+      return axiosServer.post('/disk/' + payload.path.id + '/attach', null, config)
     },
     postDiskIdDetach (payload: {
       query: {

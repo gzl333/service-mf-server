@@ -50,6 +50,9 @@ const service = computed(() => store.tables.serviceTable.byId[server.value?.serv
 // // vpn info
 // const vpn = computed(() => store.tables.userVpnTable.byId[server.value?.service.id])
 
+// group info
+const group = computed(() => store.tables.groupTable.byId[server.value?.vo_id || ''])
+
 // lock toggle
 const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
 
@@ -261,19 +264,37 @@ const clickToCopy = useCopyToClipboard()
                     inline-label
                   >
 
+                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
+                    <!--                           no-caps-->
+                    <!--                           :ripple="false"-->
+                    <!--                           name="server"-->
+                    <!--                           icon="computer"-->
+                    <!--                           :label="tc('云主机信息')"-->
+                    <!--                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=server` : `/my/server/personal/detail/${server.id}?show=server`)"/>-->
+
+                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
+                    <!--                           no-caps-->
+                    <!--                           :ripple="false"-->
+                    <!--                           name="disk"-->
+                    <!--                           icon="mdi-harddisk"-->
+                    <!--                           :label="tc('已挂载云硬盘列表')"-->
+                    <!--                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=disk` : `/my/server/personal/detail/${server.id}?show=disk`)"/>-->
+
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="server"
                            icon="computer"
-                           :label="tc('云主机信息')"/>
+                           :label="tc('云主机信息')"
+                    />
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="disk"
                            icon="mdi-harddisk"
-                           :label="tc('已挂载云硬盘列表')"/>
+                           :label="tc('已挂载云硬盘列表')"
+                    />
 
                   </q-tabs>
 
@@ -299,7 +320,8 @@ const clickToCopy = useCopyToClipboard()
                            dense
                            no-caps
                            padding="xs"
-                           color="primary">
+                           color="primary"
+                           @click=store.mountDiskDialog(group,undefined,server)>
                       {{ tc('挂载云硬盘') }}
                     </q-btn>
                   </div>

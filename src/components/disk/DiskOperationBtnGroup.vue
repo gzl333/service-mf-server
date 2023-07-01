@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PropType, /* ref, */ computed } from 'vue'
 import { navigateToUrl } from 'single-spa'
-import { useStore, ServerInterface, DiskInterface } from 'stores/store'
+import { useStore, ServerInterface, DiskInterface, GroupInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -10,9 +10,9 @@ const props = defineProps({
     type: Object as PropType<DiskInterface>,
     required: true
   },
-  isGroup: {
-    type: Boolean,
-    required: false
+  group: {
+    type: Object as PropType<GroupInterface>,
+    require: false
   }
 })
 // const emits = defineEmits(['change', 'delete'])
@@ -51,23 +51,23 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
                       :disable-main-btn="disk.lock === 'lock-operation'"
                       :icon="disk.server === null ? 'mdi-harddisk-plus' : 'mdi-harddisk-remove'"
-                      @click="disk.server === null ? store.mountDiskDialog() : store.unmountDiskDialog()">
+                      @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog()">
 
         <q-list style="text-align:center">
 
-          <q-item clickable v-close-popup class="bg-white text-primary"
-                  @click="navigateToUrl(isGroup ? `/my/server/group/disk/detail/${disk.id}` : `/my/server/personal/disk/detail/${disk.id}`)">
-            <div class="row">
-              <q-item-section class="col-auto">
-                <q-icon name="info" size="sm"/>
-              </q-item-section>
-              <q-item-section class="col-auto">
-                <q-item-label>
-                  {{ tc('云硬盘详情') }}
-                </q-item-label>
-              </q-item-section>
-            </div>
-          </q-item>
+          <!--          <q-item clickable v-close-popup class="bg-white text-primary"-->
+          <!--                  @click="navigateToUrl(isGroup ? `/my/server/group/disk/detail/${disk.id}` : `/my/server/personal/disk/detail/${disk.id}`)">-->
+          <!--            <div class="row">-->
+          <!--              <q-item-section class="col-auto">-->
+          <!--                <q-icon name="info" size="sm"/>-->
+          <!--              </q-item-section>-->
+          <!--              <q-item-section class="col-auto">-->
+          <!--                <q-item-label>-->
+          <!--                  {{ tc('云硬盘详情') }}-->
+          <!--                </q-item-label>-->
+          <!--              </q-item-section>-->
+          <!--            </div>-->
+          <!--          </q-item>-->
 
           <div v-if="disk.pay_type === 'prepaid'">
             <q-item v-if="!isGroup || store.tables.groupTable.byId[disk.vo.id].myRole !== 'member'"
@@ -120,14 +120,14 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
 
           <q-separator/>
 
-          <q-item v-if="disk.server !== null" clickable v-close-popup class="bg-white text-primary"
+          <q-item v-if="disk.server === null" clickable v-close-popup class="bg-white text-primary"
                   :disable="disk.lock === 'lock-operation'"
           >
             <div class="row">
               <q-item-section class="col-auto text-red">
                 <q-icon name="power_settings_new" size="sm"/>
               </q-item-section>
-              <q-item-section class="col-auto">
+              <q-item-section class="col-auto text-red">
                 <q-item-section>
                   <q-item-label>{{ tc('删除云硬盘') }}</q-item-label>
                 </q-item-section>

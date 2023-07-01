@@ -306,7 +306,7 @@ const columns = computed(() => [
 
         <q-td key="server" :props="props">
           <div v-if="props.row.server === null">
-            {{ tc('未挂载')}}
+            {{ tc('未挂载') }}
           </div>
 
           <div v-else>
@@ -315,7 +315,7 @@ const columns = computed(() => [
         </q-td>
 
         <q-td key="status" :props="props">
-          {{ props.row.server !== null}}
+          {{ props.row.server !== null }}
         </q-td>
 
         <q-td key="operation" :props="props">
@@ -358,6 +358,9 @@ const columns = computed(() => [
 
     <!--    </template>-->
   </q-table>
+
+  <q-separator/>
+
 </template>
 
 <style lang="scss" scoped>

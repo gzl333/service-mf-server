@@ -3354,14 +3354,14 @@ export const useStore = defineStore('server', {
 
     /* disk */
     // 挂载云硬盘。云主机和云硬盘的入口都在这里。
-    mountDiskDialog (isGroup = false, diskId?: string, serverId?: string) {
+    mountDiskDialog (group?: GroupInterface, disk?: DiskInterface, server?: ServerInterface) {
       // dialog
       Dialog.create({
         component: MountDiskDialog,
         componentProps: {
-          isGroup,
-          diskId,
-          serverId
+          group,
+          disk,
+          server
         }
       })
     },
