@@ -1145,9 +1145,9 @@ const deployServer = async () => {
               </div>
 
               <div v-if="privateNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
-                   class="col q-pb-md">
+                   class="col q-pb-sm">
                 <div class="row text-weight-bold"
-                     :class="selectionNetworkId === 'randomPrivate' || !compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPrivate' || (!selectionNetworkId.includes('random') && !compSelectionNetwork?.public) ? 'text-primary' : 'text-grey'">
                   {{ tc('privateNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-x-md q-gutter-y-xs">
@@ -1194,7 +1194,7 @@ const deployServer = async () => {
               <div v-if="publicNetworks.filter(network => network.serviceId === selectionServiceId).length > 0"
                    class="col q-pb-md ">
                 <div class="row text-weight-bold"
-                     :class="selectionNetworkId === 'randomPublic' || compSelectionNetwork?.public ? 'text-primary' : 'text-grey'">
+                     :class="selectionNetworkId === 'randomPublic' || (!selectionNetworkId.includes('random') && compSelectionNetwork?.public) ? 'text-primary' : 'text-grey'">
                   {{ tc('publicNetwork') }}
                 </div>
                 <div class="row items-center q-gutter-x-md q-gutter-y-xs">
