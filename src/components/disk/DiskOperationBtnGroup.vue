@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PropType, /* ref, */ computed } from 'vue'
-import { navigateToUrl } from 'single-spa'
-import { useStore, ServerInterface, DiskInterface, GroupInterface } from 'stores/store'
+// import { navigateToUrl } from 'single-spa'
+import { useStore, DiskInterface, GroupInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
@@ -51,7 +51,7 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
                       :disable-main-btn="disk.lock === 'lock-operation'"
                       :icon="disk.server === null ? 'mdi-harddisk-plus' : 'mdi-harddisk-remove'"
-                      @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog()">
+                      @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog(group, disk)">
 
         <q-list style="text-align:center">
 
@@ -70,7 +70,7 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
           <!--          </q-item>-->
 
           <div v-if="disk.pay_type === 'prepaid'">
-            <q-item v-if="!isGroup || store.tables.groupTable.byId[disk.vo.id].myRole !== 'member'"
+            <q-item v-if="!group || store.tables.groupTable.byId[disk.vo.id].myRole !== 'member'"
                     clickable v-close-popup class="bg-white text-primary"
             >
               <div class="row">
@@ -89,7 +89,7 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
           <q-separator/>
 
           <q-item v-if="disk.server === null" clickable v-close-popup class="bg-white text-primary"
-                  :disable="disk.lock === 'lock-operation'"
+                  :disable="disk.lock === 'lock-operation'" @click="store.mountDiskDialog(group, disk)"
           >
             <div class="row">
               <q-item-section class="col-auto">
@@ -104,7 +104,7 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
           </q-item>
 
           <q-item v-if="disk.server !== null" clickable v-close-popup class="bg-white text-primary"
-                  :disable="disk.lock === 'lock-operation'"
+                  :disable="disk.lock === 'lock-operation'" @click="store.unmountDiskDialog(group, disk)"
           >
             <div class="row">
               <q-item-section class="col-auto">

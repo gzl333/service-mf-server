@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watch, /*  PropType, */ onMounted, PropType } from 'vue'
-import { navigateToUrl } from 'single-spa'
+import { ref, computed, PropType } from 'vue'
+// import { navigateToUrl } from 'single-spa'
 import { useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import api from 'src/api'
+// import api from 'src/api'
 // import { exportFile, Notify } from 'quasar'
 import type { DiskInterface } from 'stores/store'
 
-import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
+// import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 // import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
-import { DisplayStateNonNormal } from 'echarts/types/src/util/types'
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import DiskOperationBtnGroup from 'components/disk/DiskOperationBtnGroup.vue'
 
-const props = defineProps({
+/* const props = */
+defineProps({
   isLoading: {
     type: Boolean,
     required: true,
@@ -41,7 +41,7 @@ const { tc } = i18n.global
 const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
-const exceptionNotifier = useExceptionNotifier()
+// const exceptionNotifier = useExceptionNotifier()
 // const clickToCopy = useCopyToClipboard()
 
 // table row hover

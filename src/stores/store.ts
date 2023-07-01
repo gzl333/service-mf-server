@@ -3365,13 +3365,14 @@ export const useStore = defineStore('server', {
         }
       })
     },
-    // 卸载云硬盘。云主机和云硬盘的入口都在这里。
-    unmountDiskDialog (diskIds?: string[]) {
+    // 卸载云硬盘。云硬盘的入口
+    unmountDiskDialog (group?: GroupInterface, disk?: DiskInterface) {
       // dialog
       Dialog.create({
         component: UnmountDiskDialog,
         componentProps: {
-          diskIds
+          group,
+          disk
         }
       })
     },

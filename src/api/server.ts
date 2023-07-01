@@ -403,7 +403,7 @@ export default {
       const config = {
         params: payload.query
       }
-      return axiosServer.post('/disk/' + payload.path.id + '/detach', config)
+      return axiosServer.post('/disk/' + payload.path.id + '/detach', null, config)
     }
   },
   flavor: {

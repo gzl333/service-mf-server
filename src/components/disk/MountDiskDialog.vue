@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, PropType, Prop } from 'vue'
+import { ref, computed, PropType } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { DiskInterface, GroupInterface, ServerInterface, useStore } from 'stores/store'
 import { /* useRoute, */ useRouter } from 'vue-router'
@@ -7,7 +7,7 @@ import { i18n } from 'boot/i18n'
 import { Notify, QSelect, useDialogPluginComponent } from 'quasar'
 import api from 'src/api'
 import OsLogo from 'components/ui/OsLogo.vue'
-import { navigateToUrl } from 'single-spa'
+// import { navigateToUrl } from 'single-spa'
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 // dialog行为:
@@ -451,13 +451,13 @@ const onOKClick = async () => {
               </div>
 
               <div class="row">
-                <div class="col-3 text-grey-7"> ID</div>
-                <div class="col"> {{ disk.id }}</div>
+                <div class="col-3 text-grey-7"> {{ tc('创建时间') }}</div>
+                <div class="col"> {{ new Date(disk.creation_time).toLocaleString(i18n.global.locale as string) }}</div>
               </div>
 
               <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('创建时间') }}</div>
-                <div class="col"> {{ new Date(disk.creation_time).toLocaleString(i18n.global.locale as string) }}</div>
+                <div class="col-3 text-grey-7"> ID</div>
+                <div class="col"> {{ disk.id }}</div>
               </div>
 
             </div>

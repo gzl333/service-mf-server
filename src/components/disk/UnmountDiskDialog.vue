@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, PropType, Prop } from 'vue'
+import { ref, computed, PropType } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { DiskInterface, GroupInterface, ServerInterface, useStore } from 'stores/store'
 import { /* useRoute, */ useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
-import { Notify, QSelect, useDialogPluginComponent } from 'quasar'
+import { Notify, useDialogPluginComponent } from 'quasar'
 import api from 'src/api'
 import OsLogo from 'components/ui/OsLogo.vue'
-import { navigateToUrl } from 'single-spa'
+// import { navigateToUrl } from 'single-spa'
 import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 // dialog行为:
@@ -22,11 +22,7 @@ const props = defineProps({
   },
   disk: {
     type: Object as PropType<DiskInterface>,
-    required: false
-  },
-  server: {
-    type: Object as PropType<ServerInterface>,
-    required: false
+    required: true
   }
 })
 // const emits = defineEmits(['change', 'delete'])
@@ -45,34 +41,26 @@ const {
   onDialogCancel
 } = useDialogPluginComponent()
 
-const service = computed(() => {
-  if (props.disk) {
-    return store.tables.serviceTable.byId[props.disk.service.id]
-  } else if (props.server) {
-    return store.tables.serviceTable.byId[props.server.service.id]
-  }
-  return null
-})
+const service = computed(() => store.tables.serviceTable.byId[props.disk.service.id])
 
 /* disk进入,查询对应server数据 */
 const server = ref<ServerInterface>()
-const getServer = () => {
-  server.value = undefined
+const getServer = async () => {
+  try {
+    const respGetServer = await api.server.server.getServerId({
+      path: {
+        id: props.disk.server?.id || ''
+      }
+    })
+    server.value = respGetServer.data.server
+  } catch (exception) {
+    // exceptionNotifier(exception, 'UnMountDisk')
+  }
 }
 if (props.disk) {
   getServer()
 }
 /* disk进入,查询对应server数据 */
-
-/* server进入,查询对应disk数据 */
-const disk = ref<DiskInterface>()
-const getDisk = () => {
-  disk.value = undefined
-}
-if (props.server) {
-  getDisk()
-}
-/* server进入,准备disks数据 */
 
 // 确定时
 const onOKClick = async () => {
@@ -91,12 +79,12 @@ const onOKClick = async () => {
 
   try {
     /* const respMount =  */
-    await api.server.disk.postDiskIdAttach({
+    await api.server.disk.postDiskIdDetach({
       path: {
-        id: props.disk?.id || selectionDisk.value?.id || ''
+        id: props.disk?.id || ''
       },
       query: {
-        server_id: props.server?.id || selectionServer.value?.id || ''
+        server_id: props.disk?.server?.id || ''
       }
     })
 
@@ -107,7 +95,7 @@ const onOKClick = async () => {
       icon: 'mdi-check-circle',
       // spinner: true,
       textColor: 'positive',
-      message: `${tc('成功挂载云硬盘')}`,
+      message: `${tc('成功卸载云硬盘')}`,
       position: 'bottom',
       closeBtn: true,
       timeout: 5000,
@@ -122,7 +110,7 @@ const onOKClick = async () => {
     router.go(0)
   } catch (exception) {
     dismiss()
-    exceptionNotifier(exception, 'MountDisk')
+    exceptionNotifier(exception, 'UnMountDisk')
   }
 }
 </script>
@@ -133,7 +121,7 @@ const onOKClick = async () => {
     <q-card class="q-dialog-plugin dialog-primary ">
 
       <q-card-section class="row items-center justify-center q-pb-md">
-        <div class="text-primary">{{ tc('挂载云硬盘') }}</div>
+        <div class="text-primary">{{ tc('卸载云硬盘') }}</div>
         <q-space/>
         <q-btn icon="close" flat dense size="sm" v-close-popup/>
       </q-card-section>
@@ -160,227 +148,85 @@ const onOKClick = async () => {
           </div>
         </div>
 
-        <!--从serverId进入-->
-        <div v-if="server">
-
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              {{ tc('云主机') }}
-            </div>
-            <div class="col q-pa-sm bg-grey-2">
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('IP') }}</div>
-                <div class="col"> {{ server.ipv4 }}</div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('备注') }}</div>
-                <div class="col"
-                     style="max-width: 270px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                  {{ server.remarks }}
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('配置') }}</div>
-                <div class="col row">
-                  <div>
-                    {{ server.vcpus }}
-                    {{ i18n.global.locale === 'zh' ? '核' : server.vcpus > 1 ? 'cores' : 'core' }}
-                  </div>
-                  /
-                  <div>{{ server.ram }}GB</div>
-                </div>
-              </div>
-
-              <div class="row  items-center">
-                <div class="col-3 text-grey-7"> {{ tc('操作系统') }}</div>
-                <div class="col row items-center">
-                  <OsLogo class="col-auto" :os-name="server.image" size="md"/>
-                  <div class="col-auto"> {{ server.image }}</div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('ID') }}</div>
-                <div class="col"> {{ server.id }}</div>
-              </div>
-
-            </div>
+        <div class="row q-pb-lg items-center">
+          <div class="col-3 text-grey-7">
+            {{ tc('云主机') }}
           </div>
 
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              {{ tc('云硬盘') }}
+          <div class="col q-pa-sm bg-grey-2">
+
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('IP') }}</div>
+              <div class="col"> {{ props.disk.server?.ipv4 }}</div>
             </div>
-            <div class="col">
 
-              <!--              {{ disks }}-->
-
-              <q-select ref="selectDomDisk"
-                        v-if="disks.length !== 0"
-                        v-model="selectionDisk"
-                        :options="disks"
-                        outlined
-                        dense
-              >
-
-                <!--当前选项的内容插槽-->
-                <template v-slot:selected-item="scope">
-                  <div class="row items-center text-primary">
-
-                    <q-icon class="col-auto" name="mdi-harddisk" size="lg"/>
-
-                    <div class="column">
-                      <div class="row q-gutter-md">
-                        <div class="col-auto">{{ scope.opt.size }}GB</div>
-                        <div class="col-auto">ID: {{ scope.opt.id }}</div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-auto"
-                             style="max-width: 290px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                          {{ tc('备注') }}: {{ scope.opt.remarks }}
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </template>
-
-                <!--待选项的内容插槽-->
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <div class="row items-center">
-
-                      <q-icon class="col-auto" name="mdi-harddisk" size="lg"/>
-
-                      <div class="column">
-                        <div class="row q-gutter-md">
-                          <div class="col-auto">{{ scope.opt.size }}GB</div>
-                          <div class="col-auto">ID: {{ scope.opt.id }}</div>
-                        </div>
-
-                        <div class="row">
-                          <div class="col-auto"
-                               style="max-width: 290px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                            {{ tc('备注') }}: {{ scope.opt.remarks }}
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  </q-item>
-                </template>
-
-              </q-select>
-
-              <div v-else>
-                {{ tc('暂无可挂载云硬盘') }}
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('备注') }}</div>
+              <div class="col"
+                   style="max-width: 270px; word-break: break-all; word-wrap: break-word; white-space: normal;">
+                {{ server?.remarks }}
               </div>
-
             </div>
-          </div>
 
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('配置') }}</div>
+              <div class="col row">
+                <div>
+                  {{ props.disk.server?.vcpus }}
+                  {{ i18n.global.locale === 'zh' ? '核' : props.disk.server?.vcpus > 1 ? 'cores' : 'core' }}
+                </div>
+                /
+                <div>{{ props.disk.server?.ram }}GB</div>
+              </div>
+            </div>
+
+            <div class="row  items-center">
+              <div class="col-3 text-grey-7"> {{ tc('操作系统') }}</div>
+              <div class="col row items-center">
+                <OsLogo class="col-auto" :os-name="props.disk?.server?.image " size="md"/>
+                <div class="col-auto"> {{ props.disk?.server?.image }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('ID') }}</div>
+              <div class="col"> {{ props.disk.server?.id }}</div>
+            </div>
+
+          </div>
         </div>
 
-        <!--从diskId进入-->
-        <div v-else-if="disk">
-
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              {{ tc('云硬盘') }}
-            </div>
-            <div class="col q-pa-sm bg-grey-2">
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('容量') }}</div>
-                <div class="col"> {{ disk.size }}GB</div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('备注') }}</div>
-                <div class="col"> {{ disk.remarks }}</div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> ID</div>
-                <div class="col"> {{ disk.id }}</div>
-              </div>
-
-              <div class="row">
-                <div class="col-3 text-grey-7"> {{ tc('创建时间') }}</div>
-                <div class="col"> {{ new Date(disk.creation_time).toLocaleString(i18n.global.locale as string) }}</div>
-              </div>
-
-            </div>
+        <div class="row q-pb-lg items-center">
+          <div class="col-3 text-grey-7">
+            {{ tc('云硬盘') }}
           </div>
+          <div class="col q-pa-sm bg-grey-2">
 
-          <div class="row q-pb-lg items-center">
-            <div class="col-3 text-grey-7">
-              {{ tc('云主机') }}
+            <!--            {{ props.disk }}-->
+
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('容量') }}</div>
+              <div class="col"> {{ props.disk?.size }}GB</div>
             </div>
-            <div class="col">
 
-              <!--              {{ servers }}-->
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('备注') }}</div>
+              <div class="col"> {{ props.disk?.remarks }}</div>
+            </div>
 
-              <q-select ref="selectDomServer"
-                        v-if="servers.length !== 0"
-                        v-model="selectionServer"
-                        :options="servers"
-                        outlined
-                        dense
-              >
-
-                <!--当前选项的内容插槽-->
-                <template v-slot:selected-item="scope">
-                  <div class="row items-center text-primary">
-                    <OsLogo class="col-auto" :os-name="scope.opt.image" size="lg"/>
-
-                    <div class="col-auto column">
-                      <div class="col-auto">
-                        {{ scope.opt.ipv4 }}
-                      </div>
-                      <div class="col-auto"
-                           style="max-width: 290px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                        {{ tc('备注') }}: {{ scope.opt.remarks }}
-                      </div>
-                    </div>
-
-                  </div>
-                </template>
-
-                <!--待选项的内容插槽-->
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <div class="row items-center">
-
-                      <OsLogo class="col-auto" :os-name="scope.opt.image" size="lg"/>
-
-                      <div class="col-auto column">
-                        <div class="col-auto">
-                          {{ scope.opt.ipv4 }}
-                        </div>
-                        <div class="col-auto"
-                             style="max-width: 290px; word-break: break-all; word-wrap: break-word; white-space: normal;">
-                          {{ tc('备注') }}: {{ scope.opt.remarks }}
-                        </div>
-                      </div>
-
-                    </div>
-                  </q-item>
-                </template>
-
-              </q-select>
-
-              <div v-else>
-                {{ tc('暂无可供挂载云主机') }}
+            <div class="row">
+              <div class="col-3 text-grey-7"> {{ tc('创建时间') }}</div>
+              <div class="col">
+                {{ new Date(props.disk?.creation_time).toLocaleString(i18n.global.locale as string) }}
               </div>
-
             </div>
-          </div>
 
+            <div class="row">
+              <div class="col-3 text-grey-7"> ID</div>
+              <div class="col"> {{ props.disk?.id }}</div>
+            </div>
+
+          </div>
         </div>
 
       </q-card-section>
@@ -400,7 +246,7 @@ const onOKClick = async () => {
                color="primary"
                unelevated
                no-caps
-               :label="tc('挂载')"
+               :label="tc('卸载')"
                @click="onOKClick"/>
 
       </q-card-actions>
