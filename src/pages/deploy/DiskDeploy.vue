@@ -520,9 +520,9 @@ const deploy = async () => {
                         dense
                         no-caps
                         :ripple="false"
-                        @click="selectionServiceId = service!.id"
-                      >
+                        @click="selectionServiceId = service!.id">
                         <div class="row items-center">
+                          <q-tooltip v-if="!service.disk_available">{{ tc('此服务单元未提供云硬盘') }}</q-tooltip>
                           <div class="col-auto row items-center">
                             <CloudPlatformLogo class="col-auto" logo-style="mark" width="15px" height="15px"
                                                :platform-name="service.service_type"/>
@@ -542,46 +542,46 @@ const deploy = async () => {
                   </div>
                 </div>
 
-                <div class="row items-center text-weight-bold text-subtitle2"
-                     :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">
-                  {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}
-                </div>
+                <!--                <div class="row items-center text-weight-bold text-subtitle2"-->
+                <!--                     :class="compSelectionDatacenter?.id === dataCenter.id ? 'text-primary' : ''">-->
+                <!--                  {{ i18n.global.locale === 'zh' ? dataCenter.name : dataCenter.name_en }}-->
+                <!--                </div>-->
 
-                <div v-if="dataCenter.services.length === 0" class="row items-center text-grey">
-                  {{ tc('noServiceUnit') }}
-                </div>
+                <!--                <div v-if="dataCenter.services.length === 0" class="row items-center text-grey">-->
+                <!--                  {{ tc('noServiceUnit') }}-->
+                <!--                </div>-->
 
-                <div v-else class="row items-center q-gutter-x-md q-gutter-y-xs">
-                  <q-btn
-                    :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"
-                    :text-color="selectionServiceId === service?.id ? '' : 'black'"
-                    v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"
-                    :key="service?.id"
-                    :val="service?.id"
-                    :disable="!service.disk_available"
-                    unelevated
-                    dense
-                    no-caps
-                    :ripple="false"
-                    @click="selectionServiceId = service!.id"
-                  >
-                    <div class="row items-center">
-                      <q-tooltip v-if="!service.disk_available">{{ tc('此服务单元未提供云硬盘')}}</q-tooltip>
-                      <div class="col-auto row items-center">
-                        <CloudPlatformLogo class="col-auto" logo-style="mark" width="15px" height="15px"
-                                           :platform-name="service.service_type"/>
-                      </div>
-                      <div class="col-auto">
-                        {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}
-                      </div>
-                      <div v-if="currAccountCoupons.find(coupon => coupon?.app_service?.service_id === service?.id)"
-                           class="col-auto text-green"
-                           style="font-size: 12px; zoom: 0.8;">
-                        {{ tc('有券') }}
-                      </div>
-                    </div>
-                  </q-btn>
-                </div>
+                <!--                <div v-else class="row items-center q-gutter-x-md q-gutter-y-xs">-->
+                <!--                  <q-btn-->
+                <!--                    :color="selectionServiceId === service?.id ? 'primary' : 'grey-3'"-->
+                <!--                    :text-color="selectionServiceId === service?.id ? '' : 'black'"-->
+                <!--                    v-for="service in dataCenter.services.map(serviceId => services.find(serviceObj => serviceObj?.id === serviceId)).filter(serviceObj => serviceObj.status === 'enable')"-->
+                <!--                    :key="service?.id"-->
+                <!--                    :val="service?.id"-->
+                <!--                    :disable="!service.disk_available"-->
+                <!--                    unelevated-->
+                <!--                    dense-->
+                <!--                    no-caps-->
+                <!--                    :ripple="false"-->
+                <!--                    @click="selectionServiceId = service!.id"-->
+                <!--                  >-->
+                <!--                    <div class="row items-center">-->
+                <!--                      <q-tooltip v-if="!service.disk_available">{{ tc('此服务单元未提供云硬盘')}}</q-tooltip>-->
+                <!--                      <div class="col-auto row items-center">-->
+                <!--                        <CloudPlatformLogo class="col-auto" logo-style="mark" width="15px" height="15px"-->
+                <!--                                           :platform-name="service.service_type"/>-->
+                <!--                      </div>-->
+                <!--                      <div class="col-auto">-->
+                <!--                        {{ i18n.global.locale === 'zh' ? service?.name : service?.name_en }}-->
+                <!--                      </div>-->
+                <!--                      <div v-if="currAccountCoupons.find(coupon => coupon?.app_service?.service_id === service?.id)"-->
+                <!--                           class="col-auto text-green"-->
+                <!--                           style="font-size: 12px; zoom: 0.8;">-->
+                <!--                        {{ tc('有券') }}-->
+                <!--                      </div>-->
+                <!--                    </div>-->
+                <!--                  </q-btn>-->
+                <!--                </div>-->
 
               </div>
             </div>
