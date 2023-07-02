@@ -326,7 +326,7 @@ const clickToCopy = useCopyToClipboard()
                            no-caps
                            padding="xs"
                            color="primary"
-                           @click="navigateToUrl(`/my/server/deploy/disk`)">
+                           @click="navigateToUrl(`/my/server/deploy/disk${isGroup ? `?group=${group.id}` : ''}`)">
                       {{ tc('新建云硬盘') }}
                     </q-btn>
 
@@ -573,7 +573,7 @@ const clickToCopy = useCopyToClipboard()
                   </q-tab-panel>
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="disk">
-                    <disk-table :rows="disks" :is-loading="isLoadingDisk"/>
+                    <disk-table :rows="disks" :is-loading="isLoadingDisk" :group="group"/>
                   </q-tab-panel>
 
                 </q-tab-panels>
