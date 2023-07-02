@@ -44,7 +44,7 @@ store.loadDeployTables()
 // }
 
 // summary折叠
-// const isShow = ref(true)
+const isShow = ref(true)
 
 // // system disk 限制，单位GiB
 // // 接口限定最大500GiB
@@ -1300,18 +1300,24 @@ const deployServer = async () => {
             </div>
           </div>
 
-          <!--          <div class="row items-center q-py-md">-->
-          <!--            <div class="col-1 row">-->
-          <!--              <div class="text-weight-bold">-->
-          <!--                test area-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--            <div class="col-11 row q-pt-md">-->
-          <!--                       <pre>-->
-          <!--                          {{ images }}-->
-          <!--                       </pre>-->
-          <!--            </div>-->
-          <!--          </div>-->
+          <div class="row items-center q-py-md">
+            <q-btn class="col-2"
+                   dense
+                   unelevated
+                   color="primary"
+                   :loading="isDeploying"
+                   @click="deployServer">
+
+              <div v-if="selectionPayment === 'prepaid'">
+                {{ tc('placeOrder') }}
+              </div>
+
+              <div v-if="selectionPayment === 'postpaid'">
+                {{ tc('deployServer') }}
+              </div>
+
+            </q-btn>
+          </div>
 
         </div>
       </div>
@@ -1319,7 +1325,19 @@ const deployServer = async () => {
     </q-scroll-area>
 
     <q-page-sticky expand position="bottom">
-      <div class="column items-center justify-center full-width shadow-up-5 q-pt-xs"
+
+      <div class="row full-width justify-start">
+        <q-btn style="transform: translate(0, 0);"
+               flat
+               dense
+               color="primary"
+               :icon="isShow ? 'expand_more' : 'expand_less'"
+               @click="isShow = !isShow">
+          {{ isShow ? tc('折叠详情') : tc('展开详情') }}
+        </q-btn>
+      </div>
+
+      <div v-if="isShow" class="column items-center justify-center full-width shadow-up-5 q-pt-xs"
            style="background-color: rgba(0, 0, 0, 0.05); backdrop-filter: blur(10px);"
       >
         <div class="col-auto row items-center justify-between no-wrap content-fixed-width" style="line-height: 1;">
@@ -1515,22 +1533,24 @@ const deployServer = async () => {
               </div>
 
             </div>
-            <q-btn class="full-width"
-                   dense
-                   unelevated
-                   color="primary"
-                   :loading="isDeploying"
-                   @click="deployServer">
 
-              <div v-if="selectionPayment === 'prepaid'">
-                {{ tc('placeOrder') }}
-              </div>
+<!--            <q-btn class="full-width"-->
+            <!--                   dense-->
+            <!--                   unelevated-->
+            <!--                   color="primary"-->
+            <!--                   :loading="isDeploying"-->
+            <!--                   @click="deployServer">-->
 
-              <div v-if="selectionPayment === 'postpaid'">
-                {{ tc('deployServer') }}
-              </div>
+            <!--              <div v-if="selectionPayment === 'prepaid'">-->
+            <!--                {{ tc('placeOrder') }}-->
+            <!--              </div>-->
 
-            </q-btn>
+            <!--              <div v-if="selectionPayment === 'postpaid'">-->
+            <!--                {{ tc('deployServer') }}-->
+            <!--              </div>-->
+
+            <!--            </q-btn>-->
+
           </div>
         </div>
       </div>
