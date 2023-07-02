@@ -779,7 +779,7 @@ const stopServer = (server: ServerInterface) => {
           <q-td key="ip" :props="props">
 
             <div class="column">
-              {{ props.row.ipv4 }}
+              {{ props.row?.ipv4 }}
 
               <div class="row justify-center">
 
@@ -788,7 +788,7 @@ const stopServer = (server: ServerInterface) => {
                   flat
                   dense
                   color="primary"
-                  @click="clickToCopy(props.row.ipv4)">
+                  @click="clickToCopy(props.row?.ipv4)">
                   {{ tc('复制IP') }}
                 </q-btn>
 
@@ -797,12 +797,12 @@ const stopServer = (server: ServerInterface) => {
                   flat
                   dense
                   color="primary"
-                  @click="clickToCopy(props.row.id)"
+                  @click="clickToCopy(props.row?.id)"
                 >
 
                   {{ tc('复制ID') }}
 
-                  <q-tooltip>{{ props.row.id }}</q-tooltip>
+                  <q-tooltip>{{ props.row?.id }}</q-tooltip>
 
                 </q-btn>
 
@@ -815,48 +815,48 @@ const stopServer = (server: ServerInterface) => {
           <q-td key="serviceNode" :props="props">
             <div>
               {{
-                i18n.global.locale === 'zh' ? props.row.service.name : props.row.service.name_en
+                i18n.global.locale === 'zh' ? props.row?.service.name : props.row?.service.name_en
               }}
             </div>
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name :
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name_en
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name_en
               }}
             </div>
 
-            <CloudPlatformLogo :platform-name="props.row.service.service_type"/>
+            <CloudPlatformLogo :platform-name="props.row?.service.service_type"/>
 
           </q-td>
 
           <q-td key="image" :props="props">
-            <OsLogo :os-name="props.row.image"/>
-            <div> {{ props.row.image }}</div>
+            <OsLogo :os-name="props.row?.image"/>
+            <div> {{ props.row?.image }}</div>
           </q-td>
 
           <q-td key="configuration" :props="props">
-            <div> {{ props.row.vcpus }} {{
-                i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
+            <div> {{ props.row?.vcpus }} {{
+                i18n.global.locale === 'zh' ? '核' : props.row?.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
-            <div>{{ props.row.ram }}GB</div>
+            <div>{{ props.row?.ram }}GB</div>
           </q-td>
 
           <q-td key="group" :props="props">
-            <div v-if="props.row.classification === 'personal'"> 个人</div>
-            <div v-if="props.row.classification === 'vo'"> 项目组</div>
+            <div v-if="props.row?.classification === 'personal'"> 个人</div>
+            <div v-if="props.row?.classification === 'vo'"> 项目组</div>
           </q-td>
 
           <q-td key="user" :props="props">
-            {{ props.row.user.username }}
+            {{ props.row?.user.username }}
           </q-td>
 
           <q-td key="billing" :props="props">
-            {{ props.row.pay_type }}
+            {{ props.row?.pay_type }}
           </q-td>
 
           <q-td key="note" :props="props">
-            {{ props.row.remarks }}
+            {{ props.row?.remarks }}
           </q-td>
 
           <!--          <q-td key="vnc" :props="props">-->
@@ -866,22 +866,22 @@ const stopServer = (server: ServerInterface) => {
           <q-td key="creation" :props="props">
             <div v-if="i18n.global.locale==='zh'">
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                 }}
               </div>
             </div>
 
             <div v-else>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                 }}
               </div>
             </div>
@@ -889,32 +889,32 @@ const stopServer = (server: ServerInterface) => {
 
           <q-td key="expiration" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div v-if="props.row.expiration_time === null">
+              <div v-if="props.row?.expiration_time === null">
                 长期
               </div>
               <div v-else>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                   }}
                 </div>
               </div>
             </div>
 
             <div v-else>
-              <div v-if="props.row.expiration_time === null">
+              <div v-if="props.row?.expiration_time === null">
                 长期
               </div>
               <div v-else>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                   }}
                 </div>
               </div>
@@ -922,13 +922,13 @@ const stopServer = (server: ServerInterface) => {
           </q-td>
 
           <q-td key="status" :props="props" class="non-selectable">
-            <ServerStatusLocal :server="props.row" @click="updateSingleSeverStatusInRows(props.row.id)"/>
+            <ServerStatusLocal :server="props.row" @click="updateSingleSeverStatusInRows(props.row?.id)"/>
           </q-td>
 
           <q-td key="operation" :props="props">
             <div class="column">
 
-              <q-btn flat dense no-caps color="primary" @click="store.gotoVNC(props.row.id, true)">
+              <q-btn flat dense no-caps color="primary" @click="store.gotoVNC(props.row?.id, true)">
                 远程控制
               </q-btn>
 

@@ -376,6 +376,18 @@ export interface ServerInterface {
     username: string
   }
   lock: 'free' | 'lock-delete' | 'lock-operation'
+  attached_disks?:
+    {
+      id: string
+      size: 100,
+      creation_time: string
+      remarks: string
+      expiration_time: string
+      pay_type: string
+      mountpoint: string
+      attached_time: string
+      detached_time: string
+    }[]
 
   // 来自vnc接口
   vnc?: string
@@ -840,7 +852,7 @@ export const useStore = defineStore('server', {
     },
     getGroupsByFilter: (state) => (filter: string): GroupInterface[] => {
       // 排序函数，按照组创建时间降序排列
-      const sortFn = (a: GroupInterface, b: GroupInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: GroupInterface, b: GroupInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
       if (filter === 'all') {
         return Object.values(state.tables.groupTable.byId).sort(sortFn)
       } else {
@@ -880,7 +892,7 @@ export const useStore = defineStore('server', {
     // 根据myRole返回group数组
     getGroupsByMyRole: (state) => (roles: string[]): GroupInterface[] => {
       // 排序函数，按照组创建时间降序排列
-      const sortFn = (a: GroupInterface, b: GroupInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: GroupInterface, b: GroupInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
       const groups: GroupInterface[] = []
       roles.forEach((role) => {
         for (const group of Object.values(state.tables.groupTable.byId)) {
@@ -1073,7 +1085,7 @@ export const useStore = defineStore('server', {
     //   // 再筛选status。 status=''时全部返回
     //   const applications = applicationsByServiceId.filter(application => status ? status === application.status : true)
     //   // 排序函数，根据申请时间降序排列
-    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
     //   return applications.sort(sortFn)
     // },
     getServiceOptions (state) {
@@ -1111,7 +1123,7 @@ export const useStore = defineStore('server', {
     },
     // getAdminServers (state): ServerInterface[] {
     //   // 排序函数，根据申请时间降序排列
-    //   const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
     //   const rows: ServerInterface[] = []
     //   for (const application of Object.values(state.tables.adminServerTable.byId)) {
     //     rows.push(application)
@@ -1121,7 +1133,7 @@ export const useStore = defineStore('server', {
     // 根据用户选择的filter来返回application数组
     // getPersonalApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
     //   // 排序函数，根据申请时间降序排列
-    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
     //
     //   if (filter === '0') {
     //     return Object.values(state.tables.personalQuotaApplicationTable.byId).sort(sortFn)
@@ -1138,7 +1150,7 @@ export const useStore = defineStore('server', {
     // 根据用户选择的filter来返回application数组
     // getGroupApplicationsByFilter: (state) => (filter: string): QuotaApplicationInterface[] => {
     //   // 排序函数，根据申请时间降序排列
-    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
     //
     //   if (filter === '0') {
     //     return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
@@ -1201,7 +1213,7 @@ export const useStore = defineStore('server', {
     // 根据用户选择的serviceId来返回server数组
     getPersonalServersByServiceId: (state) => (serviceId: string): ServerInterface[] => {
       // 排序函数，根据云主机创建时间降序排列
-      const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
 
       if (serviceId === '0') {
         return Object.values(state.tables.personalServerTable.byId).sort(sortFn)
@@ -1218,7 +1230,7 @@ export const useStore = defineStore('server', {
     // 根据用户选择的serviceId来返回order数组
     getPersonalOrdersByServiceId: (state) => (serviceId: string): OrderInterface[] => {
       // 排序函数，根据order创建时间降序排列
-      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
 
       if (serviceId === '0') {
         return Object.values(state.tables.personalOrderTable.byId).sort(sortFn)
@@ -1238,7 +1250,7 @@ export const useStore = defineStore('server', {
       const appServiceId = state.tables.serviceTable.byId[serviceId]?.pay_app_service_id
 
       // 排序函数，根据coupon创建时间降序排列
-      const sortFn = (a: CouponInterface, b: CouponInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: CouponInterface, b: CouponInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
 
       if (serviceId === '0') {
         return Object.values(state.tables.personalCouponTable.byId).sort(sortFn)
@@ -1286,7 +1298,7 @@ export const useStore = defineStore('server', {
     /* quotaList使用 */
 
     // getGroupQuotaApplicationsByGroupId: (state) => (groupId: string): QuotaApplicationInterface[] => {
-    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+    //   const sortFn = (a: QuotaApplicationInterface, b: QuotaApplicationInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
     //   if (groupId === '0') {
     //     return Object.values(state.tables.groupQuotaApplicationTable.byId).sort(sortFn)
     //   } else {
@@ -1300,7 +1312,7 @@ export const useStore = defineStore('server', {
     //   }
     // },
     getGroupServersByGroupId: (state) => (groupId: string): ServerInterface[] => {
-      const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: ServerInterface, b: ServerInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
       if (groupId === '0') {
         return Object.values(state.tables.groupServerTable.byId).sort(sortFn)
       } else {
@@ -1314,7 +1326,7 @@ export const useStore = defineStore('server', {
       }
     },
     getGroupOrdersByGroupId: (state) => (groupId: string): OrderInterface[] => {
-      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b.creation_time).getTime() - new Date(a.creation_time).getTime()
+      const sortFn = (a: OrderInterface, b: OrderInterface) => new Date(b?.creation_time).getTime() - new Date(a?.creation_time).getTime()
       if (groupId === '0') {
         return Object.values(state.tables.groupOrderTable.byId).sort(sortFn)
       } else {
@@ -2150,13 +2162,19 @@ export const useStore = defineStore('server', {
       this.tables.personalServerTable.status = 'loading'
       try {
         const respServer = await api.server.server.getServer({ query: { page_size: 999 } })
-        // 将响应normalize，存入state里的userServerTable
 
-        const server = new schema.Entity('server')
-        for (const data of respServer.data.servers) {
-          const normalizedData = normalize(data, server)
-          Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
-          this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+        for (const server of respServer.data.servers) {
+          // // get detail
+          // const respGetServerDetail = await api.server.server.getServerId({ path: { id: data.id } })
+          //
+          // Object.assign(respGetServerDetail.data.server, { status: -1 })
+          // Object.assign(this.tables.personalServerTable.byId, { [respGetServerDetail.data.server.id]: respGetServerDetail.data.server })
+          // this.tables.personalServerTable.allIds.unshift(respGetServerDetail.data.server.id)
+          // this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
+
+          Object.assign(server, { status: -1 })
+          Object.assign(this.tables.personalServerTable.byId, { [server.id]: server })
+          this.tables.personalServerTable.allIds.unshift(server.id)
           this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
         }
         // 建立personalServerTable之后，分别更新每个server status, 并发更新，无需await
@@ -2246,7 +2264,10 @@ export const useStore = defineStore('server', {
           }
         })
         for (const server of respGroupServer.data.servers) {
-          Object.assign(server, { status: 0 })
+          // get detail
+          // const respGetServerDetail = await api.server.server.getServerId({ path: { id: server.id } })
+
+          Object.assign(server, { status: -1 })
           Object.assign(this.tables.groupServerTable.byId, { [server.id]: server })
           this.tables.groupServerTable.allIds.unshift(server.id)
           this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
@@ -2306,13 +2327,11 @@ export const useStore = defineStore('server', {
       payload.isGroup ? this.tables.groupServerTable.status = 'loading' : this.tables.personalServerTable.status = 'loading'
       try {
         const respSingleServer = await api.server.server.getServerId({ path: { id: payload.serverId } })
-        // 将响应normalize，存入state里的userServerTable
-        const server = new schema.Entity('server')
-        const normalizedData = normalize(respSingleServer.data.server, server)
+        const server = respSingleServer.data.server
         if (payload.isGroup) {
           // 更新table
-          Object.assign(this.tables.groupServerTable.byId, normalizedData.entities.server)
-          this.tables.groupServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+          Object.assign(this.tables.groupServerTable.byId, { [server.id]: server })
+          this.tables.groupServerTable.allIds.unshift(server.id)
           this.tables.groupServerTable.allIds = [...new Set(this.tables.groupServerTable.allIds)]
           this.loadSingleServerStatus({
             isGroup: true,
@@ -2320,8 +2339,8 @@ export const useStore = defineStore('server', {
           })
           this.tables.groupServerTable.status = 'part'
         } else {
-          Object.assign(this.tables.personalServerTable.byId, normalizedData.entities.server)
-          this.tables.personalServerTable.allIds.unshift(Object.keys(normalizedData.entities.server as Record<string, unknown>)[0])
+          Object.assign(this.tables.personalServerTable.byId, { [server.id]: server })
+          this.tables.personalServerTable.allIds.unshift(server.id)
           this.tables.personalServerTable.allIds = [...new Set(this.tables.personalServerTable.allIds)]
           this.loadSingleServerStatus({
             isGroup: false,
@@ -3377,12 +3396,12 @@ export const useStore = defineStore('server', {
       })
     },
     // 删除云硬盘
-    deleteDiskDialog (diskId: string) {
+    deleteDiskDialog (disk: DiskInterface) {
       // dialog
       Dialog.create({
         component: DeleteDiskDialog,
         componentProps: {
-          diskId
+          disk
         }
       })
     }

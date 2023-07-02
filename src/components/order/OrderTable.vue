@@ -188,28 +188,28 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
         <!--        <pre>{{ props.row}}</pre>-->
 
         <q-tr :props="props"
-              @mouseenter="onMouseEnterRow(props.row.id)"
+              @mouseenter="onMouseEnterRow(props.row?.id)"
               @mouseleave="onMouseLeaveRow"
         >
           <q-td key="id" :props="props">
 
             <q-btn
-              class="q-ma-none" :label="props.row.id" color="primary" padding="none" flat dense unelevated no-caps
-              @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
+              class="q-ma-none" :label="props.row?.id" color="primary" padding="none" flat dense unelevated no-caps
+              @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row?.id}` : `/my/server/personal/order/detail/${props.row?.id}`)">
               <q-tooltip>
                 {{ tc('components.order.OrderTable.order_details') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge style="top:-10px;"
-                       v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
+                       v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
                        color="light-green" floating transparent rounded align="middle">
                 new
               </q-badge>
             </q-btn>
 
-            <q-btn v-if="hoverRow === props.row.id"
+            <q-btn v-if="hoverRow === props.row?.id"
                    class="col-shrink q-px-xs q-ma-none" flat dense no-caps icon="content_copy" size="xs" color="primary"
-                   @click="clickToCopy(props.row.id)">
+                   @click="clickToCopy(props.row?.id)">
               <q-tooltip>
                 {{ tc('components.order.OrderTable.copy_to_clipboard') }}
               </q-tooltip>
@@ -225,8 +225,8 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               class="q-ma-none"
               color="primary"
               padding="none" flat dense unelevated no-caps
-              :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
-              @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
+              :label="store.tables.groupTable.byId[props.row?.vo_id]?.name"
+              @click="navigateToUrl(`/my/server/group/detail/${props.row?.vo_id}`)">
               <q-tooltip>
                 {{ tc('components.order.OrderTable.group_detail') }}
               </q-tooltip>
@@ -236,27 +236,27 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
           <q-td key="service" :props="props">
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row.service_id]?.name : store.tables.serviceTable.byId[props.row.service_id]?.name_en
+                i18n.global.locale === 'zh' ? store.tables.serviceTable.byId[props.row?.service_id]?.name : store.tables.serviceTable.byId[props.row?.service_id]?.name_en
               }}
             </div>
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service_id]?.data_center.id]?.name :
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service_id]?.data_center.id]?.name_en
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service_id]?.data_center.id]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service_id]?.data_center.id]?.name_en
               }}
             </div>
 
             <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[props.row.service_id]?.service_type"/>
+              :platform-name="store.tables.serviceTable.byId[props.row?.service_id]?.service_type"/>
 
           </q-td>
 
           <q-td key="type" :props="props">
-            <div v-if="props.row.resource_type === 'vm'">
+            <div v-if="props.row?.resource_type === 'vm'">
               <q-icon name="computer" color="primary" size="md"/>
               <div>{{ tc('云主机') }}</div>
             </div>
-            <div v-else-if="props.row.resource_type === 'disk'">
+            <div v-else-if="props.row?.resource_type === 'disk'">
               <q-icon name="mdi-harddisk" color="primary" size="md"/>
               <div>{{ tc('云硬盘') }}</div>
             </div>
@@ -264,19 +264,19 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
 
           <q-td key="config" :props="props">
 
-            <div v-if="props.row.resource_type === 'vm'">
-              <div> {{ props.row.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }} CPU</div>
-              <div> {{ props.row.instance_config.vm_ram }}GB {{ tc('内存') }}</div>
+            <div v-if="props.row?.resource_type === 'vm'">
+              <div> {{ props.row?.instance_config.vm_cpu }} {{ tc('components.order.OrderTable.cores') }} CPU</div>
+              <div> {{ props.row?.instance_config.vm_ram }}GB {{ tc('内存') }}</div>
               <div> {{
-                  props.row.instance_config.vm_public_ip
+                  props.row?.instance_config.vm_public_ip
                     ? tc('components.order.OrderTable.public_network')
                     : tc('components.order.OrderTable.private_network')
                 }} IP
               </div>
             </div>
 
-            <div v-else-if="props.row.resource_type === 'disk'">
-              <div>{{ props.row.instance_config.disk_size }}GB {{ tc('存储') }}</div>
+            <div v-else-if="props.row?.resource_type === 'disk'">
+              <div>{{ props.row?.instance_config.disk_size }}GB {{ tc('存储') }}</div>
             </div>
 
           </q-td>
@@ -285,60 +285,60 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
             <!--              日期时间格式根据locale值变化-->
             <div v-if="i18n.global.locale==='zh'">
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                 }}
               </div>
             </div>
             <div v-else>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                 }}
               </div>
             </div>
           </q-td>
 
           <q-td key="order_type" :props="props">
-            <div v-if="props.row.order_type === 'new'">
+            <div v-if="props.row?.order_type === 'new'">
               {{ tc('components.order.OrderTable.new_purchase') }}
             </div>
 
-            <div v-if="props.row.order_type === 'renewal'">
+            <div v-if="props.row?.order_type === 'renewal'">
               {{ tc('components.order.OrderTable.renewal') }}
             </div>
 
-            <div v-if="props.row.order_type === 'upgrade'">
+            <div v-if="props.row?.order_type === 'upgrade'">
               {{ tc('components.order.OrderTable.upgrade') }}
             </div>
 
-            <div v-if="props.row.order_type === 'downgrade'">
+            <div v-if="props.row?.order_type === 'downgrade'">
               {{ tc('components.order.OrderTable.downgrade') }}
             </div>
           </q-td>
 
           <q-td key="pay_type" :props="props">
-            <div v-if="props.row.pay_type === 'prepaid'">
+            <div v-if="props.row?.pay_type === 'prepaid'">
               {{ tc('components.order.OrderTable.monthly_prepaid') }}
             </div>
 
-            <div v-if="props.row.pay_type === 'postpaid'">
+            <div v-if="props.row?.pay_type === 'postpaid'">
               {{ tc('components.order.OrderTable.pay_as_go') }}
             </div>
           </q-td>
 
           <q-td key="pay" :props="props">
-            {{ props.row.payable_amount }} {{ tc('components.order.OrderTable.points') }}
+            {{ props.row?.payable_amount }} {{ tc('components.order.OrderTable.points') }}
           </q-td>
 
           <q-td key="status" :props="props" class="non-selectable">
-            <OrderStatus :order-id="props.row.id" :is-group="isGroup"/>
+            <OrderStatus :order-id="props.row?.id" :is-group="isGroup"/>
           </q-td>
 
           <q-td key="operation" :props="props" class="non-selectable">
@@ -346,28 +346,28 @@ const searchMethod = (rows: OrderInterface[], terms: string): OrderInterface[] =
               <div class="column justify-center items-start q-gutter-xs">
 
                 <q-btn icon="info" flat no-caps dense padding="none" color="primary"
-                       @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row.id}` : `/my/server/personal/order/detail/${props.row.id}`)">
+                       @click="navigateToUrl(isGroup ? `/my/server/group/order/detail/${props.row?.id}` : `/my/server/personal/order/detail/${props.row?.id}`)">
                   {{ tc('components.order.OrderTable.check_details') }}
                 </q-btn>
 
                 <q-btn
-                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'paid' && props.row.resources[0].instance_status === 'failed'"
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member') && props.row?.status === 'paid' && props.row?.resources[0].instance_status === 'failed'"
                   icon="published_with_changes" flat no-caps dense padding="none" color="primary"
-                  @click="store.reclaimOrderResource(props.row.id, isGroup)">
+                  @click="store.reclaimOrderResource(props.row?.id, isGroup)">
                   {{ tc('orderResourceReclaim') }}
                 </q-btn>
 
                 <q-btn
-                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member') && props.row?.status === 'unpaid'"
                   icon="currency_yen" flat no-caps dense padding="none" color="primary"
-                  @click="store.payOrderDialog(props.row.id, isGroup)">
+                  @click="store.payOrderDialog(props.row?.id, isGroup)">
                   {{ tc('components.order.OrderTable.pay_orders') }}
                 </q-btn>
 
                 <q-btn
-                  v-if="(!isGroup || store.tables.groupTable.byId[props.row.vo_id]?.myRole !== 'member') && props.row.status === 'unpaid'"
+                  v-if="(!isGroup || store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member') && props.row?.status === 'unpaid'"
                   icon="close" flat no-caps dense padding="none" color="primary"
-                  @click="store.cancelOrderDialog(props.row.id, isGroup)">
+                  @click="store.cancelOrderDialog(props.row?.id, isGroup)">
                   {{ tc('components.order.OrderTable.cancel_order') }}
                 </q-btn>
               </div>

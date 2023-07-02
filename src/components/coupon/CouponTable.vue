@@ -160,24 +160,24 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
       <template v-slot:body="props">
         <q-tr :props="props"
-              @mouseenter="onMouseEnterRow(props.row.id)"
+              @mouseenter="onMouseEnterRow(props.row?.id)"
               @mouseleave="onMouseLeaveRow"
         >
           <q-td key="id" :props="props">
 
             <div class="column justify-center items-center">
               <!--创建时间距离当下小于1小时则打上new标记-->
-              <q-badge v-if="(new Date() - new Date(props.row.granted_time)) < 1000 * 60 * 60 * 1 "
+              <q-badge v-if="(new Date() - new Date(props.row?.granted_time)) < 1000 * 60 * 60 * 1 "
                        class="col-shrink" style="width: 35px;"
                        color="light-green" transparent rounded align="middle">
                 new
               </q-badge>
 
               <div class="col-auto">
-                {{ props.row.id }}
-                <q-btn v-if="hoverRow === props.row.id"
+                {{ props.row?.id }}
+                <q-btn v-if="hoverRow === props.row?.id"
                        class="col-shrink q-px-xs q-ma-none" flat dense icon="content_copy" size="xs" color="primary"
-                       @click="clickToCopy(props.row.id)">
+                       @click="clickToCopy(props.row?.id)">
                   <q-tooltip>
                     {{ tc('components.coupon.CouponTable.copy_to_clipboard') }}
                   </q-tooltip>
@@ -196,8 +196,8 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
               class="q-ma-none"
               color="primary"
               padding="none" flat dense unelevated no-caps
-              :label="store.tables.groupTable.byId[props.row.vo?.id]?.name"
-              @click="navigateToUrl(`/my/server/group/detail/${props.row.vo?.id}`)">
+              :label="store.tables.groupTable.byId[props.row?.vo?.id]?.name"
+              @click="navigateToUrl(`/my/server/group/detail/${props.row?.vo?.id}`)">
               <q-tooltip>
                 {{ tc('components.coupon.CouponTable.group_detail') }}
               </q-tooltip>
@@ -206,7 +206,7 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
 
           <q-td key="serviceNode" :props="props">
 
-            <!--            <div v-if="props.row.app_service === null">-->
+            <!--            <div v-if="props.row?.app_service === null">-->
 
             <!--            </div>-->
 
@@ -217,61 +217,61 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
             <div>
               {{
                 i18n.global.locale === 'zh' ?
-                  store.tables.serviceTable.byId[props.row.app_service?.service_id]?.name :
-                  store.tables.serviceTable.byId[props.row.app_service?.service_id]?.name_en
+                  store.tables.serviceTable.byId[props.row?.app_service?.service_id]?.name :
+                  store.tables.serviceTable.byId[props.row?.app_service?.service_id]?.name_en
               }}
             </div>
             <div>
               {{
                 i18n.global.locale === 'zh' ?
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.app_service?.service_id]?.data_center.id]?.name :
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.app_service?.service_id]?.data_center.id]?.name_en
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.app_service?.service_id]?.data_center.id]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.app_service?.service_id]?.data_center.id]?.name_en
               }}
             </div>
 
             <CloudPlatformLogo
-              :platform-name="store.tables.serviceTable.byId[props.row.app_service?.service_id]?.service_type"/>
+              :platform-name="store.tables.serviceTable.byId[props.row?.app_service?.service_id]?.service_type"/>
 
           </q-td>
 
           <q-td key="redeemTime" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
+              <div>{{ new Date(props.row?.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row?.granted_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.granted_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
+              <div>{{ new Date(props.row?.granted_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
+              <div>{{ new Date(props.row?.granted_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
             </div>
           </q-td>
 
           <q-td key="expirationTime" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
+              <div>{{ new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1] }}</div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
+              <div>{{ new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0] }}</div>
+              <div>{{ new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1] }}</div>
             </div>
           </q-td>
 
           <q-td key="face" :props="props">
-            {{ props.row.face_value }} {{ tc('components.coupon.CouponTable.points') }}
+            {{ props.row?.face_value }} {{ tc('components.coupon.CouponTable.points') }}
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="text-bold">
-              {{ props.row.balance }} {{ tc('components.coupon.CouponTable.points') }}
+              {{ props.row?.balance }} {{ tc('components.coupon.CouponTable.points') }}
             </div>
           </q-td>
 
           <q-td key="status" :props="props">
 
             <div class="row justify-center">
-              <div v-if="(new Date() - new Date(props.row.expiration_time)) < 0"
+              <div v-if="(new Date() - new Date(props.row?.expiration_time)) < 0"
                    class="row items-center text-light-green">
                 <q-icon name="check_circle" color="light-green" size="sm"/>
                 {{ tc('components.coupon.CouponTable.valid') }}
@@ -286,13 +286,13 @@ const searchMethod = (rows: CouponInterface[], terms: string): CouponInterface[]
           </q-td>
 
           <q-td key="operation" :props="props" class="non-selectable">
-            <q-btn v-if="(new Date() - new Date(props.row.expiration_time)) < 0"
+            <q-btn v-if="(new Date() - new Date(props.row?.expiration_time)) < 0"
                    flat
                    no-caps
                    dense
                    padding="none"
                    color="primary"
-                   @click="navigateToUrl('/my/server/deploy?service=' + props.row.app_service?.service_id + (isGroup ? ('&group=' + props.row.vo?.id) : ''))"
+                   @click="navigateToUrl('/my/server/deploy?service=' + props.row?.app_service?.service_id + (isGroup ? ('&group=' + props.row?.vo?.id) : ''))"
             >
               {{ tc('useCoupon') }}
             </q-btn>

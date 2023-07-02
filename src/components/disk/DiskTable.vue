@@ -184,7 +184,7 @@ const columns = computed(() => [
 
     <template v-slot:body="props">
       <q-tr :props="props"
-            @mouseenter="onMouseEnterRow(props.row.id)"
+            @mouseenter="onMouseEnterRow(props.row?.id)"
             @mouseleave="onMouseLeaveRow"
       >
 
@@ -193,30 +193,30 @@ const columns = computed(() => [
         <!--        </q-td>-->
 
         <q-td key="id" :props="props">
-          {{ props.row.id }}
+          {{ props.row?.id }}
         </q-td>
 
         <q-td key="serviceNode" :props="props">
           <div>
             {{
-              i18n.global.locale === 'zh' ? props.row.service.name : props.row.service.name_en
+              i18n.global.locale === 'zh' ? props.row?.service.name : props.row?.service.name_en
             }}
           </div>
 
           <div>
             {{
-              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name :
-                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name_en
+              i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name :
+                store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name_en
             }}
           </div>
 
-          <CloudPlatformLogo :platform-name="store.tables.serviceTable.byId[props.row.service.id]?.service_type"/>
+          <CloudPlatformLogo :platform-name="store.tables.serviceTable.byId[props.row?.service.id]?.service_type"/>
 
         </q-td>
 
         <q-td key="size" :props="props">
 
-          {{ props.row.size }}GB
+          {{ props.row?.size }}GB
         </q-td>
 
         <q-td key="validTime" :props="props">
@@ -225,22 +225,22 @@ const columns = computed(() => [
             <div class="col-auto">
               <div v-if="i18n.global.locale==='zh'">
                 <div>{{
-                    new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                    new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                    new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                   }}
                 </div>
               </div>
 
               <div v-else>
                 <div>{{
-                    new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                    new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                    new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                   }}
                 </div>
               </div>
@@ -253,22 +253,22 @@ const columns = computed(() => [
             <div class="col-auto">
               <div v-if="i18n.global.locale==='zh'">
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                   }}
                 </div>
               </div>
 
               <div v-else>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                   }}
                 </div>
                 <div>{{
-                    new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                    new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                   }}
                 </div>
               </div>
@@ -279,19 +279,19 @@ const columns = computed(() => [
           <div class="row items-center justify-center">
 
             <q-badge
-              v-if="((new Date() - new Date(props.row.expiration_time)) < 0 ) && ((new Date() - new Date(props.row.creation_time)) > 0)"
+              v-if="((new Date() - new Date(props.row?.expiration_time)) < 0 ) && ((new Date() - new Date(props.row?.creation_time)) > 0)"
               color="green">
               {{ tc('有效期内') }}
             </q-badge>
 
             <q-badge
-              v-if="(new Date() - new Date(props.row.expiration_time)) > 0"
+              v-if="(new Date() - new Date(props.row?.expiration_time)) > 0"
               color="negative">
               {{ tc('已过期') }}
             </q-badge>
 
             <q-badge
-              v-if="(new Date(props.row.creation_time) - new Date()) > 0"
+              v-if="(new Date(props.row?.creation_time) - new Date()) > 0"
               color="primary">
               {{ tc('待生效') }}
             </q-badge>
@@ -301,21 +301,21 @@ const columns = computed(() => [
         </q-td>
 
         <q-td key="remarks" :props="props">
-          {{ props.row.remarks }}
+          {{ props.row?.remarks }}
         </q-td>
 
         <q-td key="server" :props="props">
-          <div v-if="props.row.server === null">
+          <div v-if="props.row?.server === null">
             {{ tc('未挂载') }}
           </div>
 
           <div v-else>
-            {{ props.row.server?.ipv4 }}
+            {{ props.row?.server?.ipv4 }}
           </div>
         </q-td>
 
         <q-td key="status" :props="props">
-          {{ props.row.server !== null }}
+          {{ props.row?.server !== null }}
         </q-td>
 
         <q-td key="operation" :props="props">

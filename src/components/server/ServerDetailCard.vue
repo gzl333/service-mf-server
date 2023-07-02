@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { navigateToUrl } from 'single-spa'
-import { useStore } from 'stores/store'
+import { DiskInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
+import api from 'src/api'
 
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
@@ -43,8 +44,25 @@ const tab = ref(show ?? 'server')
 
 // server info
 const server = computed(() => props.isGroup ? store.tables.groupServerTable.byId[props.serverId] : store.tables.personalServerTable.byId[props.serverId])
+// store.loadSingleServer({ serverId: props.serverId, isGroup: props.isGroup })
+
+// load disk info
+const disks = ref<DiskInterface[]>([])
+const isLoadingDisk = ref(false)
+
+// top-lever await trick
+onMounted(async () => {
+  isLoadingDisk.value = true
+  const serverDetail = (await api.server.server.getServerId({ path: { id: props.serverId } })).data.server
+  for (const disk of serverDetail.attached_disks) {
+    const diskDetail = (await api.server.disk.getDiskId({ path: { id: disk.id } })).data
+    disks.value.push(diskDetail)
+  }
+  isLoadingDisk.value = false
+})
+
 // service info
-const service = computed(() => store.tables.serviceTable.byId[server.value?.service.id])
+const service = computed(() => store.tables.serviceTable.byId[server.value?.service.id || ''])
 // quota info
 // const quota = computed(() => props.isGroup ? store.tables.groupQuotaTable.byId[server.value.user_quota] : store.tables.personalQuotaTable.byId[server.value?.user_quota])
 // // vpn info
@@ -54,7 +72,7 @@ const service = computed(() => store.tables.serviceTable.byId[server.value?.serv
 const group = computed(() => store.tables.groupTable.byId[server.value?.vo_id || ''])
 
 // lock toggle
-const toggle = ref(computed(() => server.value.lock === 'lock-operation'))
+const toggle = ref(computed(() => server.value?.lock === 'lock-operation'))
 
 // 当前用户在group内的角色
 const myRole = computed(() => store.tables.groupTable.byId[server.value?.vo_id || '']?.myRole || 'member')
@@ -264,29 +282,13 @@ const clickToCopy = useCopyToClipboard()
                     inline-label
                   >
 
-                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
-                    <!--                           no-caps-->
-                    <!--                           :ripple="false"-->
-                    <!--                           name="server"-->
-                    <!--                           icon="computer"-->
-                    <!--                           :label="tc('云主机信息')"-->
-                    <!--                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=server` : `/my/server/personal/detail/${server.id}?show=server`)"/>-->
-
-                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
-                    <!--                           no-caps-->
-                    <!--                           :ripple="false"-->
-                    <!--                           name="disk"-->
-                    <!--                           icon="mdi-harddisk"-->
-                    <!--                           :label="tc('已挂载云硬盘列表')"-->
-                    <!--                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=disk` : `/my/server/personal/detail/${server.id}?show=disk`)"/>-->
-
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="server"
                            icon="computer"
                            :label="tc('云主机信息')"
-                    />
+                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=server` : `/my/server/personal/detail/${server.id}?show=server`)"/>
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
@@ -294,7 +296,23 @@ const clickToCopy = useCopyToClipboard()
                            name="disk"
                            icon="mdi-harddisk"
                            :label="tc('已挂载云硬盘列表')"
-                    />
+                           @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${server.id}?show=disk` : `/my/server/personal/detail/${server.id}?show=disk`)"/>
+
+                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
+                    <!--                           no-caps-->
+                    <!--                           :ripple="false"-->
+                    <!--                           name="server"-->
+                    <!--                           icon="computer"-->
+                    <!--                           :label="tc('云主机信息')"-->
+                    <!--                    />-->
+
+                    <!--                    <q-tab class="q-px-none q-py-none q-mr-md"-->
+                    <!--                           no-caps-->
+                    <!--                           :ripple="false"-->
+                    <!--                           name="disk"-->
+                    <!--                           icon="mdi-harddisk"-->
+                    <!--                           :label="tc('已挂载云硬盘列表')"-->
+                    <!--                    />-->
 
                   </q-tabs>
 
@@ -555,7 +573,7 @@ const clickToCopy = useCopyToClipboard()
                   </q-tab-panel>
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="disk">
-                    <disk-table/>
+                    <disk-table :rows="disks" :is-loading="isLoadingDisk"/>
                   </q-tab-panel>
 
                 </q-tab-panels>

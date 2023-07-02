@@ -90,9 +90,9 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
 
           <q-td key="username" :props="props">
             <q-btn flat padding="none" no-caps no-wrap :ripple="false">
-              {{ props.row.user.username }}
+              {{ props.row?.user.username }}
               <!--创建时间距离当下小于1小时则打上new标记-->
-              <q-badge v-if="(new Date() - new Date(props.row.join_time)) < 1000 * 60 * 60 * 1 "
+              <q-badge v-if="(new Date() - new Date(props.row?.join_time)) < 1000 * 60 * 60 * 1 "
                        color="light-green" floating transparent rounded align="middle">new
               </q-badge>
             </q-btn>
@@ -100,40 +100,40 @@ const members = computed(() => store.getGroupMembersByGroupId(props.groupId))
           </q-td>
 
           <q-td key="role" :props="props">
-            <group-role-chip :role="props.row.role"/>
+            <group-role-chip :role="props.row?.role"/>
           </q-td>
 
           <q-td key="time" :props="props">
             <div v-if="i18n.global.locale==='zh'">
-              <div>{{ new Date(props.row.join_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
-              <div>{{ new Date(props.row.join_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
+              <div>{{ new Date(props.row?.join_time).toLocaleString(i18n.global.locale).split(' ')[0] }}</div>
+              <div>{{ new Date(props.row?.join_time).toLocaleString(i18n.global.locale).split(' ')[1] }}</div>
             </div>
 
             <div v-else>
-              <div>{{ new Date(props.row.join_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
-              <div>{{ new Date(props.row.join_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
+              <div>{{ new Date(props.row?.join_time).toLocaleString(i18n.global.locale).split(',')[0] }}</div>
+              <div>{{ new Date(props.row?.join_time).toLocaleString(i18n.global.locale).split(',')[1] }}</div>
             </div>
           </q-td>
 
           <q-td key="inviter" :props="props">
-            {{ props.row.inviter }}
+            {{ props.row?.inviter }}
           </q-td>
 
           <q-td key="operation" :props="props">
             <div class="column justify-center items-center q-gutter-xs">
-              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'member'" icon="mdi-account-multiple-check" flat no-caps dense padding="none"
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row?.role === 'member'" icon="mdi-account-multiple-check" flat no-caps dense padding="none"
                      color="primary"
-                     @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row.id, role:'leader', role_name: tc('components.group.GroupMemberTable.admin')})">
+                     @click="store.editGroupMemberRoleDialog( {groupId, member_id: props.row?.id, role:'leader', role_name: tc('components.group.GroupMemberTable.admin')})">
                 {{ tc('components.group.GroupMemberTable.set_admin') }}
               </q-btn>
 
-              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row.role === 'leader'" icon="mdi-account-multiple-remove" flat no-caps dense padding="none" color="primary"
-                     @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row.id, role:'member', role_name: tc('components.group.GroupMemberTable.group_members')})">
+              <q-btn v-if="store.tables.groupTable.byId[groupId]?.myRole === 'owner' && props.row?.role === 'leader'" icon="mdi-account-multiple-remove" flat no-caps dense padding="none" color="primary"
+                     @click="store.editGroupMemberRoleDialog({groupId, member_id: props.row?.id, role:'member', role_name: tc('components.group.GroupMemberTable.group_members')})">
                 {{ tc('components.group.GroupMemberTable.cancel_admin') }}
               </q-btn>
 
-              <q-btn v-if="props.row.role !== 'owner'" icon="remove_circle" flat no-caps dense padding="none" color="primary"
-                     @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row.user.username})">
+              <q-btn v-if="props.row?.role !== 'owner'" icon="remove_circle" flat no-caps dense padding="none" color="primary"
+                     @click="store.removeSingleGroupMemberDialog( {groupId, username: props.row?.user.username})">
                 {{ tc('components.group.GroupMemberTable.out_group') }}
               </q-btn>
             </div>

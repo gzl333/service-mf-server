@@ -150,53 +150,53 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
         <q-tr :props="props">
 
           <q-td key="role" :props="props">
-            <GroupRoleChip class="non-selectable" :role="props.row.myRole"/>
+            <GroupRoleChip class="non-selectable" :role="props.row?.myRole"/>
           </q-td>
 
           <q-td key="name" :props="props">
             <q-btn
-              class="q-ma-none" :label="props.row.name" color="primary" padding="xs" flat dense unelevated no-caps
-              @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
+              class="q-ma-none" :label="props.row?.name" color="primary" padding="xs" flat dense unelevated no-caps
+              @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}`)">
               <q-tooltip>
                 {{ tc('components.group.GroupTable.details') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
-              <q-badge v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
+              <q-badge v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
                        color="light-green" floating transparent rounded align="middle">new
               </q-badge>
             </q-btn>
           </q-td>
 
           <q-td key="company" :props="props">
-            {{ props.row.company }}
+            {{ props.row?.company }}
           </q-td>
 
           <q-td key="desc" :props="props">
-            {{ props.row.description }}
+            {{ props.row?.description }}
             <!--            <q-tooltip>-->
-            <!--              {{ props.row.description }}-->
+            <!--              {{ props.row?.description }}-->
             <!--            </q-tooltip>-->
           </q-td>
 
           <q-td key="creation_time" :props="props">
             <div v-if="i18n.global.locale==='zh'">
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                 }}
               </div>
             </div>
 
             <div v-else>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                 }}
               </div>
               <div>{{
-                  new Date(props.row.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                  new Date(props.row?.creation_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                 }}
               </div>
             </div>
@@ -204,40 +204,40 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
 
           <q-td key="member" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=member`)">
-              {{ props.row.stats.member_count }}
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=member`)">
+              {{ props.row?.stats.member_count }}
               {{ tc('components.group.GroupTable.member') }}
             </q-btn>
           </q-td>
 
           <q-td key="server" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=server`)">
-              {{ props.row.stats.server_count }}
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=server`)">
+              {{ props.row?.stats.server_count }}
               {{ tc('components.group.GroupTable.servers') }}
             </q-btn>
           </q-td>
 
           <q-td key="order" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=order`)">
-              {{ props.row.stats.order_count }}
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=order`)">
+              {{ props.row?.stats.order_count }}
               {{ tc('components.group.GroupTable.orders') }}
             </q-btn>
           </q-td>
 
           <q-td key="coupon" :props="props">
             <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row.id}?show=coupon`)">
-              {{ props.row.stats.coupon_count }}
+                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=coupon`)">
+              {{ props.row?.stats.coupon_count }}
               {{ tc('components.group.GroupTable.coupons') }}
             </q-btn>
           </q-td>
 
           <q-td key="balance" :props="props">
             <div class="row justify-center items-center"
-                 :class="Number(props.row.stats.balance) >= 0 ? 'text-black':'text-red'">
-              {{ props.row.stats.balance }}
+                 :class="Number(props.row?.stats.balance) >= 0 ? 'text-black':'text-red'">
+              {{ props.row?.stats.balance }}
               {{ tc('components.group.GroupTable.points') }}
             </div>
           </q-td>
@@ -247,20 +247,20 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
             <div class="column justify-center items-start ">
 
               <q-btn icon="info" flat no-caps dense padding="none" color="primary"
-                     @click="navigateToUrl(`/my/server/group/detail/${props.row.id}`)">
+                     @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}`)">
                 {{ tc('components.group.GroupTable.check_details') }}
               </q-btn>
 
-              <q-btn v-if="props.row.myRole !== 'member'"
+              <q-btn v-if="props.row?.myRole !== 'member'"
                      icon="edit" flat no-caps padding="none" color="primary" size="md" dense
-                     @click="store.editGroupDialog(props.row.id)">
+                     @click="store.editGroupDialog(props.row?.id)">
                 {{ tc('components.group.GroupTable.edit_group_info') }}
               </q-btn>
 
-              <q-btn v-if="props.row.myRole ==='owner'"
+              <q-btn v-if="props.row?.myRole ==='owner'"
                      icon="group_off" flat no-caps padding="none" dense
                      color="primary" size="md"
-                     @click="store.deleteGroupDialog(props.row.id)">
+                     @click="store.deleteGroupDialog(props.row?.id)">
                 {{ tc('components.group.GroupTable.dismiss_group') }}
               </q-btn>
 

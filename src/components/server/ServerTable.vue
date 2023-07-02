@@ -171,28 +171,28 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
       <template v-slot:body="props">
         <q-tr :props="props"
-              @mouseenter="onMouseEnterRow(props.row.name)"
+              @mouseenter="onMouseEnterRow(props.row?.name)"
               @mouseleave="onMouseLeaveRow"
         >
           <q-td key="ip" :props="props">
 
             <q-btn
-              class="q-ma-none" :label="props.row.ipv4" color="primary" padding="none" flat dense unelevated no-caps
-              @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${props.row.id}` : `/my/server/personal/detail/${props.row.id}`)">
+              class="q-ma-none" :label="props.row?.ipv4" color="primary" padding="none" flat dense unelevated no-caps
+              @click="navigateToUrl(isGroup ? `/my/server/group/server/detail/${props.row?.id}` : `/my/server/personal/detail/${props.row?.id}`)">
               <q-tooltip>
                 {{ tc('components.server.ServeTable.server_detail') }}
               </q-tooltip>
               <!--创建时间距离当下小于1小时则打上new标记-->
               <q-badge style="top:-10px;"
-                       v-if="(new Date() - new Date(props.row.creation_time)) < 1000 * 60 * 60 * 1 "
+                       v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
                        color="light-green" floating transparent rounded align="middle">
                 new
               </q-badge>
             </q-btn>
 
-            <q-btn v-if="hoverRow === props.row.name"
+            <q-btn v-if="hoverRow === props.row?.name"
                    class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs" color="primary"
-                   @click="clickToCopy(props.row.ipv4)">
+                   @click="clickToCopy(props.row?.ipv4)">
               <q-tooltip>
                 {{ tc('components.server.ServeTable.copy_to_clipboard') }}
               </q-tooltip>
@@ -208,8 +208,8 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               class="q-ma-none"
               color="primary"
               padding="none" flat dense unelevated no-caps
-              :label="store.tables.groupTable.byId[props.row.vo_id]?.name"
-              @click="navigateToUrl(`/my/server/group/detail/${props.row.vo_id}`)">
+              :label="store.tables.groupTable.byId[props.row?.vo_id]?.name"
+              @click="navigateToUrl(`/my/server/group/detail/${props.row?.vo_id}`)">
               <q-tooltip>
                 {{ tc('components.server.ServeTable.group_detail') }}
               </q-tooltip>
@@ -220,52 +220,52 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
             <div>
               {{
-                i18n.global.locale === 'zh' ? props.row.service.name : props.row.service.name_en
+                i18n.global.locale === 'zh' ? props.row?.service.name : props.row?.service.name_en
               }}
             </div>
 
             <div>
               {{
-                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name :
-                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row.service.id]?.data_center.id]?.name_en
+                i18n.global.locale === 'zh' ? store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name :
+                  store.tables.dataCenterTable.byId[store.tables.serviceTable.byId[props.row?.service.id]?.data_center.id]?.name_en
               }}
             </div>
 
-            <CloudPlatformLogo :platform-name="props.row.service.service_type"/>
+            <CloudPlatformLogo :platform-name="props.row?.service.service_type"/>
 
           </q-td>
 
           <q-td key="image" :props="props">
 
             <div>
-              <OsLogo :os-name="props.row.image"/>
+              <OsLogo :os-name="props.row?.image"/>
             </div>
             <div>
-              {{ props.row.image }}
+              {{ props.row?.image }}
             </div>
 
             <q-tooltip :offset="[0, -15]">
-              {{ props.row.image }}
-              <!--              {{ props.row.image_desc }}-->
+              {{ props.row?.image }}
+              <!--              {{ props.row?.image_desc }}-->
             </q-tooltip>
 
           </q-td>
 
           <q-td key="configuration" :props="props">
-            <div> {{ props.row.vcpus }} {{
-                i18n.global.locale === 'zh' ? '核' : props.row.vcpus > 1 ? 'cores' : 'core'
+            <div> {{ props.row?.vcpus }} {{
+                i18n.global.locale === 'zh' ? '核' : props.row?.vcpus > 1 ? 'cores' : 'core'
               }}
             </div>
-            <div>{{ props.row.ram }} GB</div>
+            <div>{{ props.row?.ram }} GB</div>
           </q-td>
 
           <q-td key="billing" :props="props">
 
-            <div v-if="props.row.pay_type === 'postpaid'">
+            <div v-if="props.row?.pay_type === 'postpaid'">
               {{ tc('components.server.ServeTable.pay_as_go') }}
             </div>
 
-            <div v-if="props.row.pay_type === 'prepaid'">
+            <div v-if="props.row?.pay_type === 'prepaid'">
               <div class="column items-center">
                 <div class="col-auto">
                   {{ tc('components.server.ServeTable.monthly_prepaid') }}
@@ -276,22 +276,22 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                     <!--              日期时间格式根据locale值变化-->
                     <div v-if="i18n.global.locale==='zh'">
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
+                          new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                         }}
                       </div>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
+                          new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[1]
                         }}
                       </div>
                     </div>
 
                     <div v-else>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
+                          new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[0]
                         }}
                       </div>
                       <div>{{
-                          new Date(props.row.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
+                          new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(',')[1]
                         }}
                       </div>
                     </div>
@@ -299,7 +299,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
                   </q-tooltip>
                 </div>
 
-                <div class="col-auto" v-if="(new Date(props.row.expiration_time).getTime() - new Date().getTime()) < 0">
+                <div class="col-auto" v-if="(new Date(props.row?.expiration_time).getTime() - new Date().getTime()) < 0">
                   <q-icon name="help_outline" color="red" size="xs">
                     <q-tooltip>{{ tc('components.server.ServeTable.notify_renew_server') }}</q-tooltip>
                   </q-icon>
@@ -308,7 +308,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
               </div>
 
               <!--              <q-btn class="col-auto" color="primary" padding="none" icon="autorenew" :ripple="false" dense flat-->
-              <!--                     @click="store.renewOrderDialog(props.row.id, isGroup)">-->
+              <!--                     @click="store.renewOrderDialog(props.row?.id, isGroup)">-->
               <!--                <q-tooltip> {{ tc('续期') }}</q-tooltip>-->
               <!--              </q-btn>-->
 
@@ -317,23 +317,23 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
           </q-td>
 
           <!--          <q-td key="creator" :props="props">-->
-          <!--            {{ props.row.user.username }}-->
+          <!--            {{ props.row?.user.username }}-->
           <!--          </q-td>-->
 
           <q-td key="note" :props="props">
             <div class="row">
               <div class="col q-ma-none q-pa-none">
-                {{ props.row.remarks }}
+                {{ props.row?.remarks }}
                 <q-tooltip>
-                  {{ props.row.remarks }}
+                  {{ props.row?.remarks }}
                 </q-tooltip>
               </div>
 
               <q-btn
-                v-if="hoverRow === props.row.name && (!isGroup || (isGroup && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
-                :disable="props.row.lock === 'lock-operation'"
+                v-if="hoverRow === props.row?.name && (!isGroup || (isGroup && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
+                :disable="props.row?.lock === 'lock-operation'"
                 class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
-                @click="store.editServerNoteDialog({serverId:props.row.id, isGroup})">
+                @click="store.editServerNoteDialog({serverId:props.row?.id, isGroup})">
                 <q-tooltip>
                   {{ tc('components.server.ServeTable.edit_remarks') }}
                 </q-tooltip>
@@ -345,9 +345,9 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
             </div>
           </q-td>
           <q-td key="vnc" :props="props" class="non-selectable q-pa-none">
-            <q-btn v-if="props.row.status === 1" unelevated flat padding="none" size="lg" color="primary"
+            <q-btn v-if="props.row?.status === 1" unelevated flat padding="none" size="lg" color="primary"
                    icon="computer"
-                   @click="store.gotoVNC(props.row.id)">
+                   @click="store.gotoVNC(props.row?.id)">
               <q-tooltip>{{ tc('components.server.ServeTable.start_remote') }}</q-tooltip>
             </q-btn>
             <q-btn v-else unelevated flat padding="none" size="lg" color="grey-5" icon="computer">
