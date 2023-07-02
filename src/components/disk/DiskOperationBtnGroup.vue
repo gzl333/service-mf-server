@@ -50,7 +50,7 @@ const tc = i18n.global.tc
 
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
                       :disable-main-btn="disk.lock === 'lock-operation'"
-                      :icon="disk.server === null ? 'mdi-harddisk-plus' : 'mdi-harddisk-remove'"
+                      :icon="disk.server === null ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
                       @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog(group, disk)">
 
         <q-list style="text-align:center">
@@ -93,7 +93,7 @@ const tc = i18n.global.tc
           >
             <div class="row">
               <q-item-section class="col-auto">
-                <q-icon name="mdi-harddisk-plus" size="sm"/>
+                <q-icon name="mdi-arrow-collapse" size="sm"/>
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>
@@ -108,7 +108,7 @@ const tc = i18n.global.tc
           >
             <div class="row">
               <q-item-section class="col-auto">
-                <q-icon name="mdi-harddisk-remove" size="sm"/>
+                <q-icon name="mdi-arrow-expand" size="sm"/>
               </q-item-section>
               <q-item-section class="col-auto">
                 <q-item-section>

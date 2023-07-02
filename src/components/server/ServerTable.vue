@@ -322,6 +322,7 @@ const searchMethod = (rows: ServerInterface[], terms: string): ServerInterface[]
 
           <q-td key="note" :props="props">
             <div class="row">
+
               <div class="col q-ma-none q-pa-none">
                 {{ props.row?.remarks }}
                 <q-tooltip>

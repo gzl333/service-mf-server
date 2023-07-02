@@ -332,7 +332,7 @@ const clickToCopy = useCopyToClipboard()
 
                     <q-btn v-show="tab==='disk'"
                            class="col-shrink"
-                           icon="mdi-shape-square-plus"
+                           icon="mdi-arrow-collapse"
                            size="md"
                            unelevated
                            dense

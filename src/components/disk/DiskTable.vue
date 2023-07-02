@@ -9,10 +9,11 @@ import { i18n } from 'boot/i18n'
 import type { DiskInterface } from 'stores/store'
 
 // import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
-// import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import DiskOperationBtnGroup from 'components/disk/DiskOperationBtnGroup.vue'
+import { navigateToUrl } from 'single-spa'
 
 /* const props = */
 defineProps({
@@ -37,7 +38,7 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 // const exceptionNotifier = useExceptionNotifier()
-// const clickToCopy = useCopyToClipboard()
+const clickToCopy = useCopyToClipboard()
 
 // table row hover
 const hoverRow = ref('')
@@ -56,7 +57,7 @@ const columns = computed(() => [
     align: 'center',
     classes: 'ellipsis',
     headerStyle: 'padding: 0 0 0 1px',
-    style: 'width: 100px;padding: 15px 0px'
+    style: 'width: 240px;padding: 15px 0px'
   },
   {
     name: 'serviceNode',
@@ -87,8 +88,8 @@ const columns = computed(() => [
     label: (() => tc('备注'))(),
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px',
-    headerStyle: 'padding: 0 2px'
+    headerStyle: 'padding: 0 2px',
+    style: 'max-width: 100px;padding: 15px 0px;word-break: break-all; word-wrap: break-word; white-space: normal;'
   },
   {
     name: 'server',
@@ -100,7 +101,7 @@ const columns = computed(() => [
   },
   {
     name: 'status',
-    label: (() => tc('状态'))(),
+    label: (() => tc('挂载状态'))(),
     align: 'center',
     classes: 'ellipsis',
     style: 'padding: 15px 0px',
@@ -188,7 +189,32 @@ const columns = computed(() => [
         <!--        </q-td>-->
 
         <q-td key="id" :props="props">
-          {{ props.row?.id }}
+          <div class="row items-center justify-center">
+            <div class="col-shrink">
+              {{ props.row?.id }}
+
+              <!--创建时间距离当下小于1小时则打上new标记-->
+              <q-badge
+                v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
+                color="light-green" floating transparent rounded align="middle">
+                new
+              </q-badge>
+
+            </div>
+
+            <q-btn v-if="hoverRow === props.row?.id"
+                   class="col-shrink q-px-xs q-ma-none" flat no-caps dense icon="content_copy" size="xs" color="primary"
+                   @click="clickToCopy(props.row?.id)">
+              <q-tooltip>
+                {{ tc('components.server.ServeTable.copy_to_clipboard') }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn v-else
+                   class="col-shrink q-px-xs q-ma-none invisible" flat dense icon="content_copy" size="xs">
+            </q-btn>
+
+          </div>
+
         </q-td>
 
         <q-td key="serviceNode" :props="props">
@@ -210,8 +236,10 @@ const columns = computed(() => [
         </q-td>
 
         <q-td key="size" :props="props">
-
-          {{ props.row?.size }}GB
+          <div>
+            <q-icon name="mdi-harddisk" color="primary" size="md"></q-icon>
+          </div>
+          <div>{{ props.row?.size }}GB</div>
         </q-td>
 
         <q-td key="validTime" :props="props">
@@ -296,21 +324,54 @@ const columns = computed(() => [
         </q-td>
 
         <q-td key="remarks" :props="props">
-          {{ props.row?.remarks }}
+
+          <div class="row">
+            <div class="col q-ma-none q-pa-none">
+              {{ props.row?.remarks }}
+              <q-tooltip>
+                {{ props.row?.remarks }}
+              </q-tooltip>
+            </div>
+
+            <q-btn
+              v-if="hoverRow === props.row?.id && (!group || (group && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
+              :disable="props.row?.lock === 'lock-operation'"
+              class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
+            >
+            </q-btn>
+
+            <q-btn v-else
+                   class="col-shrink q-px-none q-ma-none invisible" flat dense icon="edit" size="xs"/>
+          </div>
         </q-td>
 
         <q-td key="server" :props="props">
           <div v-if="props.row?.server === null">
-            {{ tc('未挂载') }}
+            {{ tc('无') }}
           </div>
 
           <div v-else>
-            {{ props.row?.server?.ipv4 }}
+            <q-btn color="primary"
+                   padding="none"
+                   dense
+                   flat
+                   @click="navigateToUrl(`/my/server/${group ? 'group/server' : 'personal'}/detail/${props.row?.server?.id}`)">
+              {{ props.row?.server?.ipv4 }}
+            </q-btn>
           </div>
         </q-td>
 
         <q-td key="status" :props="props">
-          {{ props.row?.server !== null }}
+
+          <q-chip v-if="props.row?.server === null" class="text-weight-bold non-selectable" outline color="primary"
+                  :ripple="false">
+            {{ tc('未挂载') }}
+          </q-chip>
+
+          <q-chip v-else outline color="green" class="text-weight-bold non-selectable" :ripple="false">
+            {{ tc('已挂载') }}
+          </q-chip>
+
         </q-td>
 
         <q-td key="operation" :props="props">
