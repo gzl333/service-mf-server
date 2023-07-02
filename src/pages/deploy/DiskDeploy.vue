@@ -2,7 +2,7 @@
 import { ref, computed, watch /* , PropType */ } from 'vue'
 import { PeriodInterface, useStore } from 'stores/store'
 import { useRoute, useRouter } from 'vue-router'
-import { Notify, QInput /* scroll */ } from 'quasar'
+import { Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
 import { i18n } from 'boot/i18n'
 import api from 'src/api'
@@ -280,7 +280,7 @@ if (store.tables.groupTable.status === 'total') {
   })
 }
 
-/* 新建云主机 */
+/* 新建云硬盘 */
 const isDeploying = ref(false)
 // check inputs
 const checkInputs = () => {
@@ -325,7 +325,8 @@ const checkInputs = () => {
     input.value?.focus()
     return false
   }
-  return true
+
+  return false
 }
 
 const deploy = async () => {
@@ -398,7 +399,7 @@ const deploy = async () => {
     }
   }
 }
-/* 新建云主机 */
+/* 新建云硬盘 */
 </script>
 
 <template>
