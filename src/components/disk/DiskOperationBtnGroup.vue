@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { PropType, /* ref, */ computed } from 'vue'
+import { PropType /* ref, */ /* computed */ } from 'vue'
 // import { navigateToUrl } from 'single-spa'
 import { useStore, DiskInterface, GroupInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
-const props = defineProps({
+/* const props =  */defineProps({
   disk: {
     type: Object as PropType<DiskInterface>,
     required: true
@@ -21,7 +21,7 @@ const store = useStore()
 // const route = userRoute()
 const tc = i18n.global.tc
 
-const toggleValue = computed(() => props.disk.lock === 'lock-operation')
+// const toggleValue = computed(() => props.disk.lock === 'lock-operation')
 
 // // 当前用户在group内的角色
 // const myRole = computed(() => store.tables.groupTable.byId[props.disk?.vo_id || '']?.myRole)
@@ -31,22 +31,22 @@ const toggleValue = computed(() => props.disk.lock === 'lock-operation')
   <div class="ServerOperationBtnGroup">
     <q-btn-group unelevated>
 
-      <q-btn color="grey-3" padding="none">
-        <q-toggle
-          :model-value="toggleValue"
-          checked-icon="lock"
-          unchecked-icon="lock_open"
-          color="light-green"
-          size="md"
-        >
-          <q-tooltip v-if="disk.lock === 'lock-operation'">
-            {{ tc('components.server.ServerOperationBtnGroup.server_operation_locked') }}
-          </q-tooltip>
-          <q-tooltip v-else>
-            {{ tc('components.server.ServerOperationBtnGroup.server_operation_unlocked') }}
-          </q-tooltip>
-        </q-toggle>
-      </q-btn>
+      <!--      <q-btn color="grey-3" padding="none">-->
+      <!--        <q-toggle-->
+      <!--          :model-value="toggleValue"-->
+      <!--          checked-icon="lock"-->
+      <!--          unchecked-icon="lock_open"-->
+      <!--          color="light-green"-->
+      <!--          size="md"-->
+      <!--        >-->
+      <!--          <q-tooltip v-if="disk.lock === 'lock-operation'">-->
+      <!--            {{ tc('components.server.ServerOperationBtnGroup.server_operation_locked') }}-->
+      <!--          </q-tooltip>-->
+      <!--          <q-tooltip v-else>-->
+      <!--            {{ tc('components.server.ServerOperationBtnGroup.server_operation_unlocked') }}-->
+      <!--          </q-tooltip>-->
+      <!--        </q-toggle>-->
+      <!--      </q-btn>-->
 
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
                       :disable-main-btn="disk.lock === 'lock-operation'"

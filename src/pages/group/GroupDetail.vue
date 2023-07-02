@@ -12,8 +12,9 @@ import GroupRoleChip from 'components/group/GroupRoleChip.vue'
 import ServerTable from 'components/server/ServerTable.vue'
 import OrderTable from 'components/order/OrderTable.vue'
 import CouponTable from 'components/coupon/CouponTable.vue'
-import DiskTable from 'components/disk/DiskTable.vue'
+
 // import CouponRedeemInput from 'components/coupon/CouponRedeemInput.vue'
+import GroupDiskList from 'pages/group/GroupDiskList.vue'
 
 // const props = defineProps({
 //   foo: {
@@ -30,7 +31,7 @@ const router = useRouter()
 const tc = i18n.global.tc
 
 // url传参
-const show = route.query.show as 'server' | 'member' | 'order' | 'coupon' | undefined // 子tab展示哪个部分
+const show = route.query.show as 'server' | 'disk' | 'member' | 'order' | 'coupon' | undefined // 子tab展示哪个部分
 // 从route对象中读取id参数
 const groupId = route.params.groupId as string
 
@@ -285,35 +286,40 @@ const clickToCopy = useCopyToClipboard()
                            :ripple="false"
                            name="server"
                            icon="computer"
-                           :label="tc('pages.group.GroupDetail.server')"/>
+                           :label="tc('pages.group.GroupDetail.server')"
+                           @click="navigateToUrl(`/my/server/group/detail/${groupId}?show=server`)"/>
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="disk"
                            icon="mdi-harddisk"
-                           :label="tc('云硬盘')"/>
+                           :label="tc('云硬盘')"
+                           @click="navigateToUrl(`/my/server/group/detail/${groupId}?show=disk`)"/>
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="member"
                            icon="group"
-                           :label="tc('pages.group.GroupDetail.member')"/>
+                           :label="tc('pages.group.GroupDetail.member')"
+                           @click="navigateToUrl(`/my/server/group/detail/${groupId}?show=member`)"/>
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="order"
                            icon="list_alt"
-                           :label="tc('pages.group.GroupDetail.order')"/>
+                           :label="tc('pages.group.GroupDetail.order')"
+                           @click="navigateToUrl(`/my/server/group/detail/${groupId}?show=order`)"/>
 
                     <q-tab class="q-px-none q-py-none q-mr-md"
                            no-caps
                            :ripple="false"
                            name="coupon"
                            icon="currency_yuan"
-                           :label="tc('pages.group.GroupDetail.coupon')"/>
+                           :label="tc('pages.group.GroupDetail.coupon')"
+                           @click="navigateToUrl(`/my/server/group/detail/${groupId}?show=coupon`)"/>
 
                   </q-tabs>
 
@@ -357,7 +363,7 @@ const clickToCopy = useCopyToClipboard()
                   </q-tab-panel>
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="disk">
-                    <disk-table/>
+                   <group-disk-list :group="group"/>
                   </q-tab-panel>
 
                   <q-tab-panel class="q-pa-none overflow-hidden" name="member">

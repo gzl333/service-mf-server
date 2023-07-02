@@ -1821,7 +1821,7 @@ export const useStore = defineStore('server', {
           query: {
             page: payload.page,
             page_size: payload.pageSize,
-            resource_type: 'vm',
+            // resource_type: 'vm',
             order_type: payload.orderType,
             status: payload.status,
             time_start: payload.timeStart,

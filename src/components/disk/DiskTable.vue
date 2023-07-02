@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
 // import { navigateToUrl } from 'single-spa'
-import { useStore } from 'stores/store'
+import { GroupInterface, useStore } from 'stores/store'
 // import { useRoute, useRouter } from 'vue-router'
 import { i18n } from 'boot/i18n'
 // import api from 'src/api'
@@ -24,16 +24,11 @@ defineProps({
   rows: {
     type: Array as PropType<DiskInterface[]>,
     required: true
+  },
+  group: {
+    type: Object as PropType<GroupInterface>,
+    required: false
   }
-  // isGroup: {
-  //   type: Boolean,
-  //   required: false,
-  //   default: false
-  // },
-  // groupId: {
-  //   type: String,
-  //   required: false
-  // }
 })
 // const emits = defineEmits(['change', 'delete'])
 
@@ -319,7 +314,7 @@ const columns = computed(() => [
         </q-td>
 
         <q-td key="operation" :props="props">
-          <DiskOperationBtnGroup :disk="props.row"/>
+          <DiskOperationBtnGroup :disk="props.row" :group="group"/>
         </q-td>
 
       </q-tr>
