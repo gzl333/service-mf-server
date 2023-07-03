@@ -24,6 +24,7 @@ import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 import MountDiskDialog from 'components/disk/MountDiskDialog.vue'
 import UnmountDiskDialog from 'components/disk/UnmountDiskDialog.vue'
 import DeleteDiskDialog from 'components/disk/DeleteDiskDialog.vue'
+import RenewDiskDialog from 'components/disk/RenewDiskDialog.vue'
 
 const { tc } = i18n.global
 const exceptionNotifier = useExceptionNotifier()
@@ -3396,16 +3397,27 @@ export const useStore = defineStore('server', {
       })
     },
     // 删除云硬盘
-    deleteDiskDialog (disk: DiskInterface) {
+    deleteDiskDialog (disk: DiskInterface, group?: GroupInterface) {
       // dialog
       Dialog.create({
         component: DeleteDiskDialog,
         componentProps: {
+          group,
+          disk
+        }
+      })
+    },
+    // 续期云硬盘
+    renewDiskDialog (group: GroupInterface, disk: DiskInterface) {
+      // dialog
+      Dialog.create({
+        component: RenewDiskDialog,
+        componentProps: {
+          group,
           disk
         }
       })
     }
-
     /* disk */
 
     /* dialogs */

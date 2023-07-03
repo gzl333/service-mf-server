@@ -5,7 +5,8 @@ import { useStore, DiskInterface, GroupInterface } from 'stores/store'
 // import { useRoute } from 'vue-router'
 import { i18n } from 'boot/i18n'
 
-/* const props =  */defineProps({
+/* const props =  */
+defineProps({
   disk: {
     type: Object as PropType<DiskInterface>,
     required: true
@@ -121,11 +122,10 @@ const tc = i18n.global.tc
           <q-separator/>
 
           <q-item v-if="disk.server === null" clickable v-close-popup class="bg-white text-primary"
-                  :disable="disk.lock === 'lock-operation'"
-          >
+                  :disable="disk.lock === 'lock-operation'" @click="store.deleteDiskDialog(disk, group)">
             <div class="row">
               <q-item-section class="col-auto text-red">
-                <q-icon name="power_settings_new" size="sm"/>
+                <q-icon name="delete_forever" size="sm"/>
               </q-item-section>
               <q-item-section class="col-auto text-red">
                 <q-item-section>
