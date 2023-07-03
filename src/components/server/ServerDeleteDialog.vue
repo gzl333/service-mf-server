@@ -221,7 +221,7 @@ const onOKClick = () => {
             {{ new Date(server.creation_time).toLocaleString(i18n.global.locale as string) }} -
             {{
               server.expiration_time ? new Date(server.expiration_time).toLocaleString(i18n.global.locale as string) : tc('components.server.ServerDeleteDialog.permanently_valid')
-              }}
+            }}
             <!--            <q-icon-->
             <!--              v-if="server.expiration_time !== null && (new Date(server.expiration_time).getTime() - new Date().getTime()) < 0"-->
             <!--              name="help_outline" color="red" size="xs">-->
@@ -286,22 +286,25 @@ const onOKClick = () => {
 
       <q-card-actions align="between">
 
+        <q-btn class="q-ma-sm" color="primary" outline no-caps
+               :label="tc('components.server.ServerDeleteDialog.cancel')" @click="onCancelClick"/>
+
         <div class="row justify-center items-center">
-          <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'red'"
-                 unelevated no-caps
-                 :disable="toggle || !check1 || !check2"
-                 :label="tc('components.server.ServerDeleteDialog.confirm')"
-                 @click="onOKClick"/>
+
           <div class="col">
             {{ tc('components.server.ServerDeleteDialog.if_no_pay') }}
             <q-btn type="a" color="primary" flat no-caps padding="none"
                    :label="tc('components.server.ServerDeleteDialog.rebuild_server')"
                    @click="()=> {onCancelClick(); store.triggerServerRebuildDialog( {serverId: server.id, isGroup})}"/>
           </div>
-        </div>
 
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps
-               :label="tc('components.server.ServerDeleteDialog.cancel')" @click="onCancelClick"/>
+          <q-btn class="q-ma-sm" :color="toggle || !check1 || !check2 ? 'grey' : 'red'"
+                 unelevated no-caps
+                 :disable="toggle || !check1 || !check2"
+                 :label="tc('components.server.ServerDeleteDialog.confirm')"
+                 @click="onOKClick"/>
+
+        </div>
 
       </q-card-actions>
     </q-card>

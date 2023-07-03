@@ -81,13 +81,16 @@ const onOKClick = () => {
       </q-card-section>
 
       <!-- buttons example -->
-      <q-card-actions align="right">
-        <q-btn color="primary" no-caps unelevated @click="onDialogCancel">
+      <q-card-actions align="between">
+
+        <q-btn color="primary" no-caps outline @click="onDialogCancel">
           {{ tc('components.group.GroupEditDialog.cancel') }}
         </q-btn>
-        <q-btn color="primary" no-caps outline @click="onOKClick">
+
+        <q-btn color="primary" no-caps unelevated @click="onOKClick">
           {{ tc('components.group.GroupEditDialog.confirm') }}
         </q-btn>
+
       </q-card-actions>
 
     </q-card>

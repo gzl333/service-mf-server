@@ -335,7 +335,7 @@ const onOKClick = () => {
             <div class="col-9 row items-start q-gutter-x-sm q-pt-md">
 
               <q-input ref="monthInput"
-                       style="width: 347px;"
+                       style="width: 160px;"
                        outlined v-model.number="monthCount" input-class="text-center text-primary"
                        :suffix="i18n.global.locale === 'zh' ? '个月' : 'Months'" dense
                        :rules="[val => (Number.isInteger(val) && val>0 && val <= MAX_MONTHS_RENEW) || (i18n.global.locale === 'zh' ? `应为介于1-${MAX_MONTHS_RENEW}之间的整数` : `Must be an integer between 1 and ${MAX_MONTHS_RENEW}`)]">
@@ -366,14 +366,14 @@ const onOKClick = () => {
             <div class="col-9 row items-center q-gutter-x-sm q-pt-md">
 
               <q-input ref="dateInput"
-                       style="width: 170px;"
+                       style="width: 160px;"
                        v-model="dateSelect"
                        type="date"
                        outlined
                        dense/>
 
               <q-input v-model="timeSelect"
-                       style="width: 170px;"
+                       style="width: 160px;"
                        type="time"
                        outlined
                        dense/>
@@ -410,18 +410,18 @@ const onOKClick = () => {
 
         <q-btn class="q-ma-sm"
                color="primary"
-               unelevated
+               outline
                no-caps
-               :label="tc('components.order.OrderRenewDialog.place_order')"
-               :disable="server.pay_type === 'postpaid'"
-               @click="onOKClick"/>
+               :label="tc('components.order.OrderRenewDialog.cancel')"
+               @click="onDialogCancel"/>
 
         <q-btn class="q-ma-sm"
                color="primary"
                unelevated
                no-caps
-               :label="tc('components.order.OrderRenewDialog.cancel')"
-               @click="onDialogCancel"/>
+               :label="tc('components.order.OrderRenewDialog.place_order')"
+               :disable="server.pay_type === 'postpaid'"
+               @click="onOKClick"/>
 
       </q-card-actions>
     </q-card>

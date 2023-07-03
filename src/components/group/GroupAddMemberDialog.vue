@@ -170,13 +170,16 @@ const onOKClick = async () => {
       </q-card-section>
 
       <!-- buttons example -->
-      <q-card-actions align="right">
-        <q-btn color="primary" unelevated no-caps @click="onDialogCancel">
+      <q-card-actions align="between">
+
+        <q-btn color="primary" outline no-caps @click="onDialogCancel">
           {{ tc('components.group.GroupAddMemberDialog.cancel') }}
         </q-btn>
-        <q-btn color="primary" outline no-caps @click="onOKClick">
+
+        <q-btn color="primary" unelevated no-caps @click="onOKClick">
           {{ tc('components.group.GroupAddMemberDialog.confirm') }}
         </q-btn>
+
       </q-card-actions>
 
     </q-card>

@@ -249,11 +249,23 @@ const onOKClick = () => {
 
       <!--      <q-separator/>-->
 
-      <q-card-actions align="between" class="absolute-bottom">
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps
-               :label="tc('components.order.OrderPayDialog.confirm_pay')" @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps :label="tc('components.order.OrderPayDialog.cancel')"
+      <q-card-actions align="between"
+                      class="absolute-bottom">
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               outline
+               no-caps
+               :label="tc('components.order.OrderPayDialog.cancel')"
                @click="onDialogCancel"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               unelevated
+               no-caps
+               :label="tc('components.order.OrderPayDialog.confirm_pay')"
+               @click="onOKClick"/>
+
       </q-card-actions>
 
       <!--      <pre> {{ coupons }}</pre>-->

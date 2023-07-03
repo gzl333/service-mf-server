@@ -361,11 +361,14 @@ const onOKClick = () => {
 
       <!-- buttons example -->
       <q-card-actions align="between">
+
+        <q-btn class="q-ma-sm" color="primary" outline no-caps
+               :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
+
         <q-btn class="q-ma-sm" :color="!check ? 'grey' : 'primary'" unelevated no-caps
                :label="tc('components.server.ServerRebuildDialog.confirm')" :disable="!check"
                @click="onOKClick"/>
-        <q-btn class="q-ma-sm" color="primary" unelevated no-caps
-               :label="tc('components.server.ServerRebuildDialog.cancel')" @click="onDialogCancel"/>
+
       </q-card-actions>
     </q-card>
   </q-dialog>

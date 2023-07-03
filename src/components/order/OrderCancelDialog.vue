@@ -106,14 +106,14 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
           </div>
         </div>
 
-<!--        <div class="row q-pb-lg items-center">-->
-<!--          <div class="col-3 text-grey-7">-->
-<!--            订单金额-->
-<!--          </div>-->
-<!--          <div class="col">-->
-<!--            {{ order.total_amount }}点-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="row q-pb-lg items-center">-->
+        <!--          <div class="col-3 text-grey-7">-->
+        <!--            订单金额-->
+        <!--          </div>-->
+        <!--          <div class="col">-->
+        <!--            {{ order.total_amount }}点-->
+        <!--          </div>-->
+        <!--        </div>-->
 
         <div class="row items-center">
           <div class="col-3 text-grey-7">
@@ -129,8 +129,21 @@ const order = computed(() => props.isGroup ? store.tables.groupOrderTable.byId[p
       <q-separator/>
 
       <q-card-actions align="between">
-        <q-btn class="q-ma-sm" color="primary" no-caps unelevated :label="tc('components.order.OrderCancelDialog.cancel_order')" @click="onDialogOK(true)"/>
-        <q-btn class="q-ma-sm" color="primary" no-caps unelevated :label="tc('components.order.OrderCancelDialog.keep_order')" @click="onDialogCancel"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               no-caps
+               outline
+               :label="tc('components.order.OrderCancelDialog.keep_order')"
+               @click="onDialogCancel"/>
+
+        <q-btn class="q-ma-sm"
+               color="primary"
+               no-caps
+               unelevated
+               :label="tc('components.order.OrderCancelDialog.cancel_order')"
+               @click="onDialogOK(true)"/>
+
       </q-card-actions>
     </q-card>
   </q-dialog>
