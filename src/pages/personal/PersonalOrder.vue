@@ -22,12 +22,16 @@ const store = useStore()
 // const router = useRouter()
 
 // load table
-if (store.tables.personalOrderTable.status !== 'total') {
-  void store.loadPersonalOrderTable()
-}
-if (store.tables.personalCouponTable.status !== 'total') {
-  void store.loadPersonalCouponTable()
-}
+// if (store.tables.personalOrderTable.status !== 'total') {
+//   void store.loadPersonalOrderTable()
+// }
+// if (store.tables.personalCouponTable.status !== 'total') {
+//   void store.loadPersonalCouponTable()
+// }
+
+// hard load
+void store.loadPersonalOrderTable()
+void store.loadPersonalCouponTable()
 
 // service_id下拉列表
 const serviceOptions = computed(() => store.getAllServiceOptions)

@@ -3409,7 +3409,7 @@ export const useStore = defineStore('server', {
       })
     },
     // 续期云硬盘
-    renewDiskDialog (group: GroupInterface, disk: DiskInterface) {
+    renewDiskDialog (disk: DiskInterface, group?: GroupInterface) {
       // dialog
       Dialog.create({
         component: RenewDiskDialog,

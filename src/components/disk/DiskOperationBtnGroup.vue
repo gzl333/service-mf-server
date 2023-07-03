@@ -72,8 +72,7 @@ const tc = i18n.global.tc
 
           <div v-if="disk.pay_type === 'prepaid'">
             <q-item v-if="!group || store.tables.groupTable.byId[disk.vo.id].myRole !== 'member'"
-                    clickable v-close-popup class="bg-white text-primary"
-            >
+                    clickable v-close-popup class="bg-white text-primary" @click="store.renewDiskDialog(disk, group)">
               <div class="row">
                 <q-item-section class="col-auto">
                   <q-icon name="autorenew" size="sm"/>

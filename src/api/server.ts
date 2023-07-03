@@ -325,7 +325,7 @@ export default {
     },
     getDescribePriceRenewal (payload: {
       query: {
-        resource_type: 'vm' | 'disk' | ' bucket'
+        resource_type: 'vm' | 'disk' | 'bucket'
         instance_id: string
         period?: number
         renew_to_time?: string
