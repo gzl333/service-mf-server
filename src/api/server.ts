@@ -404,6 +404,27 @@ export default {
         params: payload.query
       }
       return axiosServer.post('/disk/' + payload.path.id + '/detach', null, config)
+    },
+    postDiskIdRemark (payload: {
+      path: { id: string }
+      query: { remark: string }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/disk/' + payload.path.id + '/remark', null, config)
+    },
+    postDiskIdRenew (payload: {
+      path: {id: string}
+      query?: {
+        period?: number
+        renew_to_time?: string
+      }
+    }) {
+      const config = {
+        params: payload.query
+      }
+      return axiosServer.post('/disk/' + payload.path.id + '/renew', null, config)
     }
   },
   flavor: {

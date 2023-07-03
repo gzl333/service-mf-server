@@ -25,6 +25,7 @@ import MountDiskDialog from 'components/disk/MountDiskDialog.vue'
 import UnmountDiskDialog from 'components/disk/UnmountDiskDialog.vue'
 import DeleteDiskDialog from 'components/disk/DeleteDiskDialog.vue'
 import RenewDiskDialog from 'components/disk/RenewDiskDialog.vue'
+import EditDiskDialog from 'components/disk/EditDiskDialog.vue'
 
 const { tc } = i18n.global
 const exceptionNotifier = useExceptionNotifier()
@@ -3412,6 +3413,17 @@ export const useStore = defineStore('server', {
       // dialog
       Dialog.create({
         component: RenewDiskDialog,
+        componentProps: {
+          group,
+          disk
+        }
+      })
+    },
+    // 修改云硬盘备注
+    editDiskDialog (disk: DiskInterface, group?: GroupInterface) {
+      // dialog
+      Dialog.create({
+        component: EditDiskDialog,
         componentProps: {
           group,
           disk

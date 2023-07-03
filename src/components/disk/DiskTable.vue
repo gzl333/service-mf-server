@@ -343,8 +343,8 @@ const columns = computed(() => [
 
             <q-btn
               v-if="hoverRow === props.row?.id && (!group || (group && store.tables.groupTable.byId[props.row?.vo_id]?.myRole !== 'member')) "
-              :disable="props.row?.lock === 'lock-operation'"
-              class="col-shrink q-px-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
+              :disable="props.row?.lock === 'lock-operation'" @click="store.editDiskDialog(props.row, group)"
+              class="col-shrink q-pa-none q-ma-none" flat dense icon="edit" size="xs" color="primary"
             >
             </q-btn>
 
