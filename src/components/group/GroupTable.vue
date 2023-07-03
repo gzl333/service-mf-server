@@ -50,7 +50,7 @@ const columns = computed(() => [
     field: 'company',
     align: 'center',
     classes: 'ellipsis',
-    style: 'padding: 15px 0px; max-width: 150px;word-break: break-all; word-wrap: break-word; white-space: normal;',
+    style: 'padding: 15px 0px; max-width: 160px;word-break: break-all; word-wrap: break-word; white-space: normal;',
     headerStyle: 'padding: 0 5px'
   },
   {
@@ -82,6 +82,14 @@ const columns = computed(() => [
     name: 'server',
     label: (() => tc('components.group.GroupTable.server'))(),
     field: 'server',
+    align: 'center',
+    style: 'padding: 15px 0px',
+    headerStyle: 'padding: 0 5px'
+  },
+  {
+    name: 'disk',
+    label: (() => tc('云硬盘'))(),
+    field: 'disk',
     align: 'center',
     style: 'padding: 15px 0px',
     headerStyle: 'padding: 0 5px'
@@ -203,35 +211,83 @@ const searchMethod = (rows: GroupInterface[], terms: string): GroupInterface[] =
           </q-td>
 
           <q-td key="member" :props="props">
-            <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=member`)">
-              {{ props.row?.stats.member_count }}
-              {{ tc('components.group.GroupTable.member') }}
-            </q-btn>
+
+            <div class="column items-center cursor-pointer"
+                 @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=member`)">
+
+              <q-icon name="group" color="primary" size="xs"/>
+
+              <div class="text-primary">
+                {{ props.row?.stats.member_count }}
+                {{ tc('components.group.GroupTable.member') }}
+              </div>
+
+            </div>
+
           </q-td>
 
           <q-td key="server" :props="props">
-            <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=server`)">
-              {{ props.row?.stats.server_count }}
-              {{ tc('components.group.GroupTable.servers') }}
-            </q-btn>
+
+            <div class="column items-center cursor-pointer"
+                 @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=server`)">
+
+              <q-icon name="computer" color="primary" size="xs"/>
+
+              <div class="text-primary">
+                {{ props.row?.stats.server_count }}
+                {{ tc('components.group.GroupTable.servers') }}
+              </div>
+
+            </div>
+
+          </q-td>
+
+          <q-td key="disk" :props="props">
+
+            <div class="column items-center cursor-pointer"
+                 @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=disk`)">
+
+              <q-icon name="mdi-harddisk" color="primary" size="xs"/>
+
+              <div class="text-primary">
+                {{ props.row?.stats.disk_count }}
+                {{ tc('个') }}
+              </div>
+
+            </div>
+
           </q-td>
 
           <q-td key="order" :props="props">
-            <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=order`)">
-              {{ props.row?.stats.order_count }}
-              {{ tc('components.group.GroupTable.orders') }}
-            </q-btn>
+
+            <div class="column items-center cursor-pointer"
+                 @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=order`)">
+
+              <q-icon name="list_alt" color="primary" size="xs"/>
+
+              <div class="text-primary">
+                {{ props.row?.stats.order_count }}
+                {{ tc('components.group.GroupTable.orders') }}
+              </div>
+
+            </div>
+
           </q-td>
 
           <q-td key="coupon" :props="props">
-            <q-btn color="primary" flat padding="none" dense no-caps
-                   @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=coupon`)">
-              {{ props.row?.stats.coupon_count }}
-              {{ tc('components.group.GroupTable.coupons') }}
-            </q-btn>
+
+            <div class="column items-center cursor-pointer"
+                 @click="navigateToUrl(`/my/server/group/detail/${props.row?.id}?show=coupon`)">
+
+              <q-icon name="currency_yuan" color="primary" size="xs"/>
+
+              <div class="text-primary">
+                {{ props.row?.stats.coupon_count }}
+                {{ tc('components.group.GroupTable.coupons') }}
+              </div>
+
+            </div>
+
           </q-td>
 
           <q-td key="balance" :props="props">

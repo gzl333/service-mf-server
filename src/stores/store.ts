@@ -8,8 +8,8 @@ import { i18n } from 'boot/i18n'
 import { Dialog, Notify } from 'quasar'
 import { navigateToUrl } from 'single-spa'
 
-// @ts-expect-error
-import { useStoreMain } from '@cnic/main'
+// // @ts-expect-error
+// import { useStoreMain } from '@cnic/main'
 
 import ServerDeleteDialog from 'components/server/ServerDeleteDialog.vue'
 import ServerRebuildDialog from 'components/server/ServerRebuildDialog.vue'
@@ -94,6 +94,7 @@ export interface GroupInterface {
   stats: {
     member_count: number
     server_count: number
+    disk_count: number
     order_count: number
     coupon_count: number
     balance: string
@@ -1654,17 +1655,19 @@ export const useStore = defineStore('server', {
         const group = new schema.Entity('group')
         for (const data of respGroup.data.results) {
           // 添加role/balance/order字段
-          const storeMain = useStoreMain()
-          const currentId = storeMain.items.tokenDecoded.email
-          const myRole = currentId === data.owner.username ? 'owner' : 'member'
+          // const storeMain = useStoreMain()
+          // const currentId = storeMain.items.tokenDecoded.email
+          // const myRole = currentId === data.owner.username ? 'owner' : 'member'
+
           Object.assign(data, {
-            myRole,
-            balance: '',
+            myRole: 'member',
+            balance: '0.00',
             order: [],
             coupons: [],
             stats: {
               member_count: 0,
               server_count: 0,
+              disk_count: 0,
               order_count: 0,
               coupon_count: 0,
               balance: '0'
@@ -1707,21 +1710,22 @@ export const useStore = defineStore('server', {
           // 是否把组长添加进member列表？
           // 把groupId字段补充进去
           Object.assign(respGroupMember.data, { id: groupId })
-          // normalize
-          const groupMember = new schema.Entity('groupMember')
-          const normalizedData = normalize(respGroupMember.data, groupMember)
+          // // normalize
+          // const groupMember = new schema.Entity('groupMember')
+          // const normalizedData = normalize(respGroupMember.data, groupMember)
           // 存入state
-          Object.assign(this.tables.groupMemberTable.byId, normalizedData.entities.groupMember)
-          this.tables.groupMemberTable.allIds.unshift(Object.keys(normalizedData.entities.groupMember as Record<string, unknown>)[0])
+          Object.assign(this.tables.groupMemberTable.byId, { [respGroupMember.data.id]: respGroupMember.data })
+          this.tables.groupMemberTable.allIds.unshift(respGroupMember.data.id)
           this.tables.groupMemberTable.allIds = [...new Set(this.tables.groupMemberTable.allIds)]
-          // 给groupTable补充role字段
-          const storeMain = useStoreMain()
-          const currentId = storeMain.items.tokenDecoded.email
-          for (const member of respGroupMember.data.members) {
-            if (member.user.username === currentId && member.role === 'leader') {
-              this.tables.groupTable.byId[groupId].myRole = 'leader'
-            }
-          }
+
+          // // 给groupTable补充role字段
+          // const storeMain = useStoreMain()
+          // const currentId = storeMain.items.tokenDecoded.email
+          // for (const member of respGroupMember.data.members) {
+          //   if (member.user.username === currentId && member.role === 'leader') {
+          //     this.tables.groupTable.byId[groupId].myRole = 'leader'
+          //   }
+          // }
         } catch (exception) {
           // exceptionNotifier(exception)
           // 继续下一个循环
@@ -1787,12 +1791,16 @@ export const useStore = defineStore('server', {
     }) {
       try {
         const respGroupStats = await api.server.vo.getVoStatistic({ path: { id: payload.groupId } })
+        // myRole
+        this.tables.groupTable.byId[payload.groupId].myRole = respGroupStats.data.my_role
+        // stats
         this.tables.groupTable.byId[payload.groupId].stats = {
-          balance: respGroupStats.data.balance,
-          coupon_count: respGroupStats.data.coupon_count,
           member_count: respGroupStats.data.member_count,
+          server_count: respGroupStats.data.server_count,
+          disk_count: respGroupStats.data.disk_count,
           order_count: respGroupStats.data.order_count,
-          server_count: respGroupStats.data.server_count
+          coupon_count: respGroupStats.data.coupon_count,
+          balance: respGroupStats.data.balance
         }
       } catch (exception) {
         // exceptionNotifier(exception)
