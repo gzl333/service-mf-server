@@ -1,6 +1,6 @@
 {
   "name": "@cnic/server",
-  "version": "v2.6.0",
+  "version": "v2.6.1",
   "description": "Micro Frontend Server",
   "productName": "Micro Frontend Server",
   "author": "mimas",

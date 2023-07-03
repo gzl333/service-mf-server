@@ -135,7 +135,7 @@ const columns = computed(() => [
     :loading="isLoading"
     color="primary"
     :loading-label="tc('网络请求中，请稍候...')"
-    :no-data-label="tc('无搜索结果')"
+    :no-data-label="tc('无可用云硬盘')"
     hide-pagination
     :pagination="{rowsPerPage: 0}"
     row-key="id"
