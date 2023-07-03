@@ -189,17 +189,18 @@ const columns = computed(() => [
         <!--        </q-td>-->
 
         <q-td key="id" :props="props">
+
+          <!--创建时间距离当下小于1小时则打上new标记-->
+          <q-badge
+            v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
+            color="light-green" transparent rounded align="middle">
+            new
+          </q-badge>
+
           <div class="row items-center justify-center">
+
             <div class="col-shrink">
               {{ props.row?.id }}
-
-              <!--创建时间距离当下小于1小时则打上new标记-->
-              <q-badge
-                v-if="(new Date() - new Date(props.row?.creation_time)) < 1000 * 60 * 60 * 1 "
-                color="light-green" floating transparent rounded align="middle">
-                new
-              </q-badge>
-
             </div>
 
             <q-btn v-if="hoverRow === props.row?.id"
@@ -274,7 +275,12 @@ const columns = computed(() => [
             </div>
 
             <div class="col-auto">
-              <div v-if="i18n.global.locale==='zh'">
+
+              <div v-if="!props.row?.expiration_time">
+                {{ tc('长期') }}
+              </div>
+
+              <div v-else-if="i18n.global.locale==='zh'">
                 <div>{{
                     new Date(props.row?.expiration_time).toLocaleString(i18n.global.locale as string).split(' ')[0]
                   }}
@@ -301,23 +307,25 @@ const columns = computed(() => [
 
           <div class="row items-center justify-center">
 
-            <q-badge
-              v-if="((new Date() - new Date(props.row?.expiration_time)) < 0 ) && ((new Date() - new Date(props.row?.creation_time)) > 0)"
-              color="green">
-              {{ tc('有效期内') }}
-            </q-badge>
+            <div v-if="props.row?.expiration_time">
+              <q-badge
+                v-if="((new Date() - new Date(props.row?.expiration_time)) < 0 ) && ((new Date() - new Date(props.row?.creation_time)) > 0)"
+                color="green">
+                {{ tc('有效期内') }}
+              </q-badge>
 
-            <q-badge
-              v-if="(new Date() - new Date(props.row?.expiration_time)) > 0"
-              color="negative">
-              {{ tc('已过期') }}
-            </q-badge>
+              <q-badge
+                v-if="(new Date() - new Date(props.row?.expiration_time)) > 0"
+                color="negative">
+                {{ tc('已过期') }}
+              </q-badge>
 
-            <q-badge
-              v-if="(new Date(props.row?.creation_time) - new Date()) > 0"
-              color="primary">
-              {{ tc('待生效') }}
-            </q-badge>
+              <q-badge
+                v-if="(new Date(props.row?.creation_time) - new Date()) > 0"
+                color="primary">
+                {{ tc('待生效') }}
+              </q-badge>
+            </div>
 
           </div>
 

@@ -326,7 +326,7 @@ const checkInputs = () => {
     return false
   }
 
-  return false
+  return true
 }
 
 const deploy = async () => {
@@ -387,7 +387,7 @@ const deploy = async () => {
         // })
 
         // 跳转至disk list
-        selectionOwner.value === 'group' ? navigateToUrl('/my/server/group/list') : navigateToUrl('/my/server/personal/disk')
+        selectionOwner.value === 'group' ? navigateToUrl(`/my/server/group/detail/${selectionGroupId.value}?show=order`) : navigateToUrl('/my/server/personal/disk')
       }
 
       // 改变按钮状态，不管响应结果如何，得到响应之后就恢复按钮状态
