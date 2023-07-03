@@ -49,10 +49,38 @@ const tc = i18n.global.tc
       <!--        </q-toggle>-->
       <!--      </q-btn>-->
 
+      <!--      <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps-->
+      <!--                      :disable-main-btn="disk.lock === 'lock-operation'"-->
+      <!--                      :icon="disk.server === null ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"-->
+      <!--                      @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog(group, disk)">-->
+
       <q-btn-dropdown color="primary" dropdown-icon="expand_more" :ripple="false" split no-caps
-                      :disable-main-btn="disk.lock === 'lock-operation'"
-                      :icon="disk.server === null ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
-                      @click="disk.server === null ? store.mountDiskDialog(group, disk) : store.unmountDiskDialog(group, disk)">
+                      :disable-main-btn="disk.lock === 'lock-operation'">
+
+        <template v-slot:label>
+          <div v-if="disk.server === null"
+               class="row items-center no-wrap"
+               @click="store.mountDiskDialog(group, disk)">
+
+            <q-icon left name="mdi-arrow-collapse"/>
+            <div class="text-center">
+              {{ tc('挂载') }}
+            </div>
+
+          </div>
+
+          <div v-else
+               class="row items-center no-wrap"
+               @click="store.unmountDiskDialog(group, disk)">
+
+            <q-icon left name="mdi-arrow-expand"/>
+            <div class="text-center">
+              {{ tc('卸载') }}
+            </div>
+
+          </div>
+
+        </template>
 
         <q-list style="text-align:center">
 

@@ -9,7 +9,7 @@ import moment from 'moment'
 
 import CloudPlatformLogo from 'components/ui/CloudPlatformLogo.vue'
 import api from 'src/api'
-import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
+// import useExceptionNotifier from 'src/hooks/useExceptionNotifier'
 
 const props = defineProps({
   serverId: {
@@ -30,7 +30,7 @@ const store = useStore()
 // const route = useRoute()
 // const router = useRouter()
 
-const exceptionNotifier = useExceptionNotifier()
+// const exceptionNotifier = useExceptionNotifier()
 
 const {
   dialogRef,
@@ -83,7 +83,7 @@ const getPrice = async () => {
       // 拿到price
       currentPrice.value = respGetPriceRenew.data.price
     } catch (exception) {
-      exceptionNotifier(exception)
+      // exceptionNotifier(exception)
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
     }

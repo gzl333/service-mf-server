@@ -80,7 +80,7 @@ const getPrice = async () => {
       // 拿到price
       currentPrice.value = respGetPriceRenew.data.price
     } catch (exception) {
-      exceptionNotifier(exception, 'GetPriceRenewDisk')
+      // exceptionNotifier(exception, 'GetPriceRenewDisk')
       // 若询价失败，清除当前询价结果
       currentPrice.value = null
     }

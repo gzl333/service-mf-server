@@ -365,26 +365,6 @@ const deploy = async () => {
           isGroup: selectionOwner.value === 'group',
           orderId
         })
-        // 更新personal/group DiskTable,根据返回的diskId获取该disk的全部信息，存入table
-        // const serverId = selectionOwner.value === 'group' ? store.tables.groupOrderTable.byId[orderId].resources[0].instance_id : store.tables.personalOrderTable.byId[orderId].resources[0].instance_id
-
-        // todo 新增disktable
-        // void await store.loadSingleServer({
-        //   serverId,
-        //   isGroup: selectionOwner.value === 'group'
-        // })
-
-        // notify todo disk table
-        // Notify.create({
-        //   classes: 'notification-positive shadow-15',
-        //   icon: 'check_circle',
-        //   textColor: 'positive',
-        //   message: `${tc('components.server.ServerDeployCard.server_create_success')}: ${selectionOwner.value === 'group' ? store.tables.groupServerTable.byId[serverId].ipv4 : store.tables.personalServerTable.byId[serverId].ipv4}`,
-        //   position: 'bottom',
-        //   closeBtn: true,
-        //   timeout: 15000,
-        //   multiLine: false
-        // })
 
         // 跳转至disk list
         selectionOwner.value === 'group' ? navigateToUrl(`/my/server/group/detail/${selectionGroupId.value}?show=order`) : navigateToUrl('/my/server/personal/disk')

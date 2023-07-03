@@ -272,7 +272,7 @@ const clickToCopy = useCopyToClipboard()
             <div class="column items-start q-py-none q-px-none">
 
               <div class="col-auto">
-                <div class="row no-wrap justify-between items-center q-pt-lg  content-area">
+                <div class="row no-wrap justify-between items-center content-area">
 
                   <q-tabs
                     class="col-auto"
