@@ -326,7 +326,7 @@ const clickToCopy = useCopyToClipboard()
                            no-caps
                            padding="xs"
                            color="primary"
-                           @click="navigateToUrl(`/my/server/deploy/disk${isGroup ? `?group=${group.id}` : ''}`)">
+                           @click="navigateToUrl(`/my/server/deploy/disk?service=${server?.service.id}${isGroup ? `&group=${group.id}` : ''}`)">
                       {{ tc('新建云硬盘') }}
                     </q-btn>
 
