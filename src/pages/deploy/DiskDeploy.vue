@@ -168,7 +168,8 @@ watch([selectionPayment, selectionPeriod, inputSize], getPrice)
 
 /* selection默认选择 */
 const chooseService = () => {
-  selectionServiceId.value = route.query.service as string || services.value[0]?.id || ''
+  // 带serviceId过来，先检查一下有没有disk available。没有的话还是选择第一个
+  selectionServiceId.value = (store.tables.serviceTable.byId[route.query.service as string]?.disk_available ? route.query.service as string : services.value[0]?.id) || ''
 }
 const chooseOwner = () => {
   selectionOwner.value = route.query.group || route.query.isgroup ? 'group' : 'personal' // query传递groupId的话则选择为项目组使用
