@@ -137,7 +137,7 @@ loadRows()
       <div class="col row items-center justify-end text-grey">
         <q-select color="grey"
                   v-model="pagination.rowsPerPage"
-                  :options="[1, 2, 10,20,30,50,100]"
+                  :options="[10,20,30,50,100]"
                   dense
                   options-dense
                   borderless
