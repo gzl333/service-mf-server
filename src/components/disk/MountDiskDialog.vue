@@ -112,7 +112,7 @@ const updateServers = async () => {
     } while (servers.value.length < count) // do体内执行完毕后，再检查循环条件，决定是否开始下次循环
 
     // servers排序
-    servers.value.sort((a: ServerInterface, b: ServerInterface) => a.ipv4.localeCompare(b.ipv4))
+    servers.value.sort((a: ServerInterface, b: ServerInterface) => b.ipv4.localeCompare(a.ipv4))
 
     // selection server 选择默认项
     selectionServer.value = servers.value[0]
